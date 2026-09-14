@@ -5,71 +5,71 @@ import { IconClose, IconCheck } from "@/icons";
 import NegativeValue from "@/components/common/NegativeValue";
 import { getRelativeDays } from "@/utils/datetime.js";
 
-const MrrList = ({ listData, onEdit, onDelete }) => {
+const PorList = ({ listData, onEdit, onDelete }) => {
   const dtColumns = [
     {
-      key: "mrrdm_trnno",
-      header: "MRR No",
+      key: "pordm_trnno",
+      header: "PO No",
       width: "100px",
       footer: () => <span className="font-semibold">Total</span>,
       body: (_, row) => {
         return (
-          <span className={`${!row.mrrdm_actve && "text-red-500"}`}>
-            {row.mrrdm_trnno}
+          <span className={`${!row.pordm_actve && "text-red-500"}`}>
+            {row.pordm_trnno}
           </span>
         );
       },
     },
     {
-      key: "mrrdm_trdat",
+      key: "pordm_trdat",
       header: "Date",
       width: "90px",
       body: (v) => getRelativeDays(v),
     },
     { key: "dpart_cname", header: "Department", width: "150px" },
     { key: "cntct_cname", header: "Supplier", width: "180px", footer: "count" },
-    { key: "mrrdm_refno", header: "Ref No", width: "100px" },
+    { key: "pordm_refno", header: "Ref No", width: "100px" },
     {
-      key: "mrrdm_tramt",
+      key: "pordm_tramt",
       header: "Amount",
       width: "80px",
       footer: (_, row) => {
-        return row.reduce((sum, row) => sum + Number(row.mrrdm_tramt ?? 0), 0);
+        return row.reduce((sum, row) => sum + Number(row.pordm_tramt ?? 0), 0);
       },
       body: (_, row) => (
         <>
-          <NegativeValue value={row.mrrdm_tramt} />
+          <NegativeValue value={row.pordm_tramt} />
         </>
       ),
     },
     {
-      key: "mrrdm_pyamt",
+      key: "pordm_pyamt",
       header: "Payable",
       width: "80px",
       footer: (_, row) => {
-        return row.reduce((sum, row) => sum + Number(row.mrrdm_pyamt ?? 0), 0);
+        return row.reduce((sum, row) => sum + Number(row.pordm_pyamt ?? 0), 0);
       },
       body: (_, row) => (
         <>
-          <NegativeValue value={row.mrrdm_pyamt} />
+          <NegativeValue value={row.pordm_pyamt} />
         </>
       ),
     },
     {
-      key: "mrrdm_duamt",
+      key: "pordm_duamt",
       header: "Due",
       width: "80px",
       footer: (_, row) => {
-        return row.reduce((sum, row) => sum + Number(row.mrrdm_duamt ?? 0), 0);
+        return row.reduce((sum, row) => sum + Number(row.pordm_duamt ?? 0), 0);
       },
       body: (_, row) => (
         <>
-          <NegativeValue value={row.mrrdm_duamt} />
+          <NegativeValue value={row.pordm_duamt} />
         </>
       ),
     },
     {
-      key: "mrrdm_ispst",
+      key: "pordm_ispst",
       header: "Posted",
       width: "80px",
       body: (v) => (
@@ -86,7 +86,7 @@ const MrrList = ({ listData, onEdit, onDelete }) => {
       body: (_, row) => (
         <ActionButton
           rowData={row}
-          actve={row.mrrdm_actve}
+          actve={row.pordm_actve}
           onEdit={onEdit}
           onDelete={onDelete}
         />
@@ -104,11 +104,11 @@ const MrrList = ({ listData, onEdit, onDelete }) => {
       hoverable
       exportable
       exportFilename="data-export.csv"
-      columnSettingsKey="m03-mrr-list"
+      columnSettingsKey="m03-por-list"
       onRowClick={(row) => onEdit(row)}
       emptyMessage="No data found"
       className="mt-2"
     />
   );
 };
-export default MrrList;
+export default PorList;

@@ -92,7 +92,6 @@ const acprd_stats_Options = [
 
 const party_ptype_Options = [
   { label: "Investor", value: "Investor", auto_create: false },
-  { label: "Bank", value: "Bank", auto_create: false },
   { label: "Cash", value: "Cash", auto_create: false },
   { label: "Expenses", value: "Expenses", auto_create: false },
   { label: "Liabilities", value: "Liabilities", auto_create: false },

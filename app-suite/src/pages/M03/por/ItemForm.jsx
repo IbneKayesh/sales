@@ -22,9 +22,9 @@ const ItemForm = ({
           <Dropdown
             label="Item"
             options={items_Options}
-            value={formData.mrrdc_price}
-            onChange={(e) => onChange("mrrdc_price", e.target.value)}
-            error={formErrors.mrrdc_price}
+            value={formData.pordc_price}
+            onChange={(e) => onChange("pordc_price", e.target.value)}
+            error={formErrors.pordc_price}
             required
             placeholder="Select..."
             disabled={readOnly}
@@ -37,9 +37,9 @@ const ItemForm = ({
           <InputNumber
             label="Rate"
             placeholder="0.00"
-            value={formData.mrrdc_itrat}
-            onChange={(e) => onChange("mrrdc_itrat", e.target.value)}
-            error={formErrors.mrrdc_itrat}
+            value={formData.pordc_itrat}
+            onChange={(e) => onChange("pordc_itrat", e.target.value)}
+            error={formErrors.pordc_itrat}
             step="0.01"
             disabled={readOnly}
           />
@@ -48,9 +48,9 @@ const ItemForm = ({
           <InputNumber
             label="Quantity"
             placeholder="0"
-            value={formData.mrrdc_itqty}
-            onChange={(e) => onChange("mrrdc_itqty", e.target.value)}
-            error={formErrors.mrrdc_itqty}
+            value={formData.pordc_itqty}
+            onChange={(e) => onChange("pordc_itqty", e.target.value)}
+            error={formErrors.pordc_itqty}
             step="0.01"
             disabled={readOnly}
           />
@@ -59,9 +59,9 @@ const ItemForm = ({
           <InputNumber
             label="Disc (%)"
             placeholder="0.00"
-            value={formData.mrrdc_dspct}
-            onChange={(e) => onChange("mrrdc_dspct", e.target.value)}
-            error={formErrors.mrrdc_dspct}
+            value={formData.pordc_dspct}
+            onChange={(e) => onChange("pordc_dspct", e.target.value)}
+            error={formErrors.pordc_dspct}
             step="0.01"
             disabled={readOnly}
           />
@@ -70,9 +70,9 @@ const ItemForm = ({
           <InputNumber
             label="VAT (%)"
             placeholder="0.00"
-            value={formData.mrrdc_vtpct}
-            onChange={(e) => onChange("mrrdc_vtpct", e.target.value)}
-            error={formErrors.mrrdc_vtpct}
+            value={formData.pordc_vtpct}
+            onChange={(e) => onChange("pordc_vtpct", e.target.value)}
+            error={formErrors.pordc_vtpct}
             step="0.01"
             disabled={readOnly}
           />
@@ -81,9 +81,9 @@ const ItemForm = ({
           <Dropdown
             label="VAT Type"
             options={txmod_Options}
-            value={formData.mrrdc_vtype}
-            onChange={(e) => onChange("mrrdc_vtype", e.target.value)}
-            error={formErrors.mrrdc_vtype}
+            value={formData.pordc_vtype}
+            onChange={(e) => onChange("pordc_vtype", e.target.value)}
+            error={formErrors.pordc_vtype}
             placeholder="Select..."
             disabled={readOnly}
           />
@@ -93,9 +93,9 @@ const ItemForm = ({
           <InputText
             label="Notes"
             placeholder="Enter notes"
-            value={formData.mrrdc_notes}
-            onChange={(e) => onChange("mrrdc_notes", e.target.value)}
-            error={formErrors.mrrdc_notes}
+            value={formData.pordc_notes}
+            onChange={(e) => onChange("pordc_notes", e.target.value)}
+            error={formErrors.pordc_notes}
             disabled={readOnly}
           />
         </div>

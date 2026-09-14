@@ -12,26 +12,26 @@ import { formatNumber } from "@/utils/misc";
 // with the Invoice Discount amount kept editable (re-splits across item
 // lines). Styling reuses the shared utility classes and PageCard pieces.
 const BillSummary = ({ formData = {}, readOnly, onChange = () => {} }) => {
-  const dueAmt = Number(formData.mrrdm_duamt) || 0;
+  const dueAmt = Number(formData.pordm_duamt) || 0;
 
   const summaryRows = [
-    { label: "Item Amount", value: formData.mrrdm_tramt },
-    { label: "Item Discount", value: formData.mrrdm_itmds },
-    { label: "Invoice Discount %", value: formData.mrrdm_dspct },
-    { label: "Invoice Discount", value: formData.mrrdm_invds, editable: true },
-    { label: "VAT Amount", value: formData.mrrdm_vtamt },
-    { label: "Include Cost", value: formData.mrrdm_icamt },
-    { label: "Exclude Cost", value: formData.mrrdm_ecamt },
-    { label: "Invoice Total", value: formData.mrrdm_stamt },
-    { label: "Inventory", value: formData.mrrdm_csamt },
+    { label: "Item Amount", value: formData.pordm_tramt },
+    { label: "Item Discount", value: formData.pordm_itmds },
+    { label: "Invoice Discount %", value: formData.pordm_dspct },
+    { label: "Invoice Discount", value: formData.pordm_invds, editable: true },
+    { label: "VAT Amount", value: formData.pordm_vtamt },
+    { label: "Include Cost", value: formData.pordm_icamt },
+    { label: "Exclude Cost", value: formData.pordm_ecamt },
+    { label: "Invoice Total", value: formData.pordm_stamt },
+    { label: "Inventory", value: formData.pordm_csamt },
   ];
 
   const keyRows = [
-    { label: "Payable Amount", value: formData.mrrdm_pyamt, bold: true },
-    { label: "Paid Amount", value: formData.mrrdm_pdamt, bold: true },
+    { label: "Payable Amount", value: formData.pordm_pyamt, bold: true },
+    { label: "Paid Amount", value: formData.pordm_pdamt, bold: true },
     {
       label: "Due Amount",
-      value: formData.mrrdm_duamt,
+      value: formData.pordm_duamt,
       bold: true,
       color: dueAmt > 0 ? "text-danger" : "text-success",
     },
@@ -62,9 +62,9 @@ const BillSummary = ({ formData = {}, readOnly, onChange = () => {} }) => {
             <InputNumber
               dense
               value={row.value}
-              onChange={(e) => onChange("mrrdm_invds", e.target.value)}
+              onChange={(e) => onChange("pordm_invds", e.target.value)}
               step="0.01"
-              disabled={readOnly || Number(formData.mrrdm_dspct) > 0}
+              disabled={readOnly || Number(formData.pordm_dspct) > 0}
               al
             />
           </div>

@@ -53,7 +53,7 @@
     "required": true
   },
   "items_szqty": {
-    "type": "number",
+    "type": "decimal",
     "label": "Size Qty",
     "default": 1,
     "placeholder": "Enter size qty",

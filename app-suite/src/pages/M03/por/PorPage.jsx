@@ -4,19 +4,13 @@ import PageCard, {
   PageCardActions,
   PageCardBody,
 } from "@/components/PageCard";
-import {
-  IconSearch,
-  IconClose,
-  IconPlus,
-  IconSave,
-  IconPrint,
-} from "@/icons";
+import { IconSearch, IconClose, IconPlus, IconSave, IconPrint } from "@/icons";
 import Button from "@/components/Button";
 import Modal, { ModalHeader, ModalTitle, ModalBody } from "@/components/Modal";
 import usePOR from "@/hooks/M03/usePOR";
 import usePrint from "@/hooks/usePrint";
-import MrrList from "./MrrList";
-import MrrForm from "./MrrForm";
+import PorList from "./PorList";
+import PorForm from "./PorForm";
 import ItemForm from "./ItemForm";
 import ItemList from "./ItemList";
 import CostForm from "./CostForm";
@@ -45,9 +39,9 @@ const PorPage = () => {
     dpart_Options,
     cntct_Options,
     items_Options,
-    mrrcs_Options,
+    porcs_Options,
     listDataCost,
-    mrrpy_Options,
+    porpy_Options,
     listDataPayment,
     //functions
     handleChange,
@@ -92,7 +86,7 @@ const PorPage = () => {
             subtitle={
               pgView === "SYS_VW_LST_1"
                 ? listData.length + " PO"
-                : formData?.mrrdm_trnno || "New PO"
+                : formData?.pordm_trnno || "New PO"
             }
           />
           <PageCardActions>
@@ -163,7 +157,7 @@ const PorPage = () => {
         </PageCardHeader>
         <PageCardBody>
           {pgView === "SYS_VW_LST_1" && (
-            <MrrList
+            <PorList
               listData={listData}
               onEdit={handleEdit}
               onDelete={handleDelete}
@@ -171,7 +165,7 @@ const PorPage = () => {
           )}
 
           {pgView === "SYS_VW_FRM_1" && (
-            <MrrForm
+            <PorForm
               isBusy={isBusy}
               readOnly={readOnly}
               stopEdit={stopEdit}
@@ -274,7 +268,7 @@ const PorPage = () => {
                   formErrors={formErrors}
                   onChange={handleChangeCost}
                   onAddToList={handleAddToListCost}
-                  party_Options={mrrcs_Options}
+                  party_Options={porcs_Options}
                 />
               )}
               {showModal.modal === "PAYMENT" && (
@@ -286,7 +280,7 @@ const PorPage = () => {
                   formErrors={formErrors}
                   onChange={handleChangePayment}
                   onAddToList={handleAddToListPayment}
-                  party_Options={mrrpy_Options}
+                  party_Options={porpy_Options}
                 />
               )}
             </ModalBody>

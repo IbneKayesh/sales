@@ -3,52 +3,34 @@
     "type": "string",
     "label": "Id"
   },
-  "mrrtx_txcod": {
+  "porcs_party": {
     "type": "string",
-    "label": "Tax Code",
+    "label": "Accounts Head",
     "maxLength": 50,
     "placeholder": "Select",
     "required": true
   },
-  "mrrtx_txtyp": {
+  "porcs_csmod": {
     "type": "string",
-    "label": "Tax Type",
+    "label": "Cost Mode",
     "maxLength": 50,
     "placeholder": "Select",
     "required": true
   },
-  "mrrtx_txmod": {
+  "porcs_clmod": {
     "type": "string",
-    "label": "Tax Mode",
+    "label": "Calculation Mode",
     "maxLength": 50,
     "placeholder": "Select",
     "required": true
   },
-  "mrrtx_txrat": {
+  "porcs_value": {
     "type": "decimal",
-    "label": "Rate",
+    "label": "Amount",
     "required": true,
     "default": 0
   },
-  "mrrtx_txamt": {
-    "type": "decimal",
-    "label": "Amount",
-    "required": false,
-    "default": 0
-  },
-  "mrrtx_rcamt": {
-    "type": "decimal",
-    "label": "Recover Amount",
-    "required": false,
-    "default": 0
-  },
-  "mrrtx_nramt": {
-    "type": "decimal",
-    "label": "Non Recover Amount",
-    "required": false,
-    "default": 0
-  },
-  "mrrtx_notes": {
+  "porcs_notes": {
     "type": "string",
     "label": "Notes",
     "maxLength": 100,

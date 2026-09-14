@@ -44,12 +44,11 @@ const TeachForm = ({
 }) => {
   return (
     <div className="form-wrap">
-      {/* Row 1: Serial, Lesson Title, Subject */}
       <div className="grid">
-        <div className="col-span-3">
+        <div className="col-span-1">
           <InputText
             label="Serial"
-            placeholder="e.g., 01"
+            placeholder="e.g., 1"
             value={formData.teach_srial || ""}
             onChange={(e) => onChange("teach_srial", e.target.value)}
             error={formErrors.teach_srial}
@@ -57,10 +56,24 @@ const TeachForm = ({
             disabled={readOnly}
           />
         </div>
-        <div className="col-span-5">
+        <div className="col-span-4">
+          <Dropdown
+            label="Parent Topic (Optional)"
+            options={[
+              { value: "", label: "None (Standalone Lesson)" },
+              ...parentOptions,
+            ]}
+            value={formData.teach_teach || ""}
+            onChange={(e) => onChange("teach_teach", e.target.value)}
+            error={formErrors.teach_teach}
+            placeholder="Select parent lesson..."
+            disabled={readOnly}
+          />
+        </div>
+        <div className="col-span-7">
           <InputText
-            label="Lesson / Topic Title"
-            placeholder="e.g., Alphabet Fun - Letter A"
+            label="Lesson Title"
+            placeholder="Enter title"
             value={formData.teach_cname || ""}
             onChange={(e) => onChange("teach_cname", e.target.value)}
             error={formErrors.teach_cname}
@@ -68,40 +81,24 @@ const TeachForm = ({
             disabled={readOnly}
           />
         </div>
-        <div className="col-span-4">
-          <Dropdown
-            label="Subject"
-            options={subjectOptions}
-            value={formData.teach_ttype || ""}
-            onChange={(e) => onChange("teach_ttype", e.target.value)}
-            error={formErrors.teach_ttype}
-            placeholder="Select Subject..."
+        <div className="col-span-12">
+          <InputTextArea
+            label="Lesson Content"
+            placeholder="Write words, sentences, phonics examples, or short story for kids to read and practice..."
+            value={formData.teach_descr || ""}
+            onChange={(e) => onChange("teach_descr", e.target.value)}
+            error={formErrors.teach_descr}
+            rows={4}
             disabled={readOnly}
           />
         </div>
-      </div>
-
-      {/* Row 2: Parent Topic, Grade/Level, Practice Reads, Reward Marks */}
-      <div className="grid">
-        <div className="col-span-4">
-          <Dropdown
-            label="Parent Lesson / Unit (Optional)"
-            options={[{ value: "", label: "None (Standalone Lesson)" }, ...parentOptions]}
-            value={formData.teach_teach || ""}
-            onChange={(e) => onChange("teach_teach", e.target.value)}
-            error={formErrors.teach_teach}
-            placeholder="Select parent lesson if nested..."
-            disabled={readOnly}
-          />
-        </div>
-        <div className="col-span-4">
-          <Dropdown
-            label="Grade / Target Age"
-            options={gradeOptions}
-            value={formData.teach_tagno || ""}
-            onChange={(e) => onChange("teach_tagno", e.target.value)}
-            error={formErrors.teach_tagno}
-            placeholder="Select Grade/Age..."
+        <div className="col-span-8">
+          <InputText
+            label="Notes"
+            placeholder="Enter notes"
+            value={formData.teach_notes || ""}
+            onChange={(e) => onChange("teach_notes", e.target.value)}
+            error={formErrors.teach_notes}
             disabled={readOnly}
           />
         </div>
@@ -128,46 +125,6 @@ const TeachForm = ({
         </div>
       </div>
 
-      {/* Row 3: Reading Material / Lesson Content */}
-      <div className="grid">
-        <div className="col-span-12">
-          <InputTextArea
-            label="Lesson Content / Reading Material for Kids"
-            placeholder="Write words, sentences, phonics examples, or short story for kids to read and practice..."
-            value={formData.teach_descr || ""}
-            onChange={(e) => onChange("teach_descr", e.target.value)}
-            error={formErrors.teach_descr}
-            rows={4}
-            disabled={readOnly}
-          />
-        </div>
-      </div>
-
-      {/* Row 4: Teacher Guidance / Notes & Status */}
-      <div className="grid">
-        <div className="col-span-8">
-          <InputText
-            label="Teacher's Guidance / Notes"
-            placeholder="Tips for class (e.g., Use picture flashcards, practice vowel sounds aloud)"
-            value={formData.teach_notes || ""}
-            onChange={(e) => onChange("teach_notes", e.target.value)}
-            error={formErrors.teach_notes}
-            disabled={readOnly}
-          />
-        </div>
-        <div className="col-span-4">
-          <Dropdown
-            label="Status"
-            options={statusOptions}
-            value={formData.teach_stats ?? true}
-            onChange={(e) => onChange("teach_stats", e.target.value === "true" || e.target.value === true)}
-            error={formErrors.teach_stats}
-            placeholder="Select Status..."
-            disabled={readOnly}
-          />
-        </div>
-      </div>
-
       {formData?.id && (
         <AuditData
           actve={formData.teach_actve}
@@ -185,7 +142,7 @@ const TeachForm = ({
         </Button>
         <Button variant="info" onClick={onSubmit} disabled={isBusy}>
           <IconSave size={16} className="icon-left" />
-          {formData?.id ? "Update Lesson" : "Save Lesson"}
+          {formData?.id ? "Update" : "Save"}
         </Button>
       </div>
     </div>

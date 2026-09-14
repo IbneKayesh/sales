@@ -7,7 +7,7 @@ import AuditData from "@/components/AuditData";
 import { PageSection } from "@/components/PageCard";
 import { IconPlus, IconClose, IconSave } from "@/icons";
 
-const MrrForm = ({
+const PorForm = ({
   isBusy,
   readOnly,
   stopEdit,
@@ -29,9 +29,9 @@ const MrrForm = ({
             <Dropdown
               label="Department"
               options={dpart_Options}
-              value={formData.mrrdm_dpart}
-              onChange={(e) => onChange("mrrdm_dpart", e.target.value)}
-              error={formErrors.mrrdm_dpart}
+              value={formData.pordm_dpart}
+              onChange={(e) => onChange("pordm_dpart", e.target.value)}
+              error={formErrors.pordm_dpart}
               required
               placeholder="Select..."
               disabled={readOnly || stopEdit}
@@ -43,9 +43,9 @@ const MrrForm = ({
             <Dropdown
               label="Supplier"
               options={cntct_Options}
-              value={formData.mrrdm_cntct}
-              onChange={(e) => onChange("mrrdm_cntct", e.target.value)}
-              error={formErrors.mrrdm_cntct}
+              value={formData.pordm_cntct}
+              onChange={(e) => onChange("pordm_cntct", e.target.value)}
+              error={formErrors.pordm_cntct}
               required
               placeholder="Select..."
               disabled={readOnly || stopEdit}
@@ -57,10 +57,10 @@ const MrrForm = ({
           <div className="col-span-2">
             <InputCalendar
               label="Date"
-              value={formData.mrrdm_trdat}
-              onChange={(e) => onChange("mrrdm_trdat", e.target.value)}
+              value={formData.pordm_trdat}
+              onChange={(e) => onChange("pordm_trdat", e.target.value)}
               placeholder="Select..."
-              error={formErrors.mrrdm_trdat}
+              error={formErrors.pordm_trdat}
               required
               disabled={readOnly || true}
             />
@@ -69,9 +69,9 @@ const MrrForm = ({
             <InputText
               label="Ref No"
               placeholder="Enter reference no"
-              value={formData.mrrdm_refno}
-              onChange={(e) => onChange("mrrdm_refno", e.target.value)}
-              error={formErrors.mrrdm_refno}
+              value={formData.pordm_refno}
+              onChange={(e) => onChange("pordm_refno", e.target.value)}
+              error={formErrors.pordm_refno}
               disabled={readOnly}
             />
           </div>
@@ -83,19 +83,19 @@ const MrrForm = ({
             <InputText
               label="Vehicle"
               placeholder="Enter vehicle"
-              value={formData.mrrdm_vehid}
-              onChange={(e) => onChange("mrrdm_vehid", e.target.value)}
-              error={formErrors.mrrdm_vehid}
+              value={formData.pordm_vehid}
+              onChange={(e) => onChange("pordm_vehid", e.target.value)}
+              error={formErrors.pordm_vehid}
               disabled={readOnly}
             />
-          </div>{" "}
+          </div>
           <div className="col-span-8">
             <InputText
               label="Notes"
               placeholder="Enter notes"
-              value={formData.mrrdm_notes}
-              onChange={(e) => onChange("mrrdm_notes", e.target.value)}
-              error={formErrors.mrrdm_notes}
+              value={formData.pordm_notes}
+              onChange={(e) => onChange("pordm_notes", e.target.value)}
+              error={formErrors.pordm_notes}
               disabled={readOnly}
             />
           </div>
@@ -103,12 +103,12 @@ const MrrForm = ({
       </PageSection>
       {formData?.id && (
         <AuditData
-          actve={formData.mrrdm_actve}
+          actve={formData.pordm_actve}
           cname={formData.crusr_cname}
-          cdate={formData.mrrdm_crdat}
+          cdate={formData.pordm_crdat}
           uname={formData.upusr_cname}
-          udate={formData.mrrdm_updat}
-          rvnmr={formData.mrrdm_rvnmr}
+          udate={formData.pordm_updat}
+          rvnmr={formData.pordm_rvnmr}
         />
       )}
       <div className="form-actions">
@@ -152,4 +152,4 @@ const MrrForm = ({
     </div>
   );
 };
-export default MrrForm;
+export default PorForm;

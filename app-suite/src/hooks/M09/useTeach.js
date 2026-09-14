@@ -95,10 +95,7 @@ const useTeach = () => {
       teach_srial: nextSerial,
       teach_reads: 1,
       teach_marks: 1,
-      teach_stats: true,
       teach_actve: true,
-      teach_ttype: "English",
-      teach_tagno: "Kindergarten",
     });
     setFormErrors({});
     setReadOnly(false);

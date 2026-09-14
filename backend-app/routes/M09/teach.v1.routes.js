@@ -81,18 +81,16 @@ const create = async (req, res) => {
   try {
     const {
       id,
+      teach_users,
+      teach_bsins,
       teach_ccode,
-      teach_srial,
       teach_teach,
+      teach_srial,
       teach_cname,
       teach_descr,
       teach_notes,
-      teach_ttype,
-      teach_tagno,
       teach_reads,
       teach_marks,
-      teach_stats,
-      teach_actve,
       user_s,
       user_c,
       user_b,
@@ -109,42 +107,34 @@ const create = async (req, res) => {
     ) {
       return res.json({
         success: false,
-        message: "All required fields in the request body must be provided.",
+        message: "All fields in the request body are required.",
         data: {},
       });
     }
 
-    let newCode;
-    try {
-      newCode = await GenNewCode(user_c, "tmsb_teach");
-    } catch (err) {
-      newCode = `TCH${Date.now().toString().slice(-8)}`;
-    }
+    //database action
+    const newCode = await GenNewCode(user_c, "tmsb_teach");
 
     const scripts = [];
     scripts.push({
-      sql: `INSERT INTO tmsb_teach(id, teach_users, teach_bsins, teach_ccode, teach_srial, teach_teach,
-      teach_cname, teach_descr, teach_notes, teach_ttype, teach_tagno, teach_reads, teach_marks, teach_stats, teach_actve,
-      teach_crusr, teach_upusr)
-      VALUES ($1, $2, $3, $4, $5, $6,
-      $7, $8, $9, $10, $11, $12, $13, $14, $15,
-      $16, $17)`,
+      sql: `INSERT INTO tmsb_teach(id, teach_users, teach_bsins, teach_ccode, teach_teach, teach_srial,
+                          teach_cname, teach_descr, teach_notes, teach_reads, teach_marks, teach_crusr,
+                          teach_upusr)
+                          VALUES ($1, $2, $3, $4, $5, $6,
+                               $7, $8, $9, $10, $11, $12,
+                               $13)`,
       params: [
         uuidv4(),
         user_c,
         user_b,
         newCode,
-        teach_srial,
-        teach_teach || null,
+        teach_teach || "-",
+        teach_srial || 1,
         teach_cname,
         teach_descr || null,
         teach_notes || null,
-        teach_ttype || null,
-        teach_tagno || null,
         Number(teach_reads) || 0,
         Number(teach_marks) || 1,
-        teach_stats ?? false,
-        teach_actve ?? true,
         user_s,
         user_s,
       ],
@@ -154,7 +144,7 @@ const create = async (req, res) => {
     await dbRunAll(scripts);
     res.json({
       success: true,
-      message: `${newCode} (${teach_cname}) - Created successfully.`,
+      message: `${teach_cname} - Created successfully.`,
       data: {},
     });
   } catch (error) {
@@ -171,23 +161,22 @@ const update = async (req, res) => {
   try {
     const {
       id,
-      teach_srial,
+      teach_users,
+      teach_bsins,
+      teach_ccode,
       teach_teach,
+      teach_srial,
       teach_cname,
       teach_descr,
       teach_notes,
-      teach_ttype,
-      teach_tagno,
       teach_reads,
       teach_marks,
-      teach_stats,
       user_s,
       user_c,
       user_b,
     } = req.body;
 
     if (
-      !id ||
       !teach_srial ||
       !teach_cname ||
       teach_marks === undefined ||
@@ -198,37 +187,31 @@ const update = async (req, res) => {
     ) {
       return res.json({
         success: false,
-        message: "All required fields in the request body must be provided.",
+        message: "All fields in the request body are required.",
         data: {},
       });
     }
 
     const sql = `UPDATE tmsb_teach
-    SET teach_srial = $1,
-    teach_teach = $2,
+    SET teach_teach = $1,
+    teach_srial = $2,
     teach_cname = $3,
     teach_descr = $4,
     teach_notes = $5,
-    teach_ttype = $6,
-    teach_tagno = $7,
-    teach_reads = $8,
-    teach_marks = $9,
-    teach_stats = $10,
-    teach_upusr = $11,
+    teach_reads = $6,
+    teach_marks = $7,
+    teach_upusr = $8,
     teach_updat = CURRENT_TIMESTAMP,
     teach_rvnmr = teach_rvnmr + 1
-    WHERE id = $12`;
+    WHERE id = $9`;
     const params = [
-      teach_srial,
-      teach_teach || null,
+      teach_teach || "-",
+      teach_srial || 1,
       teach_cname,
       teach_descr || null,
       teach_notes || null,
-      teach_ttype || null,
-      teach_tagno || null,
       Number(teach_reads) || 0,
       Number(teach_marks) || 1,
-      teach_stats ?? false,
       user_s,
       id,
     ];

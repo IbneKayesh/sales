@@ -42,8 +42,8 @@ export const porAPI = {
     apiRequest("/M03/v1/por/get-bundles-by-master", {
       body: data,
     }),
-  getAllDuepor: (data) =>
-    apiRequest("/M03/v1/por/get-all-due-mrr", {
+  getAllDuePOR: (data) =>
+    apiRequest("/M03/v1/por/get-all-due-por", {
       body: data,
     }),
 };

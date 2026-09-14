@@ -3,15 +3,14 @@ import { useUI } from "@/context/AppUIContext.jsx";
 import validate, { generateDataModel } from "@/models/validator";
 import { generateGuid } from "@/utils/guid.js";
 import { validNumber, divNumber } from "@/utils/misc.js";
-import tmpb_mrrdm from "@/models/M03/tmpb_mrrdm.json";
-import tmpb_mrrdc from "@/models/M03/tmpb_mrrdc.json";
-import tmpb_mrrcs from "@/models/M03/tmpb_mrrcs.json";
-import tmpb_mrrpy from "@/models/M03/tmpb_mrrpy.json";
-const dataModel = generateDataModel(tmpb_mrrdm);
-const dataModelItem = generateDataModel(tmpb_mrrdc);
+import tmpb_pordm from "@/models/M03/tmpb_pordm.json";
+import tmpb_pordc from "@/models/M03/tmpb_pordc.json";
+import tmpb_porcs from "@/models/M03/tmpb_porcs.json";
+import tmpb_porpy from "@/models/M03/tmpb_porpy.json";
+const dataModel = generateDataModel(tmpb_pordm);
+const dataModelItem = generateDataModel(tmpb_pordc);
 import { tabColumnsAPI } from "@/api/M01/tabColumnsAPI.js";
 import { departmentAPI } from "@/api/M01/departmentAPI.js";
-import { mrrAPI } from "@/api/M03/mrrAPI.js";
 import { porAPI } from "@/api/M03/porAPI.js";
 import { itemsAPI } from "@/api/M04/itemsAPI.js";
 import { bundleAPI } from "@/api/M04/bundleAPI.js";
@@ -45,12 +44,12 @@ const usePOR = () => {
   const [items_Options, setItems_Options] = useState([]);
 
   //costing
-  const [mrrcs_Options, setMrrcs_Options] = useState([]);
+  const [porcs_Options, setPorcs_Options] = useState([]);
   const [listDataCost, setListDataCost] = useState([]);
   const [formDataCost, setFormDataCost] = useState({});
 
   //payment
-  const [mrrpy_Options, setMrrpy_Options] = useState([]);
+  const [porpy_Options, setPorpy_Options] = useState([]);
   const [listDataPayment, setListDataPayment] = useState([]);
   const [formDataPayment, setFormDataPayment] = useState({});
 
@@ -75,10 +74,10 @@ const usePOR = () => {
   };
 
   // ---------- MRR Master ----------
-  const getAllMRR = async () => {
+  const getAllPO = async () => {
     try {
       setIsBusy(true);
-      const resp = await mrrAPI.getAll({});
+      const resp = await porAPI.getAll({});
       const list = resp.data || [];
       setListData(list);
     } catch (error) {
@@ -90,7 +89,7 @@ const usePOR = () => {
 
   useEffect(() => {
     getTabColumns();
-    getAllMRR();
+    getAllPO();
   }, []);
 
   useEffect(() => {
@@ -106,17 +105,17 @@ const usePOR = () => {
       // 1. Accumulate quantity by item + price
       const grouped = new Map();
       for (const item of items) {
-        const key = `${item.mrrdc_items}_${item.mrrdc_price}`;
+        const key = `${item.pordc_items}_${item.pordc_price}`;
 
         if (!grouped.has(key)) {
           grouped.set(key, {
-            items_id: item.mrrdc_items,
-            price_id: item.mrrdc_price,
+            items_id: item.pordc_items,
+            price_id: item.pordc_price,
             order_itqty: 0,
           });
         }
 
-        grouped.get(key).order_itqty += Number(item.mrrdc_itqty || 0);
+        grouped.get(key).order_itqty += Number(item.pordc_itqty || 0);
       }
 
       const retResp = [...grouped.values()];
@@ -125,7 +124,7 @@ const usePOR = () => {
 
       // 2. Call API
       const resp = await bundleAPI.getBundlePurchaseByItemId({
-        bndlm_dpart: formData.mrrdm_dpart,
+        bndlm_dpart: formData.pordm_dpart,
         bndlc_items: retResp,
       });
       const list = resp.data || [];
@@ -203,12 +202,12 @@ const usePOR = () => {
     //---------------------------------------------------
     const totalAmount = newItems.reduce(
       (sum, item) =>
-        sum + validNumber(item.mrrdc_itrat) * validNumber(item.mrrdc_itqty),
+        sum + validNumber(item.pordc_itrat) * validNumber(item.pordc_itqty),
       0,
     );
 
     const totalQty = newItems.reduce(
-      (sum, item) => sum + validNumber(item.mrrdc_itqty),
+      (sum, item) => sum + validNumber(item.pordc_itqty),
       0,
     );
 
@@ -221,9 +220,9 @@ const usePOR = () => {
     const sumCost = (csmod, clmod) =>
       newCosting
         .filter(
-          (item) => item.mrrcs_csmod === csmod && item.mrrcs_clmod === clmod,
+          (item) => item.porcs_csmod === csmod && item.porcs_clmod === clmod,
         )
-        .reduce((sum, item) => sum + validNumber(item.mrrcs_value), 0);
+        .reduce((sum, item) => sum + validNumber(item.porcs_value), 0);
 
     const incAmt = sumCost("Include", "By Amount");
     const incQty = sumCost("Include", "By Qty");
@@ -245,34 +244,34 @@ const usePOR = () => {
     // 1. Split Invoice Discount
     //---------------------------------------------------
     // Invoice discount has two input modes:
-    //   A) Percentage mode (mrrdm_dspct > 0): the % is auto-filled from the supplier
-    //      (cntct_dspct) when mrrdm_cntct changes, or entered directly. The amount is
-    //      DERIVED from it: amount = totalAmount * pct / 100, and mrrdm_invds is a
+    //   A) Percentage mode (pordm_dspct > 0): the % is auto-filled from the supplier
+    //      (cntct_dspct) when pordm_cntct changes, or entered directly. The amount is
+    //      DERIVED from it: amount = totalAmount * pct / 100, and pordm_invds is a
     //      read-only display value (the field is disabled in the form while pct > 0).
-    //   B) Amount mode (mrrdm_dspct === 0): the user types the discount amount directly
-    //      into mrrdm_invds. The value is used as-is (kept raw, never reformatted),
+    //   B) Amount mode (pordm_dspct === 0): the user types the discount amount directly
+    //      into pordm_invds. The value is used as-is (kept raw, never reformatted),
     //      because re-formatting it to 4 decimals mid-typing would break the input.
     // The effective amount computed here is then split proportionally across the item
-    // lines (mrrdc_edamt).
+    // lines (pordc_edamt).
     // write the effective discount amount back: computed (formatted) in % mode,
     // or the raw user-typed value (unformatted, so typing stays usable) in amount mode
-    const invoice_discount_pct = Number(master?.mrrdm_dspct || 0);
+    const invoice_discount_pct = Number(master?.pordm_dspct || 0);
     let invoice_discount_amount = 0;
     if (invoice_discount_pct > 0) {
       invoice_discount_amount = (totalAmount * invoice_discount_pct) / 100;
     } else {
-      invoice_discount_amount = master?.mrrdm_invds;
+      invoice_discount_amount = master?.pordm_invds;
     }
 
     newItems = newItems.map((item) => {
-      const mrrdc_edamt = divNumber(
-        validNumber(invoice_discount_amount) * validNumber(item.mrrdc_itqty),
+      const pordc_edamt = divNumber(
+        validNumber(invoice_discount_amount) * validNumber(item.pordc_itqty),
         totalQty,
       );
 
       return {
         ...item,
-        mrrdc_edamt: Number(mrrdc_edamt).toFixed(4),
+        pordc_edamt: Number(pordc_edamt).toFixed(4),
       };
     });
 
@@ -281,27 +280,27 @@ const usePOR = () => {
     //---------------------------------------------------
 
     newItems = newItems.map((item) => {
-      const qty = validNumber(item.mrrdc_itqty);
-      const rate = validNumber(item.mrrdc_itrat);
+      const qty = validNumber(item.pordc_itqty);
+      const rate = validNumber(item.pordc_itrat);
 
-      const mrrdc_itamt = rate * qty;
+      const pordc_itamt = rate * qty;
 
-      const mrrdc_dsamt = mrrdc_itamt * (validNumber(item.mrrdc_dspct) / 100);
+      const pordc_dsamt = pordc_itamt * (validNumber(item.pordc_dspct) / 100);
 
       const afterDisc =
-        mrrdc_itamt - (mrrdc_dsamt + validNumber(item.mrrdc_edamt));
+        pordc_itamt - (pordc_dsamt + validNumber(item.pordc_edamt));
 
       //AS BD NBR Rules
       let inclusive_vat = 0;
       let exclusive_vat = 0;
-      if (item.mrrdc_vtype === "INCLUSIVE") {
-        inclusive_vat = (afterDisc * validNumber(item.mrrdc_vtpct)) / 115;
+      if (item.pordc_vtype === "INCLUSIVE") {
+        inclusive_vat = (afterDisc * validNumber(item.pordc_vtpct)) / 115;
       }
 
-      if (item.mrrdc_vtype === "EXCLUSIVE") {
-        exclusive_vat = (afterDisc * validNumber(item.mrrdc_vtpct)) / 100;
+      if (item.pordc_vtype === "EXCLUSIVE") {
+        exclusive_vat = (afterDisc * validNumber(item.pordc_vtpct)) / 100;
       }
-      const mrrdc_vtamt = (
+      const pordc_vtamt = (
         Number(inclusive_vat || 0) + Number(exclusive_vat || 0)
       ).toFixed(4);
 
@@ -321,31 +320,31 @@ const usePOR = () => {
       const eQty = qty * excQtyRate;
       const eLine = excLineRate;
 
-      const mrrdc_icamt = iAmt + iQty + iLine;
-      const mrrdc_ecamt = eAmt + eQty + eLine;
+      const pordc_icamt = iAmt + iQty + iLine;
+      const pordc_ecamt = eAmt + eQty + eLine;
 
       //---------------------------------------------------
       // Amount
       //---------------------------------------------------
 
-      const mrrdc_pyamt = afterDisc + exclusive_vat + mrrdc_icamt;
-      const mrrdc_stamt = afterDisc + exclusive_vat + mrrdc_icamt + mrrdc_ecamt;
+      const pordc_pyamt = afterDisc + exclusive_vat + pordc_icamt;
+      const pordc_stamt = afterDisc + exclusive_vat + pordc_icamt + pordc_ecamt;
 
-      const mrrdc_csrat = divNumber(
-        afterDisc - inclusive_vat + mrrdc_icamt + mrrdc_ecamt,
+      const pordc_csrat = divNumber(
+        afterDisc - inclusive_vat + pordc_icamt + pordc_ecamt,
         qty,
       );
 
       return {
         ...item,
-        mrrdc_itamt,
-        mrrdc_dsamt,
-        mrrdc_vtamt,
-        mrrdc_icamt,
-        mrrdc_ecamt,
-        mrrdc_pyamt,
-        mrrdc_stamt,
-        mrrdc_csrat,
+        pordc_itamt,
+        pordc_dsamt,
+        pordc_vtamt,
+        pordc_icamt,
+        pordc_ecamt,
+        pordc_pyamt,
+        pordc_stamt,
+        pordc_csrat,
       };
     });
 
@@ -357,16 +356,16 @@ const usePOR = () => {
 
     const totals = newItems.reduce(
       (acc, item) => ({
-        tramt: acc.tramt + validNumber(item.mrrdc_itamt),
-        itmds: acc.itmds + validNumber(item.mrrdc_dsamt),
-        vtamt: acc.vtamt + validNumber(item.mrrdc_vtamt),
-        icamt: acc.icamt + validNumber(item.mrrdc_icamt),
-        ecamt: acc.ecamt + validNumber(item.mrrdc_ecamt),
-        pyamt: acc.pyamt + validNumber(item.mrrdc_pyamt),
-        stamt: acc.stamt + validNumber(item.mrrdc_stamt),
+        tramt: acc.tramt + validNumber(item.pordc_itamt),
+        itmds: acc.itmds + validNumber(item.pordc_dsamt),
+        vtamt: acc.vtamt + validNumber(item.pordc_vtamt),
+        icamt: acc.icamt + validNumber(item.pordc_icamt),
+        ecamt: acc.ecamt + validNumber(item.pordc_ecamt),
+        pyamt: acc.pyamt + validNumber(item.pordc_pyamt),
+        stamt: acc.stamt + validNumber(item.pordc_stamt),
         csamt:
           acc.csamt +
-          validNumber(item.mrrdc_csrat) * validNumber(item.mrrdc_itqty),
+          validNumber(item.pordc_csrat) * validNumber(item.pordc_itqty),
       }),
       {
         tramt: 0,
@@ -387,7 +386,7 @@ const usePOR = () => {
     const newPayments = [...(paymList || [])];
 
     const totalPayment = newPayments.reduce(
-      (sum, item) => sum + validNumber(item.mrrpy_pdamt),
+      (sum, item) => sum + validNumber(item.porpy_pdamt),
       0,
     );
 
@@ -401,17 +400,17 @@ const usePOR = () => {
 
     setFormData({
       ...master,
-      mrrdm_tramt: validNumber(totals.tramt).toFixed(4),
-      mrrdm_itmds: validNumber(totals.itmds).toFixed(4),
-      mrrdm_invds: invoice_discount_amount,
-      mrrdm_vtamt: validNumber(totals.vtamt).toFixed(4),
-      mrrdm_icamt: validNumber(totals.icamt).toFixed(4),
-      mrrdm_ecamt: validNumber(totals.ecamt).toFixed(4),
-      mrrdm_pyamt: validNumber(totals.pyamt).toFixed(4),
-      mrrdm_pdamt: validNumber(totalPayment).toFixed(4),
-      mrrdm_duamt: validNumber(duamt).toFixed(4),
-      mrrdm_stamt: validNumber(totals.stamt).toFixed(4),
-      mrrdm_csamt: validNumber(totals.csamt).toFixed(4),
+      pordm_tramt: validNumber(totals.tramt).toFixed(4),
+      pordm_itmds: validNumber(totals.itmds).toFixed(4),
+      pordm_invds: invoice_discount_amount,
+      pordm_vtamt: validNumber(totals.vtamt).toFixed(4),
+      pordm_icamt: validNumber(totals.icamt).toFixed(4),
+      pordm_ecamt: validNumber(totals.ecamt).toFixed(4),
+      pordm_pyamt: validNumber(totals.pyamt).toFixed(4),
+      pordm_pdamt: validNumber(totalPayment).toFixed(4),
+      pordm_duamt: validNumber(duamt).toFixed(4),
+      pordm_stamt: validNumber(totals.stamt).toFixed(4),
+      pordm_csamt: validNumber(totals.csamt).toFixed(4),
     });
 
     //find bundle items
@@ -441,7 +440,7 @@ const usePOR = () => {
   };
 
   const getExpnPaym = async () => {
-    // if (mrrcs_Options.length > 0) {
+    // if (porcs_Options.length > 0) {
     //   return;
     //updated balance
     // }
@@ -451,13 +450,13 @@ const usePOR = () => {
       const mrrcs = list.filter(
         (f) => f.chtrt_grpid === "SYS_LIB_LOCAL_VENDOR",
       );
-      const mrrpy = list.filter((f) =>
+      const porpy = list.filter((f) =>
         ["SYS_AST_PAYMENT", "SYS_NONE"].includes(f.chtrt_grpid),
       );
-      console.log("list",list)
-      setMrrcs_Options(mrrcs);
-      const listActive = mrrpy.filter((f) => validNumber(f.party_crbal) > 0);
-      setMrrpy_Options(listActive);
+      //console.log("list",list)
+      setPorcs_Options(mrrcs);
+      const listActive = porpy.filter((f) => validNumber(f.party_crbal) > 0);
+      setPorpy_Options(listActive);
     } catch (error) {}
   };
 
@@ -474,30 +473,30 @@ const usePOR = () => {
 
   const handleChange = async (f, v) => {
     setFormData((prev) => ({ ...prev, [f]: v }));
-    const newErrors = validate({ ...formData, [f]: v }, tmpb_mrrdm);
+    const newErrors = validate({ ...formData, [f]: v }, tmpb_pordm);
     setFormErrors(newErrors);
 
-    if (f === "mrrdm_cntct") {
+    if (f === "pordm_cntct") {
       const cntct_id = cntct_Options.find((opt) => opt.id === v);
       const dspct = cntct_id?.cntct_dspct || 0;
       const newformData = {
         ...formData,
-        mrrdm_cntct: v,
-        mrrdm_dspct: dspct,
+        pordm_cntct: v,
+        pordm_dspct: dspct,
         party_id: cntct_id?.party_id,
         chtac_id: cntct_id?.chtac_id,
         // new supplier has no discount % -> clear any stale computed amount
-        ...(dspct === 0 ? { mrrdm_invds: 0 } : {}),
+        ...(dspct === 0 ? { pordm_invds: 0 } : {}),
       };
       reCalculate(listDataItem, newformData, listDataCost, listDataPayment);
-      await getPorItems(v, formData.mrrdm_dpart);
+      await getPorItems(v, formData.pordm_dpart);
     }
-    if (f === "mrrdm_invds" || f === "mrrdm_dspct") {
+    if (f === "pordm_invds" || f === "pordm_dspct") {
       const newformData = {
         ...formData,
         [f]: v,
         // % cleared -> also clear the derived/stale amount
-        ...(f === "mrrdm_dspct" && Number(v) === 0 ? { mrrdm_invds: 0 } : {}),
+        ...(f === "pordm_dspct" && Number(v) === 0 ? { pordm_invds: 0 } : {}),
       };
       reCalculate(listDataItem, newformData, listDataCost, listDataPayment);
     }
@@ -517,10 +516,10 @@ const usePOR = () => {
     try {
       setIsBusy(true);
       const [dtResp, csResp, pyResp, dtOfr] = await Promise.all([
-        mrrAPI.getDetailsByMasterId({ mrrdc_mrrdm: id }),
-        mrrAPI.getCostsByMasterId({ mrrcs_mrrdm: id }),
-        mrrAPI.getPaymentsByMasterId({ mrrpy_mrrdm: id }),
-        mrrAPI.getBundlesByMasterId({ mrrdf_mrrdm: id }),
+        porAPI.getDetailsByMasterId({ pordc_pordm: id }),
+        porAPI.getCostsByMasterId({ porcs_pordm: id }),
+        porAPI.getPaymentsByMasterId({ porpy_pordm: id }),
+        porAPI.getBundlesByMasterId({ pordf_pordm: id }),
       ]);
       setListDataItem(dtResp.data || []);
       setListDataCost(csResp.data || []);
@@ -533,13 +532,13 @@ const usePOR = () => {
   };
 
   const handleDelete = async (rowData) => {
-    if (rowData.mrrdm_ispst) {
+    if (rowData.pordm_ispst) {
       showToast("MRR is posted. Cannot delete.", { type: "warning" });
       return;
     }
 
-    const isActive = rowData.mrrdm_actve;
-    const dataName = rowData.mrrdm_trnno;
+    const isActive = rowData.pordm_actve;
+    const dataName = rowData.pordm_trnno;
     const confirmation = await confirmBox({
       title: isActive ? "Deactivate" : "Activate",
       message: `Are you sure you want to ${
@@ -552,7 +551,7 @@ const usePOR = () => {
 
     try {
       setIsBusy(true);
-      const resp = await mrrAPI.delete(rowData);
+      const resp = await porAPI.delete(rowData);
       alertBox({
         title: resp.success
           ? isActive
@@ -566,7 +565,7 @@ const usePOR = () => {
       if (resp.success) {
         setPgView("SYS_VW_LST_1");
         setFormData(dataModel);
-        getAllMRR();
+        getAllPO();
       }
     } catch (error) {
     } finally {
@@ -575,14 +574,14 @@ const usePOR = () => {
   };
 
   const handleSearch = async () => {
-    getAllMRR();
+    getAllPO();
   };
 
   const handleAddNew = () => {
     setPgView("SYS_VW_FRM_1");
     setFormData({
       ...dataModel,
-      mrrdm_ttype: "Material Receipt Report",
+      pordm_ttype: "Material Receipt Report",
     });
 
     setReadOnly(false);
@@ -594,7 +593,7 @@ const usePOR = () => {
     getAllContacts();
     getAllDepartments();
     getExpnPaym();
-    //getMrrItems();
+    //getPorItems();
   };
 
   const handleCancel = () => {
@@ -606,7 +605,7 @@ const usePOR = () => {
 
   const handleSubmit = async () => {
     try {
-      const newErrors = validate(formData, tmpb_mrrdm);
+      const newErrors = validate(formData, tmpb_pordm);
       setFormErrors(newErrors);
       //console.log(formData);
       //console.log(newErrors);
@@ -619,8 +618,8 @@ const usePOR = () => {
         return;
       }
 
-      if (validNumber(formData.mrrdm_duamt) < 0) {
-        showToast(`${formData.mrrdm_duamt} Overpaid is not valid`, {
+      if (validNumber(formData.pordm_duamt) < 0) {
+        showToast(`${formData.pordm_duamt} Overpaid is not valid`, {
           type: "warning",
         });
         return;
@@ -628,14 +627,14 @@ const usePOR = () => {
 
       const reqBody = {
         ...formData,
-        tmpb_mrrdc: listDataItem,
-        tmpb_mrrcs: listDataCost,
-        tmpb_mrrpy: listDataPayment,
-        tmpb_mrrdf: listDataBundle,
+        tmpb_pordc: listDataItem,
+        tmpb_porcs: listDataCost,
+        tmpb_porpy: listDataPayment,
+        tmpb_pordf: listDataBundle,
       };
 
-      //console.log(reqBody);
-      //return;
+      console.log(reqBody);
+      return;
       setIsBusy(true);
       const resp = await porAPI.upsert(reqBody);
       alertBox({
@@ -647,7 +646,7 @@ const usePOR = () => {
       if (resp.success) {
         setPgView("SYS_VW_LST_1");
         setFormData(dataModel);
-        getAllMRR();
+        getAllPO();
       }
     } catch (error) {
     } finally {
@@ -659,19 +658,19 @@ const usePOR = () => {
 
   const handleChangeItem = async (f, v) => {
     setFormDataItem((prev) => ({ ...prev, [f]: v }));
-    const newErrors = validate({ ...formDataItem, [f]: v }, tmpb_mrrdc);
+    const newErrors = validate({ ...formDataItem, [f]: v }, tmpb_pordc);
     setFormErrors(newErrors);
-    if (f === "mrrdc_price") {
+    if (f === "pordc_price") {
       const price_id = items_Options.find((opt) => opt.price_id === v);
-      //console.log("mrrdc_price", price_id);
+      //console.log("pordc_price", price_id);
       setFormDataItem((prev) => ({
         ...prev,
-        mrrdc_items: price_id?.id,
-        mrrdc_price: v,
-        mrrdc_units: price_id?.items_runit,
-        mrrdc_itrat: price_id?.price_lprat || 0,
-        mrrdc_vtpct: price_id?.items_prvat || 0,
-        mrrdc_vtype: price_id?.items_ptvat || "-",
+        pordc_items: price_id?.id,
+        pordc_price: v,
+        pordc_units: price_id?.items_runit,
+        pordc_itrat: price_id?.price_lprat || 0,
+        pordc_vtpct: price_id?.items_prvat || 0,
+        pordc_vtype: price_id?.items_ptvat || "-",
         party_id: price_id?.party_id || "-",
         chtac_id: price_id?.chtac_id || "-",
       }));
@@ -679,34 +678,36 @@ const usePOR = () => {
   };
 
   const handleAddToListItem = (value) => {
-    const newErrors = validate(formDataItem, tmpb_mrrdc);
+    const newErrors = validate(formDataItem, tmpb_pordc);
     setFormErrors(newErrors);
+    console.log("newErrors", formDataItem);
+
     if (Object.keys(newErrors).length > 0) {
       return;
     }
-    if (validNumber(formDataItem.mrrdc_itqty) <= 0.1) {
+    if (validNumber(formDataItem.pordc_itqty) <= 0.1) {
       showToast("Quantity is required", { type: "warning" });
       return;
     }
-    if (validNumber(formDataItem.mrrdc_itrat) <= 0) {
+    if (validNumber(formDataItem.pordc_itrat) <= 0) {
       showToast("Price is required", { type: "warning" });
       return;
     }
 
-    if (formDataItem.mrrdc_vtype === "EXEMPT") {
-      if (validNumber(formDataItem.mrrdc_vtpct) !== 0) {
+    if (formDataItem.pordc_vtype === "EXEMPT") {
+      if (validNumber(formDataItem.pordc_vtpct) !== 0) {
         showToast("Purchase VAT % must be 0 for EXEMPT", { type: "danger" });
         return;
       }
     } else {
-      if (validNumber(formDataItem.mrrdc_vtpct) === 0) {
+      if (validNumber(formDataItem.pordc_vtpct) === 0) {
         showToast("Purchase VAT % must not be 0", { type: "danger" });
         return;
       }
     }
 
     const items_iname = items_Options.find(
-      (opt) => opt.price_id === formDataItem.mrrdc_price,
+      (opt) => opt.price_id === formDataItem.pordc_price,
     );
     //console.log("items_iname", items_iname);
     //create new row
@@ -723,7 +724,7 @@ const usePOR = () => {
       sgrup_cname: items_iname?.sgrup_cname || "Invalid Sub Group",
       scatg_cname: items_iname?.scatg_cname || "Invalid Sub Category",
       brand_cname: items_iname?.brand_cname || "Invalid Brand",
-      mrrdc_actve: true,
+      pordc_actve: true,
     };
 
     const newItemList = [...listDataItem, newItem];
@@ -758,45 +759,45 @@ const usePOR = () => {
 
   const handleChangeCost = (f, v) => {
     setFormDataCost((prev) => ({ ...prev, [f]: v }));
-    const newErrors = validate({ ...formDataCost, [f]: v }, tmpb_mrrcs);
+    const newErrors = validate({ ...formDataCost, [f]: v }, tmpb_porcs);
     setFormErrors(newErrors);
     //console.log(f, v);
-    if (f === "mrrcs_party") {
-      const mrrcs_id = mrrcs_Options.find((opt) => opt.id === v);
-      //console.log("mrrcs_id", mrrcs_id);
+    if (f === "porcs_party") {
+      const porcs_id = porcs_Options.find((opt) => opt.id === v);
+      //console.log("porcs_id", porcs_id);
       setFormDataCost((prev) => ({
         ...prev,
-        party_cname: mrrcs_id?.party_cname,
-        mrrcs_party: v,
-        chtac_chtno: mrrcs_id?.chtac_chtno,
-        chtac_id: mrrcs_id?.party_chtac,
+        party_cname: porcs_id?.party_cname,
+        porcs_party: v,
+        chtac_chtno: porcs_id?.chtac_chtno,
+        chtac_id: porcs_id?.party_chtac,
         party_id: v,
       }));
     }
   };
 
   const handleAddToListCost = () => {
-    const newErrors = validate(formDataCost, tmpb_mrrcs);
+    const newErrors = validate(formDataCost, tmpb_porcs);
     setFormErrors(newErrors);
     if (Object.keys(newErrors).length > 0) {
       return;
     }
 
     const isExists = listDataCost.find(
-      (f) => f.party_id === formDataCost.mrrcs_party,
+      (f) => f.party_id === formDataCost.porcs_party,
     );
     if (isExists) {
       showToast("This Cost is already added", { type: "warning" });
       return;
     }
 
-    if (validNumber(formDataCost.mrrcs_value) < 0.01) {
+    if (validNumber(formDataCost.porcs_value) < 0.01) {
       showToast("Amount is required", { type: "warning" });
       return;
     }
 
-    const party_cname = mrrcs_Options.find(
-      (opt) => opt.id === formDataCost.mrrcs_party,
+    const party_cname = porcs_Options.find(
+      (opt) => opt.id === formDataCost.porcs_party,
     );
 
     //create new row
@@ -804,7 +805,7 @@ const usePOR = () => {
       ...formDataCost,
       id: generateGuid(),
       party_cname: party_cname?.party_cname || "Invalid Item",
-      mrrcs_actve: true,
+      porcs_actve: true,
     };
     const newCostList = [...listDataCost, newItem];
     reCalculate(listDataItem, formData, newCostList, listDataPayment);
@@ -834,26 +835,26 @@ const usePOR = () => {
 
   const handleChangePayment = (f, v) => {
     setFormDataPayment((prev) => ({ ...prev, [f]: v }));
-    const newErrors = validate({ ...formDataPayment, [f]: v }, tmpb_mrrpy);
+    const newErrors = validate({ ...formDataPayment, [f]: v }, tmpb_porpy);
     setFormErrors(newErrors);
-    if (f === "mrrpy_party") {
-      const mrrpy_id = mrrpy_Options.find((opt) => opt.id === v);
-      //console.log("mrrpy_id", mrrpy_id);
+    if (f === "porpy_party") {
+      const porpy_id = porpy_Options.find((opt) => opt.id === v);
+      //console.log("porpy_id", porpy_id);
       setFormDataPayment((prev) => ({
         ...prev,
-        party_cname: mrrpy_id?.party_cname,
-        party_crbal: mrrpy_id?.party_crbal,
-        mrrpy_pdamt: formData.mrrdm_duamt, //too optional
-        mrrpy_party: v,
-        chtac_chtno: mrrpy_id?.chtac_chtno,
-        chtac_id: mrrpy_id?.party_chtac,
+        party_cname: porpy_id?.party_cname,
+        party_crbal: porpy_id?.party_crbal,
+        porpy_pdamt: formData.pordm_duamt, //too optional
+        porpy_party: v,
+        chtac_chtno: porpy_id?.chtac_chtno,
+        chtac_id: porpy_id?.party_chtac,
         party_id: v,
       }));
     }
   };
 
   const handleAddToListPayment = () => {
-    const newErrors = validate(formDataPayment, tmpb_mrrpy);
+    const newErrors = validate(formDataPayment, tmpb_porpy);
     setFormErrors(newErrors);
     if (Object.keys(newErrors).length > 0) {
       return;
@@ -865,17 +866,17 @@ const usePOR = () => {
       showToast("This payment is already added", { type: "warning" });
       return;
     }
-    if (validNumber(formDataPayment.mrrpy_pdamt) < 0.01) {
+    if (validNumber(formDataPayment.porpy_pdamt) < 0.01) {
       showToast("Amount is required", { type: "warning" });
       return;
     }
-    const party_cname = mrrpy_Options.find(
-      (opt) => opt.id === formDataPayment.mrrpy_party,
+    const party_cname = porpy_Options.find(
+      (opt) => opt.id === formDataPayment.porpy_party,
     );
     //console.log("party_cname", party_cname);
 
     const overpaidAmount =
-      validNumber(formDataPayment.mrrpy_pdamt) -
+      validNumber(formDataPayment.porpy_pdamt) -
       validNumber(party_cname.party_crbal);
     if (overpaidAmount > 0) {
       showToast(`${overpaidAmount} Overpaid is not valid`, { type: "warning" });
@@ -887,7 +888,7 @@ const usePOR = () => {
       ...formDataPayment,
       id: generateGuid(),
       party_cname: party_cname?.party_cname || "Invalid Item",
-      mrrpy_actve: true,
+      porpy_actve: true,
     };
     const newPaymentList = [...listDataPayment, newItem];
     reCalculate(listDataItem, formData, listDataCost, newPaymentList);
@@ -964,9 +965,9 @@ const usePOR = () => {
     dpart_Options,
     cntct_Options,
     items_Options,
-    mrrcs_Options,
+    porcs_Options,
     listDataCost,
-    mrrpy_Options,
+    porpy_Options,
     listDataPayment,
     //functions
     handleChange,

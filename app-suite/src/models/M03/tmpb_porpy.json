@@ -1,0 +1,33 @@
+{
+  "id": {
+    "type": "string",
+    "label": "Id"
+  },
+  "porpy_party": {
+    "type": "string",
+    "label": "Accounts Head",
+    "maxLength": 50,
+    "placeholder": "Select",
+    "required": true
+  },
+  "porpy_pdamt": {
+    "type": "decimal",
+    "label": "Amount",
+    "required": true,
+    "default": 0
+  },
+  "porpy_refno": {
+    "type": "string",
+    "label": "Ref No",
+    "maxLength": 100,
+    "placeholder": "Enter ref no",
+    "required": false
+  },
+  "porpy_notes": {
+    "type": "string",
+    "label": "Notes",
+    "maxLength": 100,
+    "placeholder": "Enter notes",
+    "required": false
+  }
+}

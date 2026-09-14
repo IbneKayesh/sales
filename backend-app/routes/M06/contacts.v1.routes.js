@@ -888,6 +888,7 @@ router.post("/get-suppliers-por", async (req, res) => {
     JOIN tmtb_chtrt crt ON cht.chtac_chtno = crt.chtrt_chtno
     WHERE cnt.cntct_users = $1
     AND cnt.cntct_actve = TRUE
+    AND cnt.cntct_order = TRUE
 	  AND crt.chtrt_trnid = 'SYS_PO'
 	  AND crt.chtrt_pegid = 'SYS_PURCHASE_ORDER'
     AND crt.chtrt_grpid ='SYS_AST_SUPPLIER'

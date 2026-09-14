@@ -40,6 +40,7 @@ CREATE TABLE tmcb_cntct (
   cntct_pswrd varchar(50) DEFAULT 'vmart',
   cntct_recky varchar(50) DEFAULT 'vmart',
   cntct_islgn boolean NOT NULL DEFAULT false,
+  cntct_order boolean NOT NULL DEFAULT true,
 
   -- default 3
   cntct_actve boolean NOT NULL DEFAULT true,

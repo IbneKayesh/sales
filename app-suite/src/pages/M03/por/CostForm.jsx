@@ -24,9 +24,9 @@ const CostForm = ({
           <Dropdown
             label="Cost Name"
             options={party_Options}
-            value={formData.mrrcs_party}
-            onChange={(e) => onChange("mrrcs_party", e.target.value)}
-            error={formErrors.mrrcs_party}
+            value={formData.porcs_party}
+            onChange={(e) => onChange("porcs_party", e.target.value)}
+            error={formErrors.porcs_party}
             required
             placeholder="Select..."
             disabled={readOnly}
@@ -39,9 +39,9 @@ const CostForm = ({
           <Dropdown
             label="Cost Mode"
             options={csmod_Options}
-            value={formData.mrrcs_csmod}
-            onChange={(e) => onChange("mrrcs_csmod", e.target.value)}
-            error={formErrors.mrrcs_csmod}
+            value={formData.porcs_csmod}
+            onChange={(e) => onChange("porcs_csmod", e.target.value)}
+            error={formErrors.porcs_csmod}
             required
             placeholder="Select..."
             disabled={readOnly}
@@ -51,9 +51,9 @@ const CostForm = ({
           <Dropdown
             label="Calculation Mode"
             options={clmod_Options}
-            value={formData.mrrcs_clmod}
-            onChange={(e) => onChange("mrrcs_clmod", e.target.value)}
-            error={formErrors.mrrcs_clmod}
+            value={formData.porcs_clmod}
+            onChange={(e) => onChange("porcs_clmod", e.target.value)}
+            error={formErrors.porcs_clmod}
             required
             placeholder="Select..."
             disabled={readOnly}
@@ -63,9 +63,9 @@ const CostForm = ({
           <InputNumber
             label="Amount"
             placeholder="0.00"
-            value={formData.mrrcs_value}
-            onChange={(e) => onChange("mrrcs_value", e.target.value)}
-            error={formErrors.mrrcs_value}
+            value={formData.porcs_value}
+            onChange={(e) => onChange("porcs_value", e.target.value)}
+            error={formErrors.porcs_value}
             step="0.01"
             disabled={readOnly}
           />
@@ -74,16 +74,16 @@ const CostForm = ({
           <InputText
             label="Notes"
             placeholder="Enter notes"
-            value={formData.mrrcs_notes}
-            onChange={(e) => onChange("mrrcs_notes", e.target.value)}
-            error={formErrors.mrrcs_notes}
+            value={formData.porcs_notes}
+            onChange={(e) => onChange("porcs_notes", e.target.value)}
+            error={formErrors.porcs_notes}
             disabled={readOnly}
           />
         </div>
         <div className="col-span-12">
           <InputLabel
             label="Amount in words"
-            value={amountInWords(formData.mrrcs_value)}
+            value={amountInWords(formData.porcs_value)}
           />
         </div>
       </div>

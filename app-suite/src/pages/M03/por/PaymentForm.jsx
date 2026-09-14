@@ -23,9 +23,9 @@ const PaymentForm = ({
           <Dropdown
             label="Payment"
             options={party_Options}
-            value={formData.mrrpy_party}
-            onChange={(e) => onChange("mrrpy_party", e.target.value)}
-            error={formErrors.mrrpy_party}
+            value={formData.porpy_party}
+            onChange={(e) => onChange("porpy_party", e.target.value)}
+            error={formErrors.porpy_party}
             required
             placeholder="Select..."
             disabled={readOnly}
@@ -38,9 +38,9 @@ const PaymentForm = ({
           <InputNumber
             label="Amount"
             placeholder="0.00"
-            value={formData.mrrpy_pdamt}
-            onChange={(e) => onChange("mrrpy_pdamt", e.target.value)}
-            error={formErrors.mrrpy_pdamt}
+            value={formData.porpy_pdamt}
+            onChange={(e) => onChange("porpy_pdamt", e.target.value)}
+            error={formErrors.porpy_pdamt}
             required
             step="0.01"
             disabled={readOnly}
@@ -50,9 +50,9 @@ const PaymentForm = ({
           <InputText
             label="Ref No"
             placeholder="Enter ref no"
-            value={formData.mrrpy_refno}
-            onChange={(e) => onChange("mrrpy_refno", e.target.value)}
-            error={formErrors.mrrpy_refno}
+            value={formData.porpy_refno}
+            onChange={(e) => onChange("porpy_refno", e.target.value)}
+            error={formErrors.porpy_refno}
             disabled={readOnly}
           />
         </div>
@@ -60,16 +60,16 @@ const PaymentForm = ({
           <InputText
             label="Notes"
             placeholder="Enter notes"
-            value={formData.mrrpy_notes}
-            onChange={(e) => onChange("mrrpy_notes", e.target.value)}
-            error={formErrors.mrrpy_notes}
+            value={formData.porpy_notes}
+            onChange={(e) => onChange("porpy_notes", e.target.value)}
+            error={formErrors.porpy_notes}
             disabled={readOnly}
           />
         </div>
         <div className="col-span-12">
           <InputLabel
             label="Amount in words"
-            value={amountInWords(formData.mrrpy_pdamt)}
+            value={amountInWords(formData.porpy_pdamt)}
           />
         </div>
       </div>

@@ -5,23 +5,23 @@ import { amountInWords } from "@/utils/ntw.js";
 const CostList = ({ readOnly, listData, onEdit, onDelete }) => {
   const dtColumns = [
     { key: "party_cname", header: "Cost Name", width: "200px" },
-    { key: "mrrcs_csmod", header: "Cost Mode", width: "80px" },
-    { key: "mrrcs_clmod", header: "Calculation Mode", width: "100px" },
+    { key: "porcs_csmod", header: "Cost Mode", width: "80px" },
+    { key: "porcs_clmod", header: "Calculation Mode", width: "100px" },
     {
-      key: "mrrcs_value",
+      key: "porcs_value",
       header: "Amount",
       width: "100px",
       footer: (_, row) => {
-        return row.reduce((sum, row) => sum + Number(row.mrrcs_value ?? 0), 0);
+        return row.reduce((sum, row) => sum + Number(row.porcs_value ?? 0), 0);
       },
     },
     {
-      key: "mrrcs_notes",
+      key: "porcs_notes",
       header: "Notes",
       width: "100px",
       footer: (_, row) => {
         return amountInWords(
-          row.reduce((sum, row) => sum + Number(row.mrrcs_value ?? 0), 0),
+          row.reduce((sum, row) => sum + Number(row.porcs_value ?? 0), 0),
         );
       },
     },
@@ -33,7 +33,7 @@ const CostList = ({ readOnly, listData, onEdit, onDelete }) => {
       body: (_, row) => (
         <ActionButton
           rowData={row}
-          actve={row.mrrcs_actve}
+          actve={row.porcs_actve}
           //onEdit={onEdit}
           onCopy={onEdit}
           onDelete={onDelete}

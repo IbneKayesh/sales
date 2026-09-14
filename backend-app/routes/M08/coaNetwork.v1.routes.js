@@ -115,7 +115,7 @@ router.post("/get-por-exp-paym", async (req, res) => {
       JOIN tmtb_chtrt crt ON cht.chtac_chtno = crt.chtrt_chtno
       WHERE crt.chtrt_trnid = 'SYS_PO'
       AND crt.chtrt_pegid = 'SYS_PURCHASE_ORDER'
-      AND crt.chtrt_grpid IN ('SYS_AST_PAYMENT','SYS_LIB_LOCAL_VENDOR')
+      AND crt.chtrt_grpid IN ('SYS_AST_PAYMENT','SYS_LIB_LOCAL_VENDOR','SYS_NONE')
       AND pty.party_actve = TRUE
       AND cht.chtac_actve = TRUE
       AND crt.chtrt_actve = TRUE

@@ -18,7 +18,7 @@ CREATE TABLE tmib_items (
   items_runit VARCHAR(50),
   items_pkqty integer NOT NULL DEFAULT 1,
   items_punit VARCHAR(50),
-  items_szqty integer NOT NULL DEFAULT 1,
+  items_szqty decimal(18,6) DEFAULT 1,
   items_sunit VARCHAR(50),
   items_sgrup VARCHAR(50),
   items_scatg VARCHAR(50),

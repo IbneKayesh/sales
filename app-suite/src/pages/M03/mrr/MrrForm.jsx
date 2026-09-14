@@ -88,7 +88,7 @@ const MrrForm = ({
               error={formErrors.mrrdm_vehid}
               disabled={readOnly}
             />
-          </div>{" "}
+          </div>
           <div className="col-span-8">
             <InputText
               label="Notes"

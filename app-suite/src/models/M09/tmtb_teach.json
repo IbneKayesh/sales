@@ -3,54 +3,39 @@
     "type": "string",
     "label": "Id"
   },
-  "teach_srial": {
-    "type": "string",
-    "label": "Serial",
-    "maxLength": 50,
-    "placeholder": "Enter serial (e.g., 01)",
-    "required": true
-  },
   "teach_teach": {
     "type": "string",
-    "label": "Parent Lesson / Topic",
+    "label": "Parent Topic",
     "maxLength": 50,
-    "placeholder": "Select parent lesson (optional)",
+    "placeholder": "Select parent topic (optional)",
     "required": false
+  },
+  "teach_srial": {
+    "type": "number",
+    "label": "Serial",
+    "placeholder": "Enter serial (e.g., 1)",
+    "required": true
   },
   "teach_cname": {
     "type": "string",
-    "label": "Lesson / Topic Title",
+    "label": "Lesson Title",
     "maxLength": 50,
     "minLength": 2,
-    "placeholder": "Enter lesson title (e.g., Alphabet Fun - Letter A)",
+    "placeholder": "Enter lesson title",
     "required": true
   },
   "teach_descr": {
     "type": "string",
-    "label": "Lesson Content / Reading Material",
+    "label": "Lesson Content",
     "maxLength": 500,
-    "placeholder": "Enter reading text, sight words, or story for kids...",
+    "placeholder": "Enter lesson content",
     "required": false
   },
   "teach_notes": {
     "type": "string",
-    "label": "Teacher Guidance / Notes",
+    "label": "Teacher Notes",
     "maxLength": 100,
-    "placeholder": "Teacher tips (e.g., Use picture flashcards)",
-    "required": false
-  },
-  "teach_ttype": {
-    "type": "string",
-    "label": "Subject",
-    "maxLength": 50,
-    "placeholder": "Select or enter subject",
-    "required": false
-  },
-  "teach_tagno": {
-    "type": "string",
-    "label": "Grade / Level",
-    "maxLength": 100,
-    "placeholder": "e.g., Kindergarten, Grade 1, Age 4-6",
+    "placeholder": "Teacher notes",
     "required": false
   },
   "teach_reads": {
@@ -66,39 +51,5 @@
     "default": 1,
     "placeholder": "Enter reward marks / points",
     "required": true
-  },
-  "teach_stats": {
-    "type": "boolean",
-    "label": "Ready for Kids",
-    "default": true,
-    "placeholder": "Select status",
-    "required": false
-  },
-  "teach_actve": {
-    "type": "boolean",
-    "label": "Active",
-    "default": true,
-    "required": false
-  },
-  "teach_crusr": {
-    "type": "string",
-    "label": "Created By"
-  },
-  "teach_crdat": {
-    "type": "string",
-    "label": "Created Date"
-  },
-  "teach_upusr": {
-    "type": "string",
-    "label": "Updated By"
-  },
-  "teach_updat": {
-    "type": "string",
-    "label": "Updated Date"
-  },
-  "teach_rvnmr": {
-    "type": "number",
-    "label": "Rev Number",
-    "default": 1
   }
 }

@@ -1,0 +1,157 @@
+{
+  "id": {
+    "type": "string",
+    "label": "Id"
+  },
+  "pordm_dpart": {
+    "type": "string",
+    "label": "Department",
+    "maxLength": 50,
+    "placeholder": "Select",
+    "required": true
+  },
+  "pordm_cntct": {
+    "type": "string",
+    "label": "Supplier",
+    "maxLength": 50,
+    "placeholder": "Select",
+    "required": true
+  },
+  "pordm_ttype": {
+    "type": "string",
+    "label": "Type",
+    "maxLength": 50,
+    "placeholder": "Select",
+    "required": true
+  },
+  "pordm_trnno": {
+    "type": "string",
+    "label": "MRR No",
+    "maxLength": 50,
+    "placeholder": "Enter MRR/GRN no",
+    "required": false
+  },
+  "pordm_trdat": {
+    "type": "datetime",
+    "label": "Date",
+    "required": true,
+    "default": "new Date() with local format"
+  },
+  "pordm_refno": {
+    "type": "string",
+    "label": "Ref No",
+    "maxLength": 50,
+    "placeholder": "Enter ref no",
+    "required": false
+  },
+  "pordm_notes": {
+    "type": "string",
+    "label": "Notes",
+    "maxLength": 100,
+    "placeholder": "Enter notes",
+    "required": false
+  },
+  "pordm_tramt": {
+    "type": "decimal",
+    "label": "Total Amount",
+    "required": false,
+    "default": 0
+  },
+  "pordm_itmds": {
+    "type": "decimal",
+    "label": "Item Discount",
+    "required": false,
+    "default": 0
+  },
+  "pordm_dspct": {
+    "type": "decimal",
+    "label": "Invoice Discount %",
+    "required": false,
+    "default": 0
+  },
+  "pordm_invds": {
+    "type": "decimal",
+    "label": "Invoice Discount",
+    "required": false,
+    "default": 0
+  },
+  "pordm_vtamt": {
+    "type": "decimal",
+    "label": "VAT Amount",
+    "required": false,
+    "default": 0
+  },
+  "pordm_icamt": {
+    "type": "decimal",
+    "label": "Include Cost",
+    "required": false,
+    "default": 0
+  },
+  "pordm_ecamt": {
+    "type": "decimal",
+    "label": "Exclude Cost",
+    "required": false,
+    "default": 0
+  },
+  "pordm_pyamt": {
+    "type": "decimal",
+    "label": "Payable Amount",
+    "required": false,
+    "default": 0
+  },
+  "pordm_pdamt": {
+    "type": "decimal",
+    "label": "Paid Amount",
+    "required": false,
+    "default": 0
+  },
+  "pordm_duamt": {
+    "type": "decimal",
+    "label": "Due Amount",
+    "required": false,
+    "default": 0
+  },
+  "pordm_stamt": {
+    "type": "decimal",
+    "label": "Total Amount",
+    "required": false,
+    "default": 0
+  },
+  "pordm_csamt": {
+    "type": "decimal",
+    "label": "Cost Amount",
+    "required": false,
+    "default": 0
+  },
+  "pordm_vehid": {
+    "type": "string",
+    "label": "Vehicle",
+    "maxLength": 50,
+    "placeholder": "Enter vehicle",
+    "required": false
+  },
+  "pordm_ispst": {
+    "type": "boolean",
+    "label": "Is Posted",
+    "required": false,
+    "default": false
+  },
+  "pordm_ispad": {
+    "type": "boolean",
+    "label": "Is Paid",
+    "required": false,
+    "default": false
+  },
+  "pordm_isqcp": {
+    "type": "boolean",
+    "label": "Is QC Passed",
+    "required": false,
+    "default": false
+  },
+  "pordm_isapp": {
+    "type": "boolean",
+    "label": "Is Approved",
+    "required": false,
+    "default": false
+  }
+}
