@@ -656,9 +656,9 @@ export const rawAppModules = [
   },
   {
     id: "M09",
-    name: "Examples",
-    icon: "Activity",
-    color: "#f59e0b",
+    name: "Learning",
+    icon: "Accounts",
+    color: "#8b5cf6",
     order: 9,
     groups: [
       {
@@ -668,6 +668,40 @@ export const rawAppModules = [
         menus: [
           {
             id: "M09-G01-M001",
+            name: "Teaching",
+            color: "#8b5cf6",
+            icon: "Accounts",
+            order: 1,
+            link: "/learning/teach",
+            desc: "Configure the learning of teaching",
+          },
+          {
+            id: "M09-G01-M002",
+            name: "Exam",
+            color: "#8b5cf6",
+            icon: "Users",
+            order: 2,
+            link: "/learning/exams",
+            desc: "Manage exams",
+          },
+        ],
+      },
+    ],
+  },
+  {
+    id: "M50",
+    name: "Examples",
+    icon: "Activity",
+    color: "#f59e0b",
+    order: 50,
+    groups: [
+      {
+        id: "G01",
+        name: "Setup",
+        order: 1,
+        menus: [
+          {
+            id: "M50-G01-M001",
             name: "Settings",
             color: "#f59e0b",
             icon: "Settings",
@@ -683,7 +717,7 @@ export const rawAppModules = [
         order: 2,
         menus: [
           {
-            id: "M09-G02-M001",
+            id: "M50-G02-M001",
             name: "Transactions",
             color: "#f59e0b",
             icon: "Activity",
@@ -699,7 +733,7 @@ export const rawAppModules = [
         order: 3,
         menus: [
           {
-            id: "M09-G03-M001",
+            id: "M50-G03-M001",
             name: "Reports",
             color: "#f59e0b",
             icon: "Chart",
@@ -715,7 +749,7 @@ export const rawAppModules = [
         order: 4,
         menus: [
           {
-            id: "M09-G04-M001",
+            id: "M50-G04-M001",
             name: "UI Examples",
             color: "#f59e0b",
             icon: "Cogs",
@@ -724,7 +758,7 @@ export const rawAppModules = [
             desc: "Browse UI component examples",
           },
           {
-            id: "M09-G04-M002",
+            id: "M50-G04-M002",
             name: "TreeView Examples",
             color: "#22c55e",
             icon: "Tree",
@@ -740,7 +774,7 @@ export const rawAppModules = [
         order: 5,
         menus: [
           {
-            id: "M09-G05-M001",
+            id: "M50-G05-M001",
             name: "Modules",
             color: "#f59e0b",
             icon: "Dashboard",

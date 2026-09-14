@@ -81,8 +81,6 @@ const create = async (req, res) => {
   try {
     const {
       id,
-      teach_users,
-      teach_bsins,
       teach_ccode,
       teach_srial,
       teach_teach,
@@ -91,6 +89,7 @@ const create = async (req, res) => {
       teach_notes,
       teach_ttype,
       teach_tagno,
+      teach_reads,
       teach_marks,
       teach_stats,
       teach_actve,
@@ -100,31 +99,36 @@ const create = async (req, res) => {
     } = req.body;
 
     if (
-      !teach_users ||
-      !teach_bsins ||
       !teach_srial ||
       !teach_cname ||
-      !teach_marks ||
+      teach_marks === undefined ||
+      teach_marks === null ||
       !user_s ||
       !user_c ||
       !user_b
     ) {
       return res.json({
         success: false,
-        message: "All fields in the request body are required.",
+        message: "All required fields in the request body must be provided.",
         data: {},
       });
     }
 
-    const newCode = await GenNewCode(user_c, "tmsb_teach");
+    let newCode;
+    try {
+      newCode = await GenNewCode(user_c, "tmsb_teach");
+    } catch (err) {
+      newCode = `TCH${Date.now().toString().slice(-8)}`;
+    }
+
     const scripts = [];
     scripts.push({
       sql: `INSERT INTO tmsb_teach(id, teach_users, teach_bsins, teach_ccode, teach_srial, teach_teach,
-      teach_cname, teach_descr, teach_notes, teach_ttype, teach_tagno, teach_marks, teach_stats, teach_actve,
+      teach_cname, teach_descr, teach_notes, teach_ttype, teach_tagno, teach_reads, teach_marks, teach_stats, teach_actve,
       teach_crusr, teach_upusr)
       VALUES ($1, $2, $3, $4, $5, $6,
-      $7, $8, $9, $10, $11, $12, $13, $14,
-      $15, $16)`,
+      $7, $8, $9, $10, $11, $12, $13, $14, $15,
+      $16, $17)`,
       params: [
         uuidv4(),
         user_c,
@@ -137,7 +141,8 @@ const create = async (req, res) => {
         teach_notes || null,
         teach_ttype || null,
         teach_tagno || null,
-        teach_marks,
+        Number(teach_reads) || 0,
+        Number(teach_marks) || 1,
         teach_stats ?? false,
         teach_actve ?? true,
         user_s,
@@ -149,7 +154,7 @@ const create = async (req, res) => {
     await dbRunAll(scripts);
     res.json({
       success: true,
-      message: `${newCode} - Created successfully.`,
+      message: `${newCode} (${teach_cname}) - Created successfully.`,
       data: {},
     });
   } catch (error) {
@@ -166,9 +171,6 @@ const update = async (req, res) => {
   try {
     const {
       id,
-      teach_users,
-      teach_bsins,
-      teach_ccode,
       teach_srial,
       teach_teach,
       teach_cname,
@@ -176,6 +178,7 @@ const update = async (req, res) => {
       teach_notes,
       teach_ttype,
       teach_tagno,
+      teach_reads,
       teach_marks,
       teach_stats,
       user_s,
@@ -185,18 +188,17 @@ const update = async (req, res) => {
 
     if (
       !id ||
-      !teach_users ||
-      !teach_bsins ||
       !teach_srial ||
       !teach_cname ||
-      !teach_marks ||
+      teach_marks === undefined ||
+      teach_marks === null ||
       !user_s ||
       !user_c ||
       !user_b
     ) {
       return res.json({
         success: false,
-        message: "All fields in the request body are required.",
+        message: "All required fields in the request body must be provided.",
         data: {},
       });
     }
@@ -209,12 +211,13 @@ const update = async (req, res) => {
     teach_notes = $5,
     teach_ttype = $6,
     teach_tagno = $7,
-    teach_marks = $8,
-    teach_stats = $9,
-    teach_upusr = $10,
+    teach_reads = $8,
+    teach_marks = $9,
+    teach_stats = $10,
+    teach_upusr = $11,
     teach_updat = CURRENT_TIMESTAMP,
     teach_rvnmr = teach_rvnmr + 1
-    WHERE id = $11`;
+    WHERE id = $12`;
     const params = [
       teach_srial,
       teach_teach || null,
@@ -223,7 +226,8 @@ const update = async (req, res) => {
       teach_notes || null,
       teach_ttype || null,
       teach_tagno || null,
-      teach_marks,
+      Number(teach_reads) || 0,
+      Number(teach_marks) || 1,
       teach_stats ?? false,
       user_s,
       id,

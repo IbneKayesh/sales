@@ -5,10 +5,55 @@ import { IconClose, IconCheck } from "@/icons";
 
 const TeachList = ({ listData, onEdit, onDelete }) => {
   const dtColumns = [
-    { key: "teach_srial", header: "Serial", width: "110px" },
-    { key: "teach_cname", header: "Student Name", width: "180px" },
-    { key: "teach_ttype", header: "Subject", width: "150px" },
-    { key: "teach_marks", header: "Marks", width: "90px" },
+    { key: "teach_srial", header: "Serial", width: "90px" },
+    {
+      key: "teach_cname",
+      header: "Lesson / Topic Title",
+      width: "220px",
+      body: (v, row) => (
+        <div>
+          <span style={{ fontWeight: 600 }}>{v}</span>
+          {row.teach_descr && (
+            <div
+              style={{
+                fontSize: "12px",
+                color: "var(--text-muted, #6b7280)",
+                whiteSpace: "nowrap",
+                overflow: "hidden",
+                textOverflow: "ellipsis",
+                maxWidth: "240px",
+              }}
+            >
+              {row.teach_descr}
+            </div>
+          )}
+        </div>
+      ),
+    },
+    {
+      key: "teach_ttype",
+      header: "Subject",
+      width: "140px",
+      body: (v) => <span className="badge badge-subtle">{v || "General"}</span>,
+    },
+    {
+      key: "teach_tagno",
+      header: "Grade / Age",
+      width: "140px",
+      body: (v) => v || "-",
+    },
+    {
+      key: "teach_reads",
+      header: "Reads",
+      width: "80px",
+      body: (v) => `${v || 0}x`,
+    },
+    {
+      key: "teach_marks",
+      header: "Points",
+      width: "80px",
+      body: (v) => `${v || 0} pts`,
+    },
     {
       key: "teach_stats",
       header: "Status",
@@ -16,7 +61,7 @@ const TeachList = ({ listData, onEdit, onDelete }) => {
       body: (v) => (
         <Badge variant={v ? "success" : "secondary"}>
           {v ? <IconCheck size={12} /> : <IconClose size={12} />}
-          {v ? "Passed" : "Not Passed"}
+          {v ? "Ready" : "Draft"}
         </Badge>
       ),
     },
@@ -46,6 +91,7 @@ const TeachList = ({ listData, onEdit, onDelete }) => {
       ),
     },
   ];
+
   return (
     <DataTable
       columns={dtColumns}
@@ -56,9 +102,9 @@ const TeachList = ({ listData, onEdit, onDelete }) => {
       striped
       hoverable
       exportable
-      exportFilename="teach-data.csv"
+      exportFilename="teaching-materials.csv"
       onRowClick={(row) => onEdit(row)}
-      emptyMessage="No teaching materials found"
+      emptyMessage="No teaching materials found. Click 'Add' to create your first kids lesson!"
     />
   );
 };

@@ -1,6 +1,7 @@
 import Button from "@/components/Button";
 import InputText from "@/components/InputText";
 import Dropdown from "@/components/Dropdown";
+import Checkbox from "@/components/Checkbox";
 import AuditData from "@/components/AuditData";
 import { IconClose, IconSave } from "@/icons";
 import { untgr_Options } from "@/utils/vtable.js";
@@ -29,7 +30,7 @@ const UnitsForm = ({
             disabled={readOnly}
           />
         </div>
-        <div className="col-span-6">
+        <div className="col-span-4">
           <Dropdown
             label="Unit Group"
             options={untgr_Options}
@@ -39,6 +40,16 @@ const UnitsForm = ({
             required
             placeholder="Select..."
             disabled={readOnly}
+          />
+        </div>
+        <div className="col-span-2 p-4">
+          <Checkbox
+            label="Rounded Qty"
+            checked={formData.units_dcpnt}
+            onChange={(e) => onChange("units_dcpnt", !formData.units_dcpnt)}
+            error={formErrors.units_dcpnt}
+            disabled={readOnly}
+            className="mt-5"
           />
         </div>
       </div>

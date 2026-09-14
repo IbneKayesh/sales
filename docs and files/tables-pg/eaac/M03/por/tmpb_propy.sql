@@ -1,6 +1,6 @@
 --
 -- Table structure for table tmpb_propy
--- mrr payments
+-- PO payments
 
 CREATE TABLE tmpb_propy (
   id varchar(50) PRIMARY KEY,

@@ -16,6 +16,7 @@ import {
   IconBox,
   IconActivity,
   IconBar,
+  IconLock,
 } from "../icons";
 import { modulesMenu } from "@/utils/appModules";
 import { toast } from "@/components/ToastBox";
@@ -35,6 +36,7 @@ export default function Topbar({ className = "", ...rest }) {
     logoImage,
     topbarBgImage,
     topbarBgColor,
+    setIsLocked,
   } = useApp();
   // The colorful default puts the top bar on the emerald→cyan→indigo
   // gradient (see data-topbar-vivid in AppContext); show the white monogram
@@ -396,6 +398,18 @@ export default function Topbar({ className = "", ...rest }) {
                 <button type="button" className="topbar__profile-action">
                   <IconInfo size={16} />
                   Help &amp; support
+                </button>
+                <button
+                  type="button"
+                  className="topbar__profile-action"
+                  onClick={() => {
+                    setProfileOpen(false);
+                    setIsLocked(true);
+                  }}
+                  title="Lock current session"
+                >
+                  <IconLock size={16} />
+                  Lock screen
                 </button>
               </div>
               <div className="topbar__profile-divider" />

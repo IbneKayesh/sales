@@ -91,6 +91,7 @@ const create = async (req, res) => {
       units_ccode,
       units_cname,
       units_untgr,
+      units_dcpnt,
       user_s,
       user_c,
       user_b,
@@ -108,8 +109,10 @@ const create = async (req, res) => {
     //database action
     const newCode = await GenNewCode(user_c, "tmib_units");
 
-    const sql = `INSERT INTO tmib_units(id, units_users, units_bsins, units_ccode, units_cname, units_untgr, units_crusr, units_upusr)
-    VALUES ($1, $2, $3, $4, $5, $6, $7, $8)`;
+    const sql = `INSERT INTO tmib_units(id, units_users, units_bsins, units_ccode, units_cname, units_untgr, 
+    units_dcpnt, units_crusr, units_upusr)
+    VALUES ($1, $2, $3, $4, $5, $6,
+    $7, $8, $9)`;
     const params = [
       uuidv4(),
       user_c,
@@ -117,6 +120,7 @@ const create = async (req, res) => {
       newCode,
       units_cname,
       units_untgr,
+      units_dcpnt,
       user_s,
       user_s,
     ];
@@ -146,6 +150,7 @@ const update = async (req, res) => {
       units_ccode,
       units_cname,
       units_untgr,
+      units_dcpnt,
       user_s,
       user_c,
       user_b,
@@ -164,11 +169,12 @@ const update = async (req, res) => {
     const sql = `UPDATE tmib_units
     SET units_cname = $1,
     units_untgr = $2,
-    units_upusr = $3,
+    units_dcpnt = $3,
+    units_upusr = $4,
     units_updat = CURRENT_TIMESTAMP,
     units_rvnmr = units_rvnmr + 1
-    WHERE id = $4`;
-    const params = [units_cname, units_untgr, user_s, id];
+    WHERE id = $5`;
+    const params = [units_cname, units_untgr, units_dcpnt, user_s, id];
 
     await dbRun(sql, params, `update units- ${user_c}`);
     res.json({

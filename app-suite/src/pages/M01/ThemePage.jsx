@@ -23,6 +23,7 @@ import {
   IconUpload,
   IconArrowRight,
   IconPopup,
+  IconLock,
 } from "@/icons";
 import { useApp } from "@/context/AppContext";
 import {
@@ -477,6 +478,8 @@ const ThemePage = () => {
     setBgAnimMode,
     bgAnimSettings,
     setBgAnimSetting,
+    isLocked,
+    setIsLocked,
   } = useApp();
 
   const activeTheme =
@@ -1486,6 +1489,8 @@ const ThemePage = () => {
                   ? "The analog clock screensaver starts after the screen is idle, over a frosted backdrop"
                   : bgAnim === "digital"
                   ? "The digital clock screensaver starts after the screen is idle, over a frosted backdrop"
+                  : bgAnim === "lock"
+                  ? "The screen locks after the set idle time, requiring your password to unlock"
                   : "Background animation settings"}
               </span>
             </div>
@@ -1538,6 +1543,16 @@ const ThemePage = () => {
                       title="A futuristic rotating digital clock"
                     >
                       Digital Clock
+                    </SettingButton>
+                    <SettingButton
+                      selected={bgAnim === "lock"}
+                      onClick={() => {
+                        setBgAnim("lock");
+                        if (bgAnimMode === "always") setBgAnimMode("idle");
+                      }}
+                      title="Lock the screen after idle time, requiring your password to unlock"
+                    >
+                      Lock Screen
                     </SettingButton>
                   </div>
                 </div>
@@ -1769,7 +1784,11 @@ const ThemePage = () => {
                           setBgAnimSetting("idleMin", Number(e.target.value))
                         }
                         aria-label="Idle time"
-                        title="Screen idle time threshold before the clock starts (0 = disabled)"
+                        title={
+                          bgAnim === "lock"
+                            ? "Screen idle time threshold before the screen locks (0 = disabled)"
+                            : "Screen idle time threshold before the clock starts (0 = disabled)"
+                        }
                         style={{
                           flex: 1,
                           accentColor: "var(--primary)",
@@ -1791,6 +1810,27 @@ const ThemePage = () => {
                           : `${bgAnimSettings?.idleMin ?? 1} min`}
                       </span>
                     </div>
+                    {bgAnim === "lock" && (
+                      <div
+                        style={{
+                          display: "flex",
+                          alignItems: "center",
+                          justifyContent: "flex-start",
+                          marginTop: 4,
+                          paddingLeft: 82,
+                        }}
+                      >
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          icon={<IconLock size={14} />}
+                          onClick={() => setIsLocked(true)}
+                          title="Lock screen immediately to test"
+                        >
+                          Lock Screen Now
+                        </Button>
+                      </div>
+                    )}
                   </div>
                 )}
               </div>

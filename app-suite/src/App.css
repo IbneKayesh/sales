@@ -9871,3 +9871,367 @@ html[data-layout="boxed"] .layout__main {
   width: calc(44px * var(--comp-scale, 1));
   height: calc(44px * var(--comp-scale, 1));
 }
+
+/* ──────────────────────────────────────────────────────────────────────────
+   Lock Screen — OS-grade frosted glass session lock overlay
+   ────────────────────────────────────────────────────────────────────────── */
+.lock-screen {
+  position: fixed;
+  inset: 0;
+  z-index: 100000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  animation: lockScreenFadeIn 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.lock-screen__backdrop {
+  position: absolute;
+  inset: 0;
+  backdrop-filter: blur(28px) saturate(180%);
+  -webkit-backdrop-filter: blur(28px) saturate(180%);
+  background: radial-gradient(
+      circle at 50% 25%,
+      color-mix(in srgb, var(--primary) 12%, transparent),
+      transparent 65%
+    ),
+    color-mix(in srgb, var(--bg-body, #0f172a) 82%, transparent);
+}
+
+.lock-screen__glow {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(80px);
+  pointer-events: none;
+  opacity: 0.35;
+}
+
+.lock-screen__glow--1 {
+  top: 10%;
+  left: 15%;
+  width: 320px;
+  height: 320px;
+  background: var(--primary);
+}
+
+.lock-screen__glow--2 {
+  bottom: 12%;
+  right: 15%;
+  width: 280px;
+  height: 280px;
+  background: color-mix(in srgb, var(--primary) 60%, #6366f1);
+}
+
+.lock-screen__container {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 22px;
+  max-width: 400px;
+  width: 90%;
+  padding: 16px 0;
+}
+
+.lock-screen__header {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+}
+
+.lock-screen__time {
+  font-size: 3.25rem;
+  font-weight: 300;
+  letter-spacing: -0.03em;
+  color: var(--text-primary);
+  line-height: 1;
+  text-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
+}
+
+.lock-screen__date {
+  font-size: var(--fs-sm);
+  font-weight: 500;
+  color: var(--text-muted);
+  margin-top: 8px;
+  letter-spacing: 0.02em;
+}
+
+.lock-screen__card {
+  width: 100%;
+  position: relative;
+  border-radius: var(--radius-xl, 14px);
+  background: var(--surface);
+  border: 1px solid var(--border);
+  box-shadow: 0 24px 60px -12px rgba(0, 0, 0, 0.32),
+    0 0 0 1px color-mix(in srgb, var(--border) 60%, transparent);
+  padding: 26px 22px;
+  overflow: hidden;
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+}
+
+.lock-screen__card-accent {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: linear-gradient(
+    90deg,
+    var(--primary),
+    color-mix(in srgb, var(--primary) 45%, white)
+  );
+}
+
+.lock-screen__profile {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: 12px;
+  margin-bottom: 20px;
+}
+
+.lock-screen__avatar-wrap {
+  position: relative;
+  width: 68px;
+  height: 68px;
+}
+
+.lock-screen__avatar-img {
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 2px solid var(--primary);
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.18);
+}
+
+.lock-screen__avatar-fallback {
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  background: linear-gradient(
+    135deg,
+    var(--primary),
+    color-mix(in srgb, var(--primary) 55%, #1e1b4b)
+  );
+  color: var(--primary-on, #fff);
+  font-size: 1.45rem;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4px 16px color-mix(in srgb, var(--primary) 35%, transparent);
+  border: 2px solid color-mix(in srgb, var(--surface) 80%, var(--primary));
+}
+
+.lock-screen__lock-badge {
+  position: absolute;
+  bottom: -2px;
+  right: -2px;
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  background: var(--primary);
+  color: var(--primary-on, #fff);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 2px solid var(--surface);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.25);
+}
+
+.lock-screen__user-details {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 3px;
+}
+
+.lock-screen__user-name {
+  font-size: var(--fs-lg);
+  font-weight: 700;
+  color: var(--text-primary);
+  margin: 0;
+}
+
+.lock-screen__user-email {
+  font-size: var(--fs-xs);
+  color: var(--text-muted);
+  margin: 0;
+}
+
+.lock-screen__locked-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 3px 9px;
+  border-radius: 20px;
+  font-size: 11px;
+  font-weight: 600;
+  background: var(--surface-alt);
+  border: 1px solid var(--border);
+  color: var(--text-secondary);
+  margin-top: 4px;
+}
+
+.lock-screen__form {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.lock-screen__field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.lock-screen__input-wrap {
+  position: relative;
+  display: flex;
+  align-items: center;
+  width: 100%;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md, 8px);
+  background: var(--surface-alt);
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.lock-screen__input-wrap:focus-within {
+  border-color: var(--primary);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--primary) 20%, transparent);
+}
+
+.lock-screen__input-wrap--error {
+  border-color: var(--danger);
+}
+
+.lock-screen__input-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 38px;
+  color: var(--text-muted);
+  flex-shrink: 0;
+}
+
+.lock-screen__input {
+  flex: 1;
+  height: 42px;
+  border: none;
+  outline: none;
+  background: transparent;
+  color: var(--text-primary);
+  font-size: var(--fs-base, 14px);
+  padding: 0 8px 0 0;
+}
+
+.lock-screen__toggle-pw {
+  background: none;
+  border: none;
+  padding: 0 12px;
+  color: var(--text-muted);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  transition: color 0.15s;
+}
+
+.lock-screen__toggle-pw:hover {
+  color: var(--text-primary);
+}
+
+.lock-screen__caps {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-size: var(--fs-xs);
+  color: var(--warning);
+  margin: 2px 0 0;
+}
+
+.lock-screen__error {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 12px;
+  border-radius: var(--radius-md, 8px);
+  font-size: var(--fs-sm);
+  color: var(--danger);
+  background: var(--danger-bg);
+  border: 1px solid color-mix(in srgb, var(--danger) 30%, transparent);
+  animation: shake 0.3s ease-in-out;
+}
+
+.lock-screen__actions {
+  display: flex;
+  gap: 10px;
+  margin-top: 4px;
+}
+
+.lock-screen__btn {
+  flex: 1;
+  height: 40px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  font-size: var(--fs-sm);
+  font-weight: 600;
+  border-radius: var(--radius-md, 8px);
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.lock-screen__btn--unlock {
+  background: var(--primary);
+  color: var(--primary-on, #fff);
+  border: 1px solid var(--primary);
+}
+
+.lock-screen__btn--unlock:hover:not(:disabled) {
+  background: var(--primary-hover);
+  border-color: var(--primary-hover);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 14px color-mix(in srgb, var(--primary) 35%, transparent);
+}
+
+.lock-screen__btn--logout {
+  background: var(--surface-alt);
+  color: var(--text-secondary);
+  border: 1px solid var(--border);
+}
+
+.lock-screen__btn--logout:hover:not(:disabled) {
+  background: var(--surface);
+  color: var(--danger);
+  border-color: var(--danger);
+}
+
+.lock-screen__btn:disabled {
+  opacity: 0.65;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.lock-screen__spinner {
+  display: inline-flex;
+  animation: spin 0.7s linear infinite;
+}
+
+@keyframes lockScreenFadeIn {
+  from {
+    opacity: 0;
+    transform: scale(0.98);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+

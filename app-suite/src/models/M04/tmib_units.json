@@ -17,5 +17,10 @@
     "maxLength": 50,
     "minLength": 3,
     "placeholder": "Enter unit group"
+  },
+  "units_dcpnt": {
+    "type": "boolean",
+    "label": "Rounded Qty",
+    "default": false
   }
 }

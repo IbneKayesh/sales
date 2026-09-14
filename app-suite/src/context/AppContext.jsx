@@ -402,6 +402,10 @@ export function AppProvider({ children }) {
   //auth guard or session holder
   const [emply, setEmply] = useState(null);
   const [user, setUser] = useState(null);
+  const userRef = useRef(user);
+  useEffect(() => {
+    userRef.current = user;
+  }, [user]);
   const [business, setBusiness] = useState(null);
   // Lazy-initialise from localStorage so menus survive a page refresh
   const [userMenus, setUserMenusState] = useState(() => {
@@ -562,12 +566,12 @@ export function AppProvider({ children }) {
       : "both";
   });
   // Background animation for the Workspace page: "none", "rain" (rain on
-  // glass), "analog" (analog clock), or "digital" (digital clock). Decorative overlay; independent of the
+  // glass), "analog" (analog clock), "digital" (digital clock), or "lock" (lock screen). Decorative overlay; independent of the
   // reduceMotion toggle. Rain settings (density %, tint color, opacity %,
   // drop size %) live in bgAnimSettings and only matter while bgAnim === "rain".
   const [bgAnim, setBgAnimState] = useState(() => {
     const stored = getStorageLoginData()?.bgAnim;
-    return stored === "rain" || stored === "analog" || stored === "digital" || stored === "none"
+    return stored === "rain" || stored === "analog" || stored === "digital" || stored === "lock" || stored === "none"
       ? stored
       : "rain";
   });
@@ -607,6 +611,37 @@ export function AppProvider({ children }) {
     };
   });
 
+  // Lock screen session state — persisted in sessionStorage so a browser refresh
+  // while locked preserves the locked state without losing session credentials.
+  const [isLocked, setIsLockedState] = useState(() => {
+    try {
+      return sessionStorage.getItem("eaac_screen_locked") === "true";
+    } catch {
+      return false;
+    }
+  });
+  const isLockedRef = useRef(isLocked);
+  useEffect(() => {
+    isLockedRef.current = isLocked;
+  }, [isLocked]);
+
+  const setIsLocked = useCallback((locked) => {
+    const val = Boolean(locked);
+    setIsLockedState(val);
+    try {
+      if (val) {
+        sessionStorage.setItem("eaac_screen_locked", "true");
+      } else {
+        sessionStorage.removeItem("eaac_screen_locked");
+      }
+    } catch {}
+  }, []);
+
+  const bgAnimRef = useRef(bgAnim);
+  useEffect(() => {
+    bgAnimRef.current = bgAnim;
+  }, [bgAnim]);
+
   const [isIdle, setIsIdle] = useState(false);
   const isIdleRef = useRef(false);
 
@@ -626,6 +661,10 @@ export function AppProvider({ children }) {
     let lastReset = 0;
 
     const resetTimer = () => {
+      // If currently locked, user activity in the lock screen MUST NOT dismiss lock state!
+      if (isLockedRef.current) {
+        return;
+      }
       const now = Date.now();
       
       if (isIdleRef.current) {
@@ -640,6 +679,9 @@ export function AppProvider({ children }) {
       if (timerId) clearTimeout(timerId);
       timerId = setTimeout(() => {
         setIsIdle(true);
+        if (bgAnimRef.current === "lock" && userRef.current) {
+          setIsLocked(true);
+        }
       }, timeoutMs);
     };
 
@@ -663,13 +705,14 @@ export function AppProvider({ children }) {
         window.removeEventListener(event, resetTimer);
       });
     };
-  }, [bgAnimSettings?.idleMin]);
+  }, [bgAnimSettings?.idleMin, setIsLocked]);
 
   // Derived: whether the background animation (rain, analog, or digital) should render.
   // "always" → always visible, user works through it non-blocking.
   // "idle"   → only visible while the idle timer has fired.
   const showBgAnim =
     bgAnim !== "none" &&
+    bgAnim !== "lock" &&
     (bgAnimMode === "always" || (bgAnimMode === "idle" && isIdle));
 
   const [users, setUsers] = useState(initialUsers);
@@ -1233,6 +1276,10 @@ export function AppProvider({ children }) {
 
   const logout = useCallback(() => {
     clearStorageData();
+    try {
+      sessionStorage.removeItem("eaac_screen_locked");
+    } catch {}
+    setIsLockedState(false);
     setUser(null);
     setEmply(null);
     setBusiness(null);
@@ -1240,7 +1287,7 @@ export function AppProvider({ children }) {
     updateAppModules(null);
     setPopups([]);
     navigate("/auth/login");
-  }, []);
+  }, [navigate]);
 
   const addUser = useCallback((userData) => {
     const newUser = {
@@ -1343,6 +1390,8 @@ export function AppProvider({ children }) {
         setBgAnimSetting,
         isIdle,
         showBgAnim,
+        isLocked,
+        setIsLocked,
         popups,
         openPopup,
         closePopup,

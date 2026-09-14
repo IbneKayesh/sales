@@ -5,6 +5,10 @@ export const examAPI = {
     apiRequest("/M09/v1/exams", {
       body: data,
     }),
+  getAllActive: (data) =>
+    apiRequest("/M09/v1/exams/get-all-active", {
+      body: data,
+    }),
   upsert: (data) =>
     apiRequest("/M09/v1/exams/upsert", {
       body: data,

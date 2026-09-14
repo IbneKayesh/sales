@@ -30,10 +30,8 @@ CREATE TABLE tmpb_prodm (
   prodm_duamt decimal(18,6) DEFAULT 0.00, --due
   prodm_stamt decimal(18,6) DEFAULT 0.00, --total amount
   prodm_csamt decimal(18,6) DEFAULT 0.00, --inventory cost amount
-  prodm_vehid VARCHAR(50),
   prodm_ispst boolean NOT NULL DEFAULT false,
   prodm_ispad boolean NOT NULL DEFAULT false,
-  prodm_isqcp boolean NOT NULL DEFAULT false,
   prodm_isapp boolean NOT NULL DEFAULT false,
   
   -- default 2

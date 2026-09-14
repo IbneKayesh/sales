@@ -88,8 +88,19 @@ const useTeach = () => {
   };
 
   const handleAddNew = () => {
+    const nextSerial = String(listData.length + 1).padStart(2, "0");
     setPgView("SYS_VW_FRM_1");
-    setFormData(dataModel);
+    setFormData({
+      ...dataModel,
+      teach_srial: nextSerial,
+      teach_reads: 1,
+      teach_marks: 1,
+      teach_stats: true,
+      teach_actve: true,
+      teach_ttype: "English",
+      teach_tagno: "Kindergarten",
+    });
+    setFormErrors({});
     setReadOnly(false);
     setStopEdit(false);
   };
@@ -97,6 +108,7 @@ const useTeach = () => {
   const handleCancel = () => {
     setPgView("SYS_VW_LST_1");
     setFormData(dataModel);
+    setFormErrors({});
     setReadOnly(false);
     setStopEdit(false);
   };
@@ -106,6 +118,7 @@ const useTeach = () => {
       const newErrors = validate(formData, tmtb_teach);
       setFormErrors(newErrors);
       if (Object.keys(newErrors).length > 0) {
+        showToast("Please fill in all required fields", "warning");
         return;
       }
 
@@ -132,6 +145,13 @@ const useTeach = () => {
     }
   };
 
+  const parentOptions = listData
+    .filter((item) => !formData?.id || item.id !== formData.id)
+    .map((item) => ({
+      value: item.id,
+      label: `[${item.teach_ttype || "General"}] ${item.teach_cname}`,
+    }));
+
   return {
     isBusy,
     pgView,
@@ -141,6 +161,7 @@ const useTeach = () => {
     listData,
     formData,
     formErrors,
+    parentOptions,
     handleChange,
     handleEdit,
     handleDelete,

@@ -5,6 +5,10 @@ export const teachAPI = {
     apiRequest("/M09/v1/teach", {
       body: data,
     }),
+  getAllActive: (data) =>
+    apiRequest("/M09/v1/teach/get-all-active", {
+      body: data,
+    }),
   upsert: (data) =>
     apiRequest("/M09/v1/teach/upsert", {
       body: data,

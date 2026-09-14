@@ -26,6 +26,10 @@ export const itemsAPI = {
     apiRequest("/M04/v1/items/get-all-active", {
       body: data,
     }),
+  getPorItems: (data) =>
+    apiRequest("/M04/v1/items/get-por-items", {
+      body: data,
+    }),
   getMrrItems: (data) =>
     apiRequest("/M04/v1/items/get-mrr-items", {
       body: data,

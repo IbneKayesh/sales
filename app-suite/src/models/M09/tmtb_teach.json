@@ -7,63 +7,70 @@
     "type": "string",
     "label": "Serial",
     "maxLength": 50,
-    "placeholder": "Enter serial",
+    "placeholder": "Enter serial (e.g., 01)",
     "required": true
   },
   "teach_teach": {
     "type": "string",
-    "label": "Parent Teaching",
+    "label": "Parent Lesson / Topic",
     "maxLength": 50,
-    "placeholder": "Select parent teaching",
+    "placeholder": "Select parent lesson (optional)",
     "required": false
   },
   "teach_cname": {
     "type": "string",
-    "label": "Student Name",
+    "label": "Lesson / Topic Title",
     "maxLength": 50,
-    "minLength": 3,
-    "placeholder": "Enter student name",
+    "minLength": 2,
+    "placeholder": "Enter lesson title (e.g., Alphabet Fun - Letter A)",
     "required": true
   },
   "teach_descr": {
     "type": "string",
-    "label": "Description",
+    "label": "Lesson Content / Reading Material",
     "maxLength": 500,
-    "placeholder": "Enter reading description",
+    "placeholder": "Enter reading text, sight words, or story for kids...",
     "required": false
   },
   "teach_notes": {
     "type": "string",
-    "label": "Notes",
-    "maxLength": 50,
-    "placeholder": "Enter notes",
+    "label": "Teacher Guidance / Notes",
+    "maxLength": 100,
+    "placeholder": "Teacher tips (e.g., Use picture flashcards)",
     "required": false
   },
   "teach_ttype": {
     "type": "string",
     "label": "Subject",
     "maxLength": 50,
-    "placeholder": "Enter subject",
+    "placeholder": "Select or enter subject",
     "required": false
   },
   "teach_tagno": {
     "type": "string",
-    "label": "Tag No",
+    "label": "Grade / Level",
     "maxLength": 100,
-    "placeholder": "Enter tag no",
+    "placeholder": "e.g., Kindergarten, Grade 1, Age 4-6",
+    "required": false
+  },
+  "teach_reads": {
+    "type": "number",
+    "label": "Practice Reads",
+    "default": 1,
+    "placeholder": "Number of practice reads",
     "required": false
   },
   "teach_marks": {
     "type": "number",
-    "label": "Total Marks",
+    "label": "Reward Marks",
     "default": 1,
-    "placeholder": "Enter total marks",
+    "placeholder": "Enter reward marks / points",
     "required": true
   },
   "teach_stats": {
     "type": "boolean",
-    "label": "Status",
-    "default": false,
+    "label": "Ready for Kids",
+    "default": true,
     "placeholder": "Select status",
     "required": false
   },

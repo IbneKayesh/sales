@@ -5,26 +5,66 @@ import { IconClose, IconCheck } from "@/icons";
 
 const ExamList = ({ listData, onEdit, onDelete }) => {
   const dtColumns = [
-    { key: "exams_srial", header: "Serial", width: "110px" },
-    { key: "exams_teach", header: "Teaching", width: "150px" },
-    { key: "exams_cname", header: "Question Name", width: "180px" },
-    { key: "exams_marks", header: "Marks", width: "90px" },
+    { key: "exams_srial", header: "Serial", width: "90px" },
     {
-      key: "exams_answr",
-      header: "Answer",
+      key: "teach_cname_ref",
+      header: "Lesson / Material",
       width: "200px",
-      body: (_, row) => (
-        <span className="text-truncate">{row.exams_answr}</span>
+      body: (v, row) => (
+        <span style={{ fontWeight: 500 }}>
+          {v ? (
+            <>
+              <span className="badge badge-subtle" style={{ marginRight: "6px" }}>
+                {row.teach_ttype_ref || "General"}
+              </span>
+              {v}
+            </>
+          ) : (
+            <span style={{ color: "var(--text-muted, #9ca3af)", fontStyle: "italic" }}>
+              Not Assigned
+            </span>
+          )}
+        </span>
       ),
     },
     {
+      key: "exams_cname",
+      header: "Question / Task",
+      width: "240px",
+      body: (v, row) => (
+        <div>
+          <span style={{ fontWeight: 600 }}>{v}</span>
+          {row.exams_answr && (
+            <div
+              style={{
+                fontSize: "12px",
+                color: "var(--text-muted, #6b7280)",
+                whiteSpace: "nowrap",
+                overflow: "hidden",
+                textOverflow: "ellipsis",
+                maxWidth: "260px",
+              }}
+            >
+              Ans: {row.exams_answr}
+            </div>
+          )}
+        </div>
+      ),
+    },
+    {
+      key: "exams_marks",
+      header: "Marks",
+      width: "80px",
+      body: (v) => `${v || 0} pts`,
+    },
+    {
       key: "exams_stats",
-      header: "Result",
-      width: "110px",
+      header: "Status",
+      width: "120px",
       body: (v) => (
-        <Badge variant={v ? "success" : "danger"}>
+        <Badge variant={v ? "success" : "secondary"}>
           {v ? <IconCheck size={12} /> : <IconClose size={12} />}
-          {v ? "Pass" : "Fail"}
+          {v ? "Evaluated" : "Pending"}
         </Badge>
       ),
     },
@@ -54,6 +94,7 @@ const ExamList = ({ listData, onEdit, onDelete }) => {
       ),
     },
   ];
+
   return (
     <DataTable
       columns={dtColumns}
@@ -64,9 +105,9 @@ const ExamList = ({ listData, onEdit, onDelete }) => {
       striped
       hoverable
       exportable
-      exportFilename="exam-data.csv"
+      exportFilename="weekly-exams.csv"
       onRowClick={(row) => onEdit(row)}
-      emptyMessage="No exam questions found"
+      emptyMessage="No exam questions found. Click 'Add' to create weekly quiz questions for your kids!"
     />
   );
 };

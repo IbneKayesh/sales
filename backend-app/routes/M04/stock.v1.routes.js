@@ -340,7 +340,7 @@ router.post("/get-price-ledger", async (req, res) => {
       });
     }
 
-    //mrr (+), sales (-), production (-), batch (+), adjustment (+)
+    //mrr (+), sales (-), production consumption (-), batch (+), adjustment in (+) out (-)
     const sql = `SELECT stk.*, stk.mrrdc_itqty * stk.mrrdc_csrat line_value,
     COALESCE(cnt.cntct_cname, stk.mrrdm_cntct) as cntct_cname, itm.items_iname, prc.price_cname, unt.units_cname
     FROM(

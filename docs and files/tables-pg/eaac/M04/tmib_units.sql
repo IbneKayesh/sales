@@ -13,6 +13,7 @@ CREATE TABLE tmib_units (
 
   -- optional
   units_untgr varchar(50), --will be short table
+  units_dcpnt boolean NOT NULL DEFAULT false,
 
   -- default
   units_actve boolean NOT NULL DEFAULT true,

@@ -20,6 +20,7 @@ const TeachPage = () => {
     listData,
     formData,
     formErrors,
+    parentOptions,
     handleChange,
     handleEdit,
     handleDelete,
@@ -79,6 +80,7 @@ const TeachPage = () => {
               stopEdit={stopEdit}
               formData={formData}
               formErrors={formErrors}
+              parentOptions={parentOptions}
               onChange={handleChange}
               onCancel={handleCancel}
               onSubmit={handleSubmit}

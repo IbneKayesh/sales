@@ -7,50 +7,50 @@
     "type": "string",
     "label": "Serial",
     "maxLength": 50,
-    "placeholder": "Enter serial",
+    "placeholder": "Enter question serial (e.g., 01)",
     "required": true
   },
   "exams_teach": {
     "type": "string",
-    "label": "Teaching",
+    "label": "Teaching Material / Lesson",
     "maxLength": 50,
-    "placeholder": "Select teaching",
+    "placeholder": "Select teaching material",
     "required": true
   },
   "exams_cname": {
     "type": "string",
-    "label": "Question Name",
-    "maxLength": 50,
-    "minLength": 3,
-    "placeholder": "Enter question name",
+    "label": "Question / Quiz Task",
+    "maxLength": 200,
+    "minLength": 2,
+    "placeholder": "Enter question (e.g., What sound does 'A' make? Or: 2 + 3 = ?)",
     "required": true
   },
   "exams_answr": {
     "type": "string",
-    "label": "Answer",
+    "label": "Expected Answer / Solution",
     "maxLength": 500,
-    "placeholder": "Enter answer",
+    "placeholder": "Enter the expected answer or solution...",
     "required": false
   },
   "exams_notes": {
     "type": "string",
-    "label": "Notes",
-    "maxLength": 50,
-    "placeholder": "Enter notes",
+    "label": "Teacher Guidance / Hint",
+    "maxLength": 100,
+    "placeholder": "Teacher hints or grading notes",
     "required": false
   },
   "exams_marks": {
     "type": "number",
     "label": "Marks",
     "default": 1,
-    "placeholder": "Enter marks",
+    "placeholder": "Enter marks for this question",
     "required": true
   },
   "exams_stats": {
     "type": "boolean",
-    "label": "Pass/Fail",
+    "label": "Evaluated / Passed",
     "default": false,
-    "placeholder": "Select result",
+    "placeholder": "Select status",
     "required": false
   },
   "exams_actve": {

@@ -1,25 +1,30 @@
 import DataTable from "@/components/DataTable";
 import Badge from "@/components/Badge";
 import ActionButton from "@/components/ActionButton";
-import {
-  IconClose,
-  IconCheck,
-} from "@/icons";
+import { IconClose, IconCheck } from "@/icons";
+import InactiveText from "@/components/InactiveText";
 
 const UnitsList = ({ listData, onEdit, onDelete }) => {
   const dtColumns = [
     { key: "units_ccode", header: "Code", width: "120px" },
-    { key: "units_cname", header: "Unit Name", width: "200px" },
+    {
+      key: "units_cname",
+      header: "Unit Name",
+      width: "200px",
+      body: (_, row) => {
+        return <InactiveText text={row.units_cname} active={row.units_actve} />;
+      },
+    },
     { key: "units_untgr", header: "Unit Group", width: "180px" },
     {
-      key: "units_actve",
-      header: "Status",
+      key: "units_dcpnt",
+      header: "Rounded Qty",
       width: "120px",
       body: (v) => {
         return (
           <Badge variant={v ? "success" : "danger"}>
             {v ? <IconCheck size={12} /> : <IconClose size={12} />}
-            {v ? "Active" : "Inactive"}
+            {v ? "Full Number" : "Fraction"}
           </Badge>
         );
       },

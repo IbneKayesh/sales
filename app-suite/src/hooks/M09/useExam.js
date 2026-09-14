@@ -4,6 +4,7 @@ import validate, { generateDataModel } from "@/models/validator";
 import tmtb_exams from "@/models/M09/tmtb_exams.json";
 const dataModel = generateDataModel(tmtb_exams);
 import { examAPI } from "@/api/M09/examAPI.js";
+import { teachAPI } from "@/api/M09/teachAPI.js";
 
 const useExam = () => {
   const { showToast, confirmBox, alertBox, isBusy, setIsBusy } = useUI();
@@ -18,6 +19,7 @@ const useExam = () => {
   const [readOnly, setReadOnly] = useState(false);
   const [stopEdit, setStopEdit] = useState(false);
   const [listData, setListData] = useState([]);
+  const [teachList, setTeachList] = useState([]);
   const [formData, setFormData] = useState(dataModel);
   const [formErrors, setFormErrors] = useState({});
 
@@ -33,8 +35,19 @@ const useExam = () => {
     }
   };
 
+  const getTeachList = async () => {
+    try {
+      const resp = await teachAPI.getAllActive({});
+      const list = resp.data || [];
+      setTeachList(list);
+    } catch (error) {
+      console.error("Error fetching teaching list:", error);
+    }
+  };
+
   useEffect(() => {
     getAllExams();
+    getTeachList();
   }, []);
 
   const handleChange = (f, v) => {
@@ -88,8 +101,18 @@ const useExam = () => {
   };
 
   const handleAddNew = () => {
+    const nextSerial = String(listData.length + 1).padStart(2, "0");
+    const defaultTeach = teachList[0]?.id || "";
     setPgView("SYS_VW_FRM_1");
-    setFormData(dataModel);
+    setFormData({
+      ...dataModel,
+      exams_srial: nextSerial,
+      exams_teach: defaultTeach,
+      exams_marks: 1,
+      exams_stats: false,
+      exams_actve: true,
+    });
+    setFormErrors({});
     setReadOnly(false);
     setStopEdit(false);
   };
@@ -97,6 +120,7 @@ const useExam = () => {
   const handleCancel = () => {
     setPgView("SYS_VW_LST_1");
     setFormData(dataModel);
+    setFormErrors({});
     setReadOnly(false);
     setStopEdit(false);
   };
@@ -106,6 +130,7 @@ const useExam = () => {
       const newErrors = validate(formData, tmtb_exams);
       setFormErrors(newErrors);
       if (Object.keys(newErrors).length > 0) {
+        showToast("Please fill in all required fields", "warning");
         return;
       }
 
@@ -132,6 +157,11 @@ const useExam = () => {
     }
   };
 
+  const teachOptions = teachList.map((item) => ({
+    value: item.id,
+    label: `[${item.teach_ttype || "General"}] ${item.teach_cname}${item.teach_tagno ? ` (${item.teach_tagno})` : ""}`,
+  }));
+
   return {
     isBusy,
     pgView,
@@ -139,6 +169,8 @@ const useExam = () => {
     readOnly,
     stopEdit,
     listData,
+    teachList,
+    teachOptions,
     formData,
     formErrors,
     handleChange,

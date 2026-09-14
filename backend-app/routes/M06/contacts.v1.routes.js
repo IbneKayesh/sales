@@ -866,4 +866,54 @@ router.post("/get-avail-suppliers-item", async (req, res) => {
   }
 });
 
+// get-suppliers-por
+router.post("/get-suppliers-por", async (req, res) => {
+  try {
+    const { user_s, user_c, user_b } = req.body;
+
+    // Validate input
+    if (!user_c) {
+      return res.json({
+        success: false,
+        message: "All fields in the request body are required.",
+        data: [],
+      });
+    }
+
+    //database action
+    const sql = `SELECT cnt.*, pty.id party_id, pty.party_chtac chtac_id, pty.party_crbal
+    FROM tmcb_cntct cnt
+    JOIN tmtb_party pty ON cnt.id = pty.party_vndor
+    JOIN tmtb_chtac cht ON pty.party_chtac = cht.id
+    JOIN tmtb_chtrt crt ON cht.chtac_chtno = crt.chtrt_chtno
+    WHERE cnt.cntct_users = $1
+    AND cnt.cntct_actve = TRUE
+	  AND crt.chtrt_trnid = 'SYS_PO'
+	  AND crt.chtrt_pegid = 'SYS_PURCHASE_ORDER'
+    AND crt.chtrt_grpid ='SYS_AST_SUPPLIER'
+    AND pty.party_actve = TRUE
+    AND cht.chtac_actve = TRUE
+    AND crt.chtrt_actve = TRUE
+    ORDER BY cnt.cntct_cname`;
+    //AND cnt.cntct_ctype IN ('Supplier')
+    const params = [user_c];
+    const rows = await dbGetAll(
+      sql,
+      params,
+      `get contact suppliers po- ${user_c}`,
+    );
+    res.json({
+      success: true,
+      message: "Query executed successfully.",
+      data: rows,
+    });
+  } catch (error) {
+    console.error("database action error:", error);
+    return res.json({
+      success: false,
+      message: error.message || "An error occurred during db action",
+      data: [],
+    });
+  }
+});
 module.exports = router;

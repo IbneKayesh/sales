@@ -17,7 +17,7 @@ router.post("/", async (req, res) => {
       });
     }
 
-    const sql = `SELECT exm.*, tch.teach_cname AS teach_cname_ref,
+    const sql = `SELECT exm.*, tch.teach_cname AS teach_cname_ref, tch.teach_ttype AS teach_ttype_ref,
     csr.emply_cname AS crusr_cname, usr.emply_cname AS upusr_cname, 0 as edit_stop
     FROM tmsb_exams exm
     LEFT JOIN tmsb_teach tch ON exm.exams_teach = tch.id
@@ -56,7 +56,7 @@ router.post("/get-all-active", async (req, res) => {
       });
     }
 
-    const sql = `SELECT exm.*, tch.teach_cname AS teach_cname_ref, 0 as edit_stop
+    const sql = `SELECT exm.*, tch.teach_cname AS teach_cname_ref, tch.teach_ttype AS teach_ttype_ref, 0 as edit_stop
     FROM tmsb_exams exm
     LEFT JOIN tmsb_teach tch ON exm.exams_teach = tch.id
     WHERE exm.exams_users = $1
@@ -84,9 +84,6 @@ const create = async (req, res) => {
   try {
     const {
       id,
-      exams_users,
-      exams_bsins,
-      exams_ccode,
       exams_srial,
       exams_teach,
       exams_cname,
@@ -101,24 +98,29 @@ const create = async (req, res) => {
     } = req.body;
 
     if (
-      !exams_users ||
-      !exams_bsins ||
       !exams_srial ||
       !exams_teach ||
       !exams_cname ||
-      !exams_marks ||
+      exams_marks === undefined ||
+      exams_marks === null ||
       !user_s ||
       !user_c ||
       !user_b
     ) {
       return res.json({
         success: false,
-        message: "All fields in the request body are required.",
+        message: "All required fields in the request body must be provided.",
         data: {},
       });
     }
 
-    const newCode = await GenNewCode(user_c, "tmsb_exams");
+    let newCode;
+    try {
+      newCode = await GenNewCode(user_c, "tmsb_exams");
+    } catch (err) {
+      newCode = `EXM${Date.now().toString().slice(-8)}`;
+    }
+
     const scripts = [];
     scripts.push({
       sql: `INSERT INTO tmsb_exams(id, exams_users, exams_bsins, exams_ccode, exams_srial, exams_teach,
@@ -137,7 +139,7 @@ const create = async (req, res) => {
         exams_cname,
         exams_answr || null,
         exams_notes || null,
-        exams_marks,
+        Number(exams_marks) || 1,
         exams_stats ?? false,
         exams_actve ?? true,
         user_s,
@@ -149,7 +151,7 @@ const create = async (req, res) => {
     await dbRunAll(scripts);
     res.json({
       success: true,
-      message: `${newCode} - Created successfully.`,
+      message: `${newCode} (${exams_cname}) - Created successfully.`,
       data: {},
     });
   } catch (error) {
@@ -166,9 +168,6 @@ const update = async (req, res) => {
   try {
     const {
       id,
-      exams_users,
-      exams_bsins,
-      exams_ccode,
       exams_srial,
       exams_teach,
       exams_cname,
@@ -183,19 +182,18 @@ const update = async (req, res) => {
 
     if (
       !id ||
-      !exams_users ||
-      !exams_bsins ||
       !exams_srial ||
       !exams_teach ||
       !exams_cname ||
-      !exams_marks ||
+      exams_marks === undefined ||
+      exams_marks === null ||
       !user_s ||
       !user_c ||
       !user_b
     ) {
       return res.json({
         success: false,
-        message: "All fields in the request body are required.",
+        message: "All required fields in the request body must be provided.",
         data: {},
       });
     }
@@ -218,7 +216,7 @@ const update = async (req, res) => {
       exams_cname,
       exams_answr || null,
       exams_notes || null,
-      exams_marks,
+      Number(exams_marks) || 1,
       exams_stats ?? false,
       user_s,
       id,

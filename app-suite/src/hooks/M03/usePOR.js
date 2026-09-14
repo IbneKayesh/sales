@@ -12,6 +12,7 @@ const dataModelItem = generateDataModel(tmpb_mrrdc);
 import { tabColumnsAPI } from "@/api/M01/tabColumnsAPI.js";
 import { departmentAPI } from "@/api/M01/departmentAPI.js";
 import { mrrAPI } from "@/api/M03/mrrAPI.js";
+import { porAPI } from "@/api/M03/porAPI.js";
 import { itemsAPI } from "@/api/M04/itemsAPI.js";
 import { bundleAPI } from "@/api/M04/bundleAPI.js";
 import { contactAPI } from "@/api/M06/contactAPI.js";
@@ -61,7 +62,7 @@ const usePOR = () => {
     try {
       setIsBusy(true);
       const resp = await tabColumnsAPI.getByPage({
-        tabcl_cname: "SYS_MRR_DIRECT",
+        tabcl_cname: "SYS_PURCHASE_ORDER",
       });
       const list = resp.data || [];
       //console.log("list", list);
@@ -433,7 +434,7 @@ const usePOR = () => {
       return;
     }
     try {
-      const resp = await contactAPI.getSuppliersMrr();
+      const resp = await contactAPI.getSuppliersPor();
       const list = resp.data || [];
       setCntct_Options(list);
     } catch (error) {}
@@ -445,7 +446,7 @@ const usePOR = () => {
     //updated balance
     // }
     try {
-      const resp = await coaNetworkAPI.getMrrDirectExpPaym({});
+      const resp = await coaNetworkAPI.getPorExpPaym({});
       const list = resp.data || [];
       const mrrcs = list.filter(
         (f) => f.chtrt_grpid === "SYS_LIB_LOCAL_VENDOR",
@@ -453,16 +454,16 @@ const usePOR = () => {
       const mrrpy = list.filter((f) =>
         ["SYS_AST_PAYMENT", "SYS_NONE"].includes(f.chtrt_grpid),
       );
-      //console.log("list",list)
+      console.log("list",list)
       setMrrcs_Options(mrrcs);
       const listActive = mrrpy.filter((f) => validNumber(f.party_crbal) > 0);
       setMrrpy_Options(listActive);
     } catch (error) {}
   };
 
-  const getMrrItems = async (id, dpart_id) => {
+  const getPorItems = async (id, dpart_id) => {
     try {
-      const resp = await itemsAPI.getMrrItems({
+      const resp = await itemsAPI.getPorItems({
         cntct_id: id,
         price_dpart: dpart_id,
       });
@@ -489,7 +490,7 @@ const usePOR = () => {
         ...(dspct === 0 ? { mrrdm_invds: 0 } : {}),
       };
       reCalculate(listDataItem, newformData, listDataCost, listDataPayment);
-      await getMrrItems(v, formData.mrrdm_dpart);
+      await getPorItems(v, formData.mrrdm_dpart);
     }
     if (f === "mrrdm_invds" || f === "mrrdm_dspct") {
       const newformData = {
@@ -636,7 +637,7 @@ const usePOR = () => {
       //console.log(reqBody);
       //return;
       setIsBusy(true);
-      const resp = await mrrAPI.upsert(reqBody);
+      const resp = await porAPI.upsert(reqBody);
       alertBox({
         title: resp.success ? (formData.id ? "Updated" : "Saved") : "Error",
         message: resp.message,

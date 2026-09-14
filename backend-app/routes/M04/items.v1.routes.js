@@ -539,6 +539,78 @@ router.post("/get-new-business-items", async (req, res) => {
   }
 });
 
+// get-por-items
+router.post("/get-por-items", async (req, res) => {
+  try {
+    const { cntct_id, price_dpart, user_s, user_c, user_b } = req.body;
+
+    // Validate input
+    if (!cntct_id || !price_dpart || !user_c) {
+      return res.json({
+        success: false,
+        message: "All fields in the request body are required.",
+        data: [],
+      });
+    }
+
+    //database action
+    const sql = `SELECT itm.*,
+    prc.id AS price_id, prc.price_cname,
+    prc.price_lprat, prc.price_dprat, prc.price_tprat, prc.price_mrrat, prc.price_dspct,
+    prc.price_gdstk, prc.price_bdstk, prc.price_mnqty, prc.price_mxqty, prc.price_pbqty,
+    prc.price_sbqty, prc.price_notes, prc.price_jnote,
+    runit.units_cname as runit_cname,
+    punit.units_cname as punit_cname,
+    sunit.units_cname as sunit_cname,
+    sgrup.sgrup_cname as sgrup_cname,
+    scatg.scatg_cname as scatg_cname,
+    brand.brand_cname as brand_cname,
+    pty.id party_id, pty.party_chtac chtac_id
+    FROM tmib_items itm
+    JOIN tmib_price prc ON itm.id = prc.price_items    
+    JOIN tmib_units runit ON itm.items_runit = runit.id
+    JOIN tmib_units punit ON itm.items_punit = punit.id
+    JOIN tmib_units sunit ON itm.items_sunit = sunit.id
+    JOIN tmib_sgrup sgrup ON itm.items_sgrup = sgrup.id
+    JOIN tmib_scatg scatg ON itm.items_scatg = scatg.id
+    JOIN tmib_brand brand ON itm.items_brand = brand.id
+    JOIN tmtb_party pty ON itm.items_itype = pty.party_vndor
+    JOIN tmtb_chtac cht ON pty.party_chtac = cht.id
+    JOIN tmtb_chtrt crt ON cht.chtac_chtno = crt.chtrt_chtno
+                        AND crt.chtrt_trnid = 'SYS_PO'
+                        AND crt.chtrt_pegid = 'SYS_PURCHASE_ORDER'
+                        AND crt.chtrt_grpid = 'SYS_AST_INVENTORY'
+                        AND crt.chtrt_route = itm.items_itype
+    JOIN tmib_itmct itc ON itm.id = itc.itmct_items
+    WHERE itm.items_stpur = false
+    AND itm.items_actve = TRUE
+    AND prc.price_actve = TRUE
+    AND pty.party_actve = TRUE
+    AND cht.chtac_actve = TRUE
+    AND crt.chtrt_actve = TRUE
+    AND itc.itmct_cntct = $1
+    AND prc.price_users = $2
+    AND prc.price_bsins = $3
+    AND prc.price_dpart = $4
+    ORDER BY itm.items_iname ASC`;
+
+    const params = [cntct_id, user_c, user_b, price_dpart];
+    const rows = await dbGetAll(sql, params, `get new por items- ${user_c}`);
+    res.json({
+      success: true,
+      message: "Query executed successfully.",
+      data: rows,
+    });
+  } catch (error) {
+    console.error("database action error:", error);
+    return res.json({
+      success: false,
+      message: error.message || "An error occurred during db action",
+      data: [],
+    });
+  }
+});
+
 // get-mrr-items
 router.post("/get-mrr-items", async (req, res) => {
   try {
@@ -576,7 +648,7 @@ router.post("/get-mrr-items", async (req, res) => {
     JOIN tmib_brand brand ON itm.items_brand = brand.id
     JOIN tmtb_party pty ON itm.items_itype = pty.party_vndor
     JOIN tmtb_chtac cht ON pty.party_chtac = cht.id
-    JOIN tmtb_chtrt crt ON cht.chtac_chtno = crt.chtrt_chtno            
+    JOIN tmtb_chtrt crt ON cht.chtac_chtno = crt.chtrt_chtno
                         AND crt.chtrt_trnid = 'SYS_MRR'
                         AND crt.chtrt_pegid = 'SYS_MRR_DIRECT'
                         AND crt.chtrt_grpid = 'SYS_AST_INVENTORY'
@@ -926,7 +998,7 @@ ORDER BY prc.price_cname, stk.stock_crdat`;
           AND prc.price_actve = TRUE
           ORDER BY prc.price_cname`;
 
-             sql = `SELECT prc.id stock_id, '-' stock_sorce, '-' stock_trnno, TO_CHAR(CURRENT_DATE, 'YYYY-MM-DD') as stock_trdat, prc.price_items stock_items, prc.id stock_price,
+      sql = `SELECT prc.id stock_id, '-' stock_sorce, '-' stock_trnno, TO_CHAR(CURRENT_DATE, 'YYYY-MM-DD') as stock_trdat, prc.price_items stock_items, prc.id stock_price,
       prc.id stock_refid, '-' stock_brcod, '-' stock_batch, '-' stock_srial, null stock_wrdat, null stock_fgdat, 
       null stock_exdat, prc.price_gdstk stock_ohqty, COALESCE(NULLIF(prc.price_avrat, 0), NULLIF(prc.price_lprat, 0)) stock_cprat,
       prc.id price_id, prc.price_cname, prc.price_lprat,

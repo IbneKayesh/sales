@@ -11,6 +11,7 @@ import Taskbar from "./layouts/Taskbar";
 import RainGlass from "./components/RainGlass";
 import AnalogClock from "./components/AnalogClock";
 import DigitalClock from "./components/DigitalClock";
+import LockScreen from "./pages/auth/LockScreen";
 import "./App.css";
 
 function AppContent() {
@@ -22,6 +23,7 @@ function AppContent() {
     bgAnimMode,
     isIdle,
     showBgAnim,
+    isLocked,
   } = useApp();
 
   // Block the browser's default right-click context menu app-wide.
@@ -122,6 +124,8 @@ function AppContent() {
           <DigitalClock noBackdrop={bgAnimMode === "always"} />
         </div>
       )}
+      {/* Session Lock Screen — locks after idle time; unlocking preserves exact state */}
+      {isLocked && <LockScreen />}
     </Layout>
   );
 }

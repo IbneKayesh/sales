@@ -1,10 +1,15 @@
 import Button from "@/components/Button";
 import InputText from "@/components/InputText";
 import InputNumber from "@/components/InputNumber";
+import InputTextArea from "@/components/InputTextArea";
 import Dropdown from "@/components/Dropdown";
 import AuditData from "@/components/AuditData";
 import { IconClose, IconSave } from "@/icons";
-import { bool_Options } from "@/utils/vtable.js";
+
+const examStatusOptions = [
+  { value: false, label: "Pending Evaluation / Active Question" },
+  { value: true, label: "Evaluated / Completed" },
+];
 
 const ExamForm = ({
   isBusy,
@@ -12,64 +17,62 @@ const ExamForm = ({
   stopEdit,
   formData,
   formErrors,
+  teachOptions = [],
   onChange,
   onCancel,
   onSubmit,
 }) => {
   return (
     <div className="form-wrap">
+      {/* Row 1: Serial and Teaching Material dropdown */}
       <div className="grid">
-        <div className="col-span-4">
+        <div className="col-span-3">
           <InputText
-            label="Serial"
-            placeholder="Enter serial"
-            value={formData.exams_srial}
+            label="Question No / Serial"
+            placeholder="e.g., 01"
+            value={formData.exams_srial || ""}
             onChange={(e) => onChange("exams_srial", e.target.value)}
             error={formErrors.exams_srial}
             required
             disabled={readOnly}
           />
         </div>
-        <div className="col-span-4">
-          <InputText
-            label="Teaching Ref"
-            placeholder="Enter teaching reference"
-            value={formData.exams_teach}
+        <div className="col-span-9">
+          <Dropdown
+            label="Lesson / Teaching Material"
+            options={teachOptions}
+            value={formData.exams_teach || ""}
             onChange={(e) => onChange("exams_teach", e.target.value)}
             error={formErrors.exams_teach}
-            required
-            disabled={readOnly}
-          />
-        </div>
-        <div className="col-span-4">
-          <InputText
-            label="Question Name"
-            placeholder="Enter question name"
-            value={formData.exams_cname}
-            onChange={(e) => onChange("exams_cname", e.target.value)}
-            error={formErrors.exams_cname}
+            placeholder={
+              teachOptions.length === 0
+                ? "No lessons available. Please create a lesson first!"
+                : "Select the lesson this question belongs to..."
+            }
             required
             disabled={readOnly}
           />
         </div>
       </div>
 
+      {/* Row 2: Question / Task & Marks */}
       <div className="grid">
-        <div className="col-span-6">
+        <div className="col-span-10">
           <InputText
-            label="Answer"
-            placeholder="Enter expected answer"
-            value={formData.exams_answr}
-            onChange={(e) => onChange("exams_answr", e.target.value)}
-            error={formErrors.exams_answr}
+            label="Question / Task for Kids"
+            placeholder="e.g., What sound does 'B' make? Or: Circle all words starting with 'C'."
+            value={formData.exams_cname || ""}
+            onChange={(e) => onChange("exams_cname", e.target.value)}
+            error={formErrors.exams_cname}
+            required
             disabled={readOnly}
           />
         </div>
-        <div className="col-span-6">
+        <div className="col-span-2">
           <InputNumber
-            label="Marks"
-            placeholder="Enter marks"
-            value={formData.exams_marks}
+            label="Question Marks"
+            placeholder="e.g., 1"
+            value={formData.exams_marks ?? 1}
             onChange={(e) => onChange("exams_marks", e.target.value)}
             error={formErrors.exams_marks}
             required
@@ -78,25 +81,41 @@ const ExamForm = ({
         </div>
       </div>
 
+      {/* Row 3: Expected Answer / Solution */}
       <div className="grid">
-        <div className="col-span-6">
+        <div className="col-span-12">
+          <InputTextArea
+            label="Expected Answer / Solution (Teacher's Rubric)"
+            placeholder="Enter the correct answer or acceptable responses from kids..."
+            value={formData.exams_answr || ""}
+            onChange={(e) => onChange("exams_answr", e.target.value)}
+            error={formErrors.exams_answr}
+            rows={3}
+            disabled={readOnly}
+          />
+        </div>
+      </div>
+
+      {/* Row 4: Teacher Guidance & Status */}
+      <div className="grid">
+        <div className="col-span-8">
           <InputText
-            label="Notes"
-            placeholder="Enter notes"
-            value={formData.exams_notes}
+            label="Teacher Guidance / Hint"
+            placeholder="e.g., Prompt with picture card if needed"
+            value={formData.exams_notes || ""}
             onChange={(e) => onChange("exams_notes", e.target.value)}
             error={formErrors.exams_notes}
             disabled={readOnly}
           />
         </div>
-        <div className="col-span-6">
+        <div className="col-span-4">
           <Dropdown
-            label="Pass/Fail"
-            options={bool_Options}
-            value={formData.exams_stats}
-            onChange={(e) => onChange("exams_stats", e.target.value)}
+            label="Question Status"
+            options={examStatusOptions}
+            value={formData.exams_stats ?? false}
+            onChange={(e) => onChange("exams_stats", e.target.value === "true" || e.target.value === true)}
             error={formErrors.exams_stats}
-            placeholder="Select..."
+            placeholder="Select Status..."
             disabled={readOnly}
           />
         </div>
@@ -119,7 +138,7 @@ const ExamForm = ({
         </Button>
         <Button variant="info" onClick={onSubmit} disabled={isBusy}>
           <IconSave size={16} className="icon-left" />
-          {formData?.id ? "Update" : "Create"}
+          {formData?.id ? "Update Question" : "Save Question"}
         </Button>
       </div>
     </div>

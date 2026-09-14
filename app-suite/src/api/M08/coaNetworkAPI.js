@@ -30,6 +30,10 @@ export const coaNetworkAPI = {
     apiRequest("/M08/v1/coa-network/get-by-trn-page-id", {
       body: data,
     }),
+  getPorExpPaym: (data) =>
+    apiRequest("/M08/v1/coa-network/get-por-exp-paym", {
+      body: data,
+    }),
   getMrrDirectExpPaym: (data) =>
     apiRequest("/M08/v1/coa-network/get-mrr-direct-exp-paym", {
       body: data,

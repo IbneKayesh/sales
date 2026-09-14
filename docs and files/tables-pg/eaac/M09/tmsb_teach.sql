@@ -4,18 +4,21 @@
 CREATE TABLE tmsb_teach (
   -- default 1
   id varchar(50) PRIMARY KEY,
-  teach_srial varchar(50) NOT NULL,
-  teach_teach varchar(50) NOT NULL, --parent child format teaching materials
+  teach_users varchar(50) NOT NULL, -- Company / Tenant Id
+  teach_bsins varchar(50) NOT NULL, -- Business / Branch Id
+  teach_ccode varchar(50) NOT NULL, -- Auto-generated code (TCH00000001)
+  teach_srial varchar(50) NOT NULL, -- Display Serial / Sequence (e.g. 01)
+  teach_teach varchar(50),          -- Parent Topic / Material Id (optional hierarchy)
 
   -- custom
-  teach_cname varchar(50) NOT NULL, --student Name
-  teach_descr varchar(500), --reading descriptions
-  teach_notes varchar(50), --notes
-  teach_ttype varchar(50), --subject name
-  teach_tagno varchar(100), --tag no
-  teach_reads integer NOT NULL DEFAULT 0, --total reads
-  teach_marks integer NOT NULL DEFAULT 1, --total marks
-  teach_stats boolean NOT NULL DEFAULT false, --on / off
+  teach_cname varchar(50) NOT NULL, -- Lesson / Topic Title (e.g., Alphabet - Letter A)
+  teach_descr varchar(500),         -- Reading Content / Descriptions for Kids
+  teach_notes varchar(50),          -- Teacher Guidance / Notes
+  teach_ttype varchar(50),          -- Subject Name (e.g., English, Math, Phonics)
+  teach_tagno varchar(100),         -- Grade / Level / Tag (e.g., Kindergarten, Grade 1)
+  teach_reads integer NOT NULL DEFAULT 0, -- Target practice reads / repetitions
+  teach_marks integer NOT NULL DEFAULT 1, -- Total marks / points
+  teach_stats boolean NOT NULL DEFAULT false, -- Ready for Kids (true) / Draft (false)
 
   -- default 2
   teach_actve boolean NOT NULL DEFAULT true,
