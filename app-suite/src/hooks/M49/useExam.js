@@ -1,10 +1,10 @@
 import { useEffect, useState } from "react";
 import { useUI } from "@/context/AppUIContext.jsx";
 import validate, { generateDataModel } from "@/models/validator";
-import tmtb_exams from "@/models/M09/tmtb_exams.json";
+import tmtb_exams from "@/models/M49/tmtb_exams.json";
 const dataModel = generateDataModel(tmtb_exams);
-import { examAPI } from "@/api/M09/examAPI.js";
-import { teachAPI } from "@/api/M09/teachAPI.js";
+import { examAPI } from "@/api/M49/examAPI.js";
+import { teachAPI } from "@/api/M49/teachAPI.js";
 
 const useExam = () => {
   const { showToast, confirmBox, alertBox, isBusy, setIsBusy } = useUI();

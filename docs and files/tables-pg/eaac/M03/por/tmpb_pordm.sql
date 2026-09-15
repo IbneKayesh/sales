@@ -33,7 +33,7 @@ CREATE TABLE tmpb_pordm (
   pordm_vehid VARCHAR(50),
   pordm_ispst boolean NOT NULL DEFAULT false,
   pordm_ispad boolean NOT NULL DEFAULT false,
-  pordm_isqcp boolean NOT NULL DEFAULT false,
+  pordm_ispnd boolean NOT NULL DEFAULT true, --is pending MRR
   pordm_isapp boolean NOT NULL DEFAULT false,
   
   -- default 2

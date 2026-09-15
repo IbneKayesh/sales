@@ -128,6 +128,7 @@ const create = async (req, res) => {
       tmpb_mrrcs,
       tmpb_mrrpy,
       tmpb_mrrdf,
+      fromPO,
       user_s,
       user_c,
       user_b,
@@ -169,7 +170,7 @@ const create = async (req, res) => {
       };
     }
     const { acprd_id, fsyar_id } = acprd[0];
-    
+
     const newId_JV = uuidv4();
     const newTrnNo_JV = await GenNewTrn(
       user_c,
@@ -196,7 +197,6 @@ const create = async (req, res) => {
       };
     }
 
-    
     const newId = uuidv4();
     //const newCode = await GenNewCode(user_c, "tmpb_mrrdm");
     const newTrnNo = await GenNewTrn(
@@ -410,6 +410,46 @@ const create = async (req, res) => {
           mrrdm_dpart,
         ],
         label: `Update price stock detail ${newTrnNo}`,
+      });
+
+      //reduce purchase order items
+      if (fromPO) {
+        scripts.push({
+          sql: `UPDATE tmpb_pordc
+                  SET pordc_mrqty = pordc_mrqty + $1,
+                      pordc_upusr = $2,
+                      pordc_updat = CURRENT_TIMESTAMP,
+                      pordc_rvnmr = pordc_rvnmr + 1
+                      WHERE id = $3
+                      AND pordc_users = $4`,
+          params: [det.mrrdc_itqty || 0, user_s, det.mrrdc_refid, user_c],
+          label: `Update po MRR detail ${newTrnNo}`,
+        });
+      }
+    }
+    //flag purchase order mrr pending :: unti all items are received, not make false
+    if (fromPO) {
+      scripts.push({
+        sql: `MERGE INTO tmpb_pordm SRC
+              USING ( 
+                SELECT poc.pordc_pordm, SUM (
+                  CASE
+                    WHEN (poc.pordc_itqty - poc.pordc_mrqty) > 0 THEN 1
+                    ELSE 0
+                  END ) pordc_pnqty
+                FROM tmpb_pordc poc
+                JOIN tmpb_pordm pom ON poc.pordc_pordm = pom.id
+                WHERE pom.pordm_ispnd = TRUE
+                AND pom.pordm_users = $1
+                AND pom.pordm_bsins = $2
+                AND pom.pordm_dpart = $3
+                GROUP BY poc.pordc_pordm
+              ) TGT
+              ON SRC.id = TGT.pordc_pordm
+              WHEN MATCHED THEN
+                UPDATE SET pordm_ispnd = (CASE WHEN TGT.pordc_pnqty > 0 THEN TRUE ELSE FALSE END)`,
+        params: [user_c, user_b, mrrdm_dpart],
+        label: `Update po MRR header ${newTrnNo}`,
       });
     }
 

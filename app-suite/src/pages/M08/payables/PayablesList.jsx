@@ -3,6 +3,7 @@ import { IconDollar } from "@/icons";
 import Button from "@/components/Button";
 import { getRelativeDays } from "@/utils/datetime.js";
 import { amountInWords } from "@/utils/ntw.js";
+import { formatNumber } from "@/utils/misc";
 
 const PayablesList = ({ listData, onEdit, onDelete }) => {
   const dtColumns = [
@@ -37,6 +38,7 @@ const PayablesList = ({ listData, onEdit, onDelete }) => {
       key: "mrrpy_duamt",
       header: "Amount",
       width: "80px",
+      body: (v) => formatNumber(v),
       footer: (_, row) => {
         return row.reduce((sum, row) => sum + Number(row.mrrpy_duamt ?? 0), 0);
       },

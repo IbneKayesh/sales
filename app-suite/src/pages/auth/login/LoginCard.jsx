@@ -10,21 +10,44 @@ import LoginStatus from "./LoginStatus";
  *
  * The header is deliberately text-only: the product brand and module list live
  * on the brand panel to the left, so repeating the logo here would double up.
+ *
+ * Props are the sign-in form's plus the backend status pill's, both handed over
+ * flat by LoginPage.
  */
 export default function LoginCard({
-  formProps,
-  statusProps,
+  // Sign-in form
+  formData,
+  formErrors,
+  isBusy,
+  isOffline,
+  networkError,
+  isSavedMode,
+  savedLogin,
+  onFieldChange,
+  onSubmit,
+  onSavedLoginChange,
+  onTryDifferentUser,
+  usernameRef,
+  passwordRef,
+  showPassword,
+  onToggleShowPassword,
+  // Backend status
+  status,
+  checking,
+  lastCheckedAt,
+  onRecheck,
+  retryAttempt,
+  maxRetryAttempts,
+  autoRetryStopped,
   title = "Welcome back",
   subtitle = "Sign in to continue to your workspace",
-  showHint = true,
-  className = "",
 }) {
   // Reveals the reset instructions inline instead of sending the user to a
   // route that doesn't exist yet.
   const [showResetHint, setShowResetHint] = useState(false);
 
   return (
-    <div className={`login-page__card${className ? " " + className : ""}`}>
+    <div className="login-page__card">
       <div className="login-page__accent" />
 
       <header className="login-page__card-head">
@@ -65,52 +88,63 @@ export default function LoginCard({
 
       {/* The login endpoint lives on the same server, so an unreachable
           backend means sign-in is impossible until it comes back. */}
-      {formProps.isOffline && (
+      {isOffline && (
         <div
-          className={`login-page__offline${
-            statusProps.autoRetryStopped ? " login-page__offline--stopped" : ""
-          }`}
+          className={`login-page__offline${autoRetryStopped ? " login-page__offline--stopped" : ""}`}
           role="alert"
         >
           <IconWarning size={16} />
           <div className="login-page__offline-text">
             <strong>Server unreachable</strong>
-            {formProps.networkError && (
-              <span className="login-page__offline-reason">
-                {formProps.networkError}
-              </span>
+            {networkError && (
+              <span className="login-page__offline-reason">{networkError}</span>
             )}
             <span>
-              {statusProps.autoRetryStopped
-                ? `Automatic retries stopped after ${statusProps.maxRetryAttempts} attempts. Sign-in stays disabled until the server responds.`
-                : `Sign-in is disabled. Retrying automatically — attempt ${statusProps.retryAttempt} of ${statusProps.maxRetryAttempts}…`}
+              {autoRetryStopped
+                ? `Automatic retries stopped after ${maxRetryAttempts} attempts. Sign-in stays disabled until the server responds.`
+                : `Sign-in is disabled. Retrying automatically — attempt ${retryAttempt} of ${maxRetryAttempts}…`}
             </span>
           </div>
           <button
             type="button"
             className="login-page__offline-retry"
-            onClick={statusProps.onRecheck}
-            disabled={statusProps.checking}
+            onClick={onRecheck}
+            disabled={checking}
           >
-            {statusProps.checking
-              ? "Retrying…"
-              : statusProps.autoRetryStopped
-                ? "Retry"
-                : "Retry now"}
+            {checking ? "Retrying…" : autoRetryStopped ? "Retry" : "Retry now"}
           </button>
         </div>
       )}
 
-      <LoginForm {...formProps} />
+      <LoginForm
+        formData={formData}
+        formErrors={formErrors}
+        isBusy={isBusy}
+        isOffline={isOffline}
+        isSavedMode={isSavedMode}
+        savedLogin={savedLogin}
+        onFieldChange={onFieldChange}
+        onSubmit={onSubmit}
+        onSavedLoginChange={onSavedLoginChange}
+        onTryDifferentUser={onTryDifferentUser}
+        usernameRef={usernameRef}
+        passwordRef={passwordRef}
+        showPassword={showPassword}
+        onToggleShowPassword={onToggleShowPassword}
+      />
 
-      {showHint && (
-        <p className="login-page__hint">
-          {APP_NAME} © {new Date().getFullYear()} · Crafting Digital Excellence
-        </p>
-      )}
+      <p className="login-page__hint">
+        {APP_NAME} © {new Date().getFullYear()} · {APP_CREATOR}
+      </p>
 
       <LoginStatus
-        {...statusProps}
+        status={status}
+        checking={checking}
+        lastCheckedAt={lastCheckedAt}
+        onRecheck={onRecheck}
+        retryAttempt={retryAttempt}
+        maxRetryAttempts={maxRetryAttempts}
+        autoRetryStopped={autoRetryStopped}
         className="login-page__backend--card login-page__backend--mobile-only"
       />
     </div>

@@ -945,6 +945,7 @@ router.post("/get-suppliers-pending-mrr", async (req, res) => {
     JOIN (SELECT pom.pordm_cntct
       FROM tmpb_pordm pom
       WHERE pom.pordm_ispst = TRUE
+      AND pom.pordm_ispnd = TRUE
       AND pom.pordm_isapp = TRUE
       AND pom.pordm_users = $1
       AND pom.pordm_dpart = $2

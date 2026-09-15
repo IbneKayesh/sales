@@ -56,15 +56,15 @@ const PorList = ({ listData, onEdit, onDelete }) => {
       ),
     },
     {
-      key: "pordm_duamt",
-      header: "Due",
+      key: "pordm_pdamt",
+      header: "Advance",
       width: "80px",
       footer: (_, row) => {
-        return row.reduce((sum, row) => sum + Number(row.pordm_duamt ?? 0), 0);
+        return row.reduce((sum, row) => sum + Number(row.pordm_pdamt ?? 0), 0);
       },
       body: (_, row) => (
         <>
-          <NegativeValue value={row.pordm_duamt} />
+          <NegativeValue value={row.pordm_pdamt} />
         </>
       ),
     },
@@ -74,6 +74,16 @@ const PorList = ({ listData, onEdit, onDelete }) => {
       width: "80px",
       body: (v) => (
         <Badge variant={v ? "success" : "secondary"} size="sm">
+          {v ? "Yes" : "No"}
+        </Badge>
+      ),
+    },
+    {
+      key: "pordm_ispnd",
+      header: "MRR Pending",
+      width: "80px",
+      body: (v) => (
+        <Badge variant={v ? "warning" : "success"} size="sm">
           {v ? "Yes" : "No"}
         </Badge>
       ),

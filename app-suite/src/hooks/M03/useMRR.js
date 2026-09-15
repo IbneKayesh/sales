@@ -42,6 +42,7 @@ const useMRR = () => {
   const [dpart_Options, setDpart_Options] = useState([]);
   const [cntct_Options, setCntct_Options] = useState([]);
   const [items_Options, setItems_Options] = useState([]);
+  const [allItems, setAllItems] = useState([]);
 
   //costing
   const [mrrcs_Options, setMrrcs_Options] = useState([]);
@@ -102,6 +103,20 @@ const useMRR = () => {
       setStopEdit(false);
     }
   }, [listDataItem]);
+
+  useEffect(() => {
+    if (fromPO) {
+      const addedItemIds = new Set(
+        listDataItem.map((item) => item.mrrdc_refid),
+      );
+
+      const availableItems = allItems.filter(
+        (item) => !addedItemIds.has(item.price_refid),
+      );
+
+      setItems_Options(availableItems);
+    }
+  }, [allItems, listDataItem]);
 
   const getBundleItem = async (items) => {
     try {
@@ -471,15 +486,40 @@ const useMRR = () => {
     } catch (error) {}
   };
 
+  const getPOExpnPaym = async (cntct_id, dpart_id) => {
+    try {
+      const resp = await coaNetworkAPI.getMrrDirectExpPaymPO({
+        cntct_id: cntct_id,
+        dpart_id: dpart_id,
+      });
+      const list = resp.data || [];
+      const mrrcs = list.filter(
+        (f) => f.chtrt_grpid === "SYS_LIB_LOCAL_VENDOR",
+      );
+      const mrrpy = list.filter((f) =>
+        ["SYS_AST_SUPPLIER", "SYS_NONE"].includes(f.chtrt_grpid),
+      );
+      //console.log("list",list)
+      setMrrcs_Options(mrrcs);
+      const listActive = mrrpy.filter((f) => validNumber(f.party_crbal) > 0);
+      setMrrpy_Options(listActive);
+    } catch (error) {}
+  };
+
   const getMrrItems = async (id, dpart_id) => {
     try {
       const resp = await itemsAPI.getMrrItems({
         cntct_id: id,
         price_dpart: dpart_id,
-        from_po: fromPO
+        from_po: fromPO,
       });
       const list = resp.data || [];
-      setItems_Options(list);
+      //setItems_Options(list);
+      if (fromPO) {
+        setAllItems(list);
+      } else {
+        setItems_Options(list);
+      }
     } catch (error) {}
   };
 
@@ -502,6 +542,7 @@ const useMRR = () => {
       };
       reCalculate(listDataItem, newformData, listDataCost, listDataPayment);
       await getMrrItems(v, formData.mrrdm_dpart);
+      await getPOExpnPaym(v, formData.mrrdm_dpart);
     }
     if (f === "mrrdm_invds" || f === "mrrdm_dspct") {
       const newformData = {
@@ -606,6 +647,7 @@ const useMRR = () => {
     setListDataCost([]);
     setListDataPayment([]);
     setListDataBundle([]);
+    setItems_Options([]);
     getAllContacts();
     getAllDepartments();
     getExpnPaym();
@@ -642,8 +684,19 @@ const useMRR = () => {
         return;
       }
 
+      if (fromPO && validNumber(formData.mrrdm_pdamt) < 0.1) {
+        const confirmation = await confirmBox({
+          title: "With PO → MRR without payment",
+          message: `This MRR has no payment or adjust with Supplier advance. Are you want to continue?`,
+          confirmText: "Continue",
+          variant: "danger",
+        });
+        if (!confirmation) return;
+      }
+
       const reqBody = {
         ...formData,
+        fromPO,
         tmpb_mrrdc: listDataItem,
         tmpb_mrrcs: listDataCost,
         tmpb_mrrpy: listDataPayment,
@@ -677,19 +730,37 @@ const useMRR = () => {
     setFormDataItem((prev) => ({ ...prev, [f]: v }));
     const newErrors = validate({ ...formDataItem, [f]: v }, tmpb_mrrdc);
     setFormErrors(newErrors);
-    if (f === "mrrdc_price") {
-      const price_id = items_Options.find((opt) => opt.price_id === v);
-      //console.log("mrrdc_price", price_id);
+    if (f === "mrrdc_refid") {
+      const price_id = items_Options.find((opt) => opt.price_refid === v);
+      //console.log("price_id", price_id);
+      let defQty = 1;
+      if (fromPO) {
+        defQty = price_id?.price_gdstk || 1;
+      }
       setFormDataItem((prev) => ({
         ...prev,
         mrrdc_items: price_id?.id,
-        mrrdc_price: v,
+        mrrdc_price: price_id?.price_id,
         mrrdc_units: price_id?.items_runit,
         mrrdc_itrat: price_id?.price_lprat || 0,
         mrrdc_vtpct: price_id?.items_prvat || 0,
         mrrdc_vtype: price_id?.items_ptvat || "-",
         party_id: price_id?.party_id || "-",
         chtac_id: price_id?.chtac_id || "-",
+        mrrdc_refid: price_id?.price_refid || "-",
+        refid_trnno: price_id?.refid_trnno || "-",
+        mrrdc_itqty: defQty,
+        items_iname: price_id?.items_iname || "Invalid Item",
+        price_cname: price_id?.price_cname || "Invalid Item",
+        runit_cname: price_id?.runit_cname || "Invalid Retail Unit",
+        items_pkqty: price_id?.items_pkqty || 1,
+        punit_cname: price_id?.punit_cname || "Invalid Pack Unit",
+        items_szqty: price_id?.items_szqty || 1,
+        sunit_cname: price_id?.sunit_cname || "Invalid Size Unit",
+        sgrup_cname: price_id?.sgrup_cname || "Invalid Sub Group",
+        scatg_cname: price_id?.scatg_cname || "Invalid Sub Category",
+        brand_cname: price_id?.brand_cname || "Invalid Brand",
+        mrrdc_actve: true,
       }));
     }
   };
@@ -721,25 +792,14 @@ const useMRR = () => {
       }
     }
 
-    const items_iname = items_Options.find(
-      (opt) => opt.price_id === formDataItem.mrrdc_price,
-    );
+    // const items_iname = items_Options.find(
+    //   (opt) => opt.price_refid === formDataItem.mrrdc_refid,
+    // );
     //console.log("items_iname", items_iname);
     //create new row
     const newItem = {
       ...formDataItem,
       id: generateGuid(),
-      items_iname: items_iname?.items_iname || "Invalid Item",
-      price_cname: items_iname?.price_cname || "Invalid Item",
-      runit_cname: items_iname?.runit_cname || "Invalid Retail Unit",
-      items_pkqty: items_iname?.items_pkqty || 1,
-      punit_cname: items_iname?.punit_cname || "Invalid Pack Unit",
-      items_szqty: items_iname?.items_szqty || 1,
-      sunit_cname: items_iname?.sunit_cname || "Invalid Size Unit",
-      sgrup_cname: items_iname?.sgrup_cname || "Invalid Sub Group",
-      scatg_cname: items_iname?.scatg_cname || "Invalid Sub Category",
-      brand_cname: items_iname?.brand_cname || "Invalid Brand",
-      mrrdc_actve: true,
     };
 
     const newItemList = [...listDataItem, newItem];
@@ -946,6 +1006,7 @@ const useMRR = () => {
     setListDataCost([]);
     setListDataPayment([]);
     setListDataBundle([]);
+    setItems_Options([]);
     //getAllContacts();
     getAllDepartments();
     //getExpnPaym();
@@ -978,7 +1039,7 @@ const useMRR = () => {
 
     setShowModal({ show: true, modal: modal });
   };
-  
+
   const handleHideModal = () => {
     setShowModal({ show: false, modal: "" });
     setModalTitle({ title: "", subTitle: "" });

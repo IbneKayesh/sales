@@ -120,7 +120,7 @@ const create = async (req, res) => {
       pordm_vehid,
       pordm_ispst,
       pordm_ispad,
-      pordm_isqcp,
+      pordm_ispnd,
       pordm_isapp,
       party_id,
       chtac_id,
@@ -170,7 +170,7 @@ const create = async (req, res) => {
       pordm_trnno, pordm_trdat, pordm_refno, pordm_notes, pordm_tramt, pordm_itmds,
       pordm_dspct, pordm_invds, pordm_vtamt, pordm_icamt, pordm_ecamt, pordm_pyamt,
       pordm_pdamt, pordm_duamt, pordm_stamt, pordm_csamt, pordm_vehid, pordm_ispst,
-      pordm_ispad, pordm_isqcp, pordm_isapp, pordm_crusr, pordm_upusr)
+      pordm_ispad, pordm_ispnd, pordm_isapp, pordm_crusr, pordm_upusr)
     VALUES ($1, $2, $3, $4, $5, $6,
       $7, $8, $9, $10, $11, $12,
       $13, $14, $15, $16, $17, $18,
@@ -452,7 +452,7 @@ const create = async (req, res) => {
           newId_JV,
           chtac_id,
           party_id,
-          pordm_pyamt || 0,
+          pordm_pdamt || 0,
           0,
           "To Assets / Supplier / Advance",
           pordm_ttype,

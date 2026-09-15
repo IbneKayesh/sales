@@ -2,6 +2,7 @@ import DataTable from "@/components/DataTable";
 import ActionButton from "@/components/ActionButton";
 import { formatDate } from "@/utils/datetime";
 import { amountInWords } from "@/utils/ntw.js";
+import { formatNumber } from "@/utils/misc";
 
 const PaymentList = ({ readOnly, listData, onEdit, onDelete }) => {
   const dtColumns = [
@@ -16,6 +17,7 @@ const PaymentList = ({ readOnly, listData, onEdit, onDelete }) => {
       key: "mrrpy_pdamt",
       header: "Amount",
       width: "80px",
+      body: (v) => formatNumber(v),
       footer: (_, row) => {
         return row.reduce((sum, row) => sum + Number(row.mrrpy_pdamt ?? 0), 0);
       },

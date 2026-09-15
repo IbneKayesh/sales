@@ -1,9 +1,9 @@
 import { useEffect, useState, useMemo } from "react";
 import { useUI } from "@/context/AppUIContext.jsx";
 import validate, { generateDataModel } from "@/models/validator";
-import tmtb_teach from "@/models/M09/tmtb_teach.json";
+import tmtb_teach from "@/models/M49/tmtb_teach.json";
 const dataModel = generateDataModel(tmtb_teach);
-import { teachAPI } from "@/api/M09/teachAPI.js";
+import { teachAPI } from "@/api/M49/teachAPI.js";
 
 /** A lesson is a root when its parent is empty or points at itself. */
 const isRootNode = (item) => !item.teach_teach || item.teach_teach === item.id;

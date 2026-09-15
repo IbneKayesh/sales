@@ -1,5 +1,10 @@
 import { useCallback, useEffect, useRef, useState } from "react";
-import useLogin from "@/hooks/useLogin";
+import useLogin, {
+  APP_NAME,
+  APP_CREATOR,
+  APP_VERSION,
+  BRAND_PANEL_COLOR,
+} from "@/hooks/useLogin";
 import { healthCheck } from "@/utils/api";
 import {
   IconAccounts,
@@ -13,7 +18,6 @@ import {
   IconManufacture,
   IconSales,
 } from "@/icons";
-import { APP_NAME, APP_VERSION, BRAND_PANEL_COLOR } from "@/hooks/useLogin";
 import LoginCard from "./login/LoginCard";
 import LoginStatus from "./login/LoginStatus";
 
@@ -38,87 +42,9 @@ const MODULES = [
  * The login layout — a themed brand panel on the left and the sign-in card on
  * the right. The brand panel is a rounded card carrying the module list, with
  * layered watermarks behind it.
- */
-function SplitLayout({ formProps, statusProps }) {
-  return (
-    <div className="login-page login-page--split">
-      {/* Brand panel — the background fades out while the server is offline */}
-      <aside
-        className={`login-split__brand${
-          formProps.isOffline ? " login-split__brand--offline" : ""
-        }`}
-      >
-        {/* Decorative watermark layers */}
-        <div className="login-split__watermarks" aria-hidden="true">
-          <span className="login-split__wm login-split__wm--1" />
-          <span className="login-split__wm login-split__wm--2" />
-          <span className="login-split__wm login-split__wm--3" />
-          <span className="login-split__wm login-split__wm--4" />
-          <span className="login-split__wm login-split__wm--5" />
-          <span className="login-split__wm login-split__wm--6" />
-        </div>
-
-        <div className="login-split__brand-head">
-          <span className="login-split__logo">
-            <IconLogo size={26} />
-          </span>
-          <div className="login-split__wordmark-group">
-            <span className="login-split__wordmark">{APP_NAME}</span>
-            <span className="login-split__wordmark-sub">
-              Crafting Digital Excellence
-            </span>
-          </div>
-
-          {/* Server status — pushed to the top-right of the brand panel */}
-          <LoginStatus
-            {...statusProps}
-            variant="dot"
-            className="login-split__status"
-          />
-        </div>
-
-        <div className="login-split__brand-body">
-          <p className="login-split__headline">
-            Run your entire business from one system
-          </p>
-          <p className="login-split__tagline">
-            Enterprise.Automation.Analytics.Control.
-          </p>
-          <p className="login-split__tagline">
-            Everything your team needs, unified in a single ERP workspace.
-          </p>
-          <ul className="login-split__features">
-            {MODULES.map(({ label, Icon }) => (
-              <li className="login-split__feature" key={label}>
-                <span className="login-split__feature-icon">
-                  <Icon size={13} />
-                </span>
-                {label}
-              </li>
-            ))}
-          </ul>
-        </div>
-
-        <div className="login-split__brand-foot">
-          <span>Version {APP_VERSION}</span>
-          <span>
-            {APP_NAME} © {new Date().getFullYear()}
-          </span>
-        </div>
-      </aside>
-
-      {/* Form panel — the login card with a text-only header, since the brand
-          is already shown on the panel to the left. */}
-      <main className="login-split__panel">
-        <LoginCard formProps={formProps} statusProps={statusProps} />
-      </main>
-    </div>
-  );
-}
-
-/**
- * Login controller. Owns focus, password visibility, the backend health check
- * and the offline/retry flow; SplitLayout is purely presentational.
+ *
+ * Owns focus, password visibility, the backend health check and the
+ * offline/retry flow.
  */
 export default function LoginPage() {
   const usernameRef = useRef(null);
@@ -140,10 +66,21 @@ export default function LoginPage() {
   }, []);
 
   const login = useLogin({ onNetworkError: handleServerDown });
-  const { formData, isBusy, clearNetworkError } = login;
+  const {
+    formData,
+    formErrors,
+    networkError,
+    isBusy,
+    savedLogin,
+    handleChange,
+    handleSubmitClick,
+    handleSavedLoginChange,
+    handleTryDifferentUser,
+    clearNetworkError,
+  } = login;
 
   // Saved-login mode shows a read-only profile badge instead of the username field
-  const isSavedMode = login.savedLogin && !!formData.username;
+  const isSavedMode = savedLogin && !!formData.username;
 
   const checkBackend = useCallback(async () => {
     setChecking(true);
@@ -215,8 +152,10 @@ export default function LoginPage() {
     checkBackend();
   }, [checkBackend]);
 
-  const autoRetryStopped =
-    backendStatus === false && autoRetries >= MAX_AUTO_RETRIES;
+  // No point letting anyone sign in while the login server is unreachable.
+  const isOffline = backendStatus === false;
+
+  const autoRetryStopped = isOffline && autoRetries >= MAX_AUTO_RETRIES;
 
   // 1-based number of the attempt that is running (or next in line).
   const retryAttempt = Math.min(
@@ -224,34 +163,105 @@ export default function LoginPage() {
     Math.max(1, checking ? autoRetries : autoRetries + 1),
   );
 
-  const formProps = {
-    formData,
-    formErrors: login.formErrors,
-    isBusy,
-    // No point letting anyone sign in while the login server is unreachable
-    isOffline: backendStatus === false,
-    networkError: login.networkError,
-    isSavedMode,
-    savedLogin: login.savedLogin,
-    onFieldChange: login.handleChange,
-    onSubmit: login.handleSubmitClick,
-    onSavedLoginChange: login.handleSavedLoginChange,
-    onTryDifferentUser: login.handleTryDifferentUser,
-    usernameRef,
-    passwordRef,
-    showPassword,
-    onToggleShowPassword: () => setShowPassword((v) => !v),
-  };
+  return (
+    <div className="login-page login-page--split">
+      {/* Brand panel — the background fades out while the server is offline */}
+      <aside
+        className={`login-split__brand${
+          isOffline ? " login-split__brand--offline" : ""
+        }`}
+      >
+        {/* Decorative watermark layers */}
+        <div className="login-split__watermarks" aria-hidden="true">
+          <span className="login-split__wm login-split__wm--1" />
+          <span className="login-split__wm login-split__wm--2" />
+          <span className="login-split__wm login-split__wm--3" />
+          <span className="login-split__wm login-split__wm--4" />
+          <span className="login-split__wm login-split__wm--5" />
+          <span className="login-split__wm login-split__wm--6" />
+        </div>
 
-  const statusProps = {
-    status: backendStatus,
-    checking,
-    lastCheckedAt,
-    onRecheck: handleManualCheck,
-    retryAttempt,
-    maxRetryAttempts: MAX_AUTO_RETRIES,
-    autoRetryStopped,
-  };
+        <div className="login-split__brand-head">
+          <span className="login-split__logo">
+            <IconLogo size={26} />
+          </span>
+          <div className="login-split__wordmark-group">
+            <span className="login-split__wordmark">{APP_NAME}</span>
+            <span className="login-split__wordmark-sub">{APP_CREATOR}</span>
+          </div>
 
-  return <SplitLayout formProps={formProps} statusProps={statusProps} />;
+          {/* Server status — pushed to the top-right of the brand panel */}
+          <LoginStatus
+            status={backendStatus}
+            checking={checking}
+            lastCheckedAt={lastCheckedAt}
+            onRecheck={handleManualCheck}
+            retryAttempt={retryAttempt}
+            maxRetryAttempts={MAX_AUTO_RETRIES}
+            autoRetryStopped={autoRetryStopped}
+            variant="dot"
+            className="login-split__status"
+          />
+        </div>
+
+        <div className="login-split__brand-body">
+          <p className="login-split__headline">
+            Run your entire business from one system
+          </p>
+          <p className="login-split__tagline">
+            Enterprise.Automation.Analytics.Control.
+          </p>
+          <p className="login-split__tagline">
+            Everything your team needs, unified in a single ERP workspace.
+          </p>
+          <ul className="login-split__features">
+            {MODULES.map(({ label, Icon }) => (
+              <li className="login-split__feature" key={label}>
+                <span className="login-split__feature-icon">
+                  <Icon size={13} />
+                </span>
+                {label}
+              </li>
+            ))}
+          </ul>
+        </div>
+
+        <div className="login-split__brand-foot">
+          <span>Version {APP_VERSION}</span>
+          <span>
+            {APP_NAME} © {new Date().getFullYear()}
+          </span>
+        </div>
+      </aside>
+
+      {/* Form panel — the login card with a text-only header, since the brand
+          is already shown on the panel to the left. */}
+      <main className="login-split__panel">
+        <LoginCard
+          formData={formData}
+          formErrors={formErrors}
+          isBusy={isBusy}
+          isOffline={isOffline}
+          networkError={networkError}
+          isSavedMode={isSavedMode}
+          savedLogin={savedLogin}
+          onFieldChange={handleChange}
+          onSubmit={handleSubmitClick}
+          onSavedLoginChange={handleSavedLoginChange}
+          onTryDifferentUser={handleTryDifferentUser}
+          usernameRef={usernameRef}
+          passwordRef={passwordRef}
+          showPassword={showPassword}
+          onToggleShowPassword={() => setShowPassword((v) => !v)}
+          status={backendStatus}
+          checking={checking}
+          lastCheckedAt={lastCheckedAt}
+          onRecheck={handleManualCheck}
+          retryAttempt={retryAttempt}
+          maxRetryAttempts={MAX_AUTO_RETRIES}
+          autoRetryStopped={autoRetryStopped}
+        />
+      </main>
+    </div>
+  );
 }

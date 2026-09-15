@@ -1,6 +1,8 @@
 import DataTable from "@/components/DataTable";
 import ActionButton from "@/components/ActionButton";
 import ConvertUOM from "@/components/common/ConvertUOM";
+import ConvertSize from "@/components/common/ConvertSize";
+import { formatNumber } from "@/utils/misc";
 
 // Column visibility is configured in M01 SetupPage and passed in as params
 // (cfColumns). No storage read/write happens here.
@@ -13,7 +15,7 @@ const ItemList = ({ cfColumns = [], readOnly, listData, onEdit, onDelete }) => {
       body: (_, row) => {
         return (
           <span>
-            {row.price_cname} - {row.items_szqty} {row.sunit_cname}
+            {row.price_cname} - {formatNumber(row.items_szqty)} {row.sunit_cname}
           </span>
         );
       },
@@ -33,9 +35,9 @@ const ItemList = ({ cfColumns = [], readOnly, listData, onEdit, onDelete }) => {
       body: (_, rowData) => {
         return (
           <>
-            {Number(rowData.mrrdc_itrat).toFixed(4)} x{" "}
-            {Number(rowData.mrrdc_itqty).toFixed(4)} {rowData.runit_cname} ={" "}
-            {Number(rowData.mrrdc_itamt).toFixed(4)}
+            {formatNumber(rowData.mrrdc_itrat)} x{" "}
+            {formatNumber(rowData.mrrdc_itqty)} {rowData.runit_cname} ={" "}
+            {formatNumber(rowData.mrrdc_itamt)}
           </>
         );
       },
@@ -54,8 +56,8 @@ const ItemList = ({ cfColumns = [], readOnly, listData, onEdit, onDelete }) => {
       body: (_, rowData) => {
         return (
           <>
-            {Number(rowData.mrrdc_dsamt).toFixed(4)} ({rowData.mrrdc_dspct}%)
-            [Other: {rowData.mrrdc_edamt}]
+            {formatNumber(rowData.mrrdc_dsamt)} ({formatNumber(rowData.mrrdc_dspct)}%)
+            [Other: {formatNumber(rowData.mrrdc_edamt)}]
           </>
         );
       },
@@ -67,7 +69,7 @@ const ItemList = ({ cfColumns = [], readOnly, listData, onEdit, onDelete }) => {
       body: (_, rowData) => {
         return (
           <>
-            {rowData.mrrdc_vtamt} ({rowData.mrrdc_vtpct}% {rowData.mrrdc_vtype})
+            {formatNumber(rowData.mrrdc_vtamt)} ({formatNumber(rowData.mrrdc_vtpct)}% {rowData.mrrdc_vtype})
           </>
         );
       },
@@ -76,18 +78,20 @@ const ItemList = ({ cfColumns = [], readOnly, listData, onEdit, onDelete }) => {
       key: "mrrdc_icamt",
       header: "In Cost",
       width: "80px",
+      body: (v) => formatNumber(v),
     },
     {
       key: "mrrdc_ecamt",
       header: "Ex Cost",
       width: "80px",
+      body: (v) => formatNumber(v),
     },
     {
       key: "mrrdc_pyamt",
       header: "Payable",
       width: "80px",
       body: (_, rowData) => {
-        return <>{(Number(rowData.mrrdc_pyamt) || 0).toFixed(4)}</>;
+        return <>{formatNumber(rowData.mrrdc_pyamt)}</>;
       },
     },
     {
@@ -95,7 +99,7 @@ const ItemList = ({ cfColumns = [], readOnly, listData, onEdit, onDelete }) => {
       header: "Sub Total",
       width: "80px",
       body: (_, rowData) => {
-        return <>{(Number(rowData.mrrdc_stamt) || 0).toFixed(4)}</>;
+        return <>{formatNumber(rowData.mrrdc_stamt)}</>;
       },
     },
     { key: "mrrdc_notes", header: "Notes", width: "100px" },
@@ -104,7 +108,7 @@ const ItemList = ({ cfColumns = [], readOnly, listData, onEdit, onDelete }) => {
       header: "Unit Cost",
       width: "80px",
       body: (_, rowData) => {
-        return <>{(Number(rowData.mrrdc_csrat) || 0).toFixed(4)}</>;
+        return <>{formatNumber(rowData.mrrdc_csrat)}</>;
       },
     },
     {
@@ -131,11 +135,10 @@ const ItemList = ({ cfColumns = [], readOnly, listData, onEdit, onDelete }) => {
       body: (_, rowData) => {
         return (
           <>
-            <ConvertUOM
+            <ConvertSize
               qty={rowData.mrrdc_itqty}
               dfQty={rowData.items_szqty}
-              runit={rowData.runit_cname}
-              punit={rowData.sunit_cname}
+              sunit={rowData.sunit_cname}
             />
           </>
         );

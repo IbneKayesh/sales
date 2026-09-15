@@ -9,13 +9,7 @@ import MenuCard from "@/components/MenuCard";
 import PopupList from "@/components/PopupList";
 import GreetingHeader from "@/components/GreetingHeader";
 import { useApp } from "@/context/AppContext";
-import {
-  IconHome,
-  IconClose,
-  IconDelete,
-  IconPopup,
-  IconStar,
-} from "@/icons";
+import { IconHome, IconClose, IconDelete, IconPopup, IconStar } from "@/icons";
 import { resolveMenuIcon } from "@/icons";
 import { appModules, menus, toMenu } from "@/utils/appModules";
 import { moduleShade } from "@/utils/theme";
@@ -200,11 +194,7 @@ const ModulePage = () => {
             type="button"
             className={`module-page__popup-trigger${popupListOpen ? " module-page__popup-trigger--active" : ""}`}
             onClick={() => setPopupListOpen((o) => !o)}
-            title={
-              popups.length
-                ? "Show open windows"
-                : "No open windows"
-            }
+            title={popups.length ? "Show open windows" : "No open windows"}
             aria-label="Show open windows"
             aria-expanded={popupListOpen}
           >
@@ -350,8 +340,10 @@ const ModulePage = () => {
                 groups = groups
                   .map((g) => ({
                     ...g,
-                    menus: g.menus.filter((m) =>
-                      m.name.toLowerCase().includes(q),
+                    menus: g.menus.filter(
+                      (m) =>
+                        m.name.toLowerCase().includes(q) ||
+                        m.desc?.toLowerCase().includes(q),
                     ),
                   }))
                   .filter((g) => g.menus.length > 0);
@@ -378,7 +370,6 @@ const ModulePage = () => {
             );
           })}
       </div>
-
     </div>
   );
 };

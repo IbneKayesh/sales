@@ -46,4 +46,8 @@ export const coaNetworkAPI = {
     apiRequest("/M08/v1/coa-network/get-sales-invoice-exp-paym", {
       body: data,
     }),
+  getMrrDirectExpPaymPO: (data) =>
+    apiRequest("/M08/v1/coa-network/get-mrr-direct-exp-paym-po", {
+      body: data,
+    }),
 };

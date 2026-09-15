@@ -6,7 +6,7 @@ import PageCard, {
 } from "@/components/PageCard";
 import { IconSearch, IconClose, IconPlus, IconSave } from "@/icons";
 import Button from "@/components/Button";
-import useTeach from "@/hooks/M09/useTeach";
+import useTeach from "@/hooks/M49/useTeach";
 import TeachList from "./TeachList";
 import TeachForm from "./TeachForm";
 

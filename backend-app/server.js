@@ -48,8 +48,11 @@ const m06Routes = require("./routes/M06");
 const m07Routes = require("./routes/M07");
 //M08 :: Accounts
 const m08Routes = require("./routes/M08");
-//M09 :: Learning
+//M09 :: Reports
 const m09Routes = require("./routes/M09");
+//M49 :: Learning
+const m49Routes = require("./routes/M49");
+
 
 const app = express();
 
@@ -114,8 +117,10 @@ app.use("/api/M06", m06Routes);
 app.use("/api/M07", m07Routes);
 //M08 :: Accounts
 app.use("/api/M08", m08Routes);
-//M09 :: Learning
+//M09 :: Reports
 app.use("/api/M09", m09Routes);
+//M49 :: Learning
+app.use("/api/M49", m49Routes);
 
 // Health check endpoint
 app.get("/api/health", (req, res) => {

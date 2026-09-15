@@ -28,6 +28,7 @@ CREATE TABLE tmpb_pordc (
   pordc_notes VARCHAR(100),
   pordc_csrat decimal(18,6) DEFAULT 0.00,
   pordc_refid VARCHAR(50),
+  pordc_mrqty decimal(18,6) DEFAULT 0.00,
   
   -- default
   pordc_actve boolean NOT NULL DEFAULT true,

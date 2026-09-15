@@ -705,7 +705,7 @@ function WindowItem({
           // the window frame's rounding so the tinted bar doesn't show square
           // corners inside the rounded modal. Overrides the shared modal
           // header padding for a slimmer window chrome.
-          padding: "6px 12px",
+          padding: "3px 8px",
           background: "var(--titlebar-bg)",
           borderTopLeftRadius: fullscreen ? 0 : "var(--radius-lg)",
           borderTopRightRadius: fullscreen ? 0 : "var(--radius-lg)",

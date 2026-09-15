@@ -33,7 +33,7 @@ export const rawAppModules = [
     groups: [
       {
         id: "G01",
-        name: "General",
+        name: "Applications",
         order: 1,
         menus: [
           {
@@ -249,7 +249,7 @@ export const rawAppModules = [
             icon: "Refresh",
             order: 3,
             link: "/purchase/orders",
-            desc: "Handle suppliers order requests",
+            desc: "Handle suppliers orders, po",
           },
         ],
       },
@@ -656,8 +656,8 @@ export const rawAppModules = [
   },
   {
     id: "M09",
-    name: "Learning",
-    icon: "Accounts",
+    name: "Reports",
+    icon: "Chart",
     color: "#8b5cf6",
     order: 9,
     groups: [
@@ -668,6 +668,39 @@ export const rawAppModules = [
         menus: [
           {
             id: "M09-G01-M001",
+            name: "Standard Reports",
+            color: "#8b5cf6",
+            icon: "Accounts",
+            order: 1,
+            link: "/reports/standard",
+            desc: "Standard Reports",
+          },
+          {
+            id: "M09-G01-M002",
+            name: "Custom Reports",
+            color: "#8b5cf6",
+            icon: "Chart",
+            order: 2,
+            link: "/reports/custom",
+            desc: "Custom Reports",
+          },
+        ],
+      },
+    ],
+  },{
+    id: "M49",
+    name: "Learning",
+    icon: "Accounts",
+    color: "#8b5cf6",
+    order: 49,
+    groups: [
+      {
+        id: "G01",
+        name: "Setup",
+        order: 1,
+        menus: [
+          {
+            id: "M49-G01-M001",
             name: "Teaching",
             color: "#8b5cf6",
             icon: "Accounts",
@@ -676,7 +709,7 @@ export const rawAppModules = [
             desc: "Configure the learning of teaching",
           },
           {
-            id: "M09-G01-M002",
+            id: "M49-G01-M002",
             name: "Exam",
             color: "#8b5cf6",
             icon: "Users",

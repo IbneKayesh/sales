@@ -26,12 +26,16 @@ delete from tmmb_prrpm;
 delete from tmmb_promf;
 delete from tmmb_prbtc;
 --production bom
-delete from tmmb_bommf;
-delete from tmmb_borpm;
-delete from tmmb_bofoh;
-delete from tmmb_bosfg;
+-- delete from tmmb_bommf;
+-- delete from tmmb_borpm;
+-- delete from tmmb_bofoh;
+-- delete from tmmb_bosfg;
 --adjustment
 delete from tmib_adjsc;
 delete from tmib_adjsm;
 --stock merge trnsactions
 delete from tmib_stkmg;
+--purchase order
+delete from tmpb_pordm;
+delete from tmpb_pordc;
+delete from tmpb_porcs;

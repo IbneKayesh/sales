@@ -11,6 +11,58 @@ import {
 import InputSwitch from "@/components/InputSwitch";
 
 /**
+ * One labelled input capsule — leading icon, optional trailing control and the
+ * Caps Lock hint underneath. Both sign-in fields are built from this, so the
+ * field markup exists only once.
+ */
+function LoginField({
+  id,
+  label,
+  icon,
+  trailing,
+  capsLock,
+  invalid = false,
+  inputRef,
+  onValueChange,
+  onCapsKey,
+  ...inputProps
+}) {
+  return (
+    <div className="login-page__field">
+      <label className="login-page__label" htmlFor={id}>
+        {label}
+      </label>
+      <div
+        className={`login-page__input-wrap login-page__input-wrap--icon${
+          invalid ? " login-page__input-wrap--error" : ""
+        }`}
+      >
+        <span className="login-page__input-icon" aria-hidden="true">
+          {icon}
+        </span>
+        <input
+          ref={inputRef}
+          id={id}
+          name={id}
+          className="login-page__input"
+          onChange={(e) => onValueChange(e.target.value)}
+          onKeyUp={onCapsKey}
+          onKeyDown={onCapsKey}
+          {...inputProps}
+        />
+        {trailing}
+      </div>
+      {capsLock && (
+        <p className="login-page__caps" role="status">
+          <IconWarning size={13} />
+          Caps Lock is on
+        </p>
+      )}
+    </div>
+  );
+}
+
+/**
  * The sign-in form shared by every login layout. Only presentation lives here —
  * all state and handlers come in as props from `useLogin` (via LoginPage).
  */
@@ -34,13 +86,16 @@ export default function LoginForm({
   // Holds the field the warning belongs to: null | "username" | "password".
   const [capsField, setCapsField] = useState(null);
 
-  const detectCapsLock = (field, e) => {
-    if (typeof e.getModifierState === "function") {
-      setCapsField(e.getModifierState("CapsLock") ? field : null);
-    }
-  };
-
-  const clearCapsLock = () => setCapsField(null);
+  // Caps Lock state + handlers for one field, ready to spread onto LoginField.
+  const capsProps = (field) => ({
+    capsLock: capsField === field,
+    onCapsKey: (e) => {
+      if (typeof e.getModifierState === "function") {
+        setCapsField(e.getModifierState("CapsLock") ? field : null);
+      }
+    },
+    onBlur: () => setCapsField(null),
+  });
 
   // Nothing in the form is usable while a request is in flight or the backend
   // is unreachable — the login endpoint lives on that same server.
@@ -79,71 +134,36 @@ export default function LoginForm({
           </button>
         </div>
       ) : (
-        <div className="login-page__field">
-          <label className="login-page__label" htmlFor="username">
-            User name
-          </label>
-          <div
-            className={`login-page__input-wrap login-page__input-wrap--icon${
-              formErrors && !formData.username ? " login-page__input-wrap--error" : ""
-            }`}
-          >
-            <span className="login-page__input-icon" aria-hidden="true">
-              <IconUser size={16} />
-            </span>
-            <input
-              ref={usernameRef}
-              id="username"
-              name="username"
-              type="text"
-              className="login-page__input"
-              placeholder="user@sgd.com"
-              value={formData.username}
-              onChange={(e) => onFieldChange("username", e.target.value)}
-              autoComplete="username"
-              disabled={blocked}
-              onKeyUp={(e) => detectCapsLock("username", e)}
-              onKeyDown={(e) => detectCapsLock("username", e)}
-              onBlur={clearCapsLock}
-            />
-          </div>
-          {capsField === "username" && (
-            <p className="login-page__caps" role="status">
-              <IconWarning size={13} />
-              Caps Lock is on
-            </p>
-          )}
-        </div>
+        <LoginField
+          id="username"
+          label="User name"
+          placeholder="user@sgd.com"
+          icon={<IconUser size={16} />}
+          inputRef={usernameRef}
+          value={formData.username}
+          onValueChange={(value) => onFieldChange("username", value)}
+          autoComplete="username"
+          disabled={blocked}
+          invalid={Boolean(formErrors) && !formData.username}
+          {...capsProps("username")}
+        />
       )}
 
       {/* Password */}
-      <div className="login-page__field">
-        <label className="login-page__label" htmlFor="password">
-          Password
-        </label>
-        <div
-          className={`login-page__input-wrap login-page__input-wrap--icon${
-            formErrors && !formData?.password ? " login-page__input-wrap--error" : ""
-          }`}
-        >
-          <span className="login-page__input-icon" aria-hidden="true">
-            <IconLock size={16} />
-          </span>
-          <input
-            ref={passwordRef}
-            id="password"
-            name="password"
-            type={showPassword ? "text" : "password"}
-            className="login-page__input"
-            placeholder="Enter your password"
-            value={formData.password}
-            onChange={(e) => onFieldChange("password", e.target.value)}
-            autoComplete="current-password"
-            disabled={blocked}
-            onKeyUp={(e) => detectCapsLock("password", e)}
-            onKeyDown={(e) => detectCapsLock("password", e)}
-            onBlur={clearCapsLock}
-          />
+      <LoginField
+        id="password"
+        label="Password"
+        placeholder="Enter your password"
+        type={showPassword ? "text" : "password"}
+        icon={<IconLock size={16} />}
+        inputRef={passwordRef}
+        value={formData.password}
+        onValueChange={(value) => onFieldChange("password", value)}
+        autoComplete="current-password"
+        disabled={blocked}
+        invalid={Boolean(formErrors) && !formData?.password}
+        {...capsProps("password")}
+        trailing={
           <button
             type="button"
             className="login-page__toggle-pw"
@@ -155,14 +175,8 @@ export default function LoginForm({
           >
             {showPassword ? <IconEyeOff1 size={16} /> : <IconEye1 size={16} />}
           </button>
-        </div>
-        {capsField === "password" && (
-          <p className="login-page__caps" role="status">
-            <IconWarning size={13} />
-            Caps Lock is on
-          </p>
-        )}
-      </div>
+        }
+      />
 
       {/* Remember user — only once both fields have something in them */}
       {!isSavedMode && formData.username && formData.password && (

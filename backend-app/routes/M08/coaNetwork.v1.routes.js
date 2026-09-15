@@ -168,12 +168,69 @@ router.post("/get-mrr-direct-exp-paym", async (req, res) => {
       AND cht.chtac_actve = TRUE
       AND crt.chtrt_actve = TRUE
       AND cht.chtac_users = $1
+      AND cht.chtac_bsins = $2
       ORDER BY cht.chtac_chtno, pty.party_cname`;
-    const params = [user_c];
+    const params = [user_c, user_b];
     const rows = await dbGetAll(
       sql,
       params,
       `get party network mrr direct - ${user_c}`,
+    );
+    res.json({
+      success: true,
+      message: "Query executed successfully.",
+      data: rows,
+    });
+  } catch (error) {
+    console.error("database action error:", error);
+    return res.json({
+      success: false,
+      message: error.message || "An error occurred during db action",
+      data: [],
+    });
+  }
+});
+
+// get-mrr-direct-exp-paym-po
+router.post("/get-mrr-direct-exp-paym-po", async (req, res) => {
+  try {
+    const { cntct_id, dpart_id, user_s, user_c, user_b } = req.body;
+
+    // Validate input
+    if (!user_c) {
+      return res.json({
+        success: false,
+        message: "All fields in the request body are required.",
+        data: [],
+      });
+    }
+
+    //database action   
+    const sql = `SELECT pty.id, pty.party_cname, pty.party_crbal, pty.party_chtac, cht.chtac_chtno, crt.chtrt_grpid
+      FROM tmtb_party pty
+      JOIN tmtb_chtac cht ON pty.party_chtac = cht.id
+      JOIN tmtb_chtrt crt ON cht.chtac_chtno = crt.chtrt_chtno
+      WHERE crt.chtrt_trnid = 'SYS_MRR'
+      AND crt.chtrt_pegid = 'SYS_MRR_DIRECT'
+      AND crt.chtrt_grpid IN ('SYS_NONE','SYS_LIB_LOCAL_VENDOR')
+      AND pty.party_actve = TRUE
+      AND cht.chtac_actve = TRUE
+      AND crt.chtrt_actve = TRUE
+      AND cht.chtac_users = $1
+      AND cht.chtac_bsins = $2
+      UNION ALL
+      SELECT pty.id, pty.party_cname, pty.party_crbal party_crbal, pty.party_chtac, cht.chtac_chtno, 'SYS_AST_SUPPLIER' chtrt_grpid
+      FROM tmtb_party pty
+      JOIN tmtb_chtac cht ON pty.party_chtac = cht.id
+      WHERE pty.party_users = $1
+      AND pty.party_bsins = $2
+      AND pty.party_vndor = $3
+      ORDER BY chtac_chtno, party_cname`;
+    const params = [user_c, user_b, cntct_id];
+    const rows = await dbGetAll(
+      sql,
+      params,
+      `get party network mrr direct po - ${user_c}`,
     );
     res.json({
       success: true,

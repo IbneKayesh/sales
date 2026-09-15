@@ -60,7 +60,7 @@ const ItemList = ({ cfColumns = [], readOnly, listData, onEdit, onDelete }) => {
       body: (_, rowData) => {
         return (
           <>
-            {formatNumber(rowData.pordc_dsamt)} ({rowData.pordc_dspct}%)
+            {formatNumber(rowData.pordc_dsamt)} ({formatNumber(rowData.pordc_dspct)}%)
             [Other: {formatNumber(rowData.pordc_edamt)}]
           </>
         );
@@ -145,6 +145,23 @@ const ItemList = ({ cfColumns = [], readOnly, listData, onEdit, onDelete }) => {
     { key: "sgrup_cname", header: "sGroup", width: "80px" },
     { key: "scatg_cname", header: "sCategory", width: "80px" },
     { key: "brand_cname", header: "Brand", width: "80px" },
+    { 
+      key: "pordc_mrqty", 
+      header: "MRR Qty", 
+      width: "80px",
+      body: (v) => formatNumber(v),
+    },    {
+      key: "pordc_mrpnd",
+      header: "MRR Pending",
+      width: "80px",
+      body: (_, rowData) => {
+        return (
+          <>
+            {formatNumber(rowData.pordc_itqty - rowData.pordc_mrqty)}
+          </>
+        );
+      },
+    },
     {
       key: "actions",
       header: "Actions",

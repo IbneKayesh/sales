@@ -3918,7 +3918,7 @@ html[data-layout="boxed"] .layout__main {
   align-items: center;
   justify-content: center;
   background: var(--overlay-bg);
-  backdrop-filter: blur(4px);
+  backdrop-filter: blur(0.7px);
   padding: var(--sp-6);
   animation: fade-in var(--transition-fast);
 }
@@ -4892,49 +4892,6 @@ html[data-layout="boxed"] .layout__main {
   background: var(--bg);
 }
 
-.login-page__bg-shape {
-  position: absolute;
-  border-radius: 50%;
-  pointer-events: none;
-}
-
-.login-page__bg-shape--1 {
-  width: 400px;
-  height: 400px;
-  background: radial-gradient(
-    circle,
-    rgba(124, 58, 237, 0.08) 0%,
-    transparent 70%
-  );
-  top: -100px;
-  right: -100px;
-}
-
-.login-page__bg-shape--2 {
-  width: 300px;
-  height: 300px;
-  background: radial-gradient(
-    circle,
-    rgba(139, 92, 246, 0.06) 0%,
-    transparent 70%
-  );
-  bottom: -50px;
-  left: -80px;
-}
-
-.login-page__bg-shape--3 {
-  width: 200px;
-  height: 200px;
-  background: radial-gradient(
-    circle,
-    rgba(99, 102, 241, 0.05) 0%,
-    transparent 70%
-  );
-  top: 40%;
-  left: 60%;
-  transform: translate(-50%, -50%);
-}
-
 .login-page__card {
   position: relative;
   width: 100%;
@@ -4949,6 +4906,13 @@ html[data-layout="boxed"] .layout__main {
   z-index: 1;
 }
 
+/* Theme-aware gradient rule, shared by the card's top accent strip and the
+   short rule above the title. */
+.login-page__accent,
+.login-page__card-deco {
+  background: linear-gradient(90deg, var(--primary), var(--secondary));
+}
+
 /* Accent strip along the top edge of the card — theme-aware. */
 .login-page__accent {
   position: absolute;
@@ -4956,7 +4920,6 @@ html[data-layout="boxed"] .layout__main {
   left: 0;
   right: 0;
   height: 4px;
-  background: linear-gradient(90deg, var(--primary), var(--secondary));
   pointer-events: none;
 }
 
@@ -4965,7 +4928,7 @@ html[data-layout="boxed"] .layout__main {
   flex-direction: column;
   align-items: center;
   gap: var(--sp-2);
-  margin-bottom: var(--sp-6);
+  margin-bottom: var(--sp-4);
 }
 
 .login-page__logo {
@@ -4978,12 +4941,6 @@ html[data-layout="boxed"] .layout__main {
   background: color-mix(in srgb, var(--primary) 12%, transparent);
   color: var(--primary);
   border: 1px solid var(--primary-border);
-}
-
-/* Compact brand wordmark inside the login card — small logo + name, so the
-   right-hand panel also carries the product identity. */
-.login-page__brand {
-  margin-bottom: var(--sp-4);
 }
 
 /* Card-specific logo — smaller and softer than the brand-panel logo so the
@@ -5044,7 +5001,6 @@ html[data-layout="boxed"] .layout__main {
   height: 4px;
   margin-bottom: var(--sp-2);
   border-radius: var(--radius-pill);
-  background: linear-gradient(90deg, var(--primary), var(--secondary));
 }
 
 .login-page__card-head-row {
@@ -5358,10 +5314,6 @@ html[data-layout="boxed"] .layout__main {
   line-height: var(--lh-normal);
 }
 
-.login-page__hint strong {
-  color: var(--text-secondary);
-}
-
 /* ── Backend Status Indicator ── */
 .login-page__backend {
   position: relative;
@@ -5671,32 +5623,6 @@ html[data-layout="boxed"] .layout__main {
   margin-top: var(--sp-2);
 }
 
-.login-page__checkbox-label {
-  display: inline-flex;
-  align-items: center;
-  gap: var(--sp-2);
-  cursor: pointer;
-  user-select: none;
-  font-size: var(--fs-sm);
-  color: var(--text-secondary);
-  transition: color var(--transition-fast);
-}
-
-.login-page__checkbox-label:hover {
-  color: var(--text-primary);
-}
-
-.login-page__checkbox {
-  width: 16px;
-  height: 16px;
-  accent-color: var(--primary);
-  cursor: pointer;
-}
-
-.login-page__checkbox-text {
-  line-height: 1;
-}
-
 /* ── Different user button (beside saved avatar) ── */
 .login-page__different-user {
   display: inline-flex;
@@ -5986,18 +5912,6 @@ html[data-layout="boxed"] .layout__main {
   font-weight: var(--fw-medium);
   color: rgba(255, 255, 255, 0.92);
   line-height: var(--lh-normal);
-}
-
-.login-split__feature-icon {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: 22px;
-  height: 22px;
-  border-radius: 7px;
-  background: rgba(255, 255, 255, 0.16);
-  border: 1px solid rgba(255, 255, 255, 0.18);
-  flex-shrink: 0;
 }
 
 .login-split__feature-icon {
