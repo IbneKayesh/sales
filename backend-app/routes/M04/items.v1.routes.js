@@ -614,7 +614,7 @@ router.post("/get-por-items", async (req, res) => {
 // get-mrr-items
 router.post("/get-mrr-items", async (req, res) => {
   try {
-    const { cntct_id, price_dpart, user_s, user_c, user_b } = req.body;
+    const { cntct_id, price_dpart, from_po, user_s, user_c, user_b } = req.body;
 
     // Validate input
     if (!cntct_id || !price_dpart || !user_c) {
@@ -626,11 +626,64 @@ router.post("/get-mrr-items", async (req, res) => {
     }
 
     //database action
-    const sql = `SELECT itm.*,
+    let sql = "";
+    if (from_po) {
+      //COA routing not applied to With PO, its already applied in PO
+      sql = `SELECT itm.id, itm.items_ccode, itm.items_icode, itm.items_iname, itm.items_brcod, itm.items_hscod,
+      itm.items_hscod, itm.items_notes, itm.items_runit, itm.items_pkqty, itm.items_punit, itm.items_szqty,
+      itm.items_sunit, itm.items_sgrup, itm.items_scatg, itm.items_itype, itm.items_brand, itm.items_tstck,
+      poc.pordc_vtpct items_prvat, poc.pordc_vtype items_ptvat, itm.items_slvat, itm.items_stvat, itm.items_image,
+    prc.id AS price_id, prc.price_cname,
+    poc.pordc_itrat price_lprat, prc.price_dprat, prc.price_tprat, prc.price_mrrat,
+    CASE
+      WHEN prc.price_dspct > 0 THEN prc.price_dspct
+      ELSE poc.pordc_dspct
+    END price_dspct,
+    pordc_itqty price_gdstk, prc.price_bdstk, prc.price_mnqty, prc.price_mxqty, prc.price_pbqty,
+    prc.price_sbqty, prc.price_notes, prc.price_jnote, poc.id price_refid,
+    runit.units_cname as runit_cname,
+    punit.units_cname as punit_cname,
+    sunit.units_cname as sunit_cname,
+    sgrup.sgrup_cname as sgrup_cname,
+    scatg.scatg_cname as scatg_cname,
+    brand.brand_cname as brand_cname,
+    pty.id party_id, pty.party_chtac chtac_id
+    FROM tmib_items itm
+    JOIN tmib_price prc ON itm.id = prc.price_items    
+    JOIN tmib_units runit ON itm.items_runit = runit.id
+    JOIN tmib_units punit ON itm.items_punit = punit.id
+    JOIN tmib_units sunit ON itm.items_sunit = sunit.id
+    JOIN tmib_sgrup sgrup ON itm.items_sgrup = sgrup.id
+    JOIN tmib_scatg scatg ON itm.items_scatg = scatg.id
+    JOIN tmib_brand brand ON itm.items_brand = brand.id
+    JOIN tmtb_party pty ON itm.items_itype = pty.party_vndor
+    JOIN tmtb_chtac cht ON pty.party_chtac = cht.id
+    JOIN tmib_itmct itc ON itm.id = itc.itmct_items
+    JOIN tmpb_pordc poc ON itm.id = poc.pordc_items
+                        AND prc.id = poc.pordc_price
+    JOIN tmpb_pordm pom ON poc.pordc_pordm = pom.id
+                        AND pom.pordm_dpart = $4
+                        AND pom.pordm_cntct = $1
+    WHERE itm.items_stpur = false
+    AND itm.items_actve = TRUE
+    AND prc.price_actve = TRUE
+    AND pty.party_actve = TRUE
+    AND cht.chtac_actve = TRUE
+    AND itc.itmct_cntct = $1
+    AND prc.price_users = $2
+    AND prc.price_bsins = $3
+    AND prc.price_dpart = $4
+    ORDER BY itm.items_iname ASC`;
+    } else {
+      //Without PO
+      sql = `SELECT itm.id, itm.items_ccode, itm.items_icode, itm.items_iname, itm.items_brcod, itm.items_hscod,
+      itm.items_hscod, itm.items_notes, itm.items_runit, itm.items_pkqty, itm.items_punit, itm.items_szqty,
+      itm.items_sunit, itm.items_sgrup, itm.items_scatg, itm.items_itype, itm.items_brand, itm.items_tstck,
+      itm.items_prvat, itm.items_ptvat, itm.items_slvat, itm.items_stvat, itm.items_image,
     prc.id AS price_id, prc.price_cname,
     prc.price_lprat, prc.price_dprat, prc.price_tprat, prc.price_mrrat, prc.price_dspct,
     prc.price_gdstk, prc.price_bdstk, prc.price_mnqty, prc.price_mxqty, prc.price_pbqty,
-    prc.price_sbqty, prc.price_notes, prc.price_jnote,
+    prc.price_sbqty, prc.price_notes, prc.price_jnote, prc.price_id price_refid,
     runit.units_cname as runit_cname,
     punit.units_cname as punit_cname,
     sunit.units_cname as sunit_cname,
@@ -665,6 +718,7 @@ router.post("/get-mrr-items", async (req, res) => {
     AND prc.price_bsins = $3
     AND prc.price_dpart = $4
     ORDER BY itm.items_iname ASC`;
+    }
 
     const params = [cntct_id, user_c, user_b, price_dpart];
     const rows = await dbGetAll(sql, params, `get new mrr items- ${user_c}`);

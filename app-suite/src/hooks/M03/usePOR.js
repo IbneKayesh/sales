@@ -633,7 +633,7 @@ const usePOR = () => {
         tmpb_pordf: listDataBundle,
       };
 
-      console.log(reqBody);
+      //console.log(reqBody);
       //return;
       setIsBusy(true);
       const resp = await porAPI.upsert(reqBody);

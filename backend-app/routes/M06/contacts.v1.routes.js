@@ -917,4 +917,69 @@ router.post("/get-suppliers-por", async (req, res) => {
     });
   }
 });
+
+
+// get-suppliers-pending-mrr
+router.post("/get-suppliers-pending-mrr", async (req, res) => {
+  try {
+    const { dpart_id, user_s, user_c, user_b } = req.body;
+
+    // Validate input
+    if (!dpart_id || !user_c) {
+      return res.json({
+        success: false,
+        message: "All fields in the request body are required.",
+        data: [],
+      });
+    }
+    //pordm_dspct NOT APPLIED, APPLIED SUPPLIER DISCOUNT
+    //can't create 1 MRR from multiple PO, PO1- 5%, PO2- %7, PO3- %10 = MRR1- %?
+    //Item Line wise Discount is Applied Only
+    //add filter for sub query
+    //database action
+    const sql = `SELECT cnt.*, pty.id party_id, pty.party_chtac chtac_id, pty.party_crbal
+    FROM tmcb_cntct cnt
+    JOIN tmtb_party pty ON cnt.id = pty.party_vndor
+    JOIN tmtb_chtac cht ON pty.party_chtac = cht.id
+    JOIN tmtb_chtrt crt ON cht.chtac_chtno = crt.chtrt_chtno
+    JOIN (SELECT pom.pordm_cntct
+      FROM tmpb_pordm pom
+      WHERE pom.pordm_ispst = TRUE
+      AND pom.pordm_isapp = TRUE
+      AND pom.pordm_users = $1
+      AND pom.pordm_dpart = $2
+      GROUP BY pom.pordm_cntct) po
+      ON cnt.id = po.pordm_cntct
+    WHERE cnt.cntct_users = $1
+    AND cnt.cntct_actve = TRUE
+	  AND crt.chtrt_trnid = 'SYS_MRR'
+	  AND crt.chtrt_pegid = 'SYS_MRR_DIRECT'
+    AND crt.chtrt_grpid ='SYS_LIB_SUPPLIER'
+    AND pty.party_actve = TRUE
+    AND cht.chtac_actve = TRUE
+    AND crt.chtrt_actve = TRUE
+    ORDER BY cnt.cntct_cname`;
+    //AND cnt.cntct_ctype IN ('Supplier')
+    const params = [user_c, dpart_id];
+    const rows = await dbGetAll(
+      sql,
+      params,
+      `get contact suppliers- ${user_c}`,
+    );
+    res.json({
+      success: true,
+      message: "Query executed successfully.",
+      data: rows,
+    });
+  } catch (error) {
+    console.error("database action error:", error);
+    return res.json({
+      success: false,
+      message: error.message || "An error occurred during db action",
+      data: [],
+    });
+  }
+});
+
+
 module.exports = router;

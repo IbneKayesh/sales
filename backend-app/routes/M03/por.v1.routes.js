@@ -374,11 +374,11 @@ const create = async (req, res) => {
       //SYS_PO.SYS_PURCHASE_ORDER
       scripts.push({
         sql: `INSERT INTO tmtb_jrnlm(id, jrnlm_users, jrnlm_bsins, jrnlm_dpart, jrnlm_fsyar, jrnlm_acprd,
-    jrnlm_crncy, jrnlm_trtyp, jrnlm_trnno, jrnlm_trdat, jrnlm_refno, jrnlm_narrt,
-    jrnlm_drval, jrnlm_crval, jrnlm_exrat, jrnlm_stats, jrnlm_crusr, jrnlm_upusr)
-    VALUES ($1, $2, $3, $4, $5, $6,
-    $7, $8, $9, $10, $11, $12,
-    $13, $14, $15, $16, $17, $18)`,
+              jrnlm_crncy, jrnlm_trtyp, jrnlm_trnno, jrnlm_trdat, jrnlm_refno, jrnlm_narrt,
+              jrnlm_drval, jrnlm_crval, jrnlm_exrat, jrnlm_stats, jrnlm_crusr, jrnlm_upusr)
+              VALUES ($1, $2, $3, $4, $5, $6,
+              $7, $8, $9, $10, $11, $12,
+              $13, $14, $15, $16, $17, $18)`,
         params: [
           newId_JV,
           user_c,
@@ -403,6 +403,7 @@ const create = async (req, res) => {
       });
 
       let line = 1;
+
       //SYS_PO.SYS_PURCHASE_ORDER.SYS_AST_PAYMENT.SYS_EMPTY
       for (const det of tmpb_porpy) {
         scripts.push({
@@ -418,11 +419,11 @@ const create = async (req, res) => {
             user_b,
             pordm_dpart,
             newId_JV,
-            chtac_id,
-            party_id,
-            det.porpy_pdamt || 0,
+            det.chtac_id,
+            det.party_id,
             0,
-            "Assets / Supplier / Advance",
+            det.porpy_pdamt || 0,
+            "From Assets / Cash Bank",
             pordm_ttype,
             newId,
             "MASTER",
@@ -430,7 +431,7 @@ const create = async (req, res) => {
             user_s,
             user_s,
           ],
-          label: `Assets / Supplier / Advance ${newTrnNo_JV}`,
+          label: `From Assets / Cash Bank ${newTrnNo_JV}`,
         });
         line++;
       }
@@ -451,9 +452,9 @@ const create = async (req, res) => {
           newId_JV,
           chtac_id,
           party_id,
-          0,
           pordm_pyamt || 0,
-          "From Assets / Cash Bank",
+          0,
+          "To Assets / Supplier / Advance",
           pordm_ttype,
           newId,
           "MASTER",
@@ -461,7 +462,7 @@ const create = async (req, res) => {
           user_s,
           user_s,
         ],
-        label: `Create From Assets / Cash Bank ${newTrnNo_JV}`,
+        label: `Create To Assets / Supplier / Advance ${newTrnNo_JV}`,
       });
       line++;
 
@@ -477,6 +478,7 @@ const create = async (req, res) => {
         label: `Update supplier credit balance ${newTrnNo}`,
       });
     }
+
     //offer pack
     for (const det of tmpb_pordf) {
       const lineId = uuidv4();

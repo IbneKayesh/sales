@@ -995,7 +995,7 @@ export function AppProvider({ children }) {
 
   // Set the Workspace background animation: "none", "rain", "analog", or "digital".
   const setBgAnim = useCallback((value) => {
-    if (value !== "none" && value !== "rain" && value !== "analog" && value !== "digital") return;
+    if (value !== "none" && value !== "rain" && value !== "analog" && value !== "digital" && value !== "lock") return;
     setBgAnimState(value);
     setStorageLoginData({ bgAnim: value });
   }, []);
@@ -1330,6 +1330,7 @@ export function AppProvider({ children }) {
     <AppContext.Provider
       value={{
         user,
+        emply,
         business,
         userMenus,
         login,

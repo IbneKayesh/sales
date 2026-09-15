@@ -56,6 +56,9 @@ const useMRR = () => {
   //bundle
   const [listDataBundle, setListDataBundle] = useState([]);
 
+  //from PO
+  const [fromPO, setFormPO] = useState(false);
+
   //Table Columns
   const getTabColumns = async () => {
     try {
@@ -429,11 +432,19 @@ const useMRR = () => {
   };
 
   const getAllContacts = async () => {
-    if (cntct_Options.length > 0) {
-      return;
-    }
+    // if (cntct_Options.length > 0) {
+    //   return;
+    // }
     try {
       const resp = await contactAPI.getSuppliersMrr();
+      const list = resp.data || [];
+      setCntct_Options(list);
+    } catch (error) {}
+  };
+
+  const getPOContacts = async (v) => {
+    try {
+      const resp = await contactAPI.getSuppliersPendingMRR({ dpart_id: v });
       const list = resp.data || [];
       setCntct_Options(list);
     } catch (error) {}
@@ -465,6 +476,7 @@ const useMRR = () => {
       const resp = await itemsAPI.getMrrItems({
         cntct_id: id,
         price_dpart: dpart_id,
+        from_po: fromPO
       });
       const list = resp.data || [];
       setItems_Options(list);
@@ -500,6 +512,9 @@ const useMRR = () => {
       };
       reCalculate(listDataItem, newformData, listDataCost, listDataPayment);
     }
+    if (f === "mrrdm_dpart" && fromPO) {
+      await getPOContacts(v);
+    }
   };
 
   const handleEdit = async (rowData) => {
@@ -510,6 +525,7 @@ const useMRR = () => {
     getAllDepartments();
     getAllContacts();
     getExpnPaym();
+    setFormPO(false);
   };
 
   const loadAllDetails = async (id) => {
@@ -593,7 +609,7 @@ const useMRR = () => {
     getAllContacts();
     getAllDepartments();
     getExpnPaym();
-    //getMrrItems();
+    setFormPO(false);
   };
 
   const handleCancel = () => {
@@ -601,6 +617,7 @@ const useMRR = () => {
     setFormData(dataModel);
     setReadOnly(false);
     setStopEdit(false);
+    setFormPO(false);
   };
 
   const handleSubmit = async () => {
@@ -916,6 +933,25 @@ const useMRR = () => {
     showToast("Removed successfully", { type: "success" });
   };
 
+  //from PO
+  const handleAddFromPO = () => {
+    setPgView("SYS_VW_FRM_1");
+    setFormData({
+      ...dataModel,
+      mrrdm_ttype: "Material Receipt Report",
+    });
+    setReadOnly(false);
+    setStopEdit(false);
+    setListDataItem([]);
+    setListDataCost([]);
+    setListDataPayment([]);
+    setListDataBundle([]);
+    //getAllContacts();
+    getAllDepartments();
+    //getExpnPaym();
+    setFormPO(true);
+  };
+
   //modal
   const handleShowModal = (modal) => {
     if (modal === "ITEM") {
@@ -942,6 +978,7 @@ const useMRR = () => {
 
     setShowModal({ show: true, modal: modal });
   };
+  
   const handleHideModal = () => {
     setShowModal({ show: false, modal: "" });
     setModalTitle({ title: "", subTitle: "" });
@@ -994,6 +1031,8 @@ const useMRR = () => {
     handleDeletePayment,
     //bundle
     listDataBundle,
+    //from PO
+    handleAddFromPO,
     //modal
     showModal,
     modalTitle,

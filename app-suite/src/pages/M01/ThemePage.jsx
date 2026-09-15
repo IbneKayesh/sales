@@ -1501,7 +1501,7 @@ const ThemePage = () => {
                   display: "flex",
                   flexDirection: "column",
                   gap: 14,
-                  maxWidth: 520,
+                  maxWidth: 650,
                 }}
               >
                 {/* Animation type: Rain On Glass vs Clocks */}

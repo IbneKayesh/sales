@@ -15,7 +15,7 @@ const ItemList = ({ cfColumns = [], readOnly, listData, onEdit, onDelete }) => {
       body: (_, row) => {
         return (
           <span>
-            {row.price_cname} - {row.items_szqty} {row.sunit_cname}
+            {row.price_cname} - {formatNumber(row.items_szqty)} {row.sunit_cname}
           </span>
         );
       },

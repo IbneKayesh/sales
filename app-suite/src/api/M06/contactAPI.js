@@ -62,4 +62,8 @@ export const contactAPI = {
     apiRequest("/M06/v1/contacts/get-suppliers-por", {
       body: data,
     }),
+  getSuppliersPendingMRR: (data) =>
+    apiRequest("/M06/v1/contacts/get-suppliers-pending-mrr", {
+      body: data,
+    }),
 };

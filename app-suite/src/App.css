@@ -9943,10 +9943,10 @@ html[data-layout="boxed"] .layout__main {
 }
 
 .lock-screen__time {
-  font-size: 3.25rem;
-  font-weight: 300;
+  font-size: 3.55rem;
+  font-weight: 400;
   letter-spacing: -0.03em;
-  color: var(--text-primary);
+  color: var(--text-disabled);
   line-height: 1;
   text-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
 }
@@ -9954,7 +9954,7 @@ html[data-layout="boxed"] .layout__main {
 .lock-screen__date {
   font-size: var(--fs-sm);
   font-weight: 500;
-  color: var(--text-muted);
+  color: var(--text-disabled);
   margin-top: 8px;
   letter-spacing: 0.02em;
 }

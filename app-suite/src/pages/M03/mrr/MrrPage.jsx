@@ -76,6 +76,8 @@ const MrrPage = () => {
     handleDeletePayment,
     //bundle
     listDataBundle,
+    //from PO
+    handleAddFromPO,
     //modal
     showModal,
     modalTitle,
@@ -106,6 +108,12 @@ const MrrPage = () => {
               <Button size="sm" onClick={handleAddNew}>
                 <IconPlus size={14} className="icon-left" />
                 Add
+              </Button>
+            )}
+            {pgView === "SYS_VW_LST_1" && (
+              <Button size="sm" onClick={handleAddFromPO}>
+                <IconPlus size={14} className="icon-left" />
+                Add From PO
               </Button>
             )}
             {pgView === "SYS_VW_FRM_1" && !readOnly && (
