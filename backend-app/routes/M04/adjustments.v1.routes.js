@@ -8,6 +8,7 @@ const {
   getCurrentPeriod,
   getCurrencyRate,
 } = require("../../db/genHelper");
+const { buildJournalScripts } = require("../../db/journalService");
 
 // get all
 router.post("/", async (req, res) => {
@@ -135,47 +136,17 @@ const create = async (req, res) => {
     }
 
     //database action
-    const acprd = await getCurrentPeriod(user_c, user_b, adjsm_dpart);
-    if (!acprd) {
-      return {
-        success: false,
-        message: "No active fiscal year or accounting period found",
-        data: {},
-      };
-    }
-    if (acprd.length > 1) {
-      return {
-        success: false,
-        message: "Multiple active accounting periods found. Please select one.",
-        data: {},
-      };
-    }
-    const { acprd_id, fsyar_id } = acprd[0];
-    const newId_JV = uuidv4();
-    const newTrnNo_JV = await GenNewTrn(
-      user_c,
-      user_b,
-      "tmtb_jrnlm",
-      adjsm_ttype, //"Purchase Invoice",
-      adjsm_dpart,
-    );
-
-    //active currency rate
-    const crncy = await getCurrencyRate(user_c, user_b);
-    if (!crncy) {
-      return {
-        success: false,
-        message: "No active currency rate found",
-        data: {},
-      };
-    }
-    if (crncy.length > 1) {
-      return {
-        success: false,
-        message: "Multiple active currency rate found. Please select one.",
-        data: {},
-      };
-    }
+    // ─── OLD: manual period/currency/journal-number lookup (commented out) ───
+    // const acprd = await getCurrentPeriod(user_c, user_b, adjsm_dpart);
+    // if (!acprd) { return { success: false, message: "No active fiscal year or accounting period found", data: {} }; }
+    // if (acprd.length > 1) { return { success: false, message: "Multiple active accounting periods found.", data: {} }; }
+    // const { acprd_id, fsyar_id } = acprd[0];
+    // const newId_JV = uuidv4();
+    // const newTrnNo_JV = await GenNewTrn(user_c, user_b, "tmtb_jrnlm", adjsm_ttype, adjsm_dpart);
+    // const crncy = await getCurrencyRate(user_c, user_b);
+    // if (!crncy) { return { success: false, message: "No active currency rate found", data: {} }; }
+    // if (crncy.length > 1) { return { success: false, message: "Multiple active currency rate found.", data: {} }; }
+    // ─── END OLD ───
 
     const newId = uuidv4();
     //const newCode = await GenNewCode(user_c, "tmib_adjsm");
@@ -215,37 +186,16 @@ const create = async (req, res) => {
       label: `Created inventory adjustment ${newTrnNo}`,
     });
 
-    //SYS_ADJUSTMENT.SYS_ADJUSTMENT_IN
-    //SYS_ADJUSTMENT.SYS_ADJUSTMENT_OUT
-    scripts.push({
-      sql: `INSERT INTO tmtb_jrnlm(id, jrnlm_users, jrnlm_bsins, jrnlm_dpart, jrnlm_fsyar, jrnlm_acprd,
-    jrnlm_crncy, jrnlm_trtyp, jrnlm_trnno, jrnlm_trdat, jrnlm_refno, jrnlm_narrt,
-    jrnlm_drval, jrnlm_crval, jrnlm_exrat, jrnlm_stats, jrnlm_crusr, jrnlm_upusr)
-    VALUES ($1, $2, $3, $4, $5, $6,
-    $7, $8, $9, $10, $11, $12,
-    $13, $14, $15, $16, $17, $18)`,
-      params: [
-        newId_JV,
-        user_c,
-        user_b,
-        adjsm_dpart,
-        fsyar_id,
-        acprd_id,
-        crncy.crncy_tcrnc,
-        adjsm_ttype, //"Adjustment In / Adjustment Out",
-        newTrnNo_JV,
-        adjsm_trdat,
-        newTrnNo,
-        adjsm_ttype,
-        0,
-        0,
-        crncy.crncy_exrat,
-        "Posted",
-        user_s,
-        user_s,
-      ],
-      label: `create journal master- ${newTrnNo_JV}`,
-    });
+    // ─── OLD: manual journal master INSERT (commented out) ───
+    // scripts.push({
+    //   sql: `INSERT INTO tmtb_jrnlm(id, jrnlm_users, ..., jrnlm_upusr)
+    //     VALUES ($1,$2,...,$18)`,
+    //   params: [ newId_JV, user_c, user_b, adjsm_dpart, fsyar_id, acprd_id,
+    //     crncy.crncy_tcrnc, adjsm_ttype, newTrnNo_JV, adjsm_trdat, newTrnNo,
+    //     adjsm_ttype, 0, 0, crncy.crncy_exrat, "Posted", user_s, user_s ],
+    //   label: `create journal master- ${newTrnNo_JV}`,
+    // });
+    // ─── END OLD ───
 
     //Insert Adjustment In/Out details, Stock +/- Details
     let line = 1;
@@ -410,41 +360,34 @@ const create = async (req, res) => {
       }, {}),
     );
 
-    //SYS_ADJUSTMENT.SYS_ADJUSTMENT_IN.SYS_AST_INVENTORY
-    for (const det of newGroupedProducts) {
-      scripts.push({
-        sql: `INSERT INTO tmtb_jrnlc(id, jrnlc_users, jrnlc_bsins, jrnlc_dpart, jrnlc_jrnlm, jrnlc_chtac,
-        jrnlc_party, jrnlc_drval, jrnlc_crval, jrnlc_descr, jrnlc_sorce, jrnlc_refid,
-        jrnlc_rtype, jrnlc_lines, jrnlc_crusr, jrnlc_upusr)
-        VALUES ($1, $2, $3, $4, $5, $6,
-        $7, $8, $9, $10, $11, $12,
-        $13, $14, $15, $16)`,
-        params: [
-          uuidv4(),
-          user_c,
-          user_b,
-          adjsm_dpart,
-          newId_JV,
-          det.chtac_id,
-          det.party_id,
-          adjsm_ttype === "Adjustment Out" ? 0 : det.item_amount,
-          adjsm_ttype === "Adjustment Out" ? det.item_amount : 0,
-          "From Assets / Current Assets / Inventory",
-          adjsm_ttype,
-          newId,
-          "MASTER",
-          line,
-          user_s,
-          user_s,
-        ],
-        label: `Create Assets / Current Assets / Inventory ${newTrnNo_JV}`,
-      });
+    // ─── OLD: manual inventory/gain-loss journal details (commented out) ───
+    // for (const det of newGroupedProducts) {
+    //   scripts.push({ sql: `INSERT INTO tmtb_jrnlc(...)...`, params: [...], label: `...` }); line++;
+    // }
+    // const rows_inout = await dbGetAll(sql_inout, [user_c, user_b]);
+    // if (adjsm_ttype === "Adjustment In") {
+    //   scripts.push({ sql: `INSERT INTO tmtb_jrnlc(...)...`, params: [...], label: `...` });
+    // }
+    // if (adjsm_ttype === "Adjustment Out") {
+    //   scripts.push({ sql: `INSERT INTO tmtb_jrnlc(...)...`, params: [...], label: `...` });
+    // }
+    // line++;
+    // ─── END OLD ───
 
-      line++;
+    // ─── NEW: Collect journal details and use centralized helper ───
+    const jrnlDetails = [];
+
+    // Inventory (DR for Adjustment In, CR for Adjustment Out)
+    for (const det of newGroupedProducts) {
+      jrnlDetails.push({
+        chtac: det.chtac_id, party: det.party_id,
+        drval: adjsm_ttype === "Adjustment Out" ? 0 : det.item_amount,
+        crval: adjsm_ttype === "Adjustment Out" ? det.item_amount : 0,
+        descr: "From Assets / Current Assets / Inventory", sorce: adjsm_ttype, refid: newId,
+      });
     }
 
-    //SYS_ADJUSTMENT.SYS_ADJUSTMENT_IN.SYS_EXP_INV_ADJ_GAIN
-    //SYS_ADJUSTMENT.SYS_ADJUSTMENT_OUT.SYS_EXP_INV_ADJ_LOSS
+    // Gain/Loss on adjustment
     const sql_inout = `SELECT pty.id party_id, cht.id chtac_id, crt.chtrt_grpid
       FROM tmtb_party pty
       JOIN tmtb_chtac cht ON pty.party_chtac = cht.id
@@ -458,9 +401,7 @@ const create = async (req, res) => {
       AND cht.chtac_users = $1
       AND cht.chtac_bsins = $2
       LIMIT 2`;
-    //console.log(user_c, user_b, dept_id);
     const rows_inout = await dbGetAll(sql_inout, [user_c, user_b]);
-    //console.log("rows_inout",rows_inout);
     if (!rows_inout.length === 2) {
       return res.json({
         success: false,
@@ -470,75 +411,32 @@ const create = async (req, res) => {
     }
 
     if (adjsm_ttype === "Adjustment In") {
-      const prtyn_gain = rows_inout.find(
-        (row) => row.chtrt_grpid === "SYS_EXP_INV_ADJ_GAIN",
-      );
-      scripts.push({
-        sql: `INSERT INTO tmtb_jrnlc(id, jrnlc_users, jrnlc_bsins, jrnlc_dpart, jrnlc_jrnlm, jrnlc_chtac,
-        jrnlc_party, jrnlc_drval, jrnlc_crval, jrnlc_descr, jrnlc_sorce, jrnlc_refid,
-        jrnlc_rtype, jrnlc_lines, jrnlc_crusr, jrnlc_upusr)
-        VALUES ($1, $2, $3, $4, $5, $6,
-        $7, $8, $9, $10, $11, $12,
-        $13, $14, $15, $16)`,
-        params: [
-          uuidv4(),
-          user_c,
-          user_b,
-          adjsm_dpart,
-          newId_JV,
-          prtyn_gain.chtac_id,
-          prtyn_gain.party_id,
-          0,
-          adjsm_tramt || 0,
-          "Gain on Inventory Adjustment",
-          adjsm_ttype,
-          newId,
-          "MASTER",
-          line,
-          user_s,
-          user_s,
-        ],
-        label: `Create Inventory Adjustment ${newTrnNo_JV}`,
+      const prtyn_gain = rows_inout.find((row) => row.chtrt_grpid === "SYS_EXP_INV_ADJ_GAIN");
+      jrnlDetails.push({
+        chtac: prtyn_gain.chtac_id, party: prtyn_gain.party_id,
+        drval: 0, crval: adjsm_tramt || 0,
+        descr: "Gain on Inventory Adjustment", sorce: adjsm_ttype, refid: newId,
       });
     }
-
     if (adjsm_ttype === "Adjustment Out") {
-      const prtyn_loss = rows_inout.find(
-        (row) => row.chtrt_grpid === "SYS_EXP_INV_ADJ_LOSS",
-      );
-
-      scripts.push({
-        sql: `INSERT INTO tmtb_jrnlc(id, jrnlc_users, jrnlc_bsins, jrnlc_dpart, jrnlc_jrnlm, jrnlc_chtac,
-        jrnlc_party, jrnlc_drval, jrnlc_crval, jrnlc_descr, jrnlc_sorce, jrnlc_refid,
-        jrnlc_rtype, jrnlc_lines, jrnlc_crusr, jrnlc_upusr)
-        VALUES ($1, $2, $3, $4, $5, $6,
-        $7, $8, $9, $10, $11, $12,
-        $13, $14, $15, $16)`,
-        params: [
-          uuidv4(),
-          user_c,
-          user_b,
-          adjsm_dpart,
-          newId_JV,
-          prtyn_loss.chtac_id,
-          prtyn_loss.party_id,
-          adjsm_tramt || 0,
-          0,
-          "Loss on Inventory Adjustment",
-          adjsm_ttype,
-          newId,
-          "MASTER",
-          line,
-          user_s,
-          user_s,
-        ],
-        label: `Create Inventory Adjustment ${newTrnNo_JV}`,
+      const prtyn_loss = rows_inout.find((row) => row.chtrt_grpid === "SYS_EXP_INV_ADJ_LOSS");
+      jrnlDetails.push({
+        chtac: prtyn_loss.chtac_id, party: prtyn_loss.party_id,
+        drval: adjsm_tramt || 0, crval: 0,
+        descr: "Loss on Inventory Adjustment", sorce: adjsm_ttype, refid: newId,
       });
     }
-    line++;
 
-    //console.log(scripts);
-    //return;
+    // Build journal scripts via centralized helper
+    const { scripts: jrnlScripts, masterId: newId_JV, trnNo: newTrnNo_JV } = await buildJournalScripts({
+      user_c, user_b, user_s, dpart: adjsm_dpart,
+      trtyp: adjsm_ttype, trdat: adjsm_trdat,
+      refno: newTrnNo, narrt: adjsm_ttype,
+      drval: 0, crval: 0,
+      details: jrnlDetails,
+    });
+    scripts.push(...jrnlScripts);
+
     await dbRunAll(scripts);
 
     res.json({

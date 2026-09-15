@@ -8,6 +8,7 @@ const {
   getCurrentPeriod,
   getCurrencyRate,
 } = require("../../db/genHelper");
+const { buildJournalScripts } = require("../../db/journalService");
 
 // =====================
 // Get All
@@ -107,51 +108,17 @@ router.post("/create", async (req, res) => {
       });
     }
     //database actions
-    const acprd = await getCurrentPeriod(user_c, user_b, mrrdm_dpart);
-    if (!acprd) {
-      return {
-        success: false,
-        message: "No active fiscal year or accounting period found",
-        data: {},
-      };
-    }
-    if (acprd.length > 1) {
-      return {
-        success: false,
-        message: "Multiple active accounting periods found. Please select one.",
-        data: {},
-      };
-    }
-    const { acprd_id, fsyar_id } = acprd[0];
-    const newId_JV = uuidv4();
-    const newTrnNo_JV = await GenNewTrn(
-      user_c,
-      user_b,
-      "tmtb_jrnlm",
-      "Payment Voucher",
-      mrrdm_dpart,
-    );
-
-    //console.log("p1");
-
-    //active currency rate
-    const crncy = await getCurrencyRate(user_c, user_b);
-    //console.log("crncy",crncy);
-    if (!crncy) {
-      return {
-        success: false,
-        message: "No active currency rate found",
-        data: {},
-      };
-    }
-    if (crncy.length > 1) {
-      return {
-        success: false,
-        message: "Multiple active currency rate found. Please select one.",
-        data: {},
-      };
-    }
-    //console.log("p2");
+    // ─── OLD: manual period/currency/journal-number lookup (commented out) ───
+    // const acprd = await getCurrentPeriod(user_c, user_b, mrrdm_dpart);
+    // if (!acprd) { return { success: false, message: "No active fiscal year or accounting period found", data: {} }; }
+    // if (acprd.length > 1) { return { success: false, message: "Multiple active accounting periods found.", data: {} }; }
+    // const { acprd_id, fsyar_id } = acprd[0];
+    // const newId_JV = uuidv4();
+    // const newTrnNo_JV = await GenNewTrn(user_c, user_b, "tmtb_jrnlm", "Payment Voucher", mrrdm_dpart);
+    // const crncy = await getCurrencyRate(user_c, user_b);
+    // if (!crncy) { return { success: false, message: "No active currency rate found", data: {} }; }
+    // if (crncy.length > 1) { return { success: false, message: "Multiple active currency rate found.", data: {} }; }
+    // ─── END OLD ───
 
     //build scripts
     const sql = `SELECT mrm.mrrdm_pyamt-(COALESCE(SUM(mrp.mrrpy_pdamt),0) + $1) mrrdm_duamt
@@ -202,93 +169,32 @@ router.post("/create", async (req, res) => {
       label: `Update Sales Invoice master ${mrrpy_refno}`,
     });
 
-    //SYS_MRR_DIRECT
-    scripts.push({
-      sql: `INSERT INTO tmtb_jrnlm(id, jrnlm_users, jrnlm_bsins, jrnlm_dpart, jrnlm_fsyar, jrnlm_acprd,
-    jrnlm_crncy, jrnlm_trtyp, jrnlm_trnno, jrnlm_trdat, jrnlm_refno, jrnlm_narrt,
-    jrnlm_drval, jrnlm_crval, jrnlm_exrat, jrnlm_stats, jrnlm_crusr, jrnlm_upusr)
-    VALUES ($1, $2, $3, $4, $5, $6,
-    $7, $8, $9, $10, $11, $12,
-    $13, $14, $15, $16, $17, $18)`,
-      params: [
-        newId_JV,
-        user_c,
-        user_b,
-        mrrdm_dpart,
-        fsyar_id,
-        acprd_id,
-        crncy.crncy_tcrnc,
-        "Payment Voucher",
-        newTrnNo_JV,
-        new Date(),
-        mrrpy_refno,
-        mrrdm_ttype,
-        0,
-        0,
-        crncy.crncy_exrat,
-        "Posted",
-        user_s,
-        user_s,
-      ],
-      label: `create journal master- ${newTrnNo_JV}`,
+    // ─── NEW: Collect journal details and use centralized helper ───
+    const jrnlDetails = [];
+
+    // Supplier Payable (DR)
+    jrnlDetails.push({
+      chtac: chtac_id, party: party_id,
+      drval: mrrpy_pdamt || 0, crval: 0,
+      descr: "Clear Liability / Supplier Payable", sorce: mrrdm_ttype, refid: mrrpy_mrrdm,
     });
 
-    //SYS_MRR_DIRECT.SYS_LIB_SUPPLIER > Liability / Supplier Payable - 20101010 (DR)
-    scripts.push({
-      sql: `INSERT INTO tmtb_jrnlc(id, jrnlc_users, jrnlc_bsins, jrnlc_dpart, jrnlc_jrnlm, jrnlc_chtac,
-        jrnlc_party, jrnlc_drval, jrnlc_crval, jrnlc_descr, jrnlc_sorce, jrnlc_refid,
-        jrnlc_rtype, jrnlc_lines, jrnlc_crusr, jrnlc_upusr)
-        VALUES ($1, $2, $3, $4, $5, $6,
-        $7, $8, $9, $10, $11, $12,
-        $13, $14, $15, $16)`,
-      params: [
-        uuidv4(),
-        user_c,
-        user_b,
-        mrrdm_dpart,
-        newId_JV,
-        chtac_id,
-        party_id,
-        mrrpy_pdamt || 0,
-        0,
-        "Clear Liability / Supplier Payable",
-        mrrdm_ttype,
-        mrrpy_mrrdm,
-        "MASTER",
-        1,
-        user_s,
-        user_s,
-      ],
-      label: `Clear Liability / Supplier / Payable ${newTrnNo_JV}`,
+    // Cash/Bank (CR)
+    jrnlDetails.push({
+      chtac: chtac_id_pay, party: party_id_pay,
+      drval: 0, crval: mrrpy_pdamt || 0,
+      descr: "Payment Liability / Supplier Payable", sorce: mrrdm_ttype, refid: mrrpy_mrrdm,
     });
-    //SYS_MRR_DIRECT.SYS_AST_PAY_CASH/SYS_AST_PAY_BANK	> Asset / Cash In Hand - 10101010 (CR)
-    scripts.push({
-      sql: `INSERT INTO tmtb_jrnlc(id, jrnlc_users, jrnlc_bsins, jrnlc_dpart, jrnlc_jrnlm, jrnlc_chtac,
-        jrnlc_party, jrnlc_drval, jrnlc_crval, jrnlc_descr, jrnlc_sorce, jrnlc_refid,
-        jrnlc_rtype, jrnlc_lines, jrnlc_crusr, jrnlc_upusr)
-        VALUES ($1, $2, $3, $4, $5, $6,
-        $7, $8, $9, $10, $11, $12,
-        $13, $14, $15, $16)`,
-      params: [
-        uuidv4(),
-        user_c,
-        user_b,
-        mrrdm_dpart,
-        newId_JV,
-        chtac_id_pay,
-        party_id_pay,
-        0,
-        mrrpy_pdamt || 0,
-        "Payment Liability / Supplier Payable",
-        mrrdm_ttype,
-        mrrpy_mrrdm,
-        "MASTER",
-        2,
-        user_s,
-        user_s,
-      ],
-      label: `Payment Liability / Supplier / Payable ${newTrnNo_JV}`,
+
+    // Build journal scripts via centralized helper
+    const { scripts: jrnlScripts, masterId: newId_JV, trnNo: newTrnNo_JV } = await buildJournalScripts({
+      user_c, user_b, user_s, dpart: mrrdm_dpart,
+      trtyp: "Payment Voucher", trdat: new Date(),
+      refno: mrrpy_refno, narrt: mrrdm_ttype,
+      drval: 0, crval: 0,
+      details: jrnlDetails,
     });
+    scripts.push(...jrnlScripts);
 
     await dbRunAll(scripts);
 

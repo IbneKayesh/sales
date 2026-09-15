@@ -8,6 +8,7 @@ const {
   getCurrentPeriod,
   getCurrencyRate,
 } = require("../../db/genHelper");
+const { buildJournalScripts } = require("../../db/journalService");
 
 // get all
 router.post("/", async (req, res) => {
@@ -325,148 +326,36 @@ const create = async (req, res) => {
       });
     }
 
-    //SYS_PO.SYS_PURCHASE_ORDER.SYS_AST_SUPPLIER.SYS_EMPTY
+    // ─── NEW: Journal entry via centralized helper (conditional on payment) ───
     if (Number(pordm_pdamt) > 0) {
-      const acprd = await getCurrentPeriod(user_c, user_b, pordm_dpart);
-      if (!acprd) {
-        return {
-          success: false,
-          message: "No active fiscal year or accounting period found",
-          data: {},
-        };
-      }
-      if (acprd.length > 1) {
-        return {
-          success: false,
-          message:
-            "Multiple active accounting periods found. Please select one.",
-          data: {},
-        };
-      }
-      const { acprd_id, fsyar_id } = acprd[0];
+      const jrnlDetails = [];
 
-      const newId_JV = uuidv4();
-      const newTrnNo_JV = await GenNewTrn(
-        user_c,
-        user_b,
-        "tmtb_jrnlm",
-        "Purchase Order",
-        pordm_dpart,
-      );
-
-      //active currency rate
-      const crncy = await getCurrencyRate(user_c, user_b);
-      if (!crncy) {
-        return {
-          success: false,
-          message: "No active currency rate found",
-          data: {},
-        };
-      }
-      if (crncy.length > 1) {
-        return {
-          success: false,
-          message: "Multiple active currency rate found. Please select one.",
-          data: {},
-        };
-      }
-
-      //SYS_PO.SYS_PURCHASE_ORDER
-      scripts.push({
-        sql: `INSERT INTO tmtb_jrnlm(id, jrnlm_users, jrnlm_bsins, jrnlm_dpart, jrnlm_fsyar, jrnlm_acprd,
-              jrnlm_crncy, jrnlm_trtyp, jrnlm_trnno, jrnlm_trdat, jrnlm_refno, jrnlm_narrt,
-              jrnlm_drval, jrnlm_crval, jrnlm_exrat, jrnlm_stats, jrnlm_crusr, jrnlm_upusr)
-              VALUES ($1, $2, $3, $4, $5, $6,
-              $7, $8, $9, $10, $11, $12,
-              $13, $14, $15, $16, $17, $18)`,
-        params: [
-          newId_JV,
-          user_c,
-          user_b,
-          pordm_dpart,
-          fsyar_id,
-          acprd_id,
-          crncy.crncy_tcrnc,
-          "Purchase Order",
-          newTrnNo_JV,
-          pordm_trdat,
-          newTrnNo,
-          pordm_ttype,
-          0,
-          0,
-          crncy.crncy_exrat,
-          "Posted",
-          user_s,
-          user_s,
-        ],
-        label: `create journal master- ${newTrnNo_JV}`,
-      });
-
-      let line = 1;
-
-      //SYS_PO.SYS_PURCHASE_ORDER.SYS_AST_PAYMENT.SYS_EMPTY
+      // Payment details (DR cash/bank)
       for (const det of tmpb_porpy) {
-        scripts.push({
-          sql: `INSERT INTO tmtb_jrnlc(id, jrnlc_users, jrnlc_bsins, jrnlc_dpart, jrnlc_jrnlm, jrnlc_chtac,
-            jrnlc_party, jrnlc_drval, jrnlc_crval, jrnlc_descr, jrnlc_sorce, jrnlc_refid,
-            jrnlc_rtype, jrnlc_lines, jrnlc_crusr, jrnlc_upusr)
-            VALUES ($1, $2, $3, $4, $5, $6,
-            $7, $8, $9, $10, $11, $12,
-            $13, $14, $15, $16)`,
-          params: [
-            uuidv4(),
-            user_c,
-            user_b,
-            pordm_dpart,
-            newId_JV,
-            det.chtac_id,
-            det.party_id,
-            0,
-            det.porpy_pdamt || 0,
-            "From Assets / Cash Bank",
-            pordm_ttype,
-            newId,
-            "MASTER",
-            line,
-            user_s,
-            user_s,
-          ],
-          label: `From Assets / Cash Bank ${newTrnNo_JV}`,
+        jrnlDetails.push({
+          chtac: det.chtac_id, party: det.party_id,
+          drval: 0, crval: det.porpy_pdamt || 0,
+          descr: "From Assets / Cash Bank", sorce: pordm_ttype, refid: newId,
         });
-        line++;
       }
 
-      //SYS_PO.SYS_PURCHASE_ORDER.SYS_AST_SUPPLIER
-      scripts.push({
-        sql: `INSERT INTO tmtb_jrnlc(id, jrnlc_users, jrnlc_bsins, jrnlc_dpart, jrnlc_jrnlm, jrnlc_chtac,
-        jrnlc_party, jrnlc_drval, jrnlc_crval, jrnlc_descr, jrnlc_sorce, jrnlc_refid,
-        jrnlc_rtype, jrnlc_lines, jrnlc_crusr, jrnlc_upusr)
-        VALUES ($1, $2, $3, $4, $5, $6,
-        $7, $8, $9, $10, $11, $12,
-        $13, $14, $15, $16)`,
-        params: [
-          uuidv4(),
-          user_c,
-          user_b,
-          pordm_dpart,
-          newId_JV,
-          chtac_id,
-          party_id,
-          pordm_pdamt || 0,
-          0,
-          "To Assets / Supplier / Advance",
-          pordm_ttype,
-          newId,
-          "MASTER",
-          line,
-          user_s,
-          user_s,
-        ],
-        label: `Create To Assets / Supplier / Advance ${newTrnNo_JV}`,
+      // Supplier advance (CR)
+      jrnlDetails.push({
+        chtac: chtac_id, party: party_id,
+        drval: pordm_pdamt || 0, crval: 0,
+        descr: "To Assets / Supplier / Advance", sorce: pordm_ttype, refid: newId,
       });
-      line++;
 
-      //Update supplier credit balance - decrease
+      const { scripts: jrnlScripts } = await buildJournalScripts({
+        user_c, user_b, user_s, dpart: pordm_dpart,
+        trtyp: "Purchase Order", trdat: pordm_trdat,
+        refno: newTrnNo, narrt: pordm_ttype,
+        drval: 0, crval: 0,
+        details: jrnlDetails,
+      });
+      scripts.push(...jrnlScripts);
+
+      // Update supplier credit balance - decrease
       scripts.push({
         sql: `UPDATE tmcb_cntct
           SET cntct_crbal = cntct_crbal - $1,      
@@ -478,6 +367,29 @@ const create = async (req, res) => {
         label: `Update supplier credit balance ${newTrnNo}`,
       });
     }
+
+    // ─── OLD: manual period/currency/journal-number lookup + INSERTs (commented out) ───
+    // if (Number(pordm_pdamt) > 0) {
+    //   const acprd = await getCurrentPeriod(user_c, user_b, pordm_dpart);
+    //   if (!acprd) { return { success: false, message: "No active fiscal year or accounting period found", data: {} }; }
+    //   if (acprd.length > 1) { return { success: false, message: "Multiple active accounting periods found.", data: {} }; }
+    //   const { acprd_id, fsyar_id } = acprd[0];
+    //   const newId_JV = uuidv4();
+    //   const newTrnNo_JV = await GenNewTrn(user_c, user_b, "tmtb_jrnlm", "Purchase Order", pordm_dpart);
+    //   const crncy = await getCurrencyRate(user_c, user_b);
+    //   if (!crncy) { return { success: false, message: "No active currency rate found", data: {} }; }
+    //   if (crncy.length > 1) { return { success: false, message: "Multiple active currency rate found.", data: {} }; }
+    //   scripts.push({ sql: `INSERT INTO tmtb_jrnlm(...)...`, params: [...], label: `create journal master- ${newTrnNo_JV}` });
+    //   let line = 1;
+    //   for (const det of tmpb_porpy) {
+    //     scripts.push({ sql: `INSERT INTO tmtb_jrnlc(...)...`, params: [...], label: `From Assets / Cash Bank ${newTrnNo_JV}` });
+    //     line++;
+    //   }
+    //   scripts.push({ sql: `INSERT INTO tmtb_jrnlc(...)...`, params: [...], label: `Create To Assets / Supplier / Advance ${newTrnNo_JV}` });
+    //   line++;
+    //   scripts.push({ sql: `UPDATE tmcb_cntct...`, params: [...], label: `Update supplier credit balance ${newTrnNo}` });
+    // }
+    // ─── END OLD ───
 
     //offer pack
     for (const det of tmpb_pordf) {

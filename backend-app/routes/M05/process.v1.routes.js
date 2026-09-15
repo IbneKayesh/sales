@@ -8,6 +8,7 @@ const {
   getCurrentPeriod,
   getCurrencyRate,
 } = require("../../db/genHelper");
+const { buildJournalScripts } = require("../../db/journalService");
 
 // =====================
 // Get All
@@ -149,47 +150,17 @@ const create = async (req, res) => {
     }
 
     //database action
-    const acprd = await getCurrentPeriod(user_c, user_b, promf_dpart);
-    if (!acprd) {
-      return {
-        success: false,
-        message: "No active fiscal year or accounting period found",
-        data: {},
-      };
-    }
-    if (acprd.length > 1) {
-      return {
-        success: false,
-        message: "Multiple active accounting periods found. Please select one.",
-        data: {},
-      };
-    }
-    const { acprd_id, fsyar_id } = acprd[0];
-    const newId_JV = uuidv4();
-    const newTrnNo_JV = await GenNewTrn(
-      user_c,
-      user_b,
-      "tmtb_jrnlm",
-      "Production Process",
-      promf_dpart,
-    );
-
-    //active currency rate
-    const crncy = await getCurrencyRate(user_c, user_b);
-    if (!crncy) {
-      return {
-        success: false,
-        message: "No active currency rate found",
-        data: {},
-      };
-    }
-    if (crncy.length > 1) {
-      return {
-        success: false,
-        message: "Multiple active currency rate found. Please select one.",
-        data: {},
-      };
-    }
+    // ─── OLD: manual period/currency/journal-number lookup (commented out) ───
+    // const acprd = await getCurrentPeriod(user_c, user_b, promf_dpart);
+    // if (!acprd) { return { success: false, message: "No active fiscal year or accounting period found", data: {} }; }
+    // if (acprd.length > 1) { return { success: false, message: "Multiple active accounting periods found.", data: {} }; }
+    // const { acprd_id, fsyar_id } = acprd[0];
+    // const newId_JV = uuidv4();
+    // const newTrnNo_JV = await GenNewTrn(user_c, user_b, "tmtb_jrnlm", "Production Process", promf_dpart);
+    // const crncy = await getCurrencyRate(user_c, user_b);
+    // if (!crncy) { return { success: false, message: "No active currency rate found", data: {} }; }
+    // if (crncy.length > 1) { return { success: false, message: "Multiple active currency rate found.", data: {} }; }
+    // ─── END OLD ───
 
     const newId = uuidv4();
     const newCode = await GenNewCode(user_c, "tmmb_promf");
@@ -232,36 +203,73 @@ const create = async (req, res) => {
       label: `Created PP ${newTrnNo}`,
     });
 
-    //SYS_PRODUCTION.SYS_PROCESS
-    scripts.push({
-      sql: `INSERT INTO tmtb_jrnlm(id, jrnlm_users, jrnlm_bsins, jrnlm_dpart, jrnlm_fsyar, jrnlm_acprd,
-    jrnlm_crncy, jrnlm_trtyp, jrnlm_trnno, jrnlm_trdat, jrnlm_refno, jrnlm_narrt,
-    jrnlm_drval, jrnlm_crval, jrnlm_exrat, jrnlm_stats, jrnlm_crusr, jrnlm_upusr)
-    VALUES ($1, $2, $3, $4, $5, $6,
-    $7, $8, $9, $10, $11, $12,
-    $13, $14, $15, $16, $17, $18)`,
-      params: [
-        newId_JV,
-        user_c,
-        user_b,
-        promf_dpart,
-        fsyar_id,
-        acprd_id,
-        crncy.crncy_tcrnc,
-        "Production Process",
-        newTrnNo_JV,
-        promf_trdat,
-        newTrnNo,
-        "Production Process",
-        0,
-        0,
-        crncy.crncy_exrat,
-        "Posted",
-        user_s,
-        user_s,
-      ],
-      label: `create journal master- ${newTrnNo_JV}`,
+    // ─── OLD: manual journal master INSERT (commented out) ───
+    // scripts.push({
+    //   sql: `INSERT INTO tmtb_jrnlm(id, jrnlm_users, ..., jrnlm_upusr)
+    //     VALUES ($1,$2,...,$18)`,
+    //   params: [ newId_JV, user_c, user_b, promf_dpart, fsyar_id, acprd_id,
+    //     crncy.crncy_tcrnc, "Production Process", newTrnNo_JV, promf_trdat, newTrnNo,
+    //     "Production Process", 0, 0, crncy.crncy_exrat, "Posted", user_s, user_s ],
+    //   label: `create journal master- ${newTrnNo_JV}`,
+    // });
+    // ─── END OLD ───
+
+    // ─── OLD: manual journal detail INSERTs (commented out) ───
+    // for (const det of newGroupedProducts) {
+    //   scripts.push({ sql: `INSERT INTO tmtb_jrnlc(...)...`, params: [...], label: `...` }); line++;
+    //   if (det.type === "FOH" || det.type === "SVC") {
+    //     scripts.push({ sql: `INSERT INTO tmtb_jrnlc(...)...`, params: [...], label: `...` }); line++;
+    //   }
+    // }
+    // if (totalFohSvc > 0) { scripts.push({ sql: `INSERT INTO tmtb_jrnlc(...)...`, params: [...], label: `...` }); line++; }
+    // scripts.push({ sql: `INSERT INTO tmtb_jrnlc(...)...`, params: [...], label: `...` }); line++;
+    // ─── END OLD ───
+
+    // ─── NEW: Collect journal details and use centralized helper ───
+    const jrnlDetails = [];
+
+    // Input 1 + Input 2 reduce (CR)
+    for (const det of newGroupedProducts) {
+      jrnlDetails.push({
+        chtac: det.chtac_id, party: det.party_id,
+        drval: 0, crval: det.item_amount,
+        descr: "From Asset / Inventory / Products / WIP", sorce: "Production Process", refid: newId,
+      });
+      // FOH + SVC clearing (DR)
+      if (det.type === "FOH" || det.type === "SVC") {
+        jrnlDetails.push({
+          chtac: det.chtac_id, party: det.party_id,
+          drval: det.item_amount, crval: 0,
+          descr: "Asset / Inventory / Products / FOH-SVC - Clearing", sorce: "Production Process", refid: newId,
+        });
+      }
+    }
+
+    // FOH SVC absorbed (CR)
+    if (totalFohSvc > 0) {
+      jrnlDetails.push({
+        chtac: result_inpfoh.chtac_id, party: result_inpfoh.party_id,
+        drval: 0, crval: totalFohSvc,
+        descr: "To Asset / Inventory / Products / WIP - Absorbed Clearing", sorce: "Production Process", refid: newId,
+      });
+    }
+
+    // WIP (DR)
+    jrnlDetails.push({
+      chtac: result_yield.chtac_id, party: result_yield.party_id,
+      drval: totalWIP, crval: 0,
+      descr: "To Asset / Inventory / Products / WIP", sorce: "Production Process", refid: newId,
     });
+
+    // Build journal scripts via centralized helper
+    const { scripts: jrnlScripts, masterId: newId_JV, trnNo: newTrnNo_JV } = await buildJournalScripts({
+      user_c, user_b, user_s, dpart: promf_dpart,
+      trtyp: "Production Process", trdat: promf_trdat,
+      refno: newTrnNo, narrt: "Production Process",
+      drval: 0, crval: 0,
+      details: jrnlDetails,
+    });
+    scripts.push(...jrnlScripts);
 
     const jv_items = [];
     //Insert RM PM details
@@ -466,145 +474,15 @@ const create = async (req, res) => {
       }, {}),
     );
 
-    let totalFohSvc = 0;
-    for (const det of newGroupedProducts) {
-      //Input 1 + Input 2 reduce
-      scripts.push({
-        sql: `INSERT INTO tmtb_jrnlc(id, jrnlc_users, jrnlc_bsins, jrnlc_dpart, jrnlc_jrnlm, jrnlc_chtac,
-        jrnlc_party, jrnlc_drval, jrnlc_crval, jrnlc_descr, jrnlc_sorce, jrnlc_refid,
-        jrnlc_rtype, jrnlc_lines, jrnlc_crusr, jrnlc_upusr)
-        VALUES ($1, $2, $3, $4, $5, $6,
-        $7, $8, $9, $10, $11, $12,
-        $13, $14, $15, $16)`,
-        params: [
-          uuidv4(),
-          user_c,
-          user_b,
-          promf_dpart,
-          newId_JV,
-          det.chtac_id,
-          det.party_id,
-          0,
-          det.item_amount,
-          "From Asset / Inventory / Products / WIP",
-          "Production Process",
-          newId,
-          "MASTER",
-          line,
-          user_s,
-          user_s,
-        ],
-        label: `Create Asset / Inventory / Products ${newTrnNo_JV}`,
-      });
-      line++;
-      //FOH + SVC clearing from Asset Credit as Debit
-      //as no stock of 2 type items its need to move expenses again
-      if (det.type === "FOH" || det.type === "SVC") {
-        scripts.push({
-          sql: `INSERT INTO tmtb_jrnlc(id, jrnlc_users, jrnlc_bsins, jrnlc_dpart, jrnlc_jrnlm, jrnlc_chtac,
-        jrnlc_party, jrnlc_drval, jrnlc_crval, jrnlc_descr, jrnlc_sorce, jrnlc_refid,
-        jrnlc_rtype, jrnlc_lines, jrnlc_crusr, jrnlc_upusr)
-        VALUES ($1, $2, $3, $4, $5, $6,
-        $7, $8, $9, $10, $11, $12,
-        $13, $14, $15, $16)`,
-          params: [
-            uuidv4(),
-            user_c,
-            user_b,
-            promf_dpart,
-            newId_JV,
-            det.chtac_id,
-            det.party_id,
-            det.item_amount,
-            0,
-            "Asset / Inventory / Products / FOH-SVC - Clearing",
-            "Production Process",
-            newId,
-            "MASTER",
-            line,
-            user_s,
-            user_s,
-          ],
-          label: `Create Asset / Inventory / Products ${newTrnNo_JV}`,
-        });
-        totalFohSvc = totalFohSvc + Number(det.item_amount);
-        line++;
-      }
-      totalWIP = totalWIP + Number(det.item_amount);
-    }
-
-    if (totalFohSvc > 0) {
-      //SYS_PRODUCTION.SYS_PROCESS.SYS_EXP_FOH_MFG
-      const sql_inpfoh = `SELECT pty.id party_id, cht.id chtac_id, crt.chtrt_grpid
-      FROM tmtb_party pty
-      JOIN tmtb_chtac cht ON pty.party_chtac = cht.id
-      JOIN tmtb_chtrt crt ON cht.chtac_chtno = crt.chtrt_chtno
-      WHERE crt.chtrt_trnid = 'SYS_PRODUCTION'
-      AND crt.chtrt_pegid = 'SYS_PROCESS'
-      AND crt.chtrt_grpid IN ('SYS_EXP_FOH_MFG','SYS_NONE')
-      AND pty.party_actve = TRUE
-      AND cht.chtac_actve = TRUE
-      AND crt.chtrt_actve = TRUE
-      AND cht.chtac_users = $1
-      AND cht.chtac_bsins = $2`;
-      const result_inpfoh = await dbGet(sql_inpfoh, [user_c, user_b]);
-      // console.log(result);
-      if (!result_inpfoh || result_inpfoh.length === 0) {
-        return res.json({
-          success: false,
-          message: `No default input FOH configured for Production Process`,
-          data: {},
-        });
-      }
-
-      // const expFOH = await getCoaPartyExpFoh(user_c, user_b);
-      // if (!expFOH) {
-      //   return {
-      //     success: false,
-      //     message: "No account party setup for Expense FOH",
-      //     data: {},
-      //   };
-      // }
-
-      scripts.push({
-        sql: `INSERT INTO tmtb_jrnlc(id, jrnlc_users, jrnlc_bsins, jrnlc_dpart, jrnlc_jrnlm, jrnlc_chtac,
-        jrnlc_party, jrnlc_drval, jrnlc_crval, jrnlc_descr, jrnlc_sorce, jrnlc_refid,
-        jrnlc_rtype, jrnlc_lines, jrnlc_crusr, jrnlc_upusr)
-        VALUES ($1, $2, $3, $4, $5, $6,
-        $7, $8, $9, $10, $11, $12,
-        $13, $14, $15, $16)`,
-        params: [
-          uuidv4(),
-          user_c,
-          user_b,
-          promf_dpart,
-          newId_JV,
-          result_inpfoh.chtac_id,
-          result_inpfoh.party_id,
-          0,
-          totalFohSvc,
-          "To Asset / Inventory / Products / WIP - Absorbed Clearing",
-          "Production Process",
-          newId,
-          "MASTER",
-          line,
-          user_s,
-          user_s,
-        ],
-        label: `Create Asset / Inventory / Products / WIP ${newTrnNo_JV}`,
-      });
-      line++;
-    }
-
-    //SYS_PRODUCTION.SYS_PROCESS.SYS_AST_INVENTORY.WIP
-    // const astWIP = await getCoaPartyAssetsWIP(user_c, user_b);
-    // if (!astWIP) {
-    //   return {
-    //     success: false,
-    //     message: "No account party setup for Inventory WIP",
-    //     data: {},
-    //   };
+    // ─── OLD: manual journal detail loop (commented out — handled by buildJournalScripts) ───
+    // let totalFohSvc = 0;
+    // for (const det of newGroupedProducts) {
+    //   scripts.push({ sql: `INSERT INTO tmtb_jrnlc(...)...`, params: [...], label: `...` }); line++;
+    //   if (det.type === "FOH" || det.type === "SVC") {
+    //     scripts.push({ sql: `INSERT INTO tmtb_jrnlc(...)...`, params: [...], label: `...` }); line++;
+    //   }
     // }
+    // ─── END OLD ───
     const sql_yield = `SELECT pty.id party_id, cht.id chtac_id, crt.chtrt_grpid
       FROM tmtb_party pty
       JOIN tmtb_chtac cht ON pty.party_chtac = cht.id
@@ -619,7 +497,6 @@ const create = async (req, res) => {
       AND cht.chtac_users = $1
       AND cht.chtac_bsins = $2`;
     const result_yield = await dbGet(sql_yield, [user_c, user_b]);
-    // console.log(result);
     if (!result_yield || result_yield.length === 0) {
       return res.json({
         success: false,
@@ -628,33 +505,16 @@ const create = async (req, res) => {
       });
     }
 
-    scripts.push({
-      sql: `INSERT INTO tmtb_jrnlc(id, jrnlc_users, jrnlc_bsins, jrnlc_dpart, jrnlc_jrnlm, jrnlc_chtac,
-        jrnlc_party, jrnlc_drval, jrnlc_crval, jrnlc_descr, jrnlc_sorce, jrnlc_refid,
-        jrnlc_rtype, jrnlc_lines, jrnlc_crusr, jrnlc_upusr)
-        VALUES ($1, $2, $3, $4, $5, $6,
-        $7, $8, $9, $10, $11, $12,
-        $13, $14, $15, $16)`,
-      params: [
-        uuidv4(),
-        user_c,
-        user_b,
-        promf_dpart,
-        newId_JV,
-        result_yield.chtac_id,
-        result_yield.party_id,
-        totalWIP,
-        0,
-        "To Asset / Inventory / Products / WIP",
-        "Production Process",
-        newId,
-        "MASTER",
-        line,
-        user_s,
-        user_s,
-      ],
-      label: `Create Asset / Inventory / Products / WIP ${newTrnNo_JV}`,
-    });
+    // ─── OLD: manual WIP journal detail (commented out) ───
+    // scripts.push({
+    //   sql: `INSERT INTO tmtb_jrnlc(id, ..., jrnlc_upusr)
+    //     VALUES ($1,...,$16)`,
+    //   params: [ uuidv4(), user_c, user_b, promf_dpart, newId_JV,
+    //     result_yield.chtac_id, result_yield.party_id, totalWIP, 0,
+    //     "To Asset / Inventory / Products / WIP",
+    //     "Production Process", newId, "MASTER", line, user_s, user_s ],
+    //   label: `Create Asset / Inventory / Products / WIP ${newTrnNo_JV}`,
+    // });
     await dbRunAll(scripts);
 
     res.json({
@@ -1072,47 +932,17 @@ router.post("/create-batch", async (req, res) => {
     }
 
     //database action
-    const acprd = await getCurrentPeriod(user_c, user_b, promf_dpart);
-    if (!acprd) {
-      return {
-        success: false,
-        message: "No active fiscal year or accounting period found",
-        data: {},
-      };
-    }
-    if (acprd.length > 1) {
-      return {
-        success: false,
-        message: "Multiple active accounting periods found. Please select one.",
-        data: {},
-      };
-    }
-    const { acprd_id, fsyar_id } = acprd[0];
-    const newId_JV = uuidv4();
-    const newTrnNo_JV = await GenNewTrn(
-      user_c,
-      user_b,
-      "tmtb_jrnlm",
-      "Production Batch",
-      promf_dpart,
-    );
-
-    //active currency rate
-    const crncy = await getCurrencyRate(user_c, user_b);
-    if (!crncy) {
-      return {
-        success: false,
-        message: "No active currency rate found",
-        data: {},
-      };
-    }
-    if (crncy.length > 1) {
-      return {
-        success: false,
-        message: "Multiple active currency rate found. Please select one.",
-        data: {},
-      };
-    }
+    // ─── OLD: manual period/currency/journal-number lookup (commented out) ───
+    // const acprd = await getCurrentPeriod(user_c, user_b, promf_dpart);
+    // if (!acprd) { return { success: false, message: "No active fiscal year or accounting period found", data: {} }; }
+    // if (acprd.length > 1) { return { success: false, message: "Multiple active accounting periods found.", data: {} }; }
+    // const { acprd_id, fsyar_id } = acprd[0];
+    // const newId_JV = uuidv4();
+    // const newTrnNo_JV = await GenNewTrn(user_c, user_b, "tmtb_jrnlm", "Production Batch", promf_dpart);
+    // const crncy = await getCurrencyRate(user_c, user_b);
+    // if (!crncy) { return { success: false, message: "No active currency rate found", data: {} }; }
+    // if (crncy.length > 1) { return { success: false, message: "Multiple active currency rate found.", data: {} }; }
+    // ─── END OLD ───
 
     const sql_batch = `SELECT COALESCE(COUNT(btc.id),0) + 1 last_no
         FROM tmmb_prbtc btc
@@ -1145,36 +975,16 @@ router.post("/create-batch", async (req, res) => {
     //build scripts
     const scripts = [];
 
-    //SYS_PRODUCTION.SYS_BATCH
-    scripts.push({
-      sql: `INSERT INTO tmtb_jrnlm(id, jrnlm_users, jrnlm_bsins, jrnlm_dpart, jrnlm_fsyar, jrnlm_acprd,
-    jrnlm_crncy, jrnlm_trtyp, jrnlm_trnno, jrnlm_trdat, jrnlm_refno, jrnlm_narrt,
-    jrnlm_drval, jrnlm_crval, jrnlm_exrat, jrnlm_stats, jrnlm_crusr, jrnlm_upusr)
-    VALUES ($1, $2, $3, $4, $5, $6,
-    $7, $8, $9, $10, $11, $12,
-    $13, $14, $15, $16, $17, $18)`,
-      params: [
-        newId_JV,
-        user_c,
-        user_b,
-        promf_dpart,
-        fsyar_id,
-        acprd_id,
-        crncy.crncy_tcrnc,
-        "Production Batch",
-        newTrnNo_JV,
-        new Date(),
-        promf_trnno,
-        "Production Batch",
-        0,
-        0,
-        crncy.crncy_exrat,
-        "Posted",
-        user_s,
-        user_s,
-      ],
-      label: `create journal master- ${newTrnNo_JV}`,
-    });
+    // ─── OLD: manual journal master INSERT (commented out) ───
+    // scripts.push({
+    //   sql: `INSERT INTO tmtb_jrnlm(id, jrnlm_users, ..., jrnlm_upusr)
+    //     VALUES ($1,$2,...,$18)`,
+    //   params: [ newId_JV, user_c, user_b, promf_dpart, fsyar_id, acprd_id,
+    //     crncy.crncy_tcrnc, "Production Batch", newTrnNo_JV, new Date(), promf_trnno,
+    //     "Production Batch", 0, 0, crncy.crncy_exrat, "Posted", user_s, user_s ],
+    //   label: `create journal master- ${newTrnNo_JV}`,
+    // });
+    // ─── END OLD ───
 
     //Insert BATCH details
     let line = 1;
@@ -1284,49 +1094,11 @@ router.post("/create-batch", async (req, res) => {
         label: `Update price stock detail ${det.prbtc_gdstk}`,
       });
 
-      //SYS_PRODUCTION.SYS_BATCH.SYS_AST_INVENTORY (actual) but will use same as process
-      //SYS_PRODUCTION.SYS_PROCESS.SYS_AST_INVENTORY
-      scripts.push({
-        sql: `INSERT INTO tmtb_jrnlc(id, jrnlc_users, jrnlc_bsins, jrnlc_dpart, jrnlc_jrnlm, jrnlc_chtac,
-        jrnlc_party, jrnlc_drval, jrnlc_crval, jrnlc_descr, jrnlc_sorce, jrnlc_refid,
-        jrnlc_rtype, jrnlc_lines, jrnlc_crusr, jrnlc_upusr)
-        VALUES ($1, $2, $3, $4, $5, $6,
-        $7, $8, $9, $10, $11, $12,
-        $13, $14, $15, $16)`,
-        params: [
-          uuidv4(),
-          user_c,
-          user_b,
-          promf_dpart,
-          newId_JV,
-          det.chtac_id,
-          det.party_id,
-          det.prbtc_fgval,
-          0,
-          "To Asset / Inventory / Products / Output",
-          "Production Batch",
-          id,
-          "MASTER",
-          line,
-          user_s,
-          user_s,
-        ],
-        label: `Create Asset / Inventory / Products ${newTrnNo_JV}`,
-      });
-      line++;
+      // ─── OLD: manual batch output journal detail (commented out) ───
+      // scripts.push({ sql: `INSERT INTO tmtb_jrnlc(...)...`, params: [...], label: `...` }); line++;
       totalWIP = totalWIP + Number(det.prbtc_fgval);
     }
 
-    //SYS_PRODUCTION.SYS_BATCH.SYS_AST_INVENTORY (actual) but will use same as process
-    //SYS_PRODUCTION.SYS_PROCESS.SYS_AST_INVENTORY.WIP
-    // const astWIP = await getCoaPartyAssetsWIP(user_c, user_b);
-    // if (!astWIP) {
-    //   return {
-    //     success: false,
-    //     message: "No account party setup for Inventory WIP",
-    //     data: {},
-    //   };
-    // }
     const sql_yield = `SELECT pty.id party_id, cht.id chtac_id, crt.chtrt_grpid
       FROM tmtb_party pty
       JOIN tmtb_chtac cht ON pty.party_chtac = cht.id
@@ -1341,7 +1113,6 @@ router.post("/create-batch", async (req, res) => {
       AND cht.chtac_users = $1
       AND cht.chtac_bsins = $2`;
     const result_yield = await dbGet(sql_yield, [user_c, user_b]);
-    // console.log(result);
     if (!result_yield || result_yield.length === 0) {
       return res.json({
         success: false,
@@ -1350,34 +1121,37 @@ router.post("/create-batch", async (req, res) => {
       });
     }
 
-    scripts.push({
-      sql: `INSERT INTO tmtb_jrnlc(id, jrnlc_users, jrnlc_bsins, jrnlc_dpart, jrnlc_jrnlm, jrnlc_chtac,
-        jrnlc_party, jrnlc_drval, jrnlc_crval, jrnlc_descr, jrnlc_sorce, jrnlc_refid,
-        jrnlc_rtype, jrnlc_lines, jrnlc_crusr, jrnlc_upusr)
-        VALUES ($1, $2, $3, $4, $5, $6,
-        $7, $8, $9, $10, $11, $12,
-        $13, $14, $15, $16)`,
-      params: [
-        uuidv4(),
-        user_c,
-        user_b,
-        promf_dpart,
-        newId_JV,
-        result_yield.chtac_id,
-        result_yield.party_id,
-        0,
-        totalWIP,
-        "From Asset / Inventory / Products / WIP",
-        "Production Batch",
-        id,
-        "MASTER",
-        line,
-        user_s,
-        user_s,
-      ],
-      label: `Create Asset / Inventory / Products / WIP ${newTrnNo_JV}`,
+    // ─── OLD: manual WIP journal detail (commented out) ───
+    // scripts.push({ sql: `INSERT INTO tmtb_jrnlc(...)...`, params: [...], label: `...` }); line++;
+
+    // ─── NEW: Collect journal details and use centralized helper ───
+    const jrnlDetails = [];
+
+    // Batch output (DR)
+    for (const det of tmmb_prbtc) {
+      jrnlDetails.push({
+        chtac: det.chtac_id, party: det.party_id,
+        drval: det.prbtc_fgval, crval: 0,
+        descr: "To Asset / Inventory / Products / Output", sorce: "Production Batch", refid: id,
+      });
+    }
+
+    // WIP (CR)
+    jrnlDetails.push({
+      chtac: result_yield.chtac_id, party: result_yield.party_id,
+      drval: 0, crval: totalWIP,
+      descr: "From Asset / Inventory / Products / WIP", sorce: "Production Batch", refid: id,
     });
-    line++;
+
+    // Build journal scripts via centralized helper
+    const { scripts: jrnlScripts, masterId: newId_JV, trnNo: newTrnNo_JV } = await buildJournalScripts({
+      user_c, user_b, user_s, dpart: promf_dpart,
+      trtyp: "Production Batch", trdat: new Date(),
+      refno: promf_trnno, narrt: "Production Batch",
+      drval: 0, crval: 0,
+      details: jrnlDetails,
+    });
+    scripts.push(...jrnlScripts);
 
     //Process master status update
     scripts.push({
@@ -1474,47 +1248,17 @@ router.post("/close-batch", async (req, res) => {
     }
 
     //database action
-    const acprd = await getCurrentPeriod(user_c, user_b, promf_dpart);
-    if (!acprd) {
-      return {
-        success: false,
-        message: "No active fiscal year or accounting period found",
-        data: {},
-      };
-    }
-    if (acprd.length > 1) {
-      return {
-        success: false,
-        message: "Multiple active accounting periods found. Please select one.",
-        data: {},
-      };
-    }
-    const { acprd_id, fsyar_id } = acprd[0];
-    const newId_JV = uuidv4();
-    const newTrnNo_JV = await GenNewTrn(
-      user_c,
-      user_b,
-      "tmtb_jrnlm",
-      "Production Batch Close",
-      promf_dpart,
-    );
-
-    //active currency rate
-    const crncy = await getCurrencyRate(user_c, user_b);
-    if (!crncy) {
-      return {
-        success: false,
-        message: "No active currency rate found",
-        data: {},
-      };
-    }
-    if (crncy.length > 1) {
-      return {
-        success: false,
-        message: "Multiple active currency rate found. Please select one.",
-        data: {},
-      };
-    }
+    // ─── OLD: manual period/currency/journal-number lookup (commented out) ───
+    // const acprd = await getCurrentPeriod(user_c, user_b, promf_dpart);
+    // if (!acprd) { return { success: false, message: "No active fiscal year or accounting period found", data: {} }; }
+    // if (acprd.length > 1) { return { success: false, message: "Multiple active accounting periods found.", data: {} }; }
+    // const { acprd_id, fsyar_id } = acprd[0];
+    // const newId_JV = uuidv4();
+    // const newTrnNo_JV = await GenNewTrn(user_c, user_b, "tmtb_jrnlm", "Production Batch Close", promf_dpart);
+    // const crncy = await getCurrencyRate(user_c, user_b);
+    // if (!crncy) { return { success: false, message: "No active currency rate found", data: {} }; }
+    // if (crncy.length > 1) { return { success: false, message: "Multiple active currency rate found.", data: {} }; }
+    // ─── END OLD ───
 
     //const newId = uuidv4();
     const scripts = [];
@@ -1574,39 +1318,17 @@ router.post("/close-batch", async (req, res) => {
       Number(result_process_WIP?.jrnlc_drval || 0) -
       Number(result_batch_WIP?.jrnlc_crval || 0);
 
-    //SYS_PRODUCTION.SYS_BATCH
-    scripts.push({
-      sql: `INSERT INTO tmtb_jrnlm(id, jrnlm_users, jrnlm_bsins, jrnlm_dpart, jrnlm_fsyar, jrnlm_acprd,
-    jrnlm_crncy, jrnlm_trtyp, jrnlm_trnno, jrnlm_trdat, jrnlm_refno, jrnlm_narrt,
-    jrnlm_drval, jrnlm_crval, jrnlm_exrat, jrnlm_stats, jrnlm_crusr, jrnlm_upusr)
-    VALUES ($1, $2, $3, $4, $5, $6,
-    $7, $8, $9, $10, $11, $12,
-    $13, $14, $15, $16, $17, $18)`,
-      params: [
-        newId_JV,
-        user_c,
-        user_b,
-        promf_dpart,
-        fsyar_id,
-        acprd_id,
-        crncy.crncy_tcrnc,
-        "Production Batch Close",
-        newTrnNo_JV,
-        new Date(),
-        promf_trnno,
-        "Production Batch Close",
-        total_Diff_value,
-        total_Diff_value,
-        crncy.crncy_exrat,
-        "Posted",
-        user_s,
-        user_s,
-      ],
-      label: `create journal master- ${newTrnNo_JV}`,
-    });
-
-    //Insert BATCH details
-    let line = 1;
+    // ─── OLD: manual journal master INSERT (commented out) ───
+    // scripts.push({
+    //   sql: `INSERT INTO tmtb_jrnlm(id, jrnlm_users, ..., jrnlm_upusr)
+    //     VALUES ($1,$2,...,$18)`,
+    //   params: [ newId_JV, user_c, user_b, promf_dpart, fsyar_id, acprd_id,
+    //     crncy.crncy_tcrnc, "Production Batch Close", newTrnNo_JV, new Date(), promf_trnno,
+    //     "Production Batch Close", total_Diff_value, total_Diff_value, crncy.crncy_exrat,
+    //     "Posted", user_s, user_s ],
+    //   label: `create journal master- ${newTrnNo_JV}`,
+    // });
+    // ─── END OLD ───
 
     //SYS_PRODUCTION.SYS_BATCH.SYS_AST_INVENTORY (actual) but will use same as process
     //SYS_PRODUCTION.SYS_PROCESS.SYS_AST_INVENTORY.WIP
@@ -1634,84 +1356,49 @@ router.post("/close-batch", async (req, res) => {
     }
 
     const DrOrCr = total_Diff_value > 0 ? "From" : "To";
-
     const gainORloss =
       total_Diff_value > 0
         ? "To Manufacturing Yield Loss"
         : "From Manufacturing Yield Gain";
 
-    scripts.push({
-      sql: `INSERT INTO tmtb_jrnlc(id, jrnlc_users, jrnlc_bsins, jrnlc_dpart, jrnlc_jrnlm, jrnlc_chtac,
-        jrnlc_party, jrnlc_drval, jrnlc_crval, jrnlc_descr, jrnlc_sorce, jrnlc_refid,
-        jrnlc_rtype, jrnlc_lines, jrnlc_crusr, jrnlc_upusr)
-        VALUES ($1, $2, $3, $4, $5, $6,
-        $7, $8, $9, $10, $11, $12,
-        $13, $14, $15, $16)`,
-      params: [
-        uuidv4(),
-        user_c,
-        user_b,
-        promf_dpart,
-        newId_JV,
-        result_yield.chtac_id,
-        result_yield.party_id,
-        total_Diff_value > 0 ? 0 : Math.abs(total_Diff_value || 0),
-        total_Diff_value > 0 ? Math.abs(total_Diff_value || 0) : 0,
-        DrOrCr + " Asset / Inventory / Products / WIP",
-        "Production Batch Close",
-        id,
-        "MASTER",
-        line,
-        user_s,
-        user_s,
-      ],
-      label: `Create Asset / Inventory / Products / WIP ${newTrnNo_JV}`,
-    });
-    line++;
+    // ─── OLD: manual WIP/gain-loss journal details (commented out) ───
+    // scripts.push({ sql: `INSERT INTO tmtb_jrnlc(...)...`, params: [...], label: `...` }); line++;
+    // const prtyn_loss = result_yield_GL.find((row) => row.chtrt_grpid === "SYS_EXP_YIELD_LOSS");
+    // const prtyn_gain = result_yield_GL.find((row) => row.chtrt_grpid === "SYS_EXP_YIELD_GAIN");
+    // scripts.push({ sql: `INSERT INTO tmtb_jrnlc(...)...`, params: [...], label: `...` });
+    // ─── END OLD ───
 
-    //SYS_PRODUCTION.SYS_PROCESS.SYS_EXP_YIELD_GAIN.SYS_EMPTY
-    //SYS_PRODUCTION.SYS_PROCESS.SYS_EXP_YIELD_LOSS.SYS_EMPTY
-    // (+) for Loss
-    const prtyn_loss = result_yield_GL.find(
-      (row) => row.chtrt_grpid === "SYS_EXP_YIELD_LOSS",
-    );
-    // (-) for Gain
-    const prtyn_gain = result_yield_GL.find(
-      (row) => row.chtrt_grpid === "SYS_EXP_YIELD_GAIN",
-    );
+    // ─── NEW: Collect journal details and use centralized helper ───
+    const jrnlDetails = [];
 
-    scripts.push({
-      sql: `INSERT INTO tmtb_jrnlc(id, jrnlc_users, jrnlc_bsins, jrnlc_dpart, jrnlc_jrnlm, jrnlc_chtac,
-        jrnlc_party, jrnlc_drval, jrnlc_crval, jrnlc_descr, jrnlc_sorce, jrnlc_refid,
-        jrnlc_rtype, jrnlc_lines, jrnlc_crusr, jrnlc_upusr)
-        VALUES ($1, $2, $3, $4, $5, $6,
-        $7, $8, $9, $10, $11, $12,
-        $13, $14, $15, $16)`,
-      params: [
-        uuidv4(),
-        user_c,
-        user_b,
-        promf_dpart,
-        newId_JV,
-        total_Diff_value > 0 ? prtyn_loss.chtac_id : prtyn_gain.chtac_id,
-        total_Diff_value > 0 ? prtyn_loss.party_id : prtyn_gain.party_id,
-        total_Diff_value > 0 ? Math.abs(total_Diff_value || 0) : 0,
-        total_Diff_value > 0 ? 0 : Math.abs(total_Diff_value || 0),
-        gainORloss,
-        "Production Batch Close",
-        id,
-        "MASTER",
-        line,
-        user_s,
-        user_s,
-      ],
-      label: `Create ${gainORloss} ${newTrnNo_JV}`,
+    // WIP (DR or CR based on diff)
+    jrnlDetails.push({
+      chtac: result_yield.chtac_id, party: result_yield.party_id,
+      drval: total_Diff_value > 0 ? 0 : Math.abs(total_Diff_value || 0),
+      crval: total_Diff_value > 0 ? Math.abs(total_Diff_value || 0) : 0,
+      descr: DrOrCr + " Asset / Inventory / Products / WIP", sorce: "Production Batch Close", refid: id,
     });
 
-    //console.log("total_Diff_value", total_Diff_value);
-    //console.log("gainORloss", gainORloss);
-    //console.log("scripts", scripts);
-    //return;
+    // Gain/Loss
+    const prtyn_loss = result_yield_GL.find((row) => row.chtrt_grpid === "SYS_EXP_YIELD_LOSS");
+    const prtyn_gain = result_yield_GL.find((row) => row.chtrt_grpid === "SYS_EXP_YIELD_GAIN");
+    jrnlDetails.push({
+      chtac: total_Diff_value > 0 ? prtyn_loss.chtac_id : prtyn_gain.chtac_id,
+      party: total_Diff_value > 0 ? prtyn_loss.party_id : prtyn_gain.party_id,
+      drval: total_Diff_value > 0 ? Math.abs(total_Diff_value || 0) : 0,
+      crval: total_Diff_value > 0 ? 0 : Math.abs(total_Diff_value || 0),
+      descr: gainORloss, sorce: "Production Batch Close", refid: id,
+    });
+
+    // Build journal scripts via centralized helper
+    const { scripts: jrnlScripts, masterId: newId_JV, trnNo: newTrnNo_JV } = await buildJournalScripts({
+      user_c, user_b, user_s, dpart: promf_dpart,
+      trtyp: "Production Batch Close", trdat: new Date(),
+      refno: promf_trnno, narrt: "Production Batch Close",
+      drval: total_Diff_value, crval: total_Diff_value,
+      details: jrnlDetails,
+    });
+    scripts.push(...jrnlScripts);
 
     //Process master status update
     scripts.push({

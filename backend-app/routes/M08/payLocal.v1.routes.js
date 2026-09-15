@@ -8,6 +8,7 @@ const {
   getCurrentPeriod,
   getCurrencyRate,
 } = require("../../db/genHelper");
+const { buildJournalScripts } = require("../../db/journalService");
 
 // =====================
 // Get All
@@ -117,51 +118,17 @@ router.post("/create", async (req, res) => {
       });
     }
     //database actions
-    const acprd = await getCurrentPeriod(user_c, user_b, dpart_id);
-    if (!acprd) {
-      return {
-        success: false,
-        message: "No active fiscal year or accounting period found",
-        data: {},
-      };
-    }
-    if (acprd.length > 1) {
-      return {
-        success: false,
-        message: "Multiple active accounting periods found. Please select one.",
-        data: {},
-      };
-    }
-    const { acprd_id, fsyar_id } = acprd[0];
-    const newId_JV = uuidv4();
-    const newTrnNo_JV = await GenNewTrn(
-      user_c,
-      user_b,
-      "tmtb_jrnlm",
-      "Payment Voucher",
-      dpart_id,
-    );
-
-    //console.log("p1");
-
-    //active currency rate
-    const crncy = await getCurrencyRate(user_c, user_b);
-    //console.log("crncy",crncy);
-    if (!crncy) {
-      return {
-        success: false,
-        message: "No active currency rate found",
-        data: {},
-      };
-    }
-    if (crncy.length > 1) {
-      return {
-        success: false,
-        message: "Multiple active currency rate found. Please select one.",
-        data: {},
-      };
-    }
-    //console.log("p2");
+    // ─── OLD: manual period/currency/journal-number lookup (commented out) ───
+    // const acprd = await getCurrentPeriod(user_c, user_b, dpart_id);
+    // if (!acprd) { return { success: false, message: "No active fiscal year or accounting period found", data: {} }; }
+    // if (acprd.length > 1) { return { success: false, message: "Multiple active accounting periods found.", data: {} }; }
+    // const { acprd_id, fsyar_id } = acprd[0];
+    // const newId_JV = uuidv4();
+    // const newTrnNo_JV = await GenNewTrn(user_c, user_b, "tmtb_jrnlm", "Payment Voucher", dpart_id);
+    // const crncy = await getCurrencyRate(user_c, user_b);
+    // if (!crncy) { return { success: false, message: "No active currency rate found", data: {} }; }
+    // if (crncy.length > 1) { return { success: false, message: "Multiple active currency rate found.", data: {} }; }
+    // ─── END OLD ───
 
     //build scripts
     const scripts = [];
@@ -183,94 +150,32 @@ router.post("/create", async (req, res) => {
       });
     }
 
-    //SYS_PAYMENT
-    scripts.push({
-      sql: `INSERT INTO tmtb_jrnlm(id, jrnlm_users, jrnlm_bsins, jrnlm_dpart, jrnlm_fsyar, jrnlm_acprd,
-    jrnlm_crncy, jrnlm_trtyp, jrnlm_trnno, jrnlm_trdat, jrnlm_refno, jrnlm_narrt,
-    jrnlm_drval, jrnlm_crval, jrnlm_exrat, jrnlm_stats, jrnlm_crusr, jrnlm_upusr)
-    VALUES ($1, $2, $3, $4, $5, $6,
-    $7, $8, $9, $10, $11, $12,
-    $13, $14, $15, $16, $17, $18)`,
-      params: [
-        newId_JV,
-        user_c,
-        user_b,
-        dpart_id,
-        fsyar_id,
-        acprd_id,
-        crncy.crncy_tcrnc,
-        "Payment Voucher",
-        newTrnNo_JV,
-        new Date(),
-        trnno,
-        ttype,
-        pay_value,
-        pay_value,
-        crncy.crncy_exrat,
-        "Posted",
-        user_s,
-        user_s,
-      ],
-      label: `create journal master- ${newTrnNo_JV}`,
+    // ─── NEW: Collect journal details and use centralized helper ───
+    const jrnlDetails = [];
+
+    // Local Vendor Payable (DR)
+    jrnlDetails.push({
+      chtac: chtac_id, party: party_id,
+      drval: pay_value || 0, crval: 0,
+      descr: "Clear Liability / Local Vendor Payable", sorce: ttype, refid: trn_id,
     });
 
-    //SYS_MRR.SYS_MRR_DIRECT.SYS_LIB_LOCAL_VENDOR
-    //SYS_SALES.SYS_SALES_INVOICE.SYS_LIB_LOCAL_VENDOR
-    scripts.push({
-      sql: `INSERT INTO tmtb_jrnlc(id, jrnlc_users, jrnlc_bsins, jrnlc_dpart, jrnlc_jrnlm, jrnlc_chtac,
-        jrnlc_party, jrnlc_drval, jrnlc_crval, jrnlc_descr, jrnlc_sorce, jrnlc_refid,
-        jrnlc_rtype, jrnlc_lines, jrnlc_crusr, jrnlc_upusr)
-        VALUES ($1, $2, $3, $4, $5, $6,
-        $7, $8, $9, $10, $11, $12,
-        $13, $14, $15, $16)`,
-      params: [
-        uuidv4(),
-        user_c,
-        user_b,
-        dpart_id,
-        newId_JV,
-        chtac_id,
-        party_id,
-        pay_value || 0,
-        0,
-        "Clear Liability / Local Vendor Payable",
-        ttype,
-        trn_id,
-        "MASTER",
-        1,
-        user_s,
-        user_s,
-      ],
-      label: `Clear Liability / Local Vendor / Payable ${newTrnNo_JV}`,
+    // Cash/Bank (CR)
+    jrnlDetails.push({
+      chtac: chtac_id_pay, party: party_id_pay,
+      drval: 0, crval: pay_value || 0,
+      descr: "Payment Liability / Local Vendor Payable", sorce: ttype, refid: trn_id,
     });
-    //SYS_PAYMENT.SYS_PAYMENT_LOCAL.SYS_AST_PAYMENT
-    scripts.push({
-      sql: `INSERT INTO tmtb_jrnlc(id, jrnlc_users, jrnlc_bsins, jrnlc_dpart, jrnlc_jrnlm, jrnlc_chtac,
-        jrnlc_party, jrnlc_drval, jrnlc_crval, jrnlc_descr, jrnlc_sorce, jrnlc_refid,
-        jrnlc_rtype, jrnlc_lines, jrnlc_crusr, jrnlc_upusr)
-        VALUES ($1, $2, $3, $4, $5, $6,
-        $7, $8, $9, $10, $11, $12,
-        $13, $14, $15, $16)`,
-      params: [
-        uuidv4(),
-        user_c,
-        user_b,
-        dpart_id,
-        newId_JV,
-        chtac_id_pay,
-        party_id_pay,
-        0,
-        pay_value || 0,
-        "Payment Liability / Local Vendor Payable",
-        ttype,
-        trn_id,
-        "MASTER",
-        2,
-        user_s,
-        user_s,
-      ],
-      label: `Payment Liability / Local Vendor / Payable ${newTrnNo_JV}`,
+
+    // Build journal scripts via centralized helper
+    const { scripts: jrnlScripts, masterId: newId_JV, trnNo: newTrnNo_JV } = await buildJournalScripts({
+      user_c, user_b, user_s, dpart: dpart_id,
+      trtyp: "Payment Voucher", trdat: new Date(),
+      refno: trnno, narrt: ttype,
+      drval: pay_value, crval: pay_value,
+      details: jrnlDetails,
     });
+    scripts.push(...jrnlScripts);
 
     await dbRunAll(scripts);
 
