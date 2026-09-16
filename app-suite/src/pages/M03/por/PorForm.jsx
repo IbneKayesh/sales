@@ -81,11 +81,11 @@ const PorForm = ({
         <div className="grid">
           <div className="col-span-4">
             <InputText
-              label="Vehicle"
-              placeholder="Enter vehicle"
-              value={formData.pordm_vehid}
-              onChange={(e) => onChange("pordm_vehid", e.target.value)}
-              error={formErrors.pordm_vehid}
+              label="Delivery Address"
+              placeholder="Enter delivery address"
+              value={formData.pordm_dlvry}
+              onChange={(e) => onChange("pordm_dlvry", e.target.value)}
+              error={formErrors.pordm_dlvry}
               disabled={readOnly}
             />
           </div>

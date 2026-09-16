@@ -12,11 +12,13 @@ const StandardForm = ({
   onChange,
   onSubmit,
   rptList_Options,
+  //others
+  formDataReport,
 }) => {
   return (
     <div className="form-wrap mb-5">
       <div className="grid">
-        <div className="col-span-8">
+        <div className="col-span-6">
           <Dropdown
             label="Report Name"
             options={rptList_Options}
@@ -28,6 +30,20 @@ const StandardForm = ({
             disabled={readOnly}
           />
         </div>
+
+        {formDataReport?.params?.map((field) => (
+          <div className="col-span-2" key={field.value}>
+            <InputText
+              label={field.label}
+              placeholder={`Enter ${field.label.toLowerCase()}`}
+              value={formData[field.value] || ""}
+              onChange={(e) => onChange(field.value, e.target.value)}
+              error={formErrors[field.value]}
+              required={field.required}
+              disabled={readOnly}
+            />
+          </div>
+        ))}
       </div>
       <div className="form-actions">
         <Button variant="info" onClick={onSubmit} disabled={isBusy}>

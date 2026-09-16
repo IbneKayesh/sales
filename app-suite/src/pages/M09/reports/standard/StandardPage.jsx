@@ -26,6 +26,8 @@ const StandardPage = () => {
     //functions
     handleChange,
     handleSubmit,
+    //others
+    formDataReport,
   } = useStandard();
 
   return (
@@ -56,6 +58,8 @@ const StandardPage = () => {
               onChange={handleChange}
               onSubmit={handleSubmit}
               rptList_Options={rptList_Options}
+              //others
+              formDataReport={formDataReport}
             />
           )}
           {pgView === "SYS_VW_LST_1" && <StandardList listData={listData} />}

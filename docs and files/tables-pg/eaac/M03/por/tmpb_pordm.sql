@@ -30,7 +30,7 @@ CREATE TABLE tmpb_pordm (
   pordm_duamt decimal(18,6) DEFAULT 0.00, --due
   pordm_stamt decimal(18,6) DEFAULT 0.00, --total amount
   pordm_csamt decimal(18,6) DEFAULT 0.00, --inventory cost amount
-  pordm_vehid VARCHAR(50),
+  pordm_dlvry VARCHAR(100),
   pordm_ispst boolean NOT NULL DEFAULT false,
   pordm_ispad boolean NOT NULL DEFAULT false,
   pordm_ispnd boolean NOT NULL DEFAULT true, --is pending MRR

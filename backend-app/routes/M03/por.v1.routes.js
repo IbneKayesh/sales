@@ -2,12 +2,7 @@ const express = require("express");
 const router = express.Router();
 const { dbGet, dbGetAll, dbRun, dbRunAll } = require("../../db/sqlManagerpg");
 const { v4: uuidv4 } = require("uuid");
-const {
-  GenNewCode,
-  GenNewTrn,
-  getCurrentPeriod,
-  getCurrencyRate,
-} = require("../../db/genHelper");
+const { GenNewTrn } = require("../../db/genHelper");
 const { buildJournalScripts } = require("../../db/journalService");
 
 // get all
@@ -118,7 +113,7 @@ const create = async (req, res) => {
       pordm_duamt,
       pordm_stamt,
       pordm_csamt,
-      pordm_vehid,
+      pordm_dlvry,
       pordm_ispst,
       pordm_ispad,
       pordm_ispnd,
@@ -155,7 +150,6 @@ const create = async (req, res) => {
 
     //database action
     const newId = uuidv4();
-    //const newCode = await GenNewCode(user_c, "tmpb_pordm");
     const newTrnNo = await GenNewTrn(
       user_c,
       user_b,
@@ -170,7 +164,7 @@ const create = async (req, res) => {
       sql: `INSERT INTO tmpb_pordm(id, pordm_users, pordm_bsins, pordm_dpart, pordm_cntct, pordm_ttype,
       pordm_trnno, pordm_trdat, pordm_refno, pordm_notes, pordm_tramt, pordm_itmds,
       pordm_dspct, pordm_invds, pordm_vtamt, pordm_icamt, pordm_ecamt, pordm_pyamt,
-      pordm_pdamt, pordm_duamt, pordm_stamt, pordm_csamt, pordm_vehid, pordm_ispst,
+      pordm_pdamt, pordm_duamt, pordm_stamt, pordm_csamt, pordm_dlvry, pordm_ispst,
       pordm_ispad, pordm_ispnd, pordm_isapp, pordm_crusr, pordm_upusr)
     VALUES ($1, $2, $3, $4, $5, $6,
       $7, $8, $9, $10, $11, $12,
@@ -200,7 +194,7 @@ const create = async (req, res) => {
         pordm_duamt || 0,
         pordm_stamt || 0,
         pordm_csamt || 0,
-        pordm_vehid,
+        pordm_dlvry,
         true,
         pordm_ispad,
         true,
@@ -252,7 +246,7 @@ const create = async (req, res) => {
         label: `Created MRR detail ${newTrnNo}`,
       });
 
-      //update summary stock, last price
+      //update purchase booking stock increase
       scripts.push({
         sql: `UPDATE tmib_price
               SET price_pbqty = price_pbqty + $1,
@@ -275,7 +269,7 @@ const create = async (req, res) => {
       });
     }
 
-    //Insert Costing details
+    //Insert Costing details :: DON'T create any Journal for COSTING
     for (const det of tmpb_porcs) {
       const costId = uuidv4();
       scripts.push({
@@ -303,7 +297,7 @@ const create = async (req, res) => {
       });
     }
 
-    //Insert Payment details
+    //Insert Payment details :: IF ANY CREATE ASSETS / SUPPLIER ADVANCE
     for (const det of tmpb_porpy) {
       scripts.push({
         sql: `INSERT INTO tmpb_porpy(id, porpy_users, porpy_bsins, porpy_pordm, porpy_party, porpy_pdamt,
@@ -330,27 +324,41 @@ const create = async (req, res) => {
     if (Number(pordm_pdamt) > 0) {
       const jrnlDetails = [];
 
-      // Payment details (DR cash/bank)
+      // FROM :: Assets / CASH BANK (CR)
       for (const det of tmpb_porpy) {
         jrnlDetails.push({
-          chtac: det.chtac_id, party: det.party_id,
-          drval: 0, crval: det.porpy_pdamt || 0,
-          descr: "From Assets / Cash Bank", sorce: pordm_ttype, refid: newId,
+          chtac: det.chtac_id,
+          party: det.party_id,
+          drval: 0,
+          crval: det.porpy_pdamt || 0,
+          descr: "From Assets / Cash Bank",
+          sorce: pordm_ttype,
+          refid: newId,
         });
       }
 
-      // Supplier advance (CR)
+      // TO :: Assets / Supplier advance (DR)
       jrnlDetails.push({
-        chtac: chtac_id, party: party_id,
-        drval: pordm_pdamt || 0, crval: 0,
-        descr: "To Assets / Supplier / Advance", sorce: pordm_ttype, refid: newId,
+        chtac: chtac_id,
+        party: party_id,
+        drval: pordm_pdamt || 0,
+        crval: 0,
+        descr: "To Assets / Supplier Advance",
+        sorce: pordm_ttype,
+        refid: newId,
       });
 
       const { scripts: jrnlScripts } = await buildJournalScripts({
-        user_c, user_b, user_s, dpart: pordm_dpart,
-        trtyp: "Purchase Order", trdat: pordm_trdat,
-        refno: newTrnNo, narrt: pordm_ttype,
-        drval: 0, crval: 0,
+        user_c,
+        user_b,
+        user_s,
+        dpart: pordm_dpart,
+        trtyp: "Purchase Order",
+        trdat: pordm_trdat,
+        refno: newTrnNo,
+        narrt: pordm_ttype,
+        drval: pordm_pdamt || 0, //Default total paid amount
+        crval: pordm_pdamt || 0, //Default total paid amount
         details: jrnlDetails,
       });
       scripts.push(...jrnlScripts);
@@ -367,31 +375,7 @@ const create = async (req, res) => {
         label: `Update supplier credit balance ${newTrnNo}`,
       });
     }
-
-    // ─── OLD: manual period/currency/journal-number lookup + INSERTs (commented out) ───
-    // if (Number(pordm_pdamt) > 0) {
-    //   const acprd = await getCurrentPeriod(user_c, user_b, pordm_dpart);
-    //   if (!acprd) { return { success: false, message: "No active fiscal year or accounting period found", data: {} }; }
-    //   if (acprd.length > 1) { return { success: false, message: "Multiple active accounting periods found.", data: {} }; }
-    //   const { acprd_id, fsyar_id } = acprd[0];
-    //   const newId_JV = uuidv4();
-    //   const newTrnNo_JV = await GenNewTrn(user_c, user_b, "tmtb_jrnlm", "Purchase Order", pordm_dpart);
-    //   const crncy = await getCurrencyRate(user_c, user_b);
-    //   if (!crncy) { return { success: false, message: "No active currency rate found", data: {} }; }
-    //   if (crncy.length > 1) { return { success: false, message: "Multiple active currency rate found.", data: {} }; }
-    //   scripts.push({ sql: `INSERT INTO tmtb_jrnlm(...)...`, params: [...], label: `create journal master- ${newTrnNo_JV}` });
-    //   let line = 1;
-    //   for (const det of tmpb_porpy) {
-    //     scripts.push({ sql: `INSERT INTO tmtb_jrnlc(...)...`, params: [...], label: `From Assets / Cash Bank ${newTrnNo_JV}` });
-    //     line++;
-    //   }
-    //   scripts.push({ sql: `INSERT INTO tmtb_jrnlc(...)...`, params: [...], label: `Create To Assets / Supplier / Advance ${newTrnNo_JV}` });
-    //   line++;
-    //   scripts.push({ sql: `UPDATE tmcb_cntct...`, params: [...], label: `Update supplier credit balance ${newTrnNo}` });
-    // }
-    // ─── END OLD ───
-
-    //offer pack
+    //offer pack items
     for (const det of tmpb_pordf) {
       const lineId = uuidv4();
       scripts.push({
@@ -431,7 +415,7 @@ const create = async (req, res) => {
       });
     }
 
-    console.log(scripts);
+    //console.log(scripts);
     await dbRunAll(scripts);
 
     res.json({

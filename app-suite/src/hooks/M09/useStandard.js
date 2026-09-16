@@ -24,19 +24,58 @@ const useStandard = () => {
   const [formDataItem, setFormDataItem] = useState({});
   const [formErrors, setFormErrors] = useState({});
 
+  //others
+  const [formDataReport, setFormDataReport] = useState({});
+
   //report lists
   const rptList_Options = [
     {
-      value: "SYS_RPT_PENDING_MRR",
-      label: "Purchase (M03) / Purchase Order / Pending MRR Items",
+      value: "SYS_RPT_PENDING_MRR_ITEMS",
+      label: "Purchase (M03) / Purchase Order / Pending MRR Items / (Undelivered)",
+      params: [
+        {
+          type: "text",
+          label: "Supplier Code",
+          value: "cntct_ccode",
+          required: false,
+        },
+      ],
     },
     {
-      value: "SYS_RPT_PENDING_MRR2",
-      label: "Purchase (M03) / Purchase Order / Pending MRR",
+      value: "SYS_RPT_PO_SUMMARY",
+      label: "Purchase (M03) / Purchase Order / Summary",
+      params: [
+        {
+          type: "text",
+          label: "Supplier Code",
+          value: "cntct_ccode",
+          required: false,
+        },
+      ],
     },
     {
-      value: "SYS_RPT_PENDING_MRR3",
-      label: "Purchase (M03) / Purchase Order / Pending MRR",
+      value: "SYS_RPT_CUSTOMER_SALES_SUMMARY",
+      label: "Contact (M06) / Customer / Sales Summary",
+      params: [
+        {
+          type: "text",
+          label: "Customer Code",
+          value: "cntct_ccode",
+          required: true,
+        },
+      ],
+    },
+    {
+      value: "SYS_RPT_SUPPLIER_MRR_SUMMARY",
+      label: "Contact (M06) / Supplier / MRR Summary",
+      params: [
+        {
+          type: "text",
+          label: "Supplier Code",
+          value: "cntct_ccode",
+          required: false,
+        },
+      ],
     },
   ];
 
@@ -44,6 +83,10 @@ const useStandard = () => {
     setFormData((prev) => ({ ...prev, [f]: v }));
     const newErrors = validate({ ...formData, [f]: v }, tmib_units);
     setFormErrors(newErrors);
+    if (f === "rpt_name") {
+      const rpt_id = rptList_Options.find((opt) => opt.value === v);
+      setFormDataReport(rpt_id);
+    }
   };
 
   const handleSubmit = async () => {
@@ -87,6 +130,8 @@ const useStandard = () => {
     //functions
     handleChange,
     handleSubmit,
+    //others
+    formDataReport,
   };
 };
 export default useStandard;

@@ -123,11 +123,11 @@
     "required": false,
     "default": 0
   },
-  "pordm_vehid": {
+  "pordm_dlvry": {
     "type": "string",
-    "label": "Vehicle",
-    "maxLength": 50,
-    "placeholder": "Enter vehicle",
+    "label": "Delivery Address",
+    "maxLength": 100,
+    "placeholder": "Enter delviery address",
     "required": false
   },
   "pordm_ispst": {
