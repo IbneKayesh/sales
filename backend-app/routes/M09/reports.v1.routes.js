@@ -19,7 +19,7 @@ const sys_rpt_pending_mrr_items = async (req, res) => {
     //apply logic
     let sql = `SELECT cnt.cntct_ccode supplier_code,cnt.cntct_cname supplier_name, pom.pordm_trnno po_no, TO_CHAR(pom.pordm_trdat,'YYYY-MM-DD') po_date,
       itm.items_iname item_name, prc.price_cname price_name, poc.pordc_itrat po_rate, poc.pordc_itqty po_qty, poc.pordc_itamt po_amt, poc.pordc_mrqty mrr_qty,
-      poc.pordc_itqty - poc.pordc_mrqty pending_mrr_qty, poc.pordc_itrat * (poc.pordc_itqty - poc.pordc_mrqty) pending_mrr_amount
+      poc.pordc_itqty - poc.pordc_mrqty - poc.pordc_cnqty pending_mrr_qty, poc.pordc_itrat * (poc.pordc_itqty - poc.pordc_mrqty) pending_mrr_amount
       FROM tmpb_pordc poc
       JOIN tmpb_pordm pom ON poc.pordc_pordm = pom.id 
       JOIN tmib_items itm ON poc.pordc_items = itm.id
@@ -32,7 +32,7 @@ const sys_rpt_pending_mrr_items = async (req, res) => {
       JOIN tmib_scatg scatg ON itm.items_scatg = scatg.id
       JOIN tmib_brand brand ON itm.items_brand = brand.id
       JOIN tmcb_cntct cnt ON pom.pordm_cntct = cnt.id
-      WHERE poc.pordc_itqty > poc.pordc_mrqty
+      WHERE poc.pordc_itqty > (poc.pordc_mrqty + poc.pordc_cnqty)
       AND pom.pordm_users = $1`;
 
     const params = [user_c];

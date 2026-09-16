@@ -1,0 +1,47 @@
+/* ─────────────────────────────────────────────────────────────────────────
+   Topbar — top chrome bar (layouts/Topbar.jsx)
+
+   The shared bar styling lives in App.css (.topbar, .topbar__*); this file
+   holds only what the component used to pass inline: the smart sticky bar, the
+   logo image and the business line parts. App.css is bundled after this file,
+   so a rule here that has to beat a single-class rule from App.css repeats that
+   base class (.topbar.topbar--smart) and wins on specificity rather than on
+   import order.
+   ───────────────────────────────────────────────────────────────────────── */
+
+/* Smart bar: sticks to the top of the page, slides up out of the way while
+   scrolling down and comes straight back the moment you scroll up. The tint
+   itself comes from --topbar-bg (the shared .topbar rule in App.css). */
+.topbar.topbar--smart {
+  position: sticky;
+  top: 0;
+  transform: translateY(0);
+  transition: transform var(--transition-normal);
+  /* Frosted glass, so page content scrolling underneath stays legible.
+     Standard property only — Vite's lightningcss transformer adds the
+     -webkit- prefix when the browser targets need it (listing both here made
+     it drop the standard one). */
+  backdrop-filter: blur(10px) saturate(140%);
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.1);
+}
+
+/* Scrolled down: tucked up above the viewport. */
+.topbar.topbar--smart.topbar--hidden {
+  transform: translateY(-100%);
+}
+
+/* Company logo (from the Theme page) — capped so a wide logo can't push the
+   business name out of the bar. */
+.topbar__logo-img {
+  display: block;
+  height: 28px;
+  width: auto;
+  max-width: 140px;
+  object-fit: contain;
+}
+
+/* Address and currency parts of the business line: keep them from shrinking
+   inside the flex brand block. */
+.topbar__subtitle-part {
+  flex-shrink: 0;
+}

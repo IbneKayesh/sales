@@ -9,13 +9,20 @@ import {
 import { useNavigate } from "react-router-dom";
 import { apiLogin } from "@/utils/api";
 import {
-  clearStorageData,
+  clearSessionKeys,
   getStorageData,
   setStorageData,
   getStorageLoginData,
   setStorageLoginData,
+  SESSION_KEYS,
+  readStored,
+  writeStored,
+  removeStored,
+  readSession,
+  writeSession,
+  removeSession,
 } from "@/utils/storage";
-import { updateAppModules } from "@/utils/appModules";
+import { menus as allMenus, updateAppModules } from "@/utils/appModules";
 import {
   DEFAULT_FONT,
   DEFAULT_THEME,
@@ -343,15 +350,10 @@ const categoryOptions = [
   { value: "misc", label: "Miscellaneous", type: "expense" },
 ];
 
-// Minimized (hidden) windows are persisted so they survive a page reload and
-// reappear in the taskbar strip. The menu icon is a React element, so only the
-// icon name is stored and re-resolved on restore.
-const POPUPS_STORAGE_KEY = "bsuite_minimized_popups";
-
-// Starred favorite menus — shared between the Modules page Pinned section and
-// the taskbar quick-launch shortcuts. Kept in context so pinning/unpinning in
-// one place updates the other immediately.
-const PINNED_MENUS_STORAGE_KEY = "bsuite_pinned_menus";
+// Every persistence key this module needs lives in utils/storage (SESSION_KEYS
+// for anything belonging to the signed-in user, PREFERENCE_KEYS for browser
+// settings) and is read/written through its helpers — nothing here touches Web
+// Storage directly.
 
 // New windows are keyed by an incrementing sequence; start high so fresh windows
 // never collide with the small sequence numbers of restored (persisted) windows.
@@ -359,7 +361,7 @@ const START_POPUP_SEQ = 1_000_000_000;
 
 const serializePopup = (p) => ({
   key: p.key,
-  hidden: true,
+  hidden: !!p.hidden,
   menu: {
     id: p.menu.id,
     menus_mname: p.menu.menus_mname,
@@ -371,27 +373,37 @@ const serializePopup = (p) => ({
   },
 });
 
-const restoreMinimizedPopups = () => {
+const restorePopups = () => {
   try {
-    const stored = localStorage.getItem(POPUPS_STORAGE_KEY);
-    if (!stored) return [];
-    const parsed = JSON.parse(stored);
-    if (!Array.isArray(parsed)) return [];
-    return parsed
+    // Current key first; the older minimized-windows-only key is the fallback so
+    // windows saved by the previous version are not lost.
+    const stored =
+      readStored(SESSION_KEYS.openWindows, null) ??
+      readStored(SESSION_KEYS.legacyMinimizedWindows, null);
+    if (!Array.isArray(stored)) return [];
+    return stored
       .filter((p) => p && p.menu && p.menu.menus_mlink)
-      .map((p) => ({
-        key: p.key,
-        hidden: true,
-        menu: {
-          id: p.menu.id,
-          menus_mname: p.menu.menus_mname,
-          menus_color: p.menu.menus_color,
-          menus_micon: resolveMenuIcon(p.menu.menus_micon_name),
-          menus_odrby: p.menu.menus_odrby,
-          menus_mlink: p.menu.menus_mlink,
-          menus_mdesc: p.menu.menus_mdesc,
-        },
-      }));
+      .map((p) => {
+        // Always rebuild the whole menu object: the icon is a React element and
+        // cannot be stored, so only its name is persisted and the element is
+        // re-resolved here. Dropping any field (like the icon name) would be
+        // lossy, because this restored object is what gets written back on the
+        // next change — the icon would disappear on the load after that.
+        const known = allMenus.find((m) => m.id === p.menu.id);
+        // Current menu metadata wins for menus that still exist (name, link,
+        // permissions); the stored snapshot covers menus the app no longer has.
+        const menu = known ? { ...p.menu, ...known } : { ...p.menu };
+        const iconName = menu.menus_micon_name || p.menu.menus_micon_name;
+        return {
+          key: p.key,
+          hidden: !!p.hidden,
+          menu: {
+            ...menu,
+            menus_micon_name: iconName,
+            menus_micon: resolveMenuIcon(iconName),
+          },
+        };
+      });
   } catch (e) {
     return [];
   }
@@ -613,13 +625,9 @@ export function AppProvider({ children }) {
 
   // Lock screen session state — persisted in sessionStorage so a browser refresh
   // while locked preserves the locked state without losing session credentials.
-  const [isLocked, setIsLockedState] = useState(() => {
-    try {
-      return sessionStorage.getItem("eaac_screen_locked") === "true";
-    } catch {
-      return false;
-    }
-  });
+  const [isLocked, setIsLockedState] = useState(
+    () => readSession(SESSION_KEYS.screenLocked, false) === true,
+  );
   const isLockedRef = useRef(isLocked);
   useEffect(() => {
     isLockedRef.current = isLocked;
@@ -628,13 +636,8 @@ export function AppProvider({ children }) {
   const setIsLocked = useCallback((locked) => {
     const val = Boolean(locked);
     setIsLockedState(val);
-    try {
-      if (val) {
-        sessionStorage.setItem("eaac_screen_locked", "true");
-      } else {
-        sessionStorage.removeItem("eaac_screen_locked");
-      }
-    } catch {}
+    if (val) writeSession(SESSION_KEYS.screenLocked, true);
+    else removeSession(SESSION_KEYS.screenLocked);
   }, []);
 
   const bgAnimRef = useRef(bgAnim);
@@ -719,22 +722,18 @@ export function AppProvider({ children }) {
   const [transactions, setTransactions] = useState(initialTransactions);
 
   // Menu windows — routes rendered in modal windows at the app root (see
-  // layouts/Window). Multiple windows can be open at once. Windows are
-  // seeded from localStorage so minimized windows survive a page reload;
-  // popupSeqRef starts high to avoid key collisions with restored windows.
-  const [popups, setPopups] = useState(restoreMinimizedPopups);
+  // layouts/Window). Multiple windows can be open at once. The stack is seeded
+  // from localStorage so every open window (and its taskbar button) survives a
+  // page reload; popupSeqRef starts high to avoid key collisions with restored
+  // windows.
+  const [popups, setPopups] = useState(restorePopups);
   const popupSeqRef = useRef(START_POPUP_SEQ);
 
   // Pinned favorite menus (ids). Seeded from localStorage; persisted on change
   // so the Modules page and the taskbar stay in sync.
   const [pinnedMenuIds, setPinnedMenuIds] = useState(() => {
-    try {
-      const stored = localStorage.getItem(PINNED_MENUS_STORAGE_KEY);
-      const ids = stored ? JSON.parse(stored) : [];
-      return Array.isArray(ids) ? ids : [];
-    } catch (e) {
-      return [];
-    }
+    const ids = readStored(SESSION_KEYS.pinnedMenus, []);
+    return Array.isArray(ids) ? ids : [];
   });
 
   const togglePinMenu = useCallback((menuId) => {
@@ -742,11 +741,7 @@ export function AppProvider({ children }) {
       const next = prev.includes(menuId)
         ? prev.filter((id) => id !== menuId)
         : [menuId, ...prev];
-      try {
-        localStorage.setItem(PINNED_MENUS_STORAGE_KEY, JSON.stringify(next));
-      } catch (e) {
-        /* ignore */
-      }
+      writeStored(SESSION_KEYS.pinnedMenus, next);
       return next;
     });
   }, []);
@@ -818,20 +813,15 @@ export function AppProvider({ children }) {
     setPopups([]);
   }, []);
 
-  // Persist minimized windows to localStorage whenever the window stack changes.
+  // Persist the window stack to localStorage whenever it changes, so a page
+  // reload restores the very same windows (and the same taskbar buttons).
   useEffect(() => {
-    try {
-      const minimized = popups.filter((p) => p.hidden);
-      if (minimized.length === 0) {
-        localStorage.removeItem(POPUPS_STORAGE_KEY);
-      } else {
-        localStorage.setItem(
-          POPUPS_STORAGE_KEY,
-          JSON.stringify(minimized.map(serializePopup)),
-        );
-      }
-    } catch (e) {
-      /* ignore */
+    // Drop the superseded key, then mirror the current stack.
+    removeStored(SESSION_KEYS.legacyMinimizedWindows);
+    if (popups.length === 0) {
+      removeStored(SESSION_KEYS.openWindows);
+    } else {
+      writeStored(SESSION_KEYS.openWindows, popups.map(serializePopup));
     }
   }, [popups]);
 
@@ -1202,7 +1192,8 @@ export function AppProvider({ children }) {
   // Listen for unauthorized API responses and redirect to login
   useEffect(() => {
     const handleUnauthorized = () => {
-      clearStorageData();
+      // A rejected token is a forced sign-out: forget this user's state.
+      clearSessionKeys();
       setUser(null);
       setEmply(null);
       setBusiness(null);
@@ -1275,10 +1266,9 @@ export function AppProvider({ children }) {
   };
 
   const logout = useCallback(() => {
-    clearStorageData();
-    try {
-      sessionStorage.removeItem("eaac_screen_locked");
-    } catch {}
+    // Wipe everything that belongs to this user (SESSION_KEYS): their session,
+    // windows, pins, recents and lock state. Browser preferences are kept.
+    clearSessionKeys();
     setIsLockedState(false);
     setUser(null);
     setEmply(null);

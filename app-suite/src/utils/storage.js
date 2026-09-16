@@ -1,9 +1,145 @@
-// Centralized localStorage utility for managing app data
+// Single source of truth for app persistence.
+//
+// Every storage key the app uses is declared here, and every read/write of the
+// browser's Web Storage goes through the helpers in this file — components and
+// hooks must not call localStorage/sessionStorage directly. Failures (private
+// mode, quota, storage disabled) are swallowed so a persistence problem can
+// never break rendering.
+//
+// The keys are split into two groups:
+//
+//   SESSION_KEYS    Everything the app remembers about the person who is signed
+//                   in: their session, the windows they left open, their
+//                   favourite and recent menus, the lock screen. Signing out
+//                   wipes all of it (clearSessionKeys), so the next person to
+//                   sign in on this machine starts with a clean desktop and
+//                   none of the previous user's state.
+//
+//   PREFERENCE_KEYS Everything the app remembers about this browser instead of a
+//                   person: look & feel, the remembered login name, table
+//                   layout and window positions. These are not tied to an
+//                   account, so they are kept when someone signs out —
+//                   otherwise every sign-out would reset the theme, fonts and
+//                   grid settings the user just chose.
+//
+// Rule of thumb: if it describes *who is using the app*, it belongs in
+// SESSION_KEYS; if it describes *how this browser is set up*, it belongs in
+// PREFERENCE_KEYS.
 import defaultLogo from "@/assets/logo-bs.png";
 
-const STORAGE_KEY = "eaac02May2026user";
-const STORAGE_KEY_LOGIN = "eaac02May2026conf";
+// ── Wiped when the user signs out ──────────────────────────────────────────
+export const SESSION_KEYS = {
+  /** Who is signed in: employee, user, business, token and the menus they may open. */
+  session: "eaac02May2026user",
+  /** Windows left open or minimized. Cleared on sign-out so nobody inherits the previous user's desktop. */
+  openWindows: "bsuite_open_popups",
+  /** Older key that held minimized windows only; still read once, then deleted. */
+  legacyMinimizedWindows: "bsuite_minimized_popups",
+  /** Starred favourite menus, shown on the Modules page and the taskbar. */
+  pinnedMenus: "bsuite_pinned_menus",
+  /** Recently opened menus, most recent first. */
+  recentMenus: "bsuite_recent_menus",
+  /** Whether the lock screen is showing. Lives in sessionStorage — see SESSION_ONLY_KEYS. */
+  screenLocked: "eaac_screen_locked",
+};
 
+// Session keys that live in sessionStorage (gone when the tab closes) instead of
+// localStorage. Add a key here if it is ever moved between the two stores.
+const SESSION_ONLY_KEYS = new Set([SESSION_KEYS.screenLocked]);
+
+// ── Kept when the user signs out ───────────────────────────────────────────
+export const PREFERENCE_KEYS = {
+  /** Look & feel plus the remembered login name: theme, fonts, density, layout, backgrounds, saved_user … */
+  config: "eaac02May2026conf",
+  /**
+   * Saved window positions/sizes. Stored per user id, so the entries for one
+   * user are never shown to another — kept so the same user finds their
+   * windows where they left them.
+   */
+  windowGeometry: "bsuite_window_geometry",
+  /** Table rows: compact or comfortable — one choice for the whole app. */
+  tableDensity: "bsuite_table_density",
+  /** Column order/pinning/visibility for one table, keyed by that table's own id. */
+  tableLayout: (id) => `bsuite_table_layout_${id}`,
+  /** Which rows are expanded in one tree table, keyed by that tree's own id. */
+  treeExpanded: (id) => `bsuite_tree_expanded_${id}`,
+};
+
+// ── Low-level access ───────────────────────────────────────────────────────
+// The only place the Web Storage API is referenced.
+const readRaw = (store, key) => {
+  try {
+    return store.getItem(key);
+  } catch {
+    return null;
+  }
+};
+
+const writeRaw = (store, key, value) => {
+  try {
+    store.setItem(key, value);
+    return true;
+  } catch {
+    return false;
+  }
+};
+
+const removeRaw = (store, key) => {
+  try {
+    store.removeItem(key);
+  } catch {
+    /* ignore */
+  }
+};
+
+/** Read and parse a stored JSON value; `fallback` when missing or corrupt. */
+export const readStored = (key, fallback = null) => {
+  const raw = readRaw(localStorage, key);
+  if (raw == null) return fallback;
+  try {
+    const parsed = JSON.parse(raw);
+    return parsed ?? fallback;
+  } catch {
+    return fallback;
+  }
+};
+
+/** JSON-serialize a value into localStorage. Returns false if it could not be written. */
+export const writeStored = (key, value) => writeRaw(localStorage, key, JSON.stringify(value));
+
+/** Delete a localStorage key. */
+export const removeStored = (key) => removeRaw(localStorage, key);
+
+// sessionStorage twin — survives a refresh, cleared when the tab closes.
+export const readSession = (key, fallback = null) => {
+  const raw = readRaw(sessionStorage, key);
+  if (raw == null) return fallback;
+  try {
+    const parsed = JSON.parse(raw);
+    return parsed ?? fallback;
+  } catch {
+    return fallback;
+  }
+};
+
+export const writeSession = (key, value) => writeRaw(sessionStorage, key, JSON.stringify(value));
+
+export const removeSession = (key) => removeRaw(sessionStorage, key);
+
+// ── Sign-out ───────────────────────────────────────────────────────────────
+/**
+ * Forget everything stored for the signed-in user (all SESSION_KEYS, whether
+ * they live in localStorage or sessionStorage). Called on sign-out and when the
+ * API answers "unauthorized". PREFERENCE_KEYS are deliberately left alone.
+ */
+export const clearSessionKeys = () => {
+  for (const key of Object.values(SESSION_KEYS)) {
+    if (SESSION_ONLY_KEYS.has(key)) removeSession(key);
+    else removeStored(key);
+  }
+};
+
+// ── Session data (the signed-in user's record) ─────────────────────────────
 const defaultData = {
   emply: null,
   bsins: null,
@@ -60,58 +196,18 @@ const confData = {
   sidebar: "visible",
 };
 
-const getStorageData = () => {
-  try {
-    const data = localStorage.getItem(STORAGE_KEY);
-    return data ? { ...defaultData, ...JSON.parse(data) } : { ...defaultData };
-  } catch (error) {
-    console.error("Error reading from localStorage:", error);
-    return { ...defaultData };
-  }
-};
+export const getStorageData = () => ({
+  ...defaultData,
+  ...(readStored(SESSION_KEYS.session, null) || {}),
+});
 
-const setStorageData = (data) => {
-  try {
-    const currentData = getStorageData();
-    const updatedData = { ...currentData, ...data };
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(updatedData));
-  } catch (error) {
-    console.error("Error writing to localStorage:", error);
-  }
-};
+export const setStorageData = (data) =>
+  writeStored(SESSION_KEYS.session, { ...getStorageData(), ...data });
 
-const clearStorageData = () => {
-  try {
-    localStorage.removeItem(STORAGE_KEY);
-  } catch (error) {
-    console.error("Error clearing localStorage:", error);
-  }
-};
+export const getStorageLoginData = () => ({
+  ...confData,
+  ...(readStored(PREFERENCE_KEYS.config, null) || {}),
+});
 
-const getStorageLoginData = () => {
-  try {
-    const data = localStorage.getItem(STORAGE_KEY_LOGIN);
-    return data ? { ...confData, ...JSON.parse(data) } : { ...confData };
-  } catch (error) {
-    console.error("Error reading from localStorage:", error);
-    return { ...confData };
-  }
-};
-
-const setStorageLoginData = (data) => {
-  try {
-    const currentData = getStorageLoginData();
-    const updatedData = { ...currentData, ...data };
-    localStorage.setItem(STORAGE_KEY_LOGIN, JSON.stringify(updatedData));
-  } catch (error) {
-    console.error("Error writing to localStorage:", error);
-  }
-};
-
-export {
-  getStorageData,
-  setStorageData,
-  clearStorageData,
-  getStorageLoginData,
-  setStorageLoginData,
-};
+export const setStorageLoginData = (data) =>
+  writeStored(PREFERENCE_KEYS.config, { ...getStorageLoginData(), ...data });

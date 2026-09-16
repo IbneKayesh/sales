@@ -46,4 +46,8 @@ export const porAPI = {
     apiRequest("/M03/v1/por/get-all-due-por", {
       body: data,
     }),
+  cancelPO: (data) =>
+    apiRequest("/M03/v1/por/cancel-po", {
+      body: data,
+    }),
 };

@@ -17,8 +17,6 @@ const BillSummary = ({ formData = {}, readOnly, onChange = () => {} }) => {
   const summaryRows = [
     { label: "Item Amount", value: formData.pordm_tramt },
     { label: "Item Discount", value: formData.pordm_itmds },
-    { label: "Invoice Discount %", value: formData.pordm_dspct },
-    { label: "Invoice Discount", value: formData.pordm_invds, editable: true },
     { label: "VAT Amount", value: formData.pordm_vtamt },
     { label: "Include Cost", value: formData.pordm_icamt },
     { label: "Exclude Cost", value: formData.pordm_ecamt },

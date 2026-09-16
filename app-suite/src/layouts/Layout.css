@@ -1,0 +1,14 @@
+/* ─────────────────────────────────────────────────────────────────────────
+   Layout shell (layouts/Layout.jsx)
+
+   The base .layout / .layout__main rules live in App.css; this file holds only
+   what the component used to pass inline.
+   ───────────────────────────────────────────────────────────────────────── */
+
+/* Page content must clear the merged taskbar/status bar that floats over the
+   bottom of the window (~36px tall). The base class is repeated because
+   App.css is bundled after this file, and its `padding` shorthand on
+   .layout__main (plus the ≤768px override) would otherwise win. */
+.layout__main.layout__main--taskbar-clear {
+  padding-bottom: calc(var(--sp-8) + 36px);
+}

@@ -2,12 +2,7 @@ const express = require("express");
 const router = express.Router();
 const { dbGet, dbGetAll, dbRun, dbRunAll } = require("../../db/sqlManagerpg");
 const { v4: uuidv4 } = require("uuid");
-const {
-  GenNewCode,
-  GenNewTrn,
-  getCurrentPeriod,
-  getCurrencyRate,
-} = require("../../db/genHelper");
+const { GenNewTrn } = require("../../db/genHelper");
 const { buildJournalScripts } = require("../../db/journalService");
 
 // get all
@@ -155,28 +150,7 @@ const create = async (req, res) => {
     }
 
     //database action
-    // ─── OLD: manual period/currency/journal-number lookup (commented out) ───
-    // const acprd = await getCurrentPeriod(user_c, user_b, mrrdm_dpart);
-    // if (!acprd) {
-    //   return { success: false, message: "No active fiscal year or accounting period found", data: {} };
-    // }
-    // if (acprd.length > 1) {
-    //   return { success: false, message: "Multiple active accounting periods found. Please select one.", data: {} };
-    // }
-    // const { acprd_id, fsyar_id } = acprd[0];
-    // const newId_JV = uuidv4();
-    // const newTrnNo_JV = await GenNewTrn(user_c, user_b, "tmtb_jrnlm", "Purchase Invoice", mrrdm_dpart);
-    // const crncy = await getCurrencyRate(user_c, user_b);
-    // if (!crncy) {
-    //   return { success: false, message: "No active currency rate found", data: {} };
-    // }
-    // if (crncy.length > 1) {
-    //   return { success: false, message: "Multiple active currency rate found. Please select one.", data: {} };
-    // }
-    // ─── END OLD ───
-
     const newId = uuidv4();
-    //const newCode = await GenNewCode(user_c, "tmpb_mrrdm");
     const newTrnNo = await GenNewTrn(
       user_c,
       user_b,
@@ -212,15 +186,15 @@ const create = async (req, res) => {
     const scripts = [];
     scripts.push({
       sql: `INSERT INTO tmpb_mrrdm(id, mrrdm_users, mrrdm_bsins, mrrdm_dpart, mrrdm_cntct, mrrdm_ttype,
-      mrrdm_trnno, mrrdm_trdat, mrrdm_refno, mrrdm_notes, mrrdm_tramt, mrrdm_itmds,
-      mrrdm_dspct, mrrdm_invds, mrrdm_vtamt, mrrdm_icamt, mrrdm_ecamt, mrrdm_pyamt,
-      mrrdm_pdamt, mrrdm_duamt, mrrdm_stamt, mrrdm_csamt, mrrdm_vehid, mrrdm_ispst,
-      mrrdm_ispad, mrrdm_isqcp, mrrdm_isapp, mrrdm_crusr, mrrdm_upusr)
+                        mrrdm_trnno, mrrdm_trdat, mrrdm_refno, mrrdm_notes, mrrdm_tramt, mrrdm_itmds,
+                        mrrdm_dspct, mrrdm_invds, mrrdm_vtamt, mrrdm_icamt, mrrdm_ecamt, mrrdm_pyamt,
+                        mrrdm_pdamt, mrrdm_duamt, mrrdm_stamt, mrrdm_csamt, mrrdm_vehid, mrrdm_ispst,
+                        mrrdm_ispad, mrrdm_isqcp, mrrdm_isapp, mrrdm_crusr, mrrdm_upusr)
     VALUES ($1, $2, $3, $4, $5, $6,
-      $7, $8, $9, $10, $11, $12,
-      $13, $14, $15, $16, $17, $18,
-      $19, $20, $21, $22, $23, $24,
-      $25, $26, $27, $28, $29)`,
+            $7, $8, $9, $10, $11, $12,
+            $13, $14, $15, $16, $17, $18,
+            $19, $20, $21, $22, $23, $24,
+            $25, $26, $27, $28, $29)`,
       params: [
         newId,
         user_c,
@@ -255,21 +229,7 @@ const create = async (req, res) => {
       label: `Created MRR ${newTrnNo}`,
     });
 
-    // ─── OLD: manual journal master INSERT (commented out) ───
-    // scripts.push({
-    //   sql: `INSERT INTO tmtb_jrnlm(id, jrnlm_users, jrnlm_bsins, jrnlm_dpart, jrnlm_fsyar, jrnlm_acprd,
-    //     jrnlm_crncy, jrnlm_trtyp, jrnlm_trnno, jrnlm_trdat, jrnlm_refno, jrnlm_narrt,
-    //     jrnlm_drval, jrnlm_crval, jrnlm_exrat, jrnlm_stats, jrnlm_crusr, jrnlm_upusr)
-    //     VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17,$18)`,
-    //   params: [ newId_JV, user_c, user_b, mrrdm_dpart, fsyar_id, acprd_id,
-    //     crncy.crncy_tcrnc, "Purchase Invoice", newTrnNo_JV, mrrdm_trdat, newTrnNo,
-    //     mrrdm_ttype, 0, 0, crncy.crncy_exrat, "Posted", user_s, user_s ],
-    //   label: `create journal master- ${newTrnNo_JV}`,
-    // });
-    // ─── END OLD ───
-
-    //Insert MRR details, Stock Details
-    let line = 1;
+    //Insert MRR details, Increase Stock Details
     for (const det of tmpb_mrrdc) {
       const lineId = uuidv4();
       scripts.push({
@@ -277,10 +237,10 @@ const create = async (req, res) => {
                           mrrdc_units, mrrdc_itrat, mrrdc_itqty, mrrdc_itamt, mrrdc_dspct, mrrdc_dsamt,
                           mrrdc_edamt, mrrdc_vtpct, mrrdc_vtamt, mrrdc_vtype, mrrdc_icamt, mrrdc_ecamt,
                           mrrdc_pyamt, mrrdc_stamt, mrrdc_notes, mrrdc_csrat, mrrdc_refid, mrrdc_crusr, mrrdc_upusr)
-        VALUES ($1, $2, $3, $4, $5, $6,
-      $7, $8, $9, $10, $11, $12,
-      $13, $14, $15, $16, $17, $18,
-      $19, $20, $21, $22, $23, $24, $25)`,
+            VALUES ($1, $2, $3, $4, $5, $6,
+                      $7, $8, $9, $10, $11, $12,
+                      $13, $14, $15, $16, $17, $18,
+                      $19, $20, $21, $22, $23, $24, $25)`,
         params: [
           lineId,
           user_c,
@@ -314,13 +274,13 @@ const create = async (req, res) => {
       //add condition if no tracking then off
       scripts.push({
         sql: `INSERT INTO tmib_stock(id, stock_users, stock_bsins, stock_dpart, stock_sorce, stock_trnno,
-        stock_refid, stock_items, stock_price, stock_brcod, stock_batch, stock_srial,
-        stock_wrdat, stock_fgdat, stock_exdat, stock_trqty, stock_ohqty, stock_cprat,
-        stock_lprat, stock_notes, stock_crusr, stock_upusr)
-        VALUES ($1, $2, $3, $4, $5, $6,
-      $7, $8, $9, $10, $11, $12,
-      $13, $14, $15, $16, $17, $18,
-      $19, $20, $21, $22)`,
+                stock_refid, stock_items, stock_price, stock_brcod, stock_batch, stock_srial,
+                stock_wrdat, stock_fgdat, stock_exdat, stock_trqty, stock_ohqty, stock_cprat,
+                stock_lprat, stock_notes, stock_crusr, stock_upusr)
+              VALUES ($1, $2, $3, $4, $5, $6,
+                      $7, $8, $9, $10, $11, $12,
+                      $13, $14, $15, $16, $17, $18, 
+                      $19, $20, $21, $22)`,
         params: [
           uuidv4(),
           user_c,
@@ -331,12 +291,12 @@ const create = async (req, res) => {
           lineId,
           det.mrrdc_items,
           det.mrrdc_price,
-          det.stock_brcod, //
-          det.stock_batch, //
-          det.stock_srial, //
-          det.stock_wrdat, //
-          det.stock_fgdat, //
-          det.stock_exdat, //
+          det.stock_brcod || "",
+          det.stock_batch || "",
+          det.stock_srial || "",
+          det.stock_wrdat || null,
+          det.stock_fgdat || null,
+          det.stock_exdat || null,
           det.mrrdc_itqty || 0,
           det.mrrdc_itqty || 0,
           det.mrrdc_csrat || 0,
@@ -369,7 +329,7 @@ const create = async (req, res) => {
           det.mrrdc_items,
           mrrdm_dpart,
         ],
-        label: `Update price stock detail ${newTrnNo}`,
+        label: `Update price increase stock detail ${newTrnNo}`,
       });
 
       //reduce purchase order items
@@ -383,11 +343,13 @@ const create = async (req, res) => {
                       WHERE id = $3
                       AND pordc_users = $4`,
           params: [det.mrrdc_itqty || 0, user_s, det.mrrdc_refid, user_c],
-          label: `Update po MRR detail ${newTrnNo}`,
+          label: `Update PO detail MRR qty ${newTrnNo}`,
         });
       }
+
     }
-    //flag purchase order mrr pending :: unti all items are received, not make false
+
+    //FLAG purchase order mrr pending :: unti all items are received, not make false
     if (fromPO) {
       scripts.push({
         sql: `MERGE INTO tmpb_pordm SRC
@@ -432,38 +394,14 @@ const create = async (req, res) => {
       }, {}),
     );
 
-    // ─── OLD: manual journal detail INSERTs for inventory/supplier/VAT (commented out) ───
-    // for (const det of newGroupedProducts) {
-    //   scripts.push({
-    //     sql: `INSERT INTO tmtb_jrnlc(id, jrnlc_users, jrnlc_bsins, jrnlc_dpart, jrnlc_jrnlm, jrnlc_chtac,
-    //       jrnlc_party, jrnlc_drval, jrnlc_crval, jrnlc_descr, jrnlc_sorce, jrnlc_refid,
-    //       jrnlc_rtype, jrnlc_lines, jrnlc_crusr, jrnlc_upusr)
-    //       VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16)`,
-    //     params: [ uuidv4(), user_c, user_b, mrrdm_dpart, newId_JV, det.chtac_id, det.party_id,
-    //       det.item_amount, 0, "To Asset / Inventory / Products", mrrdm_ttype, newId,
-    //       "MASTER", line, user_s, user_s ],
-    //     label: `Create Asset / Inventory / Products ${newTrnNo_JV}`,
-    //   });
-    //   line++;
-    // }
-    // scripts.push({
-    //   sql: `INSERT INTO tmtb_jrnlc(...)...`, params: [...], label: `Create Liability / Supplier / Payable ${newTrnNo_JV}`,
-    // });
-    // line++;
-    // if (Number(mrrdm_vtamt) > 0) {
-    //   scripts.push({ sql: `INSERT INTO tmtb_jrnlc(...)...`, params: [...], label: `...VAT...` });
-    //   line++;
-    // }
-    // ─── END OLD ───
-
     //Insert Costing details
     for (const det of tmpb_mrrcs) {
       const costId = uuidv4();
       scripts.push({
         sql: `INSERT INTO tmpb_mrrcs(id, mrrcs_users, mrrcs_bsins, mrrcs_mrrdm, mrrcs_party, mrrcs_csmod, 
-        mrrcs_clmod, mrrcs_value, mrrcs_notes, mrrcs_jrnlm, mrrcs_crusr, mrrcs_upusr)
+                          mrrcs_clmod, mrrcs_value, mrrcs_notes, mrrcs_jrnlm, mrrcs_crusr, mrrcs_upusr)
         VALUES ($1, $2, $3, $4, $5, $6,
-      $7, $8, $9, $10, $11, $12)`,
+                $7, $8, $9, $10, $11, $12)`,
         params: [
           costId,
           user_c,
@@ -482,21 +420,6 @@ const create = async (req, res) => {
         ],
         label: `Created Costing detail ${newTrnNo}`,
       });
-      // ─── OLD: manual costing journal detail (commented out) ───
-      // if (det.mrrcs_csmod === "Exclude") {
-      //   scripts.push({
-      //     sql: `INSERT INTO tmtb_jrnlc(id, jrnlc_users, jrnlc_bsins, jrnlc_dpart, jrnlc_jrnlm, jrnlc_chtac,
-      //       jrnlc_party, jrnlc_drval, jrnlc_crval, jrnlc_descr, jrnlc_sorce, jrnlc_refid,
-      //       jrnlc_rtype, jrnlc_lines, jrnlc_crusr, jrnlc_upusr)
-      //       VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16)`,
-      //     params: [ uuidv4(), user_c, user_b, mrrdm_dpart, newId_JV, det.chtac_id, det.party_id,
-      //       0, det.mrrcs_value || 0, "From Liability / Local Vendor Payable", mrrdm_ttype,
-      //       newId, "MASTER", line, user_s, user_s ],
-      //     label: `Create Liability / Local Vendor / Payable ${newTrnNo_JV}`,
-      //   });
-      //   line++;
-      // }
-      // ─── END OLD ───
     }
 
     //Insert Payment details
@@ -520,33 +443,16 @@ const create = async (req, res) => {
         ],
         label: `Created Payment detail ${newTrnNo}`,
       });
-
-      // ─── OLD: manual payment journal details (commented out) ───
-      // scripts.push({
-      //   sql: `INSERT INTO tmtb_jrnlc(id, jrnlc_users, ..., jrnlc_chtac, ...
-      //     VALUES ($1,$2,...,$16)`,
-      //   params: [ uuidv4(), ..., "Clear Liability / Supplier Payable", ... ],
-      //   label: `Clear Liability / Supplier / Payable ${newTrnNo_JV}`,
-      // });
-      // line++;
-      // scripts.push({
-      //   sql: `INSERT INTO tmtb_jrnlc(...)...`,
-      //   params: [ ..., "Payment Liability / Supplier Payable", ... ],
-      //   label: `Payment Liability / Supplier / Payable ${newTrnNo_JV}`,
-      // });
-      // line++;
-      // ─── END OLD ───
     }
 
-    //Update supplier credit balance + increase
+    //Update supplier current balance increase (+)
     scripts.push({
       sql: `UPDATE tmcb_cntct
-      SET cntct_crbal = cntct_crbal + $1,      
-    cntct_upusr = $2,
-    cntct_updat = CURRENT_TIMESTAMP,
-    cntct_rvnmr = cntct_rvnmr + 1
-    WHERE id = $3
-      `,
+      SET cntct_crbal = cntct_crbal + $1,
+          cntct_upusr = $2,
+          cntct_updat = CURRENT_TIMESTAMP,
+          cntct_rvnmr = cntct_rvnmr + 1
+      WHERE id = $3`,
       params: [mrrdm_duamt, user_s, mrrdm_cntct],
       label: `Update supplier credit balance ${newTrnNo}`,
     });
@@ -559,10 +465,10 @@ const create = async (req, res) => {
                           mrrdf_itemm, mrrdf_unitm, mrrdf_bnqty, mrrdf_bndlc, mrrdf_pricc, mrrdf_itemc,
                           mrrdf_unitc, mrrdf_pkqty, mrrdf_trqty, mrrdf_ofcnt, mrrdf_ofqty, mrrdf_notes,
                           mrrdf_csrat, mrrdf_refid, mrrdf_crusr, mrrdf_upusr)
-        VALUES ($1, $2, $3, $4, $5, $6,
-      $7, $8, $9, $10, $11, $12,
-      $13, $14, $15, $16, $17, $18,
-      $19, $20, $21, $22)`,
+            VALUES ($1, $2, $3, $4, $5, $6,
+                        $7, $8, $9, $10, $11, $12,
+                        $13, $14, $15, $16, $17, $18,
+                        $19, $20, $21, $22)`,
         params: [
           lineId,
           user_c,
@@ -593,13 +499,13 @@ const create = async (req, res) => {
       //add condition if no tracking then off
       scripts.push({
         sql: `INSERT INTO tmib_stock(id, stock_users, stock_bsins, stock_dpart, stock_sorce, stock_trnno,
-        stock_refid, stock_items, stock_price, stock_brcod, stock_batch, stock_srial,
-        stock_wrdat, stock_fgdat, stock_exdat, stock_trqty, stock_ohqty, stock_cprat,
-        stock_lprat, stock_notes, stock_crusr, stock_upusr)
+            stock_refid, stock_items, stock_price, stock_brcod, stock_batch, stock_srial,
+            stock_wrdat, stock_fgdat, stock_exdat, stock_trqty, stock_ohqty, stock_cprat,
+            stock_lprat, stock_notes, stock_crusr, stock_upusr)
         VALUES ($1, $2, $3, $4, $5, $6,
-      $7, $8, $9, $10, $11, $12,
-      $13, $14, $15, $16, $17, $18,
-      $19, $20, $21, $22)`,
+            $7, $8, $9, $10, $11, $12,
+            $13, $14, $15, $16, $17, $18,
+            $19, $20, $21, $22)`,
         params: [
           uuidv4(),
           user_c,
@@ -634,10 +540,10 @@ const create = async (req, res) => {
                   price_upusr = $2,
                   price_updat = CURRENT_TIMESTAMP,
                   price_rvnmr = price_rvnmr + 1
-                  WHERE id = $3
-                  AND price_users = $4
-                  AND price_items = $5
-                  AND price_dpart = $6`,
+              WHERE id = $3
+              AND price_users = $4
+              AND price_items = $5
+              AND price_dpart = $6`,
         params: [
           det.mrrdf_ofqty || 0,
           user_s,
@@ -649,42 +555,58 @@ const create = async (req, res) => {
         label: `Update price offer stock detail ${newTrnNo}`,
       });
     }
+
     // ─── NEW: Collect journal details and use centralized helper ───
     const jrnlDetails = [];
 
-    // Inventory / Products (DR)
+    // Assets / Inventory / Products (DR)
     for (const det of newGroupedProducts) {
       jrnlDetails.push({
-        chtac: det.chtac_id, party: det.party_id,
-        drval: det.item_amount, crval: 0,
-        descr: "To Asset / Inventory / Products", sorce: mrrdm_ttype, refid: newId,
+        chtac: det.chtac_id,
+        party: det.party_id,
+        drval: det.item_amount,
+        crval: 0,
+        descr: "To Assets / Inventory / Products",
+        sorce: mrrdm_ttype,
+        refid: newId,
       });
     }
 
-    // Supplier Payable (CR)
+    // Liability / Supplier Payable (CR)
     jrnlDetails.push({
-      chtac: chtac_id, party: party_id,
-      drval: 0, crval: mrrdm_pyamt || 0,
-      descr: "From Liability / Supplier Payable", sorce: mrrdm_ttype, refid: newId,
+      chtac: chtac_id,
+      party: party_id,
+      drval: 0,
+      crval: mrrdm_pyamt || 0,
+      descr: "From Liability / Supplier Payable",
+      sorce: mrrdm_ttype,
+      refid: newId,
     });
 
     // Input VAT (DR) — conditional
     if (Number(mrrdm_vtamt) > 0) {
       jrnlDetails.push({
-        chtac: result_inpvat.chtac_id, party: result_inpvat.party_id,
-        drval: mrrdm_vtamt || 0, crval: 0,
-        descr: "To Assets / Current Assets / VAT & Tax Receivable / Input VAT (Purchase VAT)",
-        sorce: mrrdm_ttype, refid: newId,
+        chtac: result_inpvat.chtac_id,
+        party: result_inpvat.party_id,
+        drval: mrrdm_vtamt || 0,
+        crval: 0,
+        descr: "To Assets / VAT & Tax Receivable / Input VAT (Purchase VAT)",
+        sorce: mrrdm_ttype,
+        refid: newId,
       });
     }
 
-    // Costing exclude (CR)
+    // Costing Exclude - Liability / Local Vendor Payable (CR) — conditional
     for (const det of tmpb_mrrcs) {
       if (det.mrrcs_csmod === "Exclude") {
         jrnlDetails.push({
-          chtac: det.chtac_id, party: det.party_id,
-          drval: 0, crval: det.mrrcs_value || 0,
-          descr: "From Liability / Local Vendor Payable", sorce: mrrdm_ttype, refid: newId,
+          chtac: det.chtac_id,
+          party: det.party_id,
+          drval: 0,
+          crval: det.mrrcs_value || 0,
+          descr: "From Liability / Local Vendor Payable",
+          sorce: mrrdm_ttype,
+          refid: newId,
         });
       }
     }
@@ -692,27 +614,46 @@ const create = async (req, res) => {
     // Payment details (DR supplier, CR cash/bank)
     for (const det of tmpb_mrrpy) {
       jrnlDetails.push({
-        chtac: chtac_id, party: party_id,
-        drval: det.mrrpy_pdamt || 0, crval: 0,
-        descr: "Clear Liability / Supplier Payable", sorce: mrrdm_ttype, refid: newId,
+        chtac: chtac_id,
+        party: party_id,
+        drval: det.mrrpy_pdamt || 0,
+        crval: 0,
+        descr: "Clear - Liability / Supplier Payable",
+        sorce: mrrdm_ttype,
+        refid: newId,
       });
       jrnlDetails.push({
-        chtac: det.chtac_id, party: det.party_id,
-        drval: 0, crval: det.mrrpy_pdamt || 0,
-        descr: "Payment Liability / Supplier Payable", sorce: mrrdm_ttype, refid: newId,
+        chtac: det.chtac_id,
+        party: det.party_id,
+        drval: 0,
+        crval: det.mrrpy_pdamt || 0,
+        descr: "Payment - Liability / Supplier Payable",
+        sorce: mrrdm_ttype,
+        refid: newId,
       });
     }
 
     // Build journal scripts via centralized helper
-    const { scripts: jrnlScripts, masterId: newId_JV, trnNo: newTrnNo_JV } = await buildJournalScripts({
-      user_c, user_b, user_s, dpart: mrrdm_dpart,
-      trtyp: "Purchase Invoice", trdat: mrrdm_trdat,
-      refno: newTrnNo, narrt: mrrdm_ttype,
-      drval: 0, crval: 0,
+    const {
+      scripts: jrnlScripts,
+      masterId: newId_JV,
+      trnNo: newTrnNo_JV,
+    } = await buildJournalScripts({
+      user_c,
+      user_b,
+      user_s,
+      dpart: mrrdm_dpart,
+      trtyp: "Purchase Invoice",
+      trdat: mrrdm_trdat,
+      refno: newTrnNo,
+      narrt: mrrdm_ttype,
+      drval: 0,
+      crval: 0,
       details: jrnlDetails,
     });
     scripts.push(...jrnlScripts);
 
+    // execute all sql scripts
     await dbRunAll(scripts);
 
     res.json({
@@ -738,44 +679,6 @@ const update = async (req, res) => {
     return res.json({
       success: true,
       message: `Update feature is unavailable.`,
-      data: {},
-    });
-    const {
-      id,
-      dpart_users,
-      dpart_bsins,
-      dpart_ccode,
-      dpart_cname,
-      dpart_ofadr,
-      dpart_emcap,
-      user_s,
-      user_c,
-      user_b,
-    } = req.body;
-
-    // Validate input
-    if (!dpart_cname || !user_s || !user_c || !user_b) {
-      return res.json({
-        success: false,
-        message: "All fields in the request body are required.",
-        data: {},
-      });
-    }
-    //database action
-    const sql = `UPDATE tmsb_dpart
-    SET dpart_cname = $1,
-    dpart_ofadr = $2,
-    dpart_emcap = $3,
-    dpart_upusr = $4,
-    dpart_updat = CURRENT_TIMESTAMP,
-    dpart_rvnmr = dpart_rvnmr + 1
-    WHERE id = $5`;
-    const params = [dpart_cname, dpart_ofadr, dpart_emcap, user_s, id];
-
-    await dbRun(sql, params, `update Department- ${user_c}`);
-    res.json({
-      success: true,
-      message: `${dpart_cname} - Updated successfully.`,
       data: {},
     });
   } catch (error) {

@@ -1,0 +1,91 @@
+{
+  "id": {
+    "type": "string",
+    "label": "Id"
+  },
+  "banks_cname": {
+    "type": "string",
+    "label": "Account Name",
+    "maxLength": 50,
+    "placeholder": "Enter account name",
+    "required": true
+  },
+  "banks_actno": {
+    "type": "string",
+    "label": "Account No.",
+    "maxLength": 50,
+    "placeholder": "Enter account no",
+    "required": true
+  },
+  "banks_bname": {
+    "type": "string",
+    "label": "Bank",
+    "maxLength": 50,
+    "placeholder": "Enter bank name",
+    "required": false
+  },
+  "banks_rname": {
+    "type": "string",
+    "label": "Branch",
+    "maxLength": 100,
+    "placeholder": "Enter branch name",
+    "required": false
+  },
+  "banks_addrs": {
+    "type": "string",
+    "label": "Address",
+    "maxLength": 100,
+    "minLength": 0,
+    "placeholder": "Enter address",
+    "required": false
+  },
+  "banks_route": {
+    "type": "string",
+    "label": "Routing No.",
+    "maxLength": 20,
+    "minLength": 0,
+    "placeholder": "Enter route no",
+    "required": false
+  },
+  "banks_swift": {
+    "type": "string",
+    "label": "SWIFT",
+    "maxLength": 20,
+    "minLength": 0,
+    "placeholder": "Enter SWIFT code",
+    "required": false
+  },
+  "banks_opdat": {
+    "type": "date",
+    "label": "Opening Date",
+    "placeholder": "Enter opening date",
+    "required": true,
+    "default": "new Date() with local format"
+  },
+  "banks_opbal": {
+    "type": "decimal",
+    "label": "Opening Balance",
+    "maxLength": 9999999999,
+    "minLength": 0,
+    "placeholder": "Enter opening balance",
+    "required": false,
+    "default": 0
+  },
+  "banks_crbal": {
+    "type": "decimal",
+    "label": "Current Balance",
+    "maxLength": 9999999999,
+    "minLength": 0,
+    "placeholder": "Enter current balance",
+    "required": false,
+    "default": 0
+  },
+  "banks_chtno": {
+    "type": "string",
+    "label": "Chart of Account No.",
+    "maxLength": 50,
+    "minLength": 0,
+    "placeholder": "Enter chart of account no",
+    "required": true
+  }
+}

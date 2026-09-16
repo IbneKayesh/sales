@@ -6,6 +6,10 @@ import { IconClose } from '../icons'
  *
  * Usage:
  *   <Modal open={isOpen} onClose={() => setIsOpen(false)}>
+ *
+ * `className` styles the dialog card; `overlayClassName` styles the backdrop
+ * layer it is centred in (used by the floating windows in layouts/Window).
+ *
  *     <ModalHeader title="Title" subtitle="Optional subtitle" onClose={() => setIsOpen(false)} />
  *     <ModalBody>...</ModalBody>
  *     <ModalFooter><Button>Save</Button></ModalFooter>
@@ -32,6 +36,7 @@ export default function Modal({
   blockScroll = true,
   children,
   className = '',
+  overlayClassName = '',
   modalStyle,
   modalRef,
   ...rest
@@ -99,7 +104,7 @@ export default function Modal({
     }
   }
 
-  const overlayClass = `modal-overlay${closing ? ' modal-overlay--closing' : ''}`
+  const overlayClass = `modal-overlay${closing ? ' modal-overlay--closing' : ''}${overlayClassName ? ' ' + overlayClassName : ''}`
   const modalClass = `modal modal--${size}${closing ? ' modal--closing' : ''}${className ? ' ' + className : ''}`
 
   return (

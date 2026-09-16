@@ -3,6 +3,7 @@ import ActionButton from "@/components/ActionButton";
 import Button from "@/components/Button";
 import InactiveText from "@/components/InactiveText";
 import { IconPlus } from "@/icons";
+import { PREFERENCE_KEYS } from "@/utils/storage";
 
 const TeachList = ({ treeData, onEdit, onDelete, onAddChild }) => {
   const dtColumns = [
@@ -70,7 +71,7 @@ const TeachList = ({ treeData, onEdit, onDelete, onAddChild }) => {
       treeColumn={1}
       searchable
       expandable
-      storageKey="M09-teach-expanded"
+      storageKey={PREFERENCE_KEYS.treeExpanded("m49-teach")}
       exportable
       exportFilename="teaching-materials.csv"
       striped

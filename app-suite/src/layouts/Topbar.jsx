@@ -25,6 +25,7 @@ import FullscreenButton from "@/components/FullscreenButton";
 import ActiveWindowIndicator from "@/components/ActiveWindowIndicator";
 import defaultWorkspaceBg from "@/assets/wallpapers/aurora.png";
 import logoBsWhite from "@/assets/logo-bs-white.png";
+import "./Topbar.css";
 
 export default function Topbar({ className = "", ...rest }) {
   const {
@@ -203,13 +204,7 @@ export default function Topbar({ className = "", ...rest }) {
             <img
               src={topbarVivid ? logoBsWhite : logoImage}
               alt="Logo"
-              style={{
-                height: 28,
-                width: "auto",
-                maxWidth: 140,
-                objectFit: "contain",
-                display: "block",
-              }}
+              className="topbar__logo-img"
             />
           ) : (
             <IconLogo size={28} />
@@ -220,10 +215,16 @@ export default function Topbar({ className = "", ...rest }) {
           <span className="topbar__subtitle">
             {business?.bsins_cname},
             {business?.bsins_addrs && (
-              <span style={{ flexShrink: 0 }}> {business.bsins_addrs},</span>
+              <span className="topbar__subtitle-part">
+                {" "}
+                {business.bsins_addrs},
+              </span>
             )}
             {business?.bsins_crncy && (
-              <span style={{ flexShrink: 0 }}> {business.bsins_crncy}</span>
+              <span className="topbar__subtitle-part">
+                {" "}
+                {business.bsins_crncy}
+              </span>
             )}
           </span>
         </span>
@@ -430,25 +431,14 @@ export default function Topbar({ className = "", ...rest }) {
 
   return (
     <>
+      {/* Smart sticky bar — boxed to the app container width (matching
+          layout__main): slides away on scroll-down, slides back on scroll-up.
+          Its chrome (sticky, frosted glass, tint through --topbar-bg) lives in
+          Topbar.css. */}
       <header
-        className={`topbar${className ? " " + className : ""}`}
-        // Sticky smart bar: boxed to the app container width (matching
-        // layout__main); slides away on scroll-down, slides back on scroll-up.
-        // Frosted bar: near-opaque surface with a soft blur + a subtle theme
-        // tint so it stays clearly visible above scrolling content.
-        style={{
-          position: "sticky",
-          top: 0,
-          transform: hidden ? "translateY(-100%)" : "translateY(0)",
-          transition: "transform var(--transition-normal)",
-          // Frosted-glass tint by default (see --topbar-bg in index.css); the
-          // Theme page can override it with a scrimmed background image.
-          background: "var(--topbar-bg)",
-          WebkitBackdropFilter: "blur(10px) saturate(140%)",
-          backdropFilter: "blur(10px) saturate(140%)",
-          boxShadow: "0 2px 12px rgba(0,0,0,0.10)",
-          borderBottom: "1px solid var(--border)",
-        }}
+        className={`topbar topbar--smart${hidden ? " topbar--hidden" : ""}${
+          className ? " " + className : ""
+        }`}
         {...rest}
       >
         {headerContent}

@@ -190,14 +190,14 @@ const ItemsList = ({
         const lineStock = row.price_gdstk || 0 + row.price_bdstk || 0;
         return (
           <span className={`${lineStock > 0 && "text-green-500"}`}>
-            {Number(row.price_gdstk).toFixed(2)} +{" "}
-            {Number(row.price_bdstk).toFixed(2)} ={" "}
+            {Number(row.price_gdstk).toFixed(2)} {row.runit_cname} +{" "}
+            {Number(row.price_bdstk).toFixed(2)} {row.runit_cname} ={" "}
             {/* <NegativeValue value={Number(lineStock).toFixed(2)} /> */}
             <ConvertUOM
               qty={lineStock}
               dfQty={row.items_pkqty}
-              pname={row.runit_cname}
-              sname={row.punit_cname}
+              runit={row.runit_cname}
+              punit={row.punit_cname}
             />
           </span>
         );

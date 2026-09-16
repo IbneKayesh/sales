@@ -1,0 +1,552 @@
+/* ==========================================================================
+   Taskbar — bottom status + window strip (layouts/Taskbar.jsx)
+   ==========================================================================
+   Styles that used to be inline in Taskbar.jsx live here. Only values the
+   component computes at runtime stay inline (anchored popup geometry, portal
+   offsets, the module icon tint from moduleShade(), and the preview thumbnail
+   width/scale). Shared tokens (--surface, --border, --radius-*, --shadow-lg,
+   --transition-fast, --z-toast, …) come from index.css; the interactive base
+   properties of the buttons come from the shared :where() group in App.css.
+   ========================================================================== */
+
+/* ── Root strip ─────────────────────────────────────────────────────────── */
+
+.taskbar-root {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: var(--z-toast, 2000);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 3px 10px;
+  background: linear-gradient(
+    to top,
+    color-mix(in srgb, var(--surface) 92%, var(--primary)) 0%,
+    color-mix(in srgb, var(--surface) 97%, var(--primary)) 100%
+  );
+  -webkit-backdrop-filter: blur(10px) saturate(140%);
+  backdrop-filter: blur(10px) saturate(140%);
+  box-shadow: 0 -2px 12px rgba(0, 0, 0, 0.1);
+  border-top: 1px solid var(--border);
+  font-family: var(--font-sans);
+  font-size: 11px;
+  color: var(--text-secondary);
+  overflow-x: auto;
+  white-space: nowrap;
+  user-select: none;
+}
+
+/* Adaptive: a touch slimmer when only the status strip is showing.
+   The 4px top padding is the clip box for the window buttons' corner close
+   badges, which stick 3px above their button. */
+.taskbar-root--with-windows {
+  padding: 4px 10px;
+}
+
+/* ── Status strip: company + currency (classic desktop ERP left status) ── */
+
+.taskbar__status-btn {
+  gap: 6px;
+  flex-shrink: 0;
+  padding: 3px 8px;
+  margin-left: -8px;
+  border: none;
+  border-radius: var(--radius-lg);
+  background: transparent;
+  color: inherit;
+  font-family: inherit;
+  font-size: inherit;
+  transition: background var(--transition-fast);
+}
+
+.taskbar__status-btn:hover {
+  background: var(--surface-alt);
+}
+
+.taskbar__status-dot {
+  display: inline-block;
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--success);
+}
+
+.taskbar__status-name {
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+/* ── Pinned menu quick-launch shortcuts ─────────────────────────────────── */
+
+.taskbar__pinned {
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+  margin-left: 6px;
+  padding-left: 8px;
+  border-left: 1px solid var(--border);
+}
+
+.taskbar__pin-btn {
+  width: 26px;
+  height: 26px;
+  padding: 0;
+  border: none;
+  border-radius: var(--radius-md);
+  background: transparent;
+  flex-shrink: 0;
+  /* color: set inline from moduleShade(menu id) */
+}
+
+.taskbar__pin-btn:hover {
+  background: var(--surface-alt);
+}
+
+/* ── Right side: window actions + avatar ────────────────────────────────── */
+
+.taskbar-right {
+  margin-left: auto;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-shrink: 0;
+  padding-left: 8px;
+}
+
+.taskbar__icon-btn {
+  width: 26px;
+  height: 26px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  background: var(--surface);
+  color: var(--text-muted);
+  flex-shrink: 0;
+  transition:
+    background var(--transition-fast),
+    color var(--transition-fast);
+}
+
+.taskbar__icon-btn:hover {
+  background: var(--surface-alt);
+  color: var(--text-primary);
+}
+
+.taskbar__icon-btn--active {
+  background: var(--primary-bg);
+  color: var(--primary);
+  border-color: var(--primary-border);
+}
+
+.taskbar__avatar {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 1px solid var(--border);
+  flex-shrink: 0;
+}
+
+.taskbar__avatar--initials {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--primary-bg);
+  color: var(--primary);
+  font-size: 9px;
+  font-weight: 700;
+  border: none;
+}
+
+/* ── Clock (Windows-11 style: time over date, opens a calendar) ─────────── */
+
+.taskbar-clock {
+  position: relative;
+  flex-shrink: 0;
+  padding-left: 12px;
+  margin-left: 4px;
+  border-left: 1px solid var(--border);
+  white-space: nowrap;
+}
+
+/* The calendar popup is portaled with fixed positioning (geometry set
+   inline); it reuses the shared .input-calendar__popup styles. */
+
+.taskbar-clock__btn {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 0;
+  padding: 1px 6px;
+  border: none;
+  border-radius: var(--radius-lg);
+  background: transparent;
+  color: var(--text-primary);
+  font-family: var(--font-sans);
+  line-height: 1.15;
+  transition: background var(--transition-fast);
+}
+
+.taskbar-clock__btn:hover {
+  background: var(--surface-alt);
+}
+
+.taskbar-clock__time {
+  font-size: 12px;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  color: var(--text-primary);
+  line-height: 1.15;
+}
+
+.taskbar-clock__date {
+  font-size: 10px;
+  color: var(--text-muted);
+  line-height: 1.15;
+}
+
+/* ── Window buttons (window-taskbar style) ──────────────────────────────── */
+
+.taskbar-items {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  /* Padding + matching negative margin: the items stay exactly where they
+     were, while the overflow clip box grows just enough (3px up, 6px right)
+     for an item's close badge to be painted in full instead of being cut.
+     The strip's own box therefore stays inside the taskbar. The separator is
+     a pseudo-element (below) rather than a border so the line keeps its own
+     height instead of growing with that clip box. */
+  padding: 3px 6px 0 8px;
+  margin: -3px -6px 0 5px;
+  min-width: 0;
+  overflow: hidden;
+}
+
+.taskbar-items::before {
+  content: "";
+  position: absolute;
+  left: -1px;
+  top: 3px;
+  bottom: 0;
+  width: 1px;
+  background: var(--border);
+}
+
+.taskbar-item {
+  position: relative;
+  display: inline-flex;
+  flex-shrink: 0;
+}
+
+.taskbar-item__btn {
+  gap: 6px;
+  max-width: 220px;
+  padding: 2px 4px;
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--border);
+  background: transparent;
+  color: var(--text-primary);
+  font-size: 13px;
+  transition:
+    background var(--transition-fast),
+    opacity var(--transition-fast);
+  overflow: hidden;
+}
+
+.taskbar-item__btn:hover {
+  background: var(--surface-alt);
+}
+
+/* Minimized windows are dimmed until restored. */
+.taskbar-item__btn--hidden {
+  opacity: 0.55;
+}
+
+.taskbar-item__icon {
+  display: inline-flex;
+  flex-shrink: 0;
+  /* color: set inline from moduleShade(menu id) */
+}
+
+.taskbar-item__label {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* Close cross — revealed on hover of the window button (or when the button
+   is keyboard-focused), like an OS taskbar badge. It appears instantly, and a
+   plain mouse click does not pin it open. */
+.taskbar-item__close {
+  position: absolute;
+  top: -3px;
+  right: -6px;
+  width: 18px;
+  height: 18px;
+  padding: 0;
+  border-radius: 50%;
+  border: 1px solid var(--border);
+  background: var(--surface);
+  color: var(--text-muted);
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.15);
+  opacity: 0;
+  visibility: hidden;
+}
+
+.taskbar-item:hover .taskbar-item__close,
+.taskbar-item__btn:focus-visible + .taskbar-item__close {
+  opacity: 1;
+  visibility: visible;
+}
+
+.taskbar-item__close:hover {
+  background: var(--danger-bg);
+  color: var(--danger);
+  border-color: var(--danger);
+}
+
+/* ── Hover preview (scaled snapshot of the live window) ─────────────────── */
+
+.taskbar-preview {
+  position: fixed;
+  bottom: 54px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-xl);
+  box-shadow: var(--shadow-lg);
+  overflow: hidden;
+  z-index: var(--z-toast, 2000);
+  pointer-events: none;
+  /* left + width: set inline (anchored to the window button) */
+}
+
+.taskbar-preview__header {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 10px;
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--text-primary);
+  border-bottom: 1px solid var(--border);
+  background: var(--surface-alt);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.taskbar-preview__icon {
+  flex-shrink: 0;
+  /* color: set inline from moduleShade(menu id) */
+}
+
+.taskbar-preview__title {
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.taskbar-preview__body {
+  width: 100%;
+  height: 184px;
+  overflow: hidden;
+  position: relative;
+  background: var(--surface-alt);
+}
+
+.taskbar-preview__empty {
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 11px;
+  color: var(--text-muted);
+}
+
+.taskbar-preview__shot {
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+}
+
+/* The cloned window body keeps its real width and is shrunk with a transform
+   (width + scale are set inline from the live window metrics). */
+.taskbar-preview__shot-inner {
+  transform-origin: top left;
+}
+
+/* ── Overflow: hidden measurement strip + "more windows" dropdown ───────── */
+
+.taskbar-measure {
+  position: absolute;
+  visibility: hidden;
+  pointer-events: none;
+  display: inline-flex;
+  gap: 6px;
+  z-index: -1;
+}
+
+.taskbar-measure__item {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  max-width: 220px;
+  padding: 4px 8px;
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--border);
+  font-size: 13px;
+  white-space: nowrap;
+  overflow: hidden;
+}
+
+.taskbar-measure__label {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.taskbar-overflow {
+  position: relative;
+  flex-shrink: 0;
+}
+
+.taskbar-overflow__btn {
+  position: relative;
+  width: 36px;
+  height: 36px;
+  flex-shrink: 0;
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--border);
+  background: var(--surface);
+  color: var(--text-muted);
+  transition: all var(--transition-fast);
+}
+
+.taskbar-overflow__btn:hover {
+  background: var(--surface-alt);
+  color: var(--text-primary);
+}
+
+.taskbar-overflow__btn--open {
+  background: var(--primary);
+  color: var(--primary-on);
+}
+
+.taskbar-overflow__badge {
+  position: absolute;
+  top: -4px;
+  right: -4px;
+  min-width: 16px;
+  height: 16px;
+  padding: 0 4px;
+  border-radius: var(--radius-lg);
+  background: var(--primary);
+  color: var(--primary-on);
+  font-size: 10px;
+  font-weight: 700;
+  line-height: 16px;
+  text-align: center;
+}
+
+/* The overflow panel is portaled into this fixed wrapper, so the shared
+   .popup-list__panel absolute anchoring is overridden here (scoped so it wins
+   over the base rule in App.css). */
+.taskbar-overflow-portal .popup-list__panel--taskbar {
+  position: static;
+  top: auto;
+  right: auto;
+  min-width: 260px;
+}
+
+/* ── Right-click context menu for a window button ───────────────────────── */
+
+.taskbar-menu {
+  position: fixed;
+  width: 200px;
+  padding: 4px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-lg);
+  animation: fade-in-down var(--transition-fast);
+  font-family: var(--font-sans);
+  font-size: 12px;
+  color: var(--text-primary);
+  user-select: none;
+  z-index: var(--z-toast, 2000);
+  /* left + bottom: set inline (anchored to the window button) */
+}
+
+.taskbar-menu__header {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 10px 8px;
+  border-bottom: 1px solid var(--border);
+  margin-bottom: 4px;
+  white-space: nowrap;
+  overflow: hidden;
+}
+
+.taskbar-menu__icon {
+  display: inline-flex;
+  flex-shrink: 0;
+  /* color: set inline from moduleShade(menu id) */
+}
+
+.taskbar-menu__title {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.taskbar-menu__divider {
+  height: 1px;
+  background: var(--border);
+  margin: 4px 6px;
+}
+
+.taskbar-menu__item {
+  display: flex;
+  width: 100%;
+  gap: 8px;
+  padding: 7px 10px;
+  font-size: 12px;
+  justify-content: flex-start;
+  border-radius: var(--radius-md);
+  border: none;
+  background: transparent;
+  color: var(--text-primary);
+  text-align: left;
+}
+
+.taskbar-menu__item:hover,
+.taskbar-menu__item:focus-visible {
+  background: var(--surface-alt);
+}
+
+.taskbar-menu__item--danger:hover,
+.taskbar-menu__item--danger:focus-visible {
+  background: var(--danger-bg);
+  color: var(--danger);
+}
+
+.taskbar-menu__item-icon {
+  display: inline-flex;
+  flex-shrink: 0;
+  color: var(--text-secondary);
+}
+
+.taskbar-menu__item--danger:hover .taskbar-menu__item-icon,
+.taskbar-menu__item--danger:focus-visible .taskbar-menu__item-icon {
+  color: var(--danger);
+}
+
+.taskbar-menu__item-label {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}

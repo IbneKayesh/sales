@@ -17,7 +17,6 @@ CREATE TABLE tmpb_pordc (
   pordc_itamt decimal(18,6) DEFAULT 0.00,
   pordc_dspct decimal(18,6) DEFAULT 0.00,
   pordc_dsamt decimal(18,6) DEFAULT 0.00,
-  pordc_edamt decimal(18,6) DEFAULT 0.00,
   pordc_vtpct decimal(18,6) DEFAULT 0.00,
   pordc_vtamt decimal(18,6) DEFAULT 0.00,
   pordc_vtype VARCHAR(10) DEFAULT 'EXEMPT',
@@ -29,6 +28,7 @@ CREATE TABLE tmpb_pordc (
   pordc_csrat decimal(18,6) DEFAULT 0.00,
   pordc_refid VARCHAR(50),
   pordc_mrqty decimal(18,6) DEFAULT 0.00,
+  pordc_cnqty decimal(18,6) DEFAULT 0.00,
   
   -- default
   pordc_actve boolean NOT NULL DEFAULT true,

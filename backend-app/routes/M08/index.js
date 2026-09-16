@@ -11,6 +11,7 @@ const reportsV1Routes = require("./reports.v1.routes.js");
 const receivablesV1Routes = require("./receivables.v1.routes.js");
 const payablesV1Routes = require("./payables.v1.routes.js");
 const payLocalV1Routes = require("./payLocal.v1.routes.js");
+const banksV1Routes = require("./banks.v1.routes.js");
 
 router.use("/v1/coa", coaV1Routes);
 router.use("/v1/coa-network", coaNetworkV1Routes);
@@ -22,4 +23,5 @@ router.use("/v1/reports", reportsV1Routes);
 router.use("/v1/receivables", receivablesV1Routes);
 router.use("/v1/payables", payablesV1Routes);
 router.use("/v1/pay-local", payLocalV1Routes);
+router.use("/v1/banks", banksV1Routes);
 module.exports = router;

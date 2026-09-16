@@ -8,27 +8,15 @@ import Calendar from "@/components/Calendar";
 import PopupList from "@/components/PopupList";
 import { moduleShade } from "@/utils/theme";
 import { menus as allMenus } from "@/utils/appModules";
-
-const actionStyle = {
-  display: "inline-flex",
-  alignItems: "center",
-  justifyContent: "center",
-  width: 26,
-  height: 26,
-  borderRadius: 6,
-  border: "1px solid var(--border, #e0e0e0)",
-  background: "var(--surface, #fff)",
-  color: "var(--text-muted, #888)",
-  cursor: "pointer",
-  flexShrink: 0,
-};
+import "./Taskbar.css";
 
 /**
  * Taskbar strip pinned to the bottom of the viewport listing every open menu
  * window — like a window taskbar. Click a window to toggle it: a minimized one
  * is restored (and brought to the front), a visible one is minimized. Bulk
  * actions on the right: Close all, Show all (restore minimized), Hide all
- * (minimize everything). Renders nothing while no windows are open.
+ * (minimize everything). Collapses to the slim status strip while no windows
+ * are open. Styling lives in Taskbar.css.
  */
 export default function Taskbar() {
   const {
@@ -68,112 +56,36 @@ export default function Taskbar() {
 
   return (
     <div
-      className="taskbar-root"
-      style={{
-        position: "fixed",
-        left: 0,
-        right: 0,
-        bottom: 0,
-        zIndex: "var(--z-toast, 2000)",
-        display: "flex",
-        alignItems: "center",
-        gap: 6,
-        // Adaptive: a touch slimmer when only the status strip is showing.
-        padding: hasPopups ? "4px 10px" : "3px 10px",
-        background:
-          "linear-gradient(to top, color-mix(in srgb, var(--surface, #ffffff) 92%, var(--primary, #7c3aed)) 0%, color-mix(in srgb, var(--surface, #ffffff) 97%, var(--primary, #7c3aed)) 100%)",
-        WebkitBackdropFilter: "blur(10px) saturate(140%)",
-        backdropFilter: "blur(10px) saturate(140%)",
-        boxShadow: "0 -2px 12px rgba(0,0,0,0.10)",
-        borderTop: "1px solid var(--border, #e0e0e0)",
-        fontFamily: "var(--font-sans)",
-        fontSize: 11,
-        color: "var(--text-secondary, #4b5563)",
-        overflowX: "auto",
-        whiteSpace: "nowrap",
-        userSelect: "none",
-      }}
+      className={`taskbar-root${hasPopups ? " taskbar-root--with-windows" : ""}`}
     >
       {/* Status strip — company + currency (classic desktop ERP left status).
           Clicking the company name opens the modules page, same as the
           topbar bSuite brand. */}
       <button
         type="button"
+        className="taskbar__status-btn"
         onClick={() => navigate("/bsuite/modules")}
         title="Open modules"
         aria-label="Open modules"
-        style={{
-          display: "inline-flex",
-          alignItems: "center",
-          gap: 6,
-          flexShrink: 0,
-          padding: "3px 8px",
-          marginLeft: -8,
-          border: "none",
-          borderRadius: 8,
-          background: "transparent",
-          color: "inherit",
-          cursor: "pointer",
-          fontFamily: "inherit",
-          fontSize: "inherit",
-          transition: "background 0.15s",
-        }}
-        onMouseEnter={(e) =>
-          (e.currentTarget.style.background = "var(--surface-alt, #f1f3f5)")
-        }
-        onMouseLeave={(e) => (e.currentTarget.style.background = "transparent")}
       >
-        <span
-          style={{
-            width: 7,
-            height: 7,
-            borderRadius: "50%",
-            background: "var(--success, #16a34a)",
-            display: "inline-block",
-          }}
-        />
-        <strong style={{ fontWeight: 600, color: "var(--text-primary, #111)" }}>
+        <span className="taskbar__status-dot" />
+        <strong className="taskbar__status-name">
           {business?.bsins_cname || "bSuite"}
         </strong>
       </button>
 
       {/* Pinned menu quick-launch shortcuts */}
       {pinnedMenus.length > 0 && (
-        <span
-          style={{
-            display: "inline-flex",
-            alignItems: "center",
-            gap: 2,
-            marginLeft: 6,
-            paddingLeft: 8,
-            borderLeft: "1px solid var(--border, #e0e0e0)",
-          }}
-        >
+        <span className="taskbar__pinned">
           {pinnedMenus.map((m) => (
             <button
               key={m.id}
               type="button"
+              className="taskbar__pin-btn"
               onClick={() => navigate(m.menus_mlink)}
               title={m.menus_mname}
               aria-label={`Open ${m.menus_mname}`}
-              style={{
-                display: "inline-flex",
-                alignItems: "center",
-                justifyContent: "center",
-                width: 26,
-                height: 26,
-                padding: 0,
-                borderRadius: 6,
-                border: "none",
-                background: "transparent",
-                color: moduleShade(m.id),
-                cursor: "pointer",
-                flexShrink: 0,
-              }}
-              onMouseEnter={(e) =>
-                (e.currentTarget.style.background = "var(--surface-alt, #f1f3f5)")
-              }
-              onMouseLeave={(e) => (e.currentTarget.style.background = "transparent")}
+              style={{ color: moduleShade(m.id) }}
             >
               {m.menus_micon}
             </button>
@@ -195,23 +107,17 @@ export default function Taskbar() {
         />
       )}
 
-      <div
-        className="taskbar-right"
-        style={{
-          marginLeft: "auto",
-          display: "flex",
-          alignItems: "center",
-          gap: 6,
-          flexShrink: 0,
-          paddingLeft: 8,
-        }}
-      >
+      <div className="taskbar-right">
         {hasPopups && (
           <>
-            <FullscreenButton style={actionStyle} iconSize={14} />
+            <FullscreenButton
+              className="taskbar__icon-btn"
+              activeClassName="taskbar__icon-btn--active"
+              iconSize={14}
+            />
             <button
               type="button"
-              style={actionStyle}
+              className="taskbar__icon-btn"
               onClick={showAllPopups}
               title="Restore all minimized windows"
               aria-label="Show all windows"
@@ -220,7 +126,7 @@ export default function Taskbar() {
             </button>
             <button
               type="button"
-              style={actionStyle}
+              className="taskbar__icon-btn"
               onClick={hideAllPopups}
               title="Minimize all open windows"
               aria-label="Hide all windows"
@@ -229,7 +135,7 @@ export default function Taskbar() {
             </button>
             <button
               type="button"
-              style={actionStyle}
+              className="taskbar__icon-btn"
               onClick={closeAllPopups}
               title="Close all open windows"
               aria-label="Close all windows"
@@ -240,34 +146,15 @@ export default function Taskbar() {
         )}
         {hasAvatar ? (
           <img
+            className="taskbar__avatar"
             src={user.avatar}
             alt={user.name || "User"}
             title={user?.name || "User"}
-            style={{
-              width: 20,
-              height: 20,
-              borderRadius: "50%",
-              objectFit: "cover",
-              border: "1px solid var(--border, #e0e0e0)",
-              flexShrink: 0,
-            }}
           />
         ) : (
           <span
+            className="taskbar__avatar taskbar__avatar--initials"
             title={user?.name || "User"}
-            style={{
-              display: "inline-flex",
-              alignItems: "center",
-              justifyContent: "center",
-              width: 20,
-              height: 20,
-              borderRadius: "50%",
-              background: "var(--primary-bg, rgba(124, 58, 237, 0.10))",
-              color: "var(--primary, #7c3aed)",
-              fontSize: 9,
-              fontWeight: 700,
-              flexShrink: 0,
-            }}
           >
             {initials}
           </span>
@@ -340,59 +227,17 @@ function TaskbarClock() {
   }
 
   return (
-    <div
-      ref={wrapRef}
-      style={{
-        position: "relative",
-        flexShrink: 0,
-        paddingLeft: 12,
-        marginLeft: 4,
-        borderLeft: "1px solid var(--border, #e0e0e0)",
-        whiteSpace: "nowrap",
-      }}
-    >
+    <div ref={wrapRef} className="taskbar-clock">
       <button
         ref={btnRef}
         type="button"
+        className="taskbar-clock__btn"
         onClick={toggle}
         title={`${date} · ${time}`}
         aria-label="Open calendar"
-        style={{
-          display: "flex",
-          flexDirection: "column",
-          alignItems: "flex-end",
-          gap: 0,
-          padding: "1px 6px",
-          border: "none",
-          borderRadius: 8,
-          background: "transparent",
-          color: "var(--text-primary, #111)",
-          cursor: "pointer",
-          fontFamily: "var(--font-sans)",
-          lineHeight: 1.15,
-          transition: "background 0.15s",
-        }}
       >
-        <span
-          style={{
-            fontSize: 12,
-            fontWeight: 700,
-            fontVariantNumeric: "tabular-nums",
-            color: "var(--text-primary, #111)",
-            lineHeight: 1.15,
-          }}
-        >
-          {time}
-        </span>
-        <span
-          style={{
-            fontSize: 10,
-            color: "var(--text-muted, #888)",
-            lineHeight: 1.15,
-          }}
-        >
-          {date}
-        </span>
+        <span className="taskbar-clock__time">{time}</span>
+        <span className="taskbar-clock__date">{date}</span>
       </button>
       {open &&
         popupStyle &&
@@ -459,70 +304,25 @@ function TaskbarPreview({ popup, anchor }) {
     : 0;
   if (!anchor) return null;
   return createPortal(
-    <div
-      style={{
-        position: "fixed",
-        left,
-        bottom: 54,
-        width: W,
-        background: "var(--surface, #fff)",
-        border: "1px solid var(--border, #e0e0e0)",
-        borderRadius: 12,
-        boxShadow: "0 12px 32px rgba(0,0,0,0.25)",
-        overflow: "hidden",
-        zIndex: "var(--z-toast, 2000)",
-        pointerEvents: "none",
-      }}
-    >
-      <div
-        style={{
-          display: "flex",
-          alignItems: "center",
-          gap: 6,
-          padding: "4px 10px",
-          fontSize: 11,
-          fontWeight: 600,
-          color: "var(--text-primary, #111)",
-          borderBottom: "1px solid var(--border, #e0e0e0)",
-          background: "var(--surface-alt, #f1f3f5)",
-          whiteSpace: "nowrap",
-          overflow: "hidden",
-          textOverflow: "ellipsis",
-        }}
-      >
-        <span style={{ color: moduleShade(popup.menu.id), flexShrink: 0 }}>
+    <div className="taskbar-preview" style={{ left, width: W }}>
+      <div className="taskbar-preview__header">
+        <span
+          className="taskbar-preview__icon"
+          style={{ color: moduleShade(popup.menu.id) }}
+        >
           {popup.menu.menus_micon}
         </span>
-        <span style={{ overflow: "hidden", textOverflow: "ellipsis" }}>
+        <span className="taskbar-preview__title">
           {popup.menu.menus_mname}
         </span>
       </div>
       {/* Scaled snapshot of the real window body — scale window-width → 320px,
           cropped to the top 184px like a peeking thumbnail. */}
-      <div
-        style={{
-          width: W,
-          height: 184,
-          overflow: "hidden",
-          position: "relative",
-          background: "var(--surface-alt, #f1f3f5)",
-        }}
-      >
+      <div className="taskbar-preview__body">
         {shot ? (
           <WindowBodyShot node={shot.node} width={shot.width} />
         ) : (
-          <div
-            style={{
-              height: "100%",
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-              fontSize: 11,
-              color: "var(--text-muted, #888)",
-            }}
-          >
-            Preview unavailable
-          </div>
+          <div className="taskbar-preview__empty">Preview unavailable</div>
         )}
       </div>
     </div>,
@@ -544,14 +344,11 @@ function WindowBodyShot({ node, width }) {
   }, [node]);
   const scale = width > 0 ? 320 / width : 1;
   return (
-    <div style={{ width: "100%", height: "100%", overflow: "hidden" }}>
+    <div className="taskbar-preview__shot">
       <div
         ref={ref}
-        style={{
-          width,
-          transform: `scale(${scale})`,
-          transformOrigin: "top left",
-        }}
+        className="taskbar-preview__shot-inner"
+        style={{ width, transform: `scale(${scale})` }}
       />
     </div>
   );
@@ -656,35 +453,11 @@ function TaskbarOverflowGroup({
     <>
       {/* Hidden measurement strip — renders all items invisibly in the same
           flex row so their widths match the real layout. */}
-      <div
-        ref={measureStripRef}
-        style={{
-          position: "absolute",
-          visibility: "hidden",
-          pointerEvents: "none",
-          display: "inline-flex",
-          gap: 6,
-          zIndex: -1,
-        }}
-      >
+      <div ref={measureStripRef} className="taskbar-measure">
         {popups.map((p) => (
-          <div
-            key={`m-${p.key}`}
-            style={{
-              display: "inline-flex",
-              alignItems: "center",
-              gap: 6,
-              maxWidth: 220,
-              padding: "4px 8px",
-              borderRadius: 8,
-              border: "1px solid var(--border, #e0e0e0)",
-              fontSize: 13,
-              whiteSpace: "nowrap",
-              overflow: "hidden",
-            }}
-          >
+          <div key={`m-${p.key}`} className="taskbar-measure__item">
             <span>{p.menu.menus_micon}</span>
-            <span style={{ overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
+            <span className="taskbar-measure__label">
               {p.menu.menus_mname}
             </span>
           </div>
@@ -692,18 +465,7 @@ function TaskbarOverflowGroup({
       </div>
 
       {/* Visible items */}
-      <span
-        style={{
-          display: "inline-flex",
-          alignItems: "center",
-          gap: 6,
-          paddingLeft: 8,
-          marginLeft: 4,
-          borderLeft: "1px solid var(--border, #e0e0e0)",
-          minWidth: 0,
-          overflow: "hidden",
-        }}
-      >
+      <span className="taskbar-items">
         {popups.slice(0, visibleCount).map((p) => (
           <TaskbarItem
             key={p.key}
@@ -719,10 +481,13 @@ function TaskbarOverflowGroup({
       </span>
       {/* Overflow dropdown button + panel (portaled to body to escape overflow) */}
       {hasOverflow && (
-        <div ref={overflowRef} style={{ position: "relative", flexShrink: 0 }}>
+        <div ref={overflowRef} className="taskbar-overflow">
           <button
             ref={btnRef}
             type="button"
+            className={`taskbar-overflow__btn${
+              overflowOpen ? " taskbar-overflow__btn--open" : ""
+            }`}
             onClick={() => {
               if (!overflowOpen) {
                 const r = btnRef.current?.getBoundingClientRect();
@@ -733,54 +498,23 @@ function TaskbarOverflowGroup({
             title={`${overflowItems.length} more open window${overflowItems.length > 1 ? "s" : ""}`}
             aria-label="Show more open windows"
             aria-expanded={overflowOpen}
-            style={{
-              position: "relative",
-              width: 36,
-              height: 36,
-              display: "inline-flex",
-              alignItems: "center",
-              justifyContent: "center",
-              flexShrink: 0,
-              borderRadius: 8,
-              border: "1px solid var(--border, #e0e0e0)",
-              background: overflowOpen
-                ? "var(--primary, #7c3aed)"
-                : "var(--surface, #fff)",
-              color: overflowOpen
-                ? "var(--primary-on, #fff)"
-                : "var(--text-muted, #888)",
-              cursor: "pointer",
-              transition: "all 0.15s",
-            }}
           >
             <IconMore size={16} />
-            <span
-              style={{
-                position: "absolute",
-                top: -4,
-                right: -4,
-                minWidth: 16,
-                height: 16,
-                padding: "0 4px",
-                borderRadius: 8,
-                background: "var(--primary, #7c3aed)",
-                color: "var(--primary-on, #fff)",
-                fontSize: 10,
-                fontWeight: 700,
-                lineHeight: "16px",
-                textAlign: "center",
-              }}
-            >
+            <span className="taskbar-overflow__badge">
               {overflowItems.length}
             </span>
           </button>
           {overflowOpen && btnAnchor && createPortal(
-            <div ref={panelRef} style={{
-              position: "fixed",
-              bottom: `${window.innerHeight - btnAnchor.top + 6}px`,
-              right: `${window.innerWidth - btnAnchor.left - btnAnchor.width}px`,
-              zIndex: "var(--z-toast, 2000)",
-            }}>
+            <div
+              ref={panelRef}
+              className="taskbar-overflow-portal"
+              style={{
+                position: "fixed",
+                bottom: `${window.innerHeight - btnAnchor.top + 6}px`,
+                right: `${window.innerWidth - btnAnchor.left - btnAnchor.width}px`,
+                zIndex: "var(--z-toast, 2000)",
+              }}
+            >
               <PopupList
                 popups={overflowItems}
                 open
@@ -806,7 +540,8 @@ function TaskbarOverflowGroup({
 }
 
 function TaskbarItem({ popup, onToggle, onClose, isPinned, onTogglePin }) {
-  const [hovered, setHovered] = useState(false);
+  // Hover styling (background + close badge) is pure CSS (:hover); only the
+  // preview anchor needs JS, so it can line up with the button's live rect.
   const [anchor, setAnchor] = useState(null);
   const [menuOpen, setMenuOpen] = useState(false);
   const [menuAnchor, setMenuAnchor] = useState(null);
@@ -816,15 +551,11 @@ function TaskbarItem({ popup, onToggle, onClose, isPinned, onTogglePin }) {
 
   const showPreview = () => {
     if (menuOpen) return;
-    setHovered(true);
     const r = wrapRef.current?.getBoundingClientRect();
     if (r) setAnchor({ left: r.left, width: r.width });
   };
 
-  const hidePreview = () => {
-    setHovered(false);
-    setAnchor(null);
-  };
+  const hidePreview = () => setAnchor(null);
 
   // Close the right-click menu on outside click or Escape.
   useEffect(() => {
@@ -848,7 +579,7 @@ function TaskbarItem({ popup, onToggle, onClose, isPinned, onTogglePin }) {
   // Right-click a window button for its taskbar menu (close/minimize/pin).
   const openMenu = (e) => {
     e.preventDefault();
-    setHovered(false);
+    setAnchor(null);
     const r = wrapRef.current?.getBoundingClientRect();
     if (r) setMenuAnchor({ left: r.left, width: r.width, top: r.top });
     setMenuOpen(true);
@@ -857,16 +588,15 @@ function TaskbarItem({ popup, onToggle, onClose, isPinned, onTogglePin }) {
   return (
     <div
       ref={wrapRef}
-      style={{
-        position: "relative",
-        display: "inline-flex",
-        flexShrink: 0,
-      }}
+      className="taskbar-item"
       onMouseEnter={showPreview}
       onMouseLeave={hidePreview}
     >
       <button
         type="button"
+        className={`taskbar-item__btn${
+          hidden ? " taskbar-item__btn--hidden" : ""
+        }`}
         onClick={onToggle}
         onContextMenu={openMenu}
         title={
@@ -874,65 +604,24 @@ function TaskbarItem({ popup, onToggle, onClose, isPinned, onTogglePin }) {
             ? `Open ${popup.menu.menus_mname}`
             : `Minimize ${popup.menu.menus_mname}`
         }
-        style={{
-          display: "inline-flex",
-          alignItems: "center",
-          gap: 6,
-          maxWidth: 220,
-          padding: "4px 8px",
-          borderRadius: 8,
-          border: "1px solid var(--border, #e0e0e0)",
-          background: hovered ? "var(--surface-alt, #f1f3f5)" : "transparent",
-          color: "var(--text-primary, #111)",
-          opacity: hidden ? 0.55 : 1,
-          cursor: "pointer",
-          fontSize: 13,
-          transition: "background 0.15s, opacity 0.15s",
-          overflow: "hidden",
-        }}
       >
         <span
-          style={{
-            display: "inline-flex",
-            flexShrink: 0,
-            color: moduleShade(popup.menu.id),
-          }}
+          className="taskbar-item__icon"
+          style={{ color: moduleShade(popup.menu.id) }}
         >
           {popup.menu.menus_micon}
         </span>
-        <span
-          style={{
-            overflow: "hidden",
-            textOverflow: "ellipsis",
-            whiteSpace: "nowrap",
-          }}
-        >
+        <span className="taskbar-item__label">
           {popup.menu.menus_mname}
         </span>
       </button>
-      {!menuOpen && hovered && (
+      {!menuOpen && (
         <button
           type="button"
+          className="taskbar-item__close"
           onClick={onClose}
           aria-label={`Close ${popup.menu.menus_mname}`}
           title={`Close ${popup.menu.menus_mname}`}
-          style={{
-            position: "absolute",
-            top: -6,
-            right: -6,
-            display: "inline-flex",
-            alignItems: "center",
-            justifyContent: "center",
-            width: 18,
-            height: 18,
-            borderRadius: "50%",
-            border: "1px solid var(--border, #e0e0e0)",
-            background: "var(--surface, #fff)",
-            color: "var(--text-muted, #888)",
-            cursor: "pointer",
-            padding: 0,
-            boxShadow: "0 1px 4px rgba(0,0,0,0.15)",
-          }}
         >
           <IconClose size={11} />
         </button>
@@ -975,59 +664,28 @@ function TaskbarContextMenu({
   onDone,
   innerRef,
 }) {
+  // Width matches --taskbar-menu width in Taskbar.css; kept here to clamp the
+  // menu inside the viewport.
   const W = 200;
   const left = Math.min(Math.max(anchor.left, 8), window.innerWidth - W - 8);
   return createPortal(
     <div
       ref={innerRef}
       role="menu"
+      className="taskbar-menu"
       style={{
-        position: "fixed",
         left,
         bottom: `${window.innerHeight - anchor.top + 8}px`,
-        width: W,
-        padding: 4,
-        background: "var(--surface, #fff)",
-        border: "1px solid var(--border, #e0e0e0)",
-        borderRadius: "var(--radius-lg)",
-        boxShadow: "var(--shadow-lg)",
-        animation: "fade-in-down var(--transition-fast)",
-        fontFamily: "var(--font-sans)",
-        fontSize: 12,
-        color: "var(--text-primary, #111)",
-        userSelect: "none",
-        zIndex: "var(--z-toast, 2000)",
       }}
     >
-      <div
-        style={{
-          display: "flex",
-          alignItems: "center",
-          gap: 6,
-          padding: "6px 10px 8px",
-          borderBottom: "1px solid var(--border, #e0e0e0)",
-          marginBottom: 4,
-          whiteSpace: "nowrap",
-          overflow: "hidden",
-        }}
-      >
+      <div className="taskbar-menu__header">
         <span
-          style={{
-            display: "inline-flex",
-            flexShrink: 0,
-            color: moduleShade(popup.menu.id),
-          }}
+          className="taskbar-menu__icon"
+          style={{ color: moduleShade(popup.menu.id) }}
         >
           {popup.menu.menus_micon}
         </span>
-        <span
-          style={{
-            overflow: "hidden",
-            textOverflow: "ellipsis",
-            fontWeight: 600,
-            color: "var(--text-primary, #111)",
-          }}
-        >
+        <span className="taskbar-menu__title">
           {popup.menu.menus_mname}
         </span>
       </div>
@@ -1049,13 +707,7 @@ function TaskbarContextMenu({
           onDone();
         }}
       />
-      <div
-        style={{
-          height: 1,
-          background: "var(--border, #e0e0e0)",
-          margin: "4px 6px",
-        }}
-      />
+      <div className="taskbar-menu__divider" />
       <TaskbarMenuItem
         icon={<IconClose size={14} />}
         label="Close window"
@@ -1072,55 +724,17 @@ function TaskbarContextMenu({
 
 /** Single action row inside the taskbar context menu. */
 function TaskbarMenuItem({ icon, label, onClick, danger }) {
-  const [hov, setHov] = useState(false);
   return (
     <button
       type="button"
       role="menuitem"
-      onMouseEnter={() => setHov(true)}
-      onMouseLeave={() => setHov(false)}
+      className={`taskbar-menu__item${
+        danger ? " taskbar-menu__item--danger" : ""
+      }`}
       onClick={onClick}
-      style={{
-        display: "flex",
-        width: "100%",
-        alignItems: "center",
-        gap: 8,
-        padding: "7px 10px",
-        fontSize: 12,
-        borderRadius: 6,
-        border: "none",
-        background: hov
-          ? danger
-            ? "var(--danger-bg, rgba(239,68,68,0.12))"
-            : "var(--surface-alt, #f1f3f5)"
-          : "transparent",
-        color:
-          hov && danger ? "var(--danger, #ef4444)" : "var(--text-primary, #111)",
-        cursor: "pointer",
-        textAlign: "left",
-      }}
     >
-      <span
-        style={{
-          display: "inline-flex",
-          flexShrink: 0,
-          color:
-            hov && danger
-              ? "var(--danger, #ef4444)"
-              : "var(--text-secondary, #4b5563)",
-        }}
-      >
-        {icon}
-      </span>
-      <span
-        style={{
-          overflow: "hidden",
-          textOverflow: "ellipsis",
-          whiteSpace: "nowrap",
-        }}
-      >
-        {label}
-      </span>
+      <span className="taskbar-menu__item-icon">{icon}</span>
+      <span className="taskbar-menu__item-label">{label}</span>
     </button>
   );
 }

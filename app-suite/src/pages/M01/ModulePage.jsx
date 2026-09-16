@@ -13,9 +13,9 @@ import { IconHome, IconClose, IconDelete, IconPopup, IconStar } from "@/icons";
 import { resolveMenuIcon } from "@/icons";
 import { appModules, menus, toMenu } from "@/utils/appModules";
 import { moduleShade } from "@/utils/theme";
+import { SESSION_KEYS, readStored, writeStored, removeStored } from "@/utils/storage";
 import "./ModulePage.css";
 
-const RECENT_STORAGE_KEY = "bsuite_recent_menus";
 const MAX_RECENT = 20;
 
 // Module card with a focus effect: hovering the module name/header highlights
@@ -88,15 +88,8 @@ const ModulePage = () => {
   const [popupListOpen, setPopupListOpen] = useState(false);
 
   useEffect(() => {
-    try {
-      const stored = localStorage.getItem(RECENT_STORAGE_KEY);
-      if (stored) {
-        const ids = JSON.parse(stored);
-        if (Array.isArray(ids)) setRecentMenuIds(ids);
-      }
-    } catch (e) {
-      /* ignore */
-    }
+    const ids = readStored(SESSION_KEYS.recentMenus, null);
+    if (Array.isArray(ids)) setRecentMenuIds(ids);
   }, []);
 
   // Remember a menu in the Recent list (localStorage, most-recent first).
@@ -104,11 +97,7 @@ const ModulePage = () => {
     setRecentMenuIds((prev) => {
       const filtered = prev.filter((id) => id !== menu.id);
       const updated = [menu.id, ...filtered].slice(0, MAX_RECENT);
-      try {
-        localStorage.setItem(RECENT_STORAGE_KEY, JSON.stringify(updated));
-      } catch (e) {
-        /* ignore */
-      }
+      writeStored(SESSION_KEYS.recentMenus, updated);
       return updated;
     });
   };
@@ -293,11 +282,7 @@ const ModulePage = () => {
                     className="module-page__clear-btn"
                     onClick={() => {
                       setRecentMenuIds([]);
-                      try {
-                        localStorage.removeItem(RECENT_STORAGE_KEY);
-                      } catch (e) {
-                        /* ignore */
-                      }
+                      removeStored(SESSION_KEYS.recentMenus);
                     }}
                     title="Clear recent history"
                   >

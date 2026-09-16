@@ -15,7 +15,8 @@ const ItemList = ({ cfColumns = [], readOnly, listData, onEdit, onDelete }) => {
       body: (_, row) => {
         return (
           <span>
-            {row.price_cname} - {formatNumber(row.items_szqty)} {row.sunit_cname}
+            {row.price_cname} - {formatNumber(row.items_szqty)}{" "}
+            {row.sunit_cname}
           </span>
         );
       },
@@ -56,8 +57,9 @@ const ItemList = ({ cfColumns = [], readOnly, listData, onEdit, onDelete }) => {
       body: (_, rowData) => {
         return (
           <>
-            {formatNumber(rowData.mrrdc_dsamt)} ({formatNumber(rowData.mrrdc_dspct)}%)
-            [Other: {formatNumber(rowData.mrrdc_edamt)}]
+            {formatNumber(rowData.mrrdc_dsamt)} (
+            {formatNumber(rowData.mrrdc_dspct)}%) [Other:{" "}
+            {formatNumber(rowData.mrrdc_edamt)}]
           </>
         );
       },
@@ -69,7 +71,8 @@ const ItemList = ({ cfColumns = [], readOnly, listData, onEdit, onDelete }) => {
       body: (_, rowData) => {
         return (
           <>
-            {formatNumber(rowData.mrrdc_vtamt)} ({formatNumber(rowData.mrrdc_vtpct)}% {rowData.mrrdc_vtype})
+            {formatNumber(rowData.mrrdc_vtamt)} (
+            {formatNumber(rowData.mrrdc_vtpct)}% {rowData.mrrdc_vtype})
           </>
         );
       },
@@ -90,26 +93,20 @@ const ItemList = ({ cfColumns = [], readOnly, listData, onEdit, onDelete }) => {
       key: "mrrdc_pyamt",
       header: "Payable",
       width: "80px",
-      body: (_, rowData) => {
-        return <>{formatNumber(rowData.mrrdc_pyamt)}</>;
-      },
+      body: (v) => formatNumber(v),
     },
     {
       key: "mrrdc_stamt",
       header: "Sub Total",
       width: "80px",
-      body: (_, rowData) => {
-        return <>{formatNumber(rowData.mrrdc_stamt)}</>;
-      },
+      body: (v) => formatNumber(v),
     },
     { key: "mrrdc_notes", header: "Notes", width: "100px" },
     {
       key: "mrrdc_csrat",
       header: "Unit Cost",
       width: "80px",
-      body: (_, rowData) => {
-        return <>{formatNumber(rowData.mrrdc_csrat)}</>;
-      },
+      body: (v) => formatNumber(v),
     },
     {
       key: "punit_cname",

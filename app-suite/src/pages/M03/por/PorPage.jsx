@@ -19,6 +19,7 @@ import BillSummary from "./BillSummary";
 import PaymentForm from "./PaymentForm";
 import PaymentList from "./PaymentList";
 import ItemBundleList from "./ItemBundleList";
+import CancelForm from "./CancelForm";
 import PrintPage from "./PrintPage";
 
 const PorPage = () => {
@@ -70,6 +71,8 @@ const PorPage = () => {
     handleDeletePayment,
     //bundle
     listDataBundle,
+    //cancel PO
+    handleCancelPO,
     //modal
     showModal,
     modalTitle,
@@ -142,6 +145,18 @@ const PorPage = () => {
                 Cancel
               </Button>
             )}
+            {pgView === "SYS_VW_FRM_1" &&
+              formData?.pordm_ispnd &&
+              !formData?.pordm_iscnl && (
+                <Button
+                  variant="warning"
+                  size="sm"
+                  onClick={() => handleShowModal("CANCEL_PO")}
+                >
+                  <IconClose size={14} className="icon-left" />
+                  Cancel PO
+                </Button>
+              )}
             {pgView === "SYS_VW_FRM_1" && (
               <Button
                 variant="info"
@@ -281,6 +296,18 @@ const PorPage = () => {
                   onChange={handleChangePayment}
                   onAddToList={handleAddToListPayment}
                   party_Options={porpy_Options}
+                />
+              )}
+              {showModal.modal === "CANCEL_PO" && (
+                <CancelForm
+                  isBusy={isBusy}
+                  readOnly={readOnly}
+                  stopEdit={stopEdit}
+                  formData={formData}
+                  formErrors={formErrors}
+                  onChange={handleChange}
+                  listData={listDataItem}
+                  onCancelPO={handleCancelPO}
                 />
               )}
             </ModalBody>

@@ -176,12 +176,12 @@ export const rawAppModules = [
           },
           {
             id: "M02-G02-M003",
-            name: "Deliveries",
+            name: "Delivery Trips",
             color: "#eab308",
             icon: "Truck",
             order: 3,
-            link: "/sales/deliveries",
-            desc: "Manage delivery and dispatch records",
+            link: "/sales/delivery-trips",
+            desc: "Manage sales delivery and dispatch records",
           },
           {
             id: "M02-G02-M004",

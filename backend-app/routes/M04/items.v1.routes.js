@@ -639,7 +639,7 @@ router.post("/get-mrr-items", async (req, res) => {
       WHEN prc.price_dspct > 0 THEN prc.price_dspct
       ELSE poc.pordc_dspct
     END price_dspct,
-    (poc.pordc_itqty - poc.pordc_mrqty) as price_gdstk, prc.price_bdstk, prc.price_mnqty, prc.price_mxqty, prc.price_pbqty,
+    (poc.pordc_itqty - (poc.pordc_mrqty + poc.pordc_cnqty)) as price_gdstk, prc.price_bdstk, prc.price_mnqty, prc.price_mxqty, prc.price_pbqty,
     prc.price_sbqty, prc.price_notes, prc.price_jnote, poc.id price_refid, pom.pordm_trnno refid_trnno,
     runit.units_cname as runit_cname,
     punit.units_cname as punit_cname,
@@ -661,7 +661,7 @@ router.post("/get-mrr-items", async (req, res) => {
     JOIN tmib_itmct itc ON itm.id = itc.itmct_items
     JOIN tmpb_pordc poc ON itm.id = poc.pordc_items
                         AND prc.id = poc.pordc_price
-                        AND (poc.pordc_itqty - poc.pordc_mrqty) > 0
+                        AND (poc.pordc_itqty - (poc.pordc_mrqty + poc.pordc_cnqty)) > 0
     JOIN tmpb_pordm pom ON poc.pordc_pordm = pom.id
                         AND pom.pordm_dpart = $4
                         AND pom.pordm_cntct = $1

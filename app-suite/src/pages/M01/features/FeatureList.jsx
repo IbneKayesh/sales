@@ -8,6 +8,7 @@ import Dropdown from "@/components/Dropdown";
 import MultiSelect from "@/components/MultiSelect";
 import { fetur_ttype_Options, fetur_tagno_Options } from "@/utils/vtable";
 import { splitList } from "@/utils/misc";
+import { PREFERENCE_KEYS } from "@/utils/storage";
 
 // Colour per feature type, so the list reads at a glance
 const ttype_Variants = {
@@ -156,7 +157,7 @@ const FeatureList = ({
         treeColumn={0}
         searchable
         expandable
-        storageKey="M01-features-expanded"
+        storageKey={PREFERENCE_KEYS.treeExpanded("m01-features")}
         exportable
         exportFilename="data-export.csv"
         striped

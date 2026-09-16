@@ -1,0 +1,264 @@
+/* ─────────────────────────────────────────────────────────────────────────
+   Window chrome — floating menu windows (layouts/Window.jsx)
+
+   Only the window-specific parts live here: the pass-through overlay the
+   windows float in, the frame, the title bar, the size menu, the resize
+   handles and the drag/snap previews. Values still passed inline from the
+   component are the ones that change while the user drags or resizes
+   (position transform, width/height, snap-guide offsets, the per-module
+   tint).
+
+   Shared modal rules stay in App.css (.modal*, and the shared interactive
+   button base). Window.jsx is bundled before App.css, so a rule here that has
+   to beat a single-class rule from App.css repeats that base class
+   (`.modal.win-modal`, `.modal__header.modal__header--window`) and wins on
+   specificity rather than on import order.
+   ───────────────────────────────────────────────────────────────────────── */
+
+/* --- Overlay ----------------------------------------------------------- */
+
+/* Layer the windows float in. Deliberately invisible and transparent to the
+   mouse (pointer-events: none) so the page behind stays readable, clickable
+   and scrollable — only the window frames themselves take the pointer. */
+.modal-overlay.win-overlay {
+  background: transparent;
+  backdrop-filter: none;
+  pointer-events: none;
+}
+
+/* Maximized: no overlay padding, so the window fills the whole viewport. */
+.modal-overlay.win-overlay--fullscreen {
+  padding: 0;
+}
+
+/* Minimized: the modal stays mounted (so its page keeps its state and the
+   taskbar can preview it) but is taken out of view. */
+.modal-overlay.win-overlay--hidden {
+  display: none;
+}
+
+/* --- Window frame ------------------------------------------------------ */
+
+/* The frame is moved by an inline transform (drag offset), so it needs the
+   shared .modal base plus these overrides. */
+.modal.win-modal {
+  position: relative;
+  /* The overlay lets clicks through; the frame takes them back. */
+  pointer-events: auto;
+  /* Width comes from the drag/resize state (or the chosen size preset). */
+  max-width: none;
+}
+
+.modal.win-modal--fullscreen {
+  max-width: 100%;
+  border-radius: 0;
+}
+
+/* --- Title bar --------------------------------------------------------- */
+
+/* Slimmer chrome than a normal modal header, tinted with the title bar
+   background (or the Theme page's title bar image, layered by --titlebar-bg).
+   Draggable, hence the grab cursor. */
+.modal__header.modal__header--window {
+  cursor: grab;
+  padding: 3px 8px;
+  background: var(--titlebar-bg);
+  border-top-left-radius: var(--radius-lg);
+  border-top-right-radius: var(--radius-lg);
+}
+
+.modal__header.modal__header--window--fullscreen {
+  cursor: default;
+  border-top-left-radius: 0;
+  border-top-right-radius: 0;
+}
+
+/* Menu chip — small square with the module icon; the tint per module is
+   passed inline from Window.jsx. */
+.modal__header--window .modal__header-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  width: 24px;
+  height: 24px;
+  border-radius: var(--radius-md);
+  color: #fff;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.18);
+}
+
+/* The menu icon element is created at the icon library's default size (24px),
+   which is too big for the window chrome. */
+.modal__header--window .modal__header-icon svg {
+  width: 14px;
+  height: 14px;
+}
+
+/* Tighter title/subtitle pair than a normal modal header. */
+.modal__header--window .modal__title-text {
+  gap: 0;
+}
+
+/* --- Title-bar buttons ------------------------------------------------- */
+
+/* Window buttons (size, maximize/restore, minimize, close). The flex base
+   comes from the shared :where() group in App.css. */
+.win-bar-btn {
+  width: 28px;
+  height: 28px;
+  border: none;
+  border-radius: var(--radius-md);
+  background: transparent;
+  color: var(--text-secondary);
+  transition: background var(--transition-fast);
+}
+
+.win-bar-btn:hover,
+.win-bar-btn:focus-visible {
+  background: var(--surface-alt);
+  color: var(--text-primary);
+}
+
+.win-actions {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  flex-shrink: 0;
+}
+
+/* --- Size presets dropdown --------------------------------------------- */
+
+.win-size {
+  position: relative;
+}
+
+.win-size__menu {
+  position: absolute;
+  top: calc(100% + 6px);
+  right: 0;
+  z-index: 10;
+  min-width: 130px;
+  padding: 4px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-lg);
+  animation: fade-in-down var(--transition-fast);
+}
+
+.win-size__option {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  gap: 8px;
+  padding: 6px 10px;
+  font-size: 12px;
+  border: none;
+  border-radius: 6px;
+  background: transparent;
+  color: var(--text-secondary);
+  cursor: pointer;
+}
+
+.win-size__option--active {
+  background: var(--primary);
+  color: var(--primary-on);
+}
+
+/* --- Resize handles ---------------------------------------------------- */
+
+/* Invisible drag strips: right edge (width), bottom edge (height) and the
+   bottom-right corner (both). */
+.win-resize {
+  position: absolute;
+  z-index: 1;
+}
+
+.win-resize--w {
+  top: 0;
+  bottom: 0;
+  right: -4px;
+  width: 8px;
+  cursor: col-resize;
+}
+
+.win-resize--h {
+  left: 0;
+  right: 0;
+  bottom: -4px;
+  height: 8px;
+  cursor: row-resize;
+}
+
+.win-resize--corner {
+  z-index: 2;
+  right: -6px;
+  bottom: -6px;
+  width: 14px;
+  height: 14px;
+  cursor: nwse-resize;
+}
+
+/* Maximized windows can't be dragged or resized. */
+.win-resize--off {
+  display: none;
+}
+
+/* --- Drag previews (portaled to <body> so the modal transform can't offset
+       them) ------------------------------------------------------------- */
+
+/* Aero-snap zone: the area a dragged window would snap into. */
+.win-snap-zone {
+  position: fixed;
+  pointer-events: none;
+  z-index: 99999;
+  background: color-mix(in srgb, var(--primary, #7c3aed) 12%, transparent);
+  border: 2px solid var(--primary, #7c3aed);
+  transition: all 0.1s ease-out;
+}
+
+.win-snap-zone--maximize {
+  inset: 0;
+  border-radius: 0;
+}
+
+.win-snap-zone--left {
+  left: 0;
+  top: 0;
+  bottom: 0;
+  border-radius: 0;
+  border-top-right-radius: var(--radius-lg);
+  border-bottom-right-radius: var(--radius-lg);
+}
+
+.win-snap-zone--right {
+  right: 0;
+  top: 0;
+  bottom: 0;
+  border-radius: 0;
+  border-top-left-radius: var(--radius-lg);
+  border-bottom-left-radius: var(--radius-lg);
+}
+
+/* Window-to-window snap guide: a thin line where the dragged window's edge
+   will line up with another window. */
+.win-snap-guide {
+  position: fixed;
+  pointer-events: none;
+  z-index: 99999;
+  background: var(--primary, #7c3aed);
+  opacity: 0.65;
+}
+
+.win-snap-guide--v {
+  top: 0;
+  bottom: 0;
+  width: 3px;
+}
+
+.win-snap-guide--h {
+  left: 0;
+  right: 0;
+  height: 3px;
+}

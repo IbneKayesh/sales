@@ -15,7 +15,8 @@ const ItemList = ({ cfColumns = [], readOnly, listData, onEdit, onDelete }) => {
       body: (_, row) => {
         return (
           <span>
-            {row.price_cname} - {formatNumber(row.items_szqty)} {row.sunit_cname}
+            {row.price_cname} - {formatNumber(row.items_szqty)}{" "}
+            {row.sunit_cname}
           </span>
         );
       },
@@ -60,8 +61,8 @@ const ItemList = ({ cfColumns = [], readOnly, listData, onEdit, onDelete }) => {
       body: (_, rowData) => {
         return (
           <>
-            {formatNumber(rowData.pordc_dsamt)} ({formatNumber(rowData.pordc_dspct)}%)
-            [Other: {formatNumber(rowData.pordc_edamt)}]
+            {formatNumber(rowData.pordc_dsamt)} (
+            {formatNumber(rowData.pordc_dspct)}%)
           </>
         );
       },
@@ -73,7 +74,8 @@ const ItemList = ({ cfColumns = [], readOnly, listData, onEdit, onDelete }) => {
       body: (_, rowData) => {
         return (
           <>
-            {formatNumber(rowData.pordc_vtamt)} ({formatNumber(rowData.pordc_vtpct)}% {rowData.pordc_vtype})
+            {formatNumber(rowData.pordc_vtamt)} (
+            {formatNumber(rowData.pordc_vtpct)}% {rowData.pordc_vtype})
           </>
         );
       },
@@ -145,22 +147,25 @@ const ItemList = ({ cfColumns = [], readOnly, listData, onEdit, onDelete }) => {
     { key: "sgrup_cname", header: "sGroup", width: "80px" },
     { key: "scatg_cname", header: "sCategory", width: "80px" },
     { key: "brand_cname", header: "Brand", width: "80px" },
-    { 
-      key: "pordc_mrqty", 
-      header: "MRR Qty", 
+    {
+      key: "pordc_mrqty",
+      header: "MRR Qty",
       width: "80px",
       body: (v) => formatNumber(v),
-    },    {
+    },
+    {
       key: "pordc_mrpnd",
       header: "MRR Pending",
       width: "80px",
       body: (_, rowData) => {
-        return (
-          <>
-            {formatNumber(rowData.pordc_itqty - rowData.pordc_mrqty)}
-          </>
-        );
+        return <>{formatNumber(rowData.pordc_itqty - rowData.pordc_mrqty)}</>;
       },
+    },
+    {
+      key: "pordc_cnqty",
+      header: "Cancelled Qty",
+      width: "80px",
+      body: (v) => formatNumber(v),
     },
     {
       key: "actions",

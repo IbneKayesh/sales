@@ -1,6 +1,8 @@
 import DataTable from "@/components/DataTable";
 import ActionButton from "@/components/ActionButton";
 import ConvertUOM from "@/components/common/ConvertUOM";
+import ConvertSize from "@/components/common/ConvertSize";
+import { formatNumber } from "@/utils/misc";
 
 const ItemList = ({ cfColumns = [], readOnly, listData, onEdit, onDelete }) => {
   const dtColumns = [
@@ -11,7 +13,8 @@ const ItemList = ({ cfColumns = [], readOnly, listData, onEdit, onDelete }) => {
       body: (_, row) => {
         return (
           <span>
-            {row.price_cname} - {row.items_szqty} {row.sunit_cname}
+            {row.price_cname} - {formatNumber(row.items_szqty)}{" "}
+            {row.sunit_cname}
           </span>
         );
       },
@@ -31,9 +34,9 @@ const ItemList = ({ cfColumns = [], readOnly, listData, onEdit, onDelete }) => {
       body: (_, rowData) => {
         return (
           <>
-            {Number(rowData.invcc_itrat).toFixed(4)} x{" "}
-            {Number(rowData.invcc_itqty).toFixed(4)} {rowData.runit_uname} ={" "}
-            {Number(rowData.invcc_itamt).toFixed(4)}
+            {formatNumber(rowData.invcc_itrat)} x{" "}
+            {formatNumber(rowData.invcc_itqty)} {rowData.runit_cname} ={" "}
+            {formatNumber(rowData.invcc_itamt)}
           </>
         );
       },
@@ -52,8 +55,9 @@ const ItemList = ({ cfColumns = [], readOnly, listData, onEdit, onDelete }) => {
       body: (_, rowData) => {
         return (
           <>
-            {Number(rowData.invcc_dsamt).toFixed(4)} ({rowData.invcc_dspct}%)
-            [Other: {rowData.invcc_edamt}]
+            {formatNumber(rowData.invcc_dsamt)} (
+            {formatNumber(rowData.invcc_dspct)}%) [Other:{" "}
+            {formatNumber(rowData.invcc_edamt)}]
           </>
         );
       },
@@ -65,7 +69,8 @@ const ItemList = ({ cfColumns = [], readOnly, listData, onEdit, onDelete }) => {
       body: (_, rowData) => {
         return (
           <>
-            {rowData.invcc_vtamt} ({rowData.invcc_vtpct}% {rowData.invcc_vtype})
+            {formatNumber(rowData.invcc_vtamt)} (
+            {formatNumber(rowData.invcc_vtpct)}% {rowData.invcc_vtype})
           </>
         );
       },
@@ -74,44 +79,38 @@ const ItemList = ({ cfColumns = [], readOnly, listData, onEdit, onDelete }) => {
       key: "invcc_icamt",
       header: "In Cost",
       width: "80px",
+      body: (v) => formatNumber(v),
     },
     {
       key: "invcc_ecamt",
       header: "Ex Cost",
       width: "80px",
+      body: (v) => formatNumber(v),
     },
     {
       key: "invcc_pyamt",
       header: "Payable",
       width: "80px",
-      body: (_, rowData) => {
-        return <>{(Number(rowData.invcc_pyamt) || 0).toFixed(4)}</>;
-      },
+      body: (v) => formatNumber(v),
     },
     {
       key: "invcc_stamt",
       header: "Sub Total",
       width: "80px",
-      body: (_, rowData) => {
-        return <>{(Number(rowData.invcc_stamt) || 0).toFixed(4)}</>;
-      },
+      body: (v) => formatNumber(v),
     },
     { key: "invcc_notes", header: "Notes", width: "100px" },
     {
       key: "invcc_csrat",
       header: "Unit Cost",
       width: "80px",
-      body: (_, rowData) => {
-        return <>{(Number(rowData.invcc_csrat) || 0).toFixed(4)}</>;
-      },
+      body: (v) => formatNumber(v),
     },
     {
       key: "invcc_nsrat",
       header: "Net Unit Cost",
       width: "80px",
-      body: (_, rowData) => {
-        return <>{(Number(rowData.invcc_nsrat) || 0).toFixed(4)}</>;
-      },
+      body: (v) => formatNumber(v),
     },
     {
       key: "punit_cname",
@@ -137,11 +136,10 @@ const ItemList = ({ cfColumns = [], readOnly, listData, onEdit, onDelete }) => {
       body: (_, rowData) => {
         return (
           <>
-            <ConvertUOM
+            <ConvertSize
               qty={rowData.invcc_itqty}
               dfQty={rowData.items_szqty}
-              runit={rowData.runit_cname}
-              punit={rowData.sunit_cname}
+              sunit={rowData.sunit_cname}
             />
           </>
         );

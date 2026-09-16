@@ -2,6 +2,7 @@ import DataTable from "@/components/DataTable";
 import NegativeValue from "@/components/common/NegativeValue";
 import { getRelativeDays, formatDate } from "@/utils/datetime.js";
 import ConvertUOM from "@/components/common/ConvertUOM";
+import ConvertSize from "@/components/common/ConvertSize";
 import Badge from "@/components/Badge";
 
 const StockList = ({ cfColumns = [], listData, onEdit }) => {
@@ -126,11 +127,10 @@ const StockList = ({ cfColumns = [], listData, onEdit }) => {
       body: (_, row) => {
         return (
           <>
-            <ConvertUOM
+            <ConvertSize
               qty={row.stock_ohqty}
               dfQty={row.items_szqty}
-              runit={row.runit_cname}
-              punit={row.sunit_cname}
+              sunit={row.sunit_cname}
             />
           </>
         );

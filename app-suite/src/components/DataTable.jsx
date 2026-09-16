@@ -14,6 +14,7 @@ import {
   IconRefresh,
 } from '../icons'
 import Skeleton from './Skeleton'
+import { PREFERENCE_KEYS, readStored, writeStored } from '@/utils/storage'
 
 function exportToCsv(data, columns, filename, totalsRow) {
   if (!data.length) return
@@ -73,25 +74,6 @@ function useOutsideClose(open, onClose) {
   return ref
 }
 
-const DENSITY_KEY = 'bsuite_table_density'
-
-const readStored = (key, fallback) => {
-  try {
-    const v = localStorage.getItem(key)
-    return v == null ? fallback : JSON.parse(v)
-  } catch {
-    return fallback
-  }
-}
-
-const writeStored = (key, value) => {
-  try {
-    localStorage.setItem(key, JSON.stringify(value))
-  } catch {
-    /* ignore */
-  }
-}
-
 export default function DataTable({
   columns = [],
   data = [],
@@ -125,14 +107,15 @@ export default function DataTable({
 
   // Density — starts from the `dense` prop, then a persisted global preference.
   const [denseState, setDenseState] = useState(() =>
-    readStored(DENSITY_KEY, dense),  )
+    readStored(PREFERENCE_KEYS.tableDensity, dense),
+  )
 
   // Page size — local state initialised from the `pageSize` prop.
   // No localStorage persistence; resets when the prop changes.
   const [pageSizeState, setPageSizeState] = useState(pageSize)
 
   // Per-table layout: { order: [keys], pinned: [keys], hidden: [keys] }
-  const layoutKey = columnSettingsKey ? `bsuite_table_layout_${columnSettingsKey}` : null
+  const layoutKey = columnSettingsKey ? PREFERENCE_KEYS.tableLayout(columnSettingsKey) : null
   const [layout, setLayout] = useState(() =>
     layoutKey ? readStored(layoutKey, null) : null,
   )
@@ -153,7 +136,7 @@ export default function DataTable({
   const toggleDense = () => {
     setDenseState((v) => {
       const n = !v
-      writeStored(DENSITY_KEY, n)
+      writeStored(PREFERENCE_KEYS.tableDensity, n)
       return n
     })
   }

@@ -13,6 +13,8 @@ import {
 import getRoutes from "@/routes";
 import { useApp } from "@/context/AppContext";
 import { moduleShade } from "@/utils/theme";
+import { PREFERENCE_KEYS, readStored, writeStored } from "@/utils/storage";
+import "./Window.css";
 
 const POPUP_MIN_WIDTH = 480;
 const POPUP_MIN_HEIGHT = 200;
@@ -34,16 +36,9 @@ const POPUP_SIZES = [
 // restores exactly where the user left it (minimized windows restored from
 // localStorage keep their layout too). Stored as
 // { [userId]: { [menuId]: { x, y, width, height } } }.
-const GEOMETRY_KEY = "bsuite_window_geometry";
-
 const readGeometryMap = () => {
-  try {
-    const raw = localStorage.getItem(GEOMETRY_KEY);
-    const parsed = raw ? JSON.parse(raw) : {};
-    return parsed && typeof parsed === "object" ? parsed : {};
-  } catch {
-    return {};
-  }
+  const parsed = readStored(PREFERENCE_KEYS.windowGeometry, {});
+  return parsed && typeof parsed === "object" ? parsed : {};
 };
 
 const loadGeometry = (userId, menuId) => {
@@ -60,13 +55,9 @@ const loadGeometry = (userId, menuId) => {
 
 const saveGeometry = (userId, menuId, geom) => {
   if (!userId || !menuId) return;
-  try {
-    const map = readGeometryMap();
-    map[userId] = { ...map[userId], [menuId]: geom };
-    localStorage.setItem(GEOMETRY_KEY, JSON.stringify(map));
-  } catch {
-    /* ignore */
-  }
+  const map = readGeometryMap();
+  map[userId] = { ...map[userId], [menuId]: geom };
+  writeStored(PREFERENCE_KEYS.windowGeometry, map);
 };
 
 // ── Cascade placement for new windows ────────────────────────────────────
@@ -576,12 +567,6 @@ function WindowItem({
     saveGeometry(userId, menu.id, { x, y, width: half, height });
   };
 
-  const handleStyle = {
-    position: "absolute",
-    zIndex: 1,
-    display: fullscreen ? "none" : undefined,
-  };
-
   return (
     <>
       {/* Snap previews, portaled to <body> so the modal's transform can't
@@ -591,73 +576,32 @@ function WindowItem({
         createPortal(
           <>
             {snapTarget && (
+              // Half the viewport (never below the window minimum) so a
+              // left/right snap lands side by side; maximize needs no width.
               <div
-                style={{
-                  position: "fixed",
-                  pointerEvents: "none",
-                  zIndex: 99999,
-                  background:
-                    "color-mix(in srgb, var(--primary, #7c3aed) 12%, transparent)",
-                  border: "2px solid var(--primary, #7c3aed)",
-                  transition: "all 0.1s ease-out",
-                  ...(snapTarget === "maximize"
-                    ? { inset: 0, borderRadius: 0 }
-                    : snapTarget === "left"
-                      ? {
-                          left: 0,
-                          top: 0,
-                          bottom: 0,
-                          width: Math.max(
-                            POPUP_MIN_WIDTH,
-                            Math.round(window.innerWidth / 2),
-                          ),
-                          borderRadius: 0,
-                          borderTopRightRadius: "var(--radius-lg)",
-                          borderBottomRightRadius: "var(--radius-lg)",
-                        }
-                      : {
-                          right: 0,
-                          top: 0,
-                          bottom: 0,
-                          width: Math.max(
-                            POPUP_MIN_WIDTH,
-                            Math.round(window.innerWidth / 2),
-                          ),
-                          borderRadius: 0,
-                          borderTopLeftRadius: "var(--radius-lg)",
-                          borderBottomLeftRadius: "var(--radius-lg)",
-                        }),
-                }}
+                className={`win-snap-zone win-snap-zone--${snapTarget}`}
+                style={
+                  snapTarget === "maximize"
+                    ? undefined
+                    : {
+                        width: Math.max(
+                          POPUP_MIN_WIDTH,
+                          Math.round(window.innerWidth / 2),
+                        ),
+                      }
+                }
               />
             )}
             {winSnapTarget?.x != null && (
               <div
-                style={{
-                  position: "fixed",
-                  left: winSnapTarget.x - 1.5,
-                  top: 0,
-                  bottom: 0,
-                  width: 3,
-                  background: "var(--primary, #7c3aed)",
-                  opacity: 0.65,
-                  pointerEvents: "none",
-                  zIndex: 99999,
-                }}
+                className="win-snap-guide win-snap-guide--v"
+                style={{ left: winSnapTarget.x - 1.5 }}
               />
             )}
             {winSnapTarget?.y != null && (
               <div
-                style={{
-                  position: "fixed",
-                  top: winSnapTarget.y - 1.5,
-                  left: 0,
-                  right: 0,
-                  height: 3,
-                  background: "var(--primary, #7c3aed)",
-                  opacity: 0.65,
-                  pointerEvents: "none",
-                  zIndex: 99999,
-                }}
+                className="win-snap-guide win-snap-guide--h"
+                style={{ top: winSnapTarget.y - 1.5 }}
               />
             )}
           </>,
@@ -665,31 +609,33 @@ function WindowItem({
         )}
       <Modal
         open
-      size={fullscreen ? "full" : "xl"}
-      onClose={onClose}
-      onMouseDown={onActivate}
-      closeOnBackdrop={false}
-      blockScroll={false}
-      modalRef={modalRef}
-      modalStyle={{
-        ...(fullscreen ? {} : { maxWidth: "none", width: `${width}px` }),
-        ...(height != null ? { height: `${height}px`, maxHeight: "none" } : {}),
-        position: "relative",
-        pointerEvents: "auto",
-        borderRadius: fullscreen ? 0 : undefined,
-      }}
-      style={{
-        display: hidden ? "none" : undefined,
-        background: "transparent",
-        backdropFilter: "none",
-        pointerEvents: "none",
-        padding: fullscreen ? 0 : undefined,
-        transform: fullscreen
-          ? undefined
-          : `translate(${pos.x}px, ${pos.y}px)`,
-      }}
-    >
+        size={fullscreen ? "full" : "xl"}
+        onClose={onClose}
+        onMouseDown={onActivate}
+        closeOnBackdrop={false}
+        blockScroll={false}
+        modalRef={modalRef}
+        // The frame's chrome (transparent, click-through overlay; relative,
+        // auto-pointer frame) lives in Window.css — only the live size stays
+        // inline.
+        overlayClassName={`win-overlay${hidden ? " win-overlay--hidden" : ""}${
+          fullscreen ? " win-overlay--fullscreen" : ""
+        }`}
+        className={`win-modal${fullscreen ? " win-modal--fullscreen" : ""}`}
+        modalStyle={{
+          ...(fullscreen ? {} : { width: `${width}px` }),
+          ...(height != null ? { height: `${height}px`, maxHeight: "none" } : {}),
+        }}
+        style={{
+          transform: fullscreen
+            ? undefined
+            : `translate(${pos.x}px, ${pos.y}px)`,
+        }}
+      >
       <ModalHeader
+        className={`modal__header--window${
+          fullscreen ? " modal__header--window--fullscreen" : ""
+        }`}
         onMouseDown={startMove}
         onDoubleClick={(e) => {
           // Double-click the title bar to toggle maximize (D12).
@@ -697,34 +643,12 @@ function WindowItem({
           if (fullscreen) resetSize();
           else selectSize("100");
         }}
-        style={{
-          cursor: fullscreen ? undefined : "grab",
-          // Compact title bar — default light accent tint (--primary-bg),
-          // or the optional background image from the Theme page layered
-          // under a readability scrim (--titlebar-bg). The top corners follow
-          // the window frame's rounding so the tinted bar doesn't show square
-          // corners inside the rounded modal. Overrides the shared modal
-          // header padding for a slimmer window chrome.
-          padding: "3px 8px",
-          background: "var(--titlebar-bg)",
-          borderTopLeftRadius: fullscreen ? 0 : "var(--radius-lg)",
-          borderTopRightRadius: fullscreen ? 0 : "var(--radius-lg)",
-        }}
       >
+        {/* Compact menu chip — size and glyph live in Window.css
+            (.modal__header--window); only the module tint is dynamic. */}
         <div
-          style={{
-            width: 32,
-            height: 32,
-            borderRadius: "var(--radius-md)",
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-            flexShrink: 0,
-            background: moduleShade(menu.id),
-            color: "#fff",
-            fontSize: 16,
-            boxShadow: "0 2px 6px rgba(0,0,0,0.18)",
-          }}
+          className="modal__header-icon"
+          style={{ background: moduleShade(menu.id) }}
         >
           {menu.menus_micon}
         </div>
@@ -734,17 +658,9 @@ function WindowItem({
             <p className="modal__subtitle">{menu.menus_mdesc}</p>
           </div>
         </div>
-        <div
-          ref={sizeRef}
-          style={{
-            display: "flex",
-            alignItems: "center",
-            gap: 4,
-            flexShrink: 0,
-          }}
-        >
+        <div ref={sizeRef} className="win-actions">
           {/* Window size dropdown */}
-          <div style={{ position: "relative" }}>
+          <div className="win-size">
             <BarButton
               onClick={() => setSizeOpen((v) => !v)}
               title="Window size"
@@ -755,20 +671,8 @@ function WindowItem({
             </BarButton>
             {sizeOpen && (
               <div
+                className="win-size__menu"
                 onMouseDown={(e) => e.stopPropagation()}
-                style={{
-                  position: "absolute",
-                  right: 0,
-                  top: "calc(100% + 6px)",
-                  zIndex: 10,
-                  minWidth: 130,
-                  padding: 4,
-                  background: "var(--surface)",
-                  border: "1px solid var(--border)",
-                  borderRadius: "var(--radius-lg)",
-                  boxShadow: "var(--shadow-lg)",
-                  animation: "fade-in-down var(--transition-fast)",
-                }}
               >
                 {POPUP_SIZES.map((s) => {
                   const activeSize = s.id === size;
@@ -776,25 +680,12 @@ function WindowItem({
                     <button
                       key={s.id}
                       type="button"
+                      className={`win-size__option${
+                        activeSize ? " win-size__option--active" : ""
+                      }`}
                       onClick={() => {
                         selectSize(s.id);
                         setSizeOpen(false);
-                      }}
-                      style={{
-                        display: "flex",
-                        width: "100%",
-                        alignItems: "center",
-                        justifyContent: "space-between",
-                        gap: 8,
-                        padding: "6px 10px",
-                        fontSize: 12,
-                        borderRadius: 6,
-                        border: "none",
-                        background: activeSize ? "var(--primary)" : "transparent",
-                        color: activeSize
-                          ? "var(--primary-on)"
-                          : "var(--text-secondary)",
-                        cursor: "pointer",
                       }}
                     >
                       <span>{s.label}</span>
@@ -842,51 +733,31 @@ function WindowItem({
         onDoubleClick={resetSize}
         title="Drag to resize width · double-click to reset"
         aria-label="Resize width"
-        style={{ ...handleStyle, top: 0, bottom: 0, right: -4, width: 8, cursor: "col-resize" }}
+        className={`win-resize win-resize--w${fullscreen ? " win-resize--off" : ""}`}
       />
       <div
         onMouseDown={startHeightResize}
         title="Drag to resize height"
         aria-label="Resize height"
-        style={{ ...handleStyle, left: 0, right: 0, bottom: -4, height: 8, cursor: "row-resize" }}
+        className={`win-resize win-resize--h${fullscreen ? " win-resize--off" : ""}`}
       />
       <div
         onMouseDown={startCornerResize}
         onDoubleClick={resetSize}
         title="Drag to resize width and height · double-click to reset"
         aria-label="Resize width and height"
-        style={{ ...handleStyle, zIndex: 2, right: -6, bottom: -6, width: 14, height: 14, cursor: "nwse-resize" }}
+        className={`win-resize win-resize--corner${fullscreen ? " win-resize--off" : ""}`}
       />
       </Modal>
     </>
   );
 }
 
-/** Small icon button for the window title bar — sits on the deep primary
- * gradient bar, so icons are white with a translucent white hover. */
-function BarButton({ children, style, ...rest }) {
-  const [hov, setHov] = useState(false);
+/** Small icon button for the window title bar. Styling — including the hover
+ * state — lives in Window.css (.win-bar-btn). */
+function BarButton({ children, ...rest }) {
   return (
-    <button
-      type="button"
-      onMouseEnter={() => setHov(true)}
-      onMouseLeave={() => setHov(false)}
-      style={{
-        display: "inline-flex",
-        alignItems: "center",
-        justifyContent: "center",
-        width: 28,
-        height: 28,
-        borderRadius: "var(--radius-md)",
-        border: "none",
-        background: hov ? "var(--surface-alt)" : "transparent",
-        color: hov ? "var(--text-primary)" : "var(--text-secondary)",
-        cursor: "pointer",
-        transition: "background var(--transition-fast)",
-        ...style,
-      }}
-      {...rest}
-    >
+    <button type="button" className="win-bar-btn" {...rest}>
       {children}
     </button>
   );

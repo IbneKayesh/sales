@@ -850,13 +850,13 @@ router.post("/get-expenses-payments-heads", async (req, res) => {
   }
 });
 
-// get-all-due-invoice
-router.post("/get-all-due-invoice", async (req, res) => {
+// get-all-due-trip
+router.post("/get-all-due-trip", async (req, res) => {
   try {
-    const { user_s, user_c, user_b } = req.body;
+    const { dpart_id, user_s, user_c, user_b } = req.body;
 
     // Validate input
-    if (!user_c) {
+    if (!dpart_id || !user_c) {
       return res.json({
         success: false,
         message: "All fields in the request body are required.",
@@ -865,21 +865,21 @@ router.post("/get-all-due-invoice", async (req, res) => {
     }
 
     //database action
-    const sql = `SELECT mrr.*,
-    dprt.dpart_cname, cntct.cntct_cname,
-    csr.emply_cname AS crusr_cname, usr.emply_cname AS upusr_cname, 0 as edit_stop
-    FROM tmpb_invcm mrr
-    JOIN tmsb_dpart dprt ON mrr.invcm_dpart = dprt.id
-    JOIN tmcb_cntct cntct ON mrr.invcm_cntct = cntct.id
-    LEFT JOIN tmhb_emply csr ON mrr.invcm_crusr = csr.id
-    LEFT JOIN tmhb_emply usr ON mrr.invcm_upusr = usr.id
-    WHERE mrr.invcm_users = $1
-    AND mrr.invcm_actve = TRUE
-    AND (mrr.invcm_pyamt - mrr.invcm_pdamt) > 0
-    ORDER BY mrr.invcm_trdat DESC`;
+    const sql = `SELECT ivm.*, cnt.cntct_cname, cnt.cntct_ofadr
+            FROM tmob_invcm ivm
+            JOIN tmcb_cntct cnt ON ivm.invcm_cntct = cnt.id
+            WHERE ivm.invcm_vehid IS NULL
+                OR TRIM(ivm.invcm_vehid) = ''
+                AND ivm.invcm_dpart = $1
+                AND ivm.invcm_users = $2
+            ORDER BY ivm.invcm_trdat DESC`;
 
-    const params = [user_c];
-    const rows = await dbGetAll(sql, params, `get Department- ${user_c}`);
+    const params = [dpart_id, user_c];
+    const rows = await dbGetAll(
+      sql,
+      params,
+      `get due invoice for delivery trip- ${user_c}`,
+    );
     res.json({
       success: true,
       message: "Query executed successfully.",

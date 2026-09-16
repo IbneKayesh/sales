@@ -1,5 +1,6 @@
 import { useState, useCallback, useMemo, useEffect } from 'react'
 import { IconChevronRight, IconCheckboxCheck, IconCheckboxIndeterminate, IconSort, IconSearch, IconClose, IconDownload, IconExpand, IconCollapse } from '@/icons'
+import { readStored, writeStored } from '@/utils/storage'
 
 /* ─── Helpers ─── */
 
@@ -311,6 +312,7 @@ export default function TreeDataTable({
   exportable = false,
   exportFilename,
   expandable = false,
+  // Key from PREFERENCE_KEYS.treeExpanded(id) — see utils/storage.
   storageKey,
   striped = true,
   hoverable = true,
@@ -336,24 +338,19 @@ export default function TreeDataTable({
     return ids
   }, [])
 
-  // Load expanded state from localStorage or expand all by default
+  // Load expanded state from storage (key built from PREFERENCE_KEYS by the
+  // caller), or expand all by default
   const [localExpanded, setLocalExpanded] = useState(() => {
     if (storageKey) {
-      try {
-        const stored = localStorage.getItem(storageKey)
-        if (stored) return new Set(JSON.parse(stored))
-      } catch {}
+      const stored = readStored(storageKey, null)
+      if (Array.isArray(stored)) return new Set(stored)
     }
     return getAllParentIds(data)
   })
 
-  // Persist expanded state to localStorage
+  // Persist expanded state
   useEffect(() => {
-    if (storageKey) {
-      try {
-        localStorage.setItem(storageKey, JSON.stringify(Array.from(localExpanded)))
-      } catch {}
-    }
+    if (storageKey) writeStored(storageKey, Array.from(localExpanded))
   }, [storageKey, localExpanded])
 
   const visibleColumns = columns.filter((col) => col.visible !== false)

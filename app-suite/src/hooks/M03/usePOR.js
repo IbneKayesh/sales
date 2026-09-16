@@ -241,41 +241,6 @@ const usePOR = () => {
     const excLineRate = divNumber(excLine, totalLine);
 
     //---------------------------------------------------
-    // 1. Split Invoice Discount
-    //---------------------------------------------------
-    // Invoice discount has two input modes:
-    //   A) Percentage mode (pordm_dspct > 0): the % is auto-filled from the supplier
-    //      (cntct_dspct) when pordm_cntct changes, or entered directly. The amount is
-    //      DERIVED from it: amount = totalAmount * pct / 100, and pordm_invds is a
-    //      read-only display value (the field is disabled in the form while pct > 0).
-    //   B) Amount mode (pordm_dspct === 0): the user types the discount amount directly
-    //      into pordm_invds. The value is used as-is (kept raw, never reformatted),
-    //      because re-formatting it to 4 decimals mid-typing would break the input.
-    // The effective amount computed here is then split proportionally across the item
-    // lines (pordc_edamt).
-    // write the effective discount amount back: computed (formatted) in % mode,
-    // or the raw user-typed value (unformatted, so typing stays usable) in amount mode
-    const invoice_discount_pct = Number(master?.pordm_dspct || 0);
-    let invoice_discount_amount = 0;
-    if (invoice_discount_pct > 0) {
-      invoice_discount_amount = (totalAmount * invoice_discount_pct) / 100;
-    } else {
-      invoice_discount_amount = master?.pordm_invds;
-    }
-
-    newItems = newItems.map((item) => {
-      const pordc_edamt = divNumber(
-        validNumber(invoice_discount_amount) * validNumber(item.pordc_itqty),
-        totalQty,
-      );
-
-      return {
-        ...item,
-        pordc_edamt: Number(pordc_edamt).toFixed(4),
-      };
-    });
-
-    //---------------------------------------------------
     // 2. Calculate Item Values
     //---------------------------------------------------
 
@@ -287,8 +252,7 @@ const usePOR = () => {
 
       const pordc_dsamt = pordc_itamt * (validNumber(item.pordc_dspct) / 100);
 
-      const afterDisc =
-        pordc_itamt - (pordc_dsamt + validNumber(item.pordc_edamt));
+      const afterDisc = pordc_itamt - pordc_dsamt;
 
       //AS BD NBR Rules
       let inclusive_vat = 0;
@@ -402,7 +366,6 @@ const usePOR = () => {
       ...master,
       pordm_tramt: validNumber(totals.tramt).toFixed(4),
       pordm_itmds: validNumber(totals.itmds).toFixed(4),
-      pordm_invds: invoice_discount_amount,
       pordm_vtamt: validNumber(totals.vtamt).toFixed(4),
       pordm_icamt: validNumber(totals.icamt).toFixed(4),
       pordm_ecamt: validNumber(totals.ecamt).toFixed(4),
@@ -478,27 +441,14 @@ const usePOR = () => {
 
     if (f === "pordm_cntct") {
       const cntct_id = cntct_Options.find((opt) => opt.id === v);
-      const dspct = cntct_id?.cntct_dspct || 0;
       const newformData = {
         ...formData,
         pordm_cntct: v,
-        pordm_dspct: dspct,
         party_id: cntct_id?.party_id,
         chtac_id: cntct_id?.chtac_id,
-        // new supplier has no discount % -> clear any stale computed amount
-        ...(dspct === 0 ? { pordm_invds: 0 } : {}),
       };
       reCalculate(listDataItem, newformData, listDataCost, listDataPayment);
       await getPorItems(v, formData.pordm_dpart);
-    }
-    if (f === "pordm_invds" || f === "pordm_dspct") {
-      const newformData = {
-        ...formData,
-        [f]: v,
-        // % cleared -> also clear the derived/stale amount
-        ...(f === "pordm_dspct" && Number(v) === 0 ? { pordm_invds: 0 } : {}),
-      };
-      reCalculate(listDataItem, newformData, listDataCost, listDataPayment);
     }
   };
 
@@ -918,6 +868,53 @@ const usePOR = () => {
     showToast("Removed successfully", { type: "success" });
   };
 
+  //cancel PO
+  const handleCancelPO = async () => {
+    // const adv_paid_amt = Number(formData?.pordm_pdamt) || 0;
+    // const adv_bal_amt = listDataItem.reduce(
+    //   (acc, item) =>
+    //     acc +
+    //     validNumber(item.pordc_itrat) *
+    //       (validNumber(item.pordc_itqty) - validNumber(item.pordc_mrqty)),
+    //   0,
+    // );
+    // const pordm_cnval = adv_paid_amt - adv_bal_amt;
+    // console.log("pordm_cnval", pordm_cnval);
+    // setFormData((prev) => ({ ...prev, pordm_cnval: pordm_cnval }));
+
+    const confirmation = await confirmBox({
+      title: "Cancel PO",
+      message: `Are you sure you want to Cancel PO "${formData?.pordm_trnno}"?`,
+      confirmText: "Cancel PO",
+      variant: "danger",
+    });
+    if (!confirmation) return;
+
+    try {
+      setIsBusy(true);
+      const reqBody = {
+        ...formData,
+        tmpb_pordc: listDataItem,
+      };
+
+      const resp = await porAPI.cancelPO(reqBody);
+      alertBox({
+        title: resp.success ? "Cancelled" : "Error",
+        message: resp.message,
+        variant: resp.success ? "success" : "danger",
+        confirmText: resp.success ? "Done" : "Close",
+      });
+      if (resp.success) {
+        setPgView("SYS_VW_LST_1");
+        setFormData(dataModel);
+        getAllPO();
+      }
+    } catch (error) {
+    } finally {
+      setIsBusy(false);
+    }
+  };
+
   //modal
   const handleShowModal = (modal) => {
     if (modal === "ITEM") {
@@ -941,9 +938,16 @@ const usePOR = () => {
         subTitle: "MRR Payment Details",
       });
     }
+    if (modal === "CANCEL_PO") {
+      setModalTitle({
+        title: "Cancel PO",
+        subTitle: "Cancel PO Item and Advance Payment",
+      });
+    }
 
     setShowModal({ show: true, modal: modal });
   };
+
   const handleHideModal = () => {
     setShowModal({ show: false, modal: "" });
     setModalTitle({ title: "", subTitle: "" });
@@ -996,6 +1000,8 @@ const usePOR = () => {
     handleDeletePayment,
     //bundle
     listDataBundle,
+    //cancel PO
+    handleCancelPO,
     //modal
     showModal,
     modalTitle,

@@ -103,8 +103,6 @@ const create = async (req, res) => {
       pordm_notes,
       pordm_tramt,
       pordm_itmds,
-      pordm_dspct,
-      pordm_invds,
       pordm_vtamt,
       pordm_icamt,
       pordm_ecamt,
@@ -163,14 +161,14 @@ const create = async (req, res) => {
     scripts.push({
       sql: `INSERT INTO tmpb_pordm(id, pordm_users, pordm_bsins, pordm_dpart, pordm_cntct, pordm_ttype,
       pordm_trnno, pordm_trdat, pordm_refno, pordm_notes, pordm_tramt, pordm_itmds,
-      pordm_dspct, pordm_invds, pordm_vtamt, pordm_icamt, pordm_ecamt, pordm_pyamt,
+      pordm_vtamt, pordm_icamt, pordm_ecamt, pordm_pyamt,
       pordm_pdamt, pordm_duamt, pordm_stamt, pordm_csamt, pordm_dlvry, pordm_ispst,
       pordm_ispad, pordm_ispnd, pordm_isapp, pordm_crusr, pordm_upusr)
     VALUES ($1, $2, $3, $4, $5, $6,
       $7, $8, $9, $10, $11, $12,
       $13, $14, $15, $16, $17, $18,
       $19, $20, $21, $22, $23, $24,
-      $25, $26, $27, $28, $29)`,
+      $25, $26, $27)`,
       params: [
         newId,
         user_c,
@@ -184,8 +182,6 @@ const create = async (req, res) => {
         pordm_notes,
         pordm_tramt || 0,
         pordm_itmds || 0,
-        pordm_dspct || 0,
-        pordm_invds || 0,
         pordm_vtamt || 0,
         pordm_icamt || 0,
         pordm_ecamt || 0,
@@ -210,12 +206,12 @@ const create = async (req, res) => {
       scripts.push({
         sql: `INSERT INTO tmpb_pordc(id, pordc_users, pordc_bsins, pordc_pordm, pordc_price, pordc_items,
                           pordc_units, pordc_itrat, pordc_itqty, pordc_itamt, pordc_dspct, pordc_dsamt,
-                          pordc_edamt, pordc_vtpct, pordc_vtamt, pordc_vtype, pordc_icamt, pordc_ecamt,
+                          pordc_vtpct, pordc_vtamt, pordc_vtype, pordc_icamt, pordc_ecamt,
                           pordc_pyamt, pordc_stamt, pordc_notes, pordc_csrat, pordc_refid, pordc_crusr, pordc_upusr)
         VALUES ($1, $2, $3, $4, $5, $6,
       $7, $8, $9, $10, $11, $12,
       $13, $14, $15, $16, $17, $18,
-      $19, $20, $21, $22, $23, $24, $25)`,
+      $19, $20, $21, $22, $23, $24)`,
         params: [
           lineId,
           user_c,
@@ -229,7 +225,6 @@ const create = async (req, res) => {
           det.pordc_itamt || 0,
           det.pordc_dspct || 0,
           det.pordc_dsamt || 0,
-          det.pordc_edamt || 0,
           det.pordc_vtpct || 0,
           det.pordc_vtamt || 0,
           det.pordc_vtype || "-",
@@ -441,44 +436,6 @@ const update = async (req, res) => {
     return res.json({
       success: true,
       message: `Update feature is unavailable.`,
-      data: {},
-    });
-    const {
-      id,
-      dpart_users,
-      dpart_bsins,
-      dpart_ccode,
-      dpart_cname,
-      dpart_ofadr,
-      dpart_emcap,
-      user_s,
-      user_c,
-      user_b,
-    } = req.body;
-
-    // Validate input
-    if (!dpart_cname || !user_s || !user_c || !user_b) {
-      return res.json({
-        success: false,
-        message: "All fields in the request body are required.",
-        data: {},
-      });
-    }
-    //database action
-    const sql = `UPDATE tmsb_dpart
-    SET dpart_cname = $1,
-    dpart_ofadr = $2,
-    dpart_emcap = $3,
-    dpart_upusr = $4,
-    dpart_updat = CURRENT_TIMESTAMP,
-    dpart_rvnmr = dpart_rvnmr + 1
-    WHERE id = $5`;
-    const params = [dpart_cname, dpart_ofadr, dpart_emcap, user_s, id];
-
-    await dbRun(sql, params, `update Department- ${user_c}`);
-    res.json({
-      success: true,
-      message: `${dpart_cname} - Updated successfully.`,
       data: {},
     });
   } catch (error) {
@@ -760,6 +717,80 @@ router.post("/get-all-due-mrr", async (req, res) => {
       success: false,
       message: error.message || "An error occurred during db action",
       data: [],
+    });
+  }
+});
+
+// cancel-po
+router.post("/cancel-po", async (req, res) => {
+  try {
+    const { id, pordm_cnrsn, pordm_cnjrn, tmpb_pordc, user_s, user_c, user_b } =
+      req.body;
+
+    // Validate input
+    if (
+      !id ||
+      !pordm_cnrsn ||
+      !pordm_cnjrn ||
+      tmpb_pordc === null ||
+      tmpb_pordc.length === 0 ||
+      !user_s ||
+      !user_c ||
+      !user_b
+    ) {
+      return res.json({
+        success: false,
+        message: "All fields in the request body are required.",
+        data: {},
+      });
+    }
+
+    //database action
+    //build scripts
+    const scripts = [];
+    scripts.push({
+      sql: `UPDATE tmpb_pordm
+        SET pordm_ispnd = false,
+        pordm_iscnl = true,
+        pordm_cndat = CURRENT_TIMESTAMP,
+        pordm_cnusr = $1,
+        pordm_cnrsn = $2,
+        pordm_cnval = 0,
+        pordm_cnjrn = $3,
+        pordm_upusr = $1,
+        pordm_updat = CURRENT_TIMESTAMP,
+        pordm_rvnmr = pordm_rvnmr + 1
+    WHERE id = $4`,
+      params: [user_s, pordm_cnrsn, pordm_cnjrn, id],
+      label: `Cancelled PO - ${id}`,
+    });
+    for (const det of tmpb_pordc) {
+      scripts.push({
+        sql: `UPDATE tmpb_pordc
+        SET pordc_cnqty = pordc_itqty - pordc_mrqty,
+          pordc_upusr = $1,
+          pordc_updat = CURRENT_TIMESTAMP,
+          pordc_rvnmr = pordc_rvnmr + 1
+        WHERE id = $2`,
+        params: [user_s, det.id],
+        label: `Cancelled PO detail ${det.id}`,
+      });
+    }
+    await dbRunAll(scripts);
+
+    res.json({
+      success: true,
+      message: `PO cancelled successfully`,
+      data: {
+        ...req.body,
+      },
+    });
+  } catch (error) {
+    console.error("database action error:", error);
+    return res.json({
+      success: false,
+      message: error.message || "An error occurred during db action",
+      data: {},
     });
   }
 });

@@ -44,6 +44,7 @@ const useInvoice = () => {
   const [dpart_Options, setDpart_Options] = useState([]);
   const [cntct_Options, setCntct_Options] = useState([]);
   const [items_Options, setItems_Options] = useState([]);
+  const [allItems, setAllItems] = useState([]);
 
   //costing
   const [invcs_Options, setInvcs_Options] = useState([]);
@@ -99,6 +100,15 @@ const useInvoice = () => {
     } else {
       setStopEdit(false);
     }
+
+    //list of items pending
+    const addedItemIds = new Set(listDataItem.map((item) => item.invcc_stock));
+
+    const availableItems = allItems.filter(
+      (item) => !addedItemIds.has(item.stock_id),
+    );
+
+    setItems_Options(availableItems);
   }, [listDataItem]);
 
   const getBundleItem = async (items) => {
@@ -472,7 +482,8 @@ const useInvoice = () => {
         dpart_id: id,
       });
       const list = resp.data || [];
-      setItems_Options(list);
+      //setItems_Options(list);
+      setAllItems(list);
     } catch (error) {}
   };
 
