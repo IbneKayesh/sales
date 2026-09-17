@@ -1,0 +1,60 @@
+{
+  "id": {
+    "type": "string",
+    "label": "Id"
+  },
+  "tripm_dpart": {
+    "type": "string",
+    "label": "Department",
+    "maxLength": 50,
+    "placeholder": "Select",
+    "required": true
+  },
+  "tripm_trdat": {
+    "type": "datetime",
+    "label": "Date",
+    "required": true,
+    "default": "new Date() with local format"
+  },
+  "tripm_party": {
+    "type": "string",
+    "label": "Party",
+    "maxLength": 50,
+    "placeholder": "Select",
+    "required": true
+  },
+  "tripm_trpmv": {
+    "type": "string",
+    "label": "Vehicle",
+    "maxLength": 50,
+    "placeholder": "Enter vehicle name",
+    "required": false
+  },
+  "tripm_trpma": {
+    "type": "string",
+    "label": "Trip Man 1",
+    "maxLength": 50,
+    "placeholder": "Enter trip man 1",
+    "required": false
+  },
+  "tripm_trpmb": {
+    "type": "string",
+    "label": "Trip Man 2",
+    "maxLength": 50,
+    "placeholder": "Enter trip man 2",
+    "required": false
+  },
+  "tripm_notes": {
+    "type": "string",
+    "label": "Notes",
+    "maxLength": 100,
+    "placeholder": "Enter notes",
+    "required": false
+  },
+  "tripm_blamt": {
+    "type": "decimal",
+    "label": "Bill Amount",
+    "required": false,
+    "default": 0
+  }
+}

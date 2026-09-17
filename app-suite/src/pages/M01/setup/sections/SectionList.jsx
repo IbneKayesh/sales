@@ -1,10 +1,7 @@
 import DataTable from "@/components/DataTable";
 import Badge from "@/components/Badge";
 import ActionButton from "@/components/ActionButton";
-import {
-  IconClose,
-  IconCheck,
-} from "@/icons";
+import { IconClose, IconCheck } from "@/icons";
 
 const SectionList = ({ listData, onEdit, onDelete }) => {
   const dtColumns = [

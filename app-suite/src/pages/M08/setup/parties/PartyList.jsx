@@ -71,7 +71,7 @@ const PartyList = ({ listData, onEdit, onDelete, onStatement }) => {
       <DataTable
         columns={dtColumns}
         data={listData}
-        pageSize={15}
+        pageSize={25}
         sortable
         searchable
         striped

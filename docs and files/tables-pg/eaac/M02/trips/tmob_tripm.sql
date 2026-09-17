@@ -18,6 +18,8 @@ CREATE TABLE tmob_tripm (
   tripm_trpmb VARCHAR(50),
   tripm_notes VARCHAR(100),
   tripm_lsdat timestamp NULL,
+  tripm_blamt decimal(18,6) DEFAULT 0.00,
+  tripm_ispnd  boolean NOT NULL DEFAULT false,
   
   -- default 2
   tripm_actve boolean NOT NULL DEFAULT true,

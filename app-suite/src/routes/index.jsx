@@ -9,6 +9,7 @@ import M06Routes from "./M06Routes";
 import M07Routes from "./M07Routes";
 import M08Routes from "./M08Routes";
 import M09Routes from "./M09Routes";
+import M49Routes from "./M49Routes";
 import ProtectedRoute from "./ProtectedRoute";
 
 // Routes that don't require authentication
@@ -25,6 +26,7 @@ const routes = [
   ...M07Routes,
   ...M08Routes,
   ...M09Routes,
+  ...M49Routes,
 ]
 
 export default function getRoutes() {

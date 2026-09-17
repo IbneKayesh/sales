@@ -1,11 +1,11 @@
 import { useEffect, useState } from "react";
 import { useUI } from "@/context/AppUIContext.jsx";
 import validate, { generateDataModel } from "@/models/validator";
-import tmib_brand from "@/models/M04/tmib_brand.json";
-const dataModel = generateDataModel(tmib_brand);
-import { brandAPI } from "@/api/M04/brandAPI.js";
+import tmob_tripm from "@/models/M02/trip/tmob_tripm.json";
+const dataModel = generateDataModel(tmob_tripm);
 import { departmentAPI } from "@/api/M01/departmentAPI.js";
 import { deliveryTripAPI } from "@/api/M02/deliveryTripAPI.js";
+import { coaNetworkAPI } from "@/api/M08/coaNetworkAPI.js";
 
 const useDeliveryTrips = () => {
   const { showToast, confirmBox, alertBox, isBusy, setIsBusy } = useUI();
@@ -27,12 +27,14 @@ const useDeliveryTrips = () => {
 
   //others
   const [dpart_Options, setDpart_Options] = useState([]);
-  const [tripm_Options, setTripm_Options] = useState([]);
+  const [party_Options, setParty_Options] = useState([]);
+  const [refid_Options, setRefid_Options] = useState([]);
+  const [allItems, setAllItems] = useState([]);
 
-  const getAllBrand = async () => {
+  const getAllDeliveryTrips = async () => {
     try {
       setIsBusy(true);
-      const resp = await brandAPI.getAll({});
+      const resp = await deliveryTripAPI.getAll({});
       const list = resp.data || [];
       setListData(list);
     } catch (error) {
@@ -42,8 +44,17 @@ const useDeliveryTrips = () => {
   };
 
   useEffect(() => {
-    getAllBrand();
+    getAllDeliveryTrips();
   }, []);
+
+  useEffect(() => {
+    const addedItemIds = new Set(listDataItem.map((item) => item.id));
+
+    const availableItems = allItems.filter(
+      (item) => !addedItemIds.has(item.id),
+    );
+    setRefid_Options(availableItems);
+  }, [allItems, listDataItem]);
 
   const getAllDepartments = async () => {
     if (dpart_Options.length > 0) {
@@ -56,23 +67,34 @@ const useDeliveryTrips = () => {
     } catch (error) {}
   };
 
+  const getDeliveryTrip = async () => {
+    if (party_Options.length > 0) {
+      return;
+    }
+    try {
+      const resp = await coaNetworkAPI.getSalesInvoiceDeliveryTrip({});
+      const list = resp.data || [];
+      setParty_Options(list);
+    } catch (error) {}
+  };
+
   const getDueTrips = async (id) => {
     try {
       const resp = await deliveryTripAPI.getAllDueTrip({ dpart_id: id });
       const list = resp.data || [];
-      setTripm_Options(list);
+      setAllItems(list);
     } catch (error) {}
   };
 
   const handleChange = async (f, v) => {
     setFormData((prev) => ({ ...prev, [f]: v }));
-    const newErrors = validate({ ...formData, [f]: v }, tmib_brand);
+    const newErrors = validate({ ...formData, [f]: v }, tmob_tripm);
     setFormErrors(newErrors);
     if (f === "tripm_dpart") {
       await getDueTrips(v);
     }
-    if (f === "tripc_tripm") {
-      const tripm = tripm_Options.find((item) => item.id === v);
+    if (f === "tripc_refid") {
+      const tripm = refid_Options.find((item) => item.tripc_refid === v);
       setListDataItem((prev) => [...prev, tripm]);
     }
   };
@@ -80,6 +102,20 @@ const useDeliveryTrips = () => {
   const handleEdit = (rowData) => {
     setPgView("SYS_VW_FRM_1");
     setFormData(rowData);
+    loadAllDetails(rowData.id);
+  };
+
+  const loadAllDetails = async (id) => {
+    try {
+      setIsBusy(true);
+      const [dtResp] = await Promise.all([
+        deliveryTripAPI.getDetailsByMasterId({ tripc_tripm: id }),
+      ]);
+      setListDataItem(dtResp.data || []);
+    } catch (error) {
+    } finally {
+      setIsBusy(false);
+    }
   };
 
   const handleDelete = async (rowData) => {
@@ -97,7 +133,7 @@ const useDeliveryTrips = () => {
 
     try {
       setIsBusy(true);
-      const resp = await brandAPI.delete(rowData);
+      const resp = await deliveryTripAPI.delete(rowData);
       alertBox({
         title: resp.success
           ? isActive
@@ -111,7 +147,7 @@ const useDeliveryTrips = () => {
       if (resp.success) {
         setPgView("SYS_VW_LST_1");
         setFormData(dataModel);
-        getAllBrand();
+        getAllDeliveryTrips();
       }
     } catch (error) {
     } finally {
@@ -120,37 +156,50 @@ const useDeliveryTrips = () => {
   };
 
   const handleSearch = async () => {
-    getAllBrand();
+    getAllDeliveryTrips();
   };
   const handleAddNew = () => {
     setPgView("SYS_VW_FRM_1");
     setFormData(dataModel);
     setReadOnly(false);
     setStopEdit(false);
+    setListDataItem([]);
     getAllDepartments();
+    getDeliveryTrip();
   };
 
   const handleCancel = () => {
     setPgView("SYS_VW_LST_1");
     setFormData(dataModel);
+    setListDataItem([]);
     setReadOnly(false);
     setStopEdit(false);
   };
 
   const handleSubmit = async () => {
     try {
-      const newErrors = validate(formData, tmib_brand);
+      const newErrors = validate(formData, tmob_tripm);
       setFormErrors(newErrors);
       if (Object.keys(newErrors).length > 0) {
         return;
       }
 
+      if (listDataItem.length === 0) {
+        showToast("At least 1 delivery invoice is required", {
+          type: "warning",
+        });
+        return;
+      }
+
       const reqBody = {
         ...formData,
+        tmob_tripc: listDataItem,
       };
       setIsBusy(true);
 
-      const resp = await brandAPI.upsert(reqBody);
+      console.log("reqBody", reqBody);
+
+      const resp = await deliveryTripAPI.upsert(reqBody);
       alertBox({
         title: resp.success ? (formData.id ? "Updated" : "Saved") : "Error",
         message: resp.message,
@@ -160,12 +209,28 @@ const useDeliveryTrips = () => {
       if (resp.success) {
         setPgView("SYS_VW_LST_1");
         setFormData(dataModel);
-        getAllBrand();
+        getAllDeliveryTrips();
       }
     } catch (error) {
     } finally {
       setIsBusy(false);
     }
+  };
+
+  // ---------- Item Details ----------
+  const handleDeleteItem = async (rowData) => {
+    const dataName = rowData.invcm_trnno;
+    const confirmation = await confirmBox({
+      title: "Remove",
+      message: `Are you sure you want to remove "${dataName}"?`,
+      confirmText: "Remove",
+      variant: "danger",
+    });
+    if (!confirmation) return;
+
+    const newItemList = listDataItem.filter((item) => item.id !== rowData.id);
+    setListDataItem(newItemList);
+    showToast("Removed successfully", { type: "success" });
   };
 
   return {
@@ -181,7 +246,8 @@ const useDeliveryTrips = () => {
     formErrors,
     //others
     dpart_Options,
-    tripm_Options,
+    party_Options,
+    refid_Options,
     //functions
     handleChange,
     handleEdit,
@@ -190,6 +256,8 @@ const useDeliveryTrips = () => {
     handleAddNew,
     handleCancel,
     handleSubmit,
+    //invoice items
+    handleDeleteItem,
   };
 };
 export default useDeliveryTrips;

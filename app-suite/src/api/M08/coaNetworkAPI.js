@@ -50,4 +50,8 @@ export const coaNetworkAPI = {
     apiRequest("/M08/v1/coa-network/get-mrr-direct-exp-paym-po", {
       body: data,
     }),
+  getSalesInvoiceDeliveryTrip: (data) =>
+    apiRequest("/M08/v1/coa-network/get-sales-invoice-delivery-trip", {
+      body: data,
+    }),
 };

@@ -15,7 +15,8 @@ const DeliveryTripsForm = ({
   onCancel,
   onSubmit,
   dpart_Options,
-  tripm_Options,
+  party_Options,
+  refid_Options,
 }) => {
   return (
     <div className="form-wrap">
@@ -37,13 +38,15 @@ const DeliveryTripsForm = ({
         <div className="col-span-4">
           <Dropdown
             label="Party"
-            options={cntry_Options}
+            options={party_Options}
             value={formData.tripm_party}
             onChange={(e) => onChange("tripm_party", e.target.value)}
             error={formErrors.tripm_party}
             required
             placeholder="Select..."
             disabled={readOnly}
+            optionValue="id"
+            optionLabel="party_cname"
           />
         </div>
         <div className="col-span-3">
@@ -76,7 +79,17 @@ const DeliveryTripsForm = ({
             disabled={readOnly}
           />
         </div>
-        <div className="col-span-10">
+        <div className="col-span-2">
+          <InputText
+            label="Bill Amount"
+            placeholder="Enter bill amount"
+            value={formData.tripm_blamt}
+            onChange={(e) => onChange("tripm_blamt", e.target.value)}
+            error={formErrors.tripm_blamt}
+            disabled={readOnly}
+          />
+        </div>
+        <div className="col-span-8">
           <InputText
             label="Notes"
             placeholder="Enter notes"
@@ -89,14 +102,14 @@ const DeliveryTripsForm = ({
         <div className="col-span-12">
           <Dropdown
             label="Pending Delivery Invoice"
-            options={tripm_Options}
-            value={formData.tripc_tripm}
-            onChange={(e) => onChange("tripc_tripm", e.target.value)}
-            error={formErrors.tripc_tripm}
+            options={refid_Options}
+            value={formData.tripc_refid}
+            onChange={(e) => onChange("tripc_refid", e.target.value)}
+            error={formErrors.tripc_refid}
             required
             placeholder="Select..."
             disabled={readOnly || stopEdit}
-            optionValue="id"
+            optionValue="tripc_refid"
             optionLabel="invcm_trnno"
             optionGrid="invcm_trnno:No,cntct_cname:Customer,cntct_ofadr:Address"
           />

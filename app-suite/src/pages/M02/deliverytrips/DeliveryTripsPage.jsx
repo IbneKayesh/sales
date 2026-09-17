@@ -25,7 +25,8 @@ const DeliveryTripsPage = () => {
     formErrors,
     //others
     dpart_Options,
-    tripm_Options,
+    refid_Options,
+    party_Options,
     //functions
     handleChange,
     handleEdit,
@@ -34,6 +35,8 @@ const DeliveryTripsPage = () => {
     handleAddNew,
     handleCancel,
     handleSubmit,
+    //invoice items
+    handleDeleteItem
   } = useDeliveryTrips();
 
   return (
@@ -90,7 +93,8 @@ const DeliveryTripsPage = () => {
               onCancel={handleCancel}
               onSubmit={handleSubmit}
               dpart_Options={dpart_Options}
-              tripm_Options={tripm_Options}
+              party_Options={party_Options}
+              refid_Options={refid_Options}
             />
           )}
           {pgView === "SYS_VW_FRM_1" && listDataItem.length > 0 && (
@@ -98,7 +102,7 @@ const DeliveryTripsPage = () => {
               readOnly={readOnly}
               listData={listDataItem}
               // onEdit={handleEditItem}
-              // onDelete={handleDeleteItem}
+              onDelete={handleDeleteItem}
             />
           )}
         </PageCardBody>

@@ -1,37 +1,61 @@
 import DataTable from "@/components/DataTable";
 import ActionButton from "@/components/ActionButton";
 import { formatNumber } from "@/utils/misc";
+import Badge from "@/components/Badge";
+import { IconClose, IconCheck } from "@/icons";
 
 const ItemList = ({ readOnly, listData, onEdit, onDelete }) => {
   const dtColumns = [
-    { key: "invcm_trnno", header: "No", width: "80px" },
+    { key: "tripc_sorce", header: "Source", width: "80px" },
     {
-      key: "invcm_tramt",
-      header: "Invoice",
+      key: "invcm_trnno",
+      header: "No",
       width: "80px",
-      body: (v) => formatNumber(v),
-    },
-    {
-      key: "invcm_duamt",
-      header: "Due",
-      width: "80px",
-      body: (v) => formatNumber(v),
-      footer: (_, row) => {
-        return row.reduce((sum, row) => sum + Number(row.invcm_duamt ?? 0), 0);
-      },
-    },
-    {
-      key: "cntct_cname",
-      header: "Customer",
-      width: "200px",
       footer: (_, row) => {
         return listData.length + " lines";
       },
     },
     {
-      key: "cntct_ofadr",
-      header: "Address",
+      key: "tripc_inval",
+      header: "Invoice",
+      width: "80px",
+      body: (v) => formatNumber(v),
     },
+    {
+      key: "tripc_duval",
+      header: "Due",
+      width: "80px",
+      body: (v) => formatNumber(v),
+      footer: (_, row) => {
+        return row.reduce((sum, row) => sum + Number(row.tripc_duval ?? 0), 0);
+      },
+    },
+    {
+      key: "tripc_clval",
+      header: "Collections",
+      width: "80px",
+      body: (v) => formatNumber(v),
+      footer: (_, row) => {
+        return row.reduce((sum, row) => sum + Number(row.tripc_clval ?? 0), 0);
+      },
+    },
+    { key: "cntct_cname", header: "Customer", width: "80px" },
+    { key: "tripc_addrs", header: "Address", width: "200px" },
+    { key: "tripc_atmpt", header: "Attempt", width: "80px" },
+    {
+      key: "tripc_isdlv",
+      header: "Delivered",
+      width: "110px",
+      body: (v) => {
+        return (
+          <Badge variant={v ? "success" : "danger"}>
+            {v ? <IconCheck size={12} /> : <IconClose size={12} />}
+            {v ? "Delivered" : "Not Delivered"}
+          </Badge>
+        );
+      },
+    },
+
     {
       key: "actions",
       header: "Actions",
@@ -40,7 +64,7 @@ const ItemList = ({ readOnly, listData, onEdit, onDelete }) => {
       body: (_, row) => (
         <ActionButton
           rowData={row}
-          actve={row.invcm_actve}
+          actve={row.tripc_actve}
           //onEdit={onEdit}
           onCopy={onEdit}
           onDelete={onDelete}
