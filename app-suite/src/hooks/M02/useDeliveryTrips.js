@@ -67,6 +67,14 @@ const useDeliveryTrips = () => {
     } catch (error) {}
   };
 
+  useEffect(() => {
+    if (listDataItem.length > 0) {
+      setStopEdit(true);
+    } else {
+      setStopEdit(false);
+    }
+  }, [listDataItem]);
+
   const getDeliveryTrip = async () => {
     if (party_Options.length > 0) {
       return;
@@ -80,7 +88,10 @@ const useDeliveryTrips = () => {
 
   const getDueTrips = async (id) => {
     try {
-      const resp = await deliveryTripAPI.getAllDueTrip({ dpart_id: id });
+      const resp = await deliveryTripAPI.getAllDueTrip({
+        dpart_id: formData.tripm_dpart,
+        tripm_sorce: id,
+      });
       const list = resp.data || [];
       setAllItems(list);
     } catch (error) {}
@@ -90,7 +101,7 @@ const useDeliveryTrips = () => {
     setFormData((prev) => ({ ...prev, [f]: v }));
     const newErrors = validate({ ...formData, [f]: v }, tmob_tripm);
     setFormErrors(newErrors);
-    if (f === "tripm_dpart") {
+    if (f === "tripm_sorce") {
       await getDueTrips(v);
     }
     if (f === "tripc_refid") {
@@ -102,14 +113,17 @@ const useDeliveryTrips = () => {
   const handleEdit = (rowData) => {
     setPgView("SYS_VW_FRM_1");
     setFormData(rowData);
-    loadAllDetails(rowData.id);
+    loadAllDetails(rowData);
   };
 
-  const loadAllDetails = async (id) => {
+  const loadAllDetails = async (rowData) => {
     try {
       setIsBusy(true);
       const [dtResp] = await Promise.all([
-        deliveryTripAPI.getDetailsByMasterId({ tripc_tripm: id }),
+        deliveryTripAPI.getDetailsByMasterId({
+          tripm_sorce: rowData.tripm_sorce,
+          tripc_tripm: rowData.id,
+        }),
       ]);
       setListDataItem(dtResp.data || []);
     } catch (error) {
@@ -233,6 +247,19 @@ const useDeliveryTrips = () => {
     showToast("Removed successfully", { type: "success" });
   };
 
+  //print
+  const [formDataPrint, setFormDataPrint] = useState({});
+  const handlePrint = async () => {
+    try {
+      const resp = await deliveryTripAPI.getPrint({
+        id: formData.id,
+      });
+      const list = resp.data || [];
+      setFormDataPrint(list);
+      //console.log("list", list);
+    } catch (error) {}
+  };
+
   return {
     isBusy,
     pgView,
@@ -258,6 +285,9 @@ const useDeliveryTrips = () => {
     handleSubmit,
     //invoice items
     handleDeleteItem,
+    //print
+    formDataPrint,
+    handlePrint,
   };
 };
 export default useDeliveryTrips;

@@ -51,6 +51,13 @@
     "placeholder": "Enter notes",
     "required": false
   },
+  "tripm_sorce": {
+    "type": "string",
+    "label": "Source",
+    "maxLength": 50,
+    "placeholder": "Select",
+    "required": true
+  },
   "tripm_blamt": {
     "type": "decimal",
     "label": "Bill Amount",

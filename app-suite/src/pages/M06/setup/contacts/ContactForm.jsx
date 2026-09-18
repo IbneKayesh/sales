@@ -10,8 +10,10 @@ import {
   crncy_Options,
   sorce_Options,
   ctype_Options,
+  price_Options
 } from "@/utils/vtable.js";
 import PartyView from "@/pages/M08/setup/parties/PartyView.jsx";
+import InputSwitch from "@/components/InputSwitch";
 
 const ContactForm = ({
   isBusy,
@@ -232,6 +234,32 @@ const ContactForm = ({
         </div>
         <div className="col-span-2">
           <InputLabel label="Credit Balance" value={formData.cntct_crbal} />
+        </div>
+        <div className="col-span-2 p-3">
+          <InputSwitch
+            label={`${formData.cntct_islgn ? "Login Enabled" : "Login Disabled"}`}
+            checked={formData.cntct_islgn}
+            onChange={(e) => onChange("cntct_islgn", e.target.checked)}
+          />
+        </div>
+        <div className="col-span-2 p-3">
+          <InputSwitch
+            label={`${formData.cntct_order ? "Pre-Order Enabled" : "Pre-Order Disabled"}`}
+            checked={formData.cntct_order}
+            onChange={(e) => onChange("cntct_order", e.target.checked)}
+          />
+        </div>
+        <div className="col-span-2">
+          <Dropdown
+            label="Price"
+            options={price_Options}
+            value={formData.cntct_price}
+            onChange={(e) => onChange("cntct_price", e.target.value)}
+            error={formErrors.cntct_price}
+            required
+            placeholder="Select..."
+            disabled={readOnly}
+          />
         </div>
       </div>
       {formData?.id && (

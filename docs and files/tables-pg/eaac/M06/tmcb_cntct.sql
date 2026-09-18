@@ -41,6 +41,7 @@ CREATE TABLE tmcb_cntct (
   cntct_recky varchar(50) DEFAULT 'vmart',
   cntct_islgn boolean NOT NULL DEFAULT false,
   cntct_order boolean NOT NULL DEFAULT true,
+  cntct_price varchar(20) DEFAULT 'price_mrrat',
 
   -- default 3
   cntct_actve boolean NOT NULL DEFAULT true,

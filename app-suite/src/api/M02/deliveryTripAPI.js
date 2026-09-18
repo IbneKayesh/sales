@@ -34,4 +34,8 @@ export const deliveryTripAPI = {
     apiRequest("/M02/v1/delivery-trip/get-all-due-trip", {
       body: data,
     }),
+  getPrint: (data) =>
+    apiRequest("/M02/v1/delivery-trip/get-print", {
+      body: data,
+    }),
 };

@@ -1,0 +1,33 @@
+{
+  "id": {
+    "type": "string",
+    "label": "Id"
+  },
+  "odrpy_party": {
+    "type": "string",
+    "label": "Accounts Head",
+    "maxLength": 50,
+    "placeholder": "Select",
+    "required": true
+  },
+  "odrpy_pdamt": {
+    "type": "decimal",
+    "label": "Amount",
+    "required": true,
+    "default": 0
+  },
+  "odrpy_refno": {
+    "type": "string",
+    "label": "Ref No",
+    "maxLength": 100,
+    "placeholder": "Enter ref no",
+    "required": false
+  },
+  "odrpy_notes": {
+    "type": "string",
+    "label": "Notes",
+    "maxLength": 100,
+    "placeholder": "Enter notes",
+    "required": false
+  }
+}

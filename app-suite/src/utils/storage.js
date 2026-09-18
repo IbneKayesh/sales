@@ -38,7 +38,7 @@ export const SESSION_KEYS = {
   /** Starred favourite menus, shown on the Modules page and the taskbar. */
   pinnedMenus: "bsuite_pinned_menus",
   /** Recently opened menus, most recent first. */
-  recentMenus: "bsuite_recent_menus",
+  //recentMenus: "bsuite_recent_menus",
   /** Whether the lock screen is showing. Lives in sessionStorage — see SESSION_ONLY_KEYS. */
   screenLocked: "eaac_screen_locked",
 };

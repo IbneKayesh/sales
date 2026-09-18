@@ -4,14 +4,17 @@ import PageCard, {
   PageCardActions,
   PageCardBody,
 } from "@/components/PageCard";
-import { IconSearch, IconClose, IconPlus, IconSave } from "@/icons";
+import { IconSearch, IconClose, IconPlus, IconSave, IconPrint } from "@/icons";
 import Button from "@/components/Button";
 import useDeliveryTrips from "@/hooks/M02/useDeliveryTrips";
 import DeliveryTripsList from "./DeliveryTripsList";
 import DeliveryTripsForm from "./DeliveryTripsForm";
 import ItemList from "./ItemList";
+import DeliveryTripPrint from "./DeliveryTripPrint";
+import usePrint from "@/hooks/usePrint";
 
 const DeliveryTripsPage = () => {
+  const print = usePrint();
   const {
     isBusy,
     pgView,
@@ -36,8 +39,16 @@ const DeliveryTripsPage = () => {
     handleCancel,
     handleSubmit,
     //invoice items
-    handleDeleteItem
+    handleDeleteItem,
+    //print
+    formDataPrint,
+    handlePrint,
   } = useDeliveryTrips();
+
+  const handleShowPrint = async (rowData) => {
+    await handlePrint(rowData);
+    print.show();
+  };
 
   return (
     <div className="page-wrap">
@@ -64,6 +75,12 @@ const DeliveryTripsPage = () => {
               <Button variant="secondary" size="sm" onClick={handleCancel}>
                 <IconClose size={14} className="icon-left" />
                 Cancel
+              </Button>
+            )}
+            {pgView === "SYS_VW_FRM_1" && formData?.id && (
+              <Button variant="info" size="sm" onClick={handleShowPrint}>
+                <IconPrint size={14} className="icon-left" />
+                Print / Export
               </Button>
             )}
             {pgView === "SYS_VW_FRM_1" && (
@@ -105,6 +122,13 @@ const DeliveryTripsPage = () => {
               onDelete={handleDeleteItem}
             />
           )}
+
+          {/*Print preview*/}
+          <DeliveryTripPrint
+            open={print.open}
+            onClose={print.hide}
+            formData={formDataPrint}
+          />
         </PageCardBody>
       </PageCard>
     </div>

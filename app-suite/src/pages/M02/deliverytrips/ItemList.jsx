@@ -8,7 +8,7 @@ const ItemList = ({ readOnly, listData, onEdit, onDelete }) => {
   const dtColumns = [
     { key: "tripc_sorce", header: "Source", width: "80px" },
     {
-      key: "invcm_trnno",
+      key: "tripm_trnno",
       header: "No",
       width: "80px",
       footer: (_, row) => {
@@ -20,6 +20,9 @@ const ItemList = ({ readOnly, listData, onEdit, onDelete }) => {
       header: "Invoice",
       width: "80px",
       body: (v) => formatNumber(v),
+      footer: (_, row) => {
+        return row.reduce((sum, row) => sum + Number(row.tripc_inval ?? 0), 0);
+      },
     },
     {
       key: "tripc_duval",

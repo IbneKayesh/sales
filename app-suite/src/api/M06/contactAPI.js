@@ -54,6 +54,10 @@ export const contactAPI = {
     apiRequest("/M06/v1/contacts/get-avail-suppliers-item", {
       body: data,
     }),
+  getCustomersSalesOrder: (data) =>
+    apiRequest("/M06/v1/contacts/get-customers-sales-order", {
+      body: data,
+    }),
   getCustomersSalesInvoice: (data) =>
     apiRequest("/M06/v1/contacts/get-customers-sales-invoice", {
       body: data,

@@ -321,6 +321,21 @@ const ledger_types_Options = [
   },
 ];
 
+const price_Options = [
+  {
+    label: "DP (Distributor Price)",
+    value: "price_dprat",
+  },
+  {
+    label: "TP (Trade Price)",
+    value: "price_tprat",
+  },
+  {
+    label: "MRP (Default)",
+    value: "price_mrrat",
+  },
+];
+
 export {
   cntry_Options,
   crncy_Options,
@@ -347,4 +362,5 @@ export {
   fetur_ttype_Options,
   fetur_tagno_Options,
   ledger_types_Options,
+  price_Options,
 };

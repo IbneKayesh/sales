@@ -63,6 +63,7 @@ const ContactPage = () => {
     handleStatement(rowData);
     print.show();
   };
+  
   return (
     <div className="page-wrap">
       <PageCard>

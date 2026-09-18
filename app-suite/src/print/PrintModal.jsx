@@ -27,6 +27,8 @@ export default function PrintModal({
   onClose,
   title = "Print",
   mode: initialMode = "a4",
+  orientation: initialOrientation = "portrait",
+  enableOrientation = true,
   enable80mm = false,
   repeatHeader: defaultRepeatHeader = true,
   repeatFooter: defaultRepeatFooter = true,
@@ -44,6 +46,9 @@ export default function PrintModal({
 
   const [mode, setMode] = useState(
     has80mmSupport && (initialMode === "80mm" || initialMode === "pos80") ? "80mm" : "a4",
+  );
+  const [orientation, setOrientation] = useState(
+    initialOrientation === "landscape" ? "landscape" : "portrait",
   );
   const [repeatHeader, setRepeatHeader] = useState(defaultRepeatHeader);
   const [repeatFooter, setRepeatFooter] = useState(defaultRepeatFooter);
@@ -104,6 +109,11 @@ export default function PrintModal({
         isPrintSource ? "report-print-area--print" : "",
         activeModeClass,
         is80mm ? "print-mode-pos80" : "",
+        !is80mm
+          ? orientation === "landscape"
+            ? "print-orientation-landscape"
+            : "print-orientation-portrait"
+          : "",
         className,
       ]
         .filter(Boolean)
@@ -114,6 +124,16 @@ export default function PrintModal({
         backgroundColor: "#fff",
       }}
     >
+      {!is80mm && (
+        <style>
+          {`
+            @page {
+              size: A4 ${orientation} !important;
+              margin: 8mm !important;
+            }
+          `}
+        </style>
+      )}
       <table className="print-sheet" style={{ width: "100%", borderCollapse: "collapse" }}>
         {shouldRepeatHeader && (
           <thead>
@@ -159,7 +179,12 @@ export default function PrintModal({
   };
 
   const handleDownload = () => {
-    downloadPrintHtml(printSourceRef.current, `${title.replace(/\s+/g, "_")}.html`, title);
+    downloadPrintHtml(
+      printSourceRef.current,
+      `${title.replace(/\s+/g, "_")}.html`,
+      title,
+      orientation,
+    );
   };
 
   return createPortal(
@@ -213,6 +238,28 @@ export default function PrintModal({
                     title="80mm thermal receipt"
                   >
                     80MM
+                  </button>
+                </>
+              )}
+
+              {/* Orientation Selection (shown for A4) */}
+              {!is80mm && enableOrientation && (
+                <>
+                  <button
+                    type="button"
+                    className={`print-toolbar-btn ${orientation === "portrait" ? "active" : ""}`}
+                    onClick={() => setOrientation("portrait")}
+                    title="Portrait orientation (standard vertical A4)"
+                  >
+                    Portrait
+                  </button>
+                  <button
+                    type="button"
+                    className={`print-toolbar-btn ${orientation === "landscape" ? "active" : ""}`}
+                    onClick={() => setOrientation("landscape")}
+                    title="Landscape orientation (horizontal A4)"
+                  >
+                    Landscape
                   </button>
                 </>
               )}
@@ -276,7 +323,11 @@ export default function PrintModal({
           <div className="modal__body print-preview__body">
             <div
               className={`print-preview__page ${
-                is80mm ? "print-preview__page--80mm" : "print-preview__page--a4"
+                is80mm
+                  ? "print-preview__page--80mm"
+                  : orientation === "landscape"
+                    ? "print-preview__page--a4-landscape"
+                    : "print-preview__page--a4"
               }`}
             >
               {renderDocument(false)}

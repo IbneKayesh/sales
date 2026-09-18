@@ -1799,27 +1799,44 @@ table {
     page-break-after: auto;
   }
 
-  .report-print-area--print table:not(.print-sheet) th {
-    color: #000 !important;
-    font-weight: 700;
-    border-bottom: 2px solid #999;
-    background-color: #e5e7eb !important;
+  .report-print-area--print table:not(.print-sheet) {
+    border: 0.5px solid #ccc !important;
   }
 
-  .report-print-area--print table:not(.print-sheet) td,
   .report-print-area--print table:not(.print-sheet) th {
-    padding: 2px 4px;
-    border: 1px solid #ccc;
-    color: #000 !important;
-    font-size: 10px;
-    line-height: 1.1;
+    color: #111 !important;
+    font-weight: 600;
+    border: 0.5px solid #ccc !important;
+    border-bottom: 1px solid #777 !important;
+    background-color: transparent !important;
+  }
+
+  .report-print-area--print table:not(.print-sheet) td {
+    padding: 2.5px 4px;
+    border: 0.5px solid #ccc !important;
+    color: #111 !important;
+    font-size: 9px;
+    line-height: 1.15;
     word-break: break-word;
   }
 
-  /* Page margins (default: A4 landscape) */
+  .report-print-area--print .print-party-block {
+    border: 0.5px solid #ccc !important;
+  }
+
+  /* Page margins (default: A4 portrait) */
   @page {
-    margin: 15mm;
+    margin: 8mm;
+    size: A4 portrait;
+  }
+
+  @page print-mode-a4-landscape {
     size: A4 landscape;
+    margin: 8mm;
+  }
+
+  .print-orientation-landscape {
+    page: print-mode-a4-landscape;
   }
 
   /* Ensure text is black */

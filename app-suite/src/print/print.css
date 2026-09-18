@@ -16,41 +16,44 @@
   margin-bottom: 4px;
 }
 .print-hdr__company-name {
-  font-size: 14px;
-  font-weight: 800;
-  letter-spacing: 0.04em;
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 0.03em;
 }
 .print-hdr__company-detail {
   font-size: 8px;
-  color: #333;
+  color: #444;
   margin-top: 1px;
 }
 .print-hdr__company-tax {
   font-size: 8px;
-  color: #555;
+  color: #666;
   margin-top: 1px;
 }
 .print-hdr__meta-bar {
   display: flex;
   justify-content: space-between;
   align-items: flex-end;
-  border-bottom: 2px solid #000;
+  border-bottom: 1px solid #444;
   padding-bottom: 3px;
 }
 .print-hdr__title {
-  font-size: 15px;
-  font-weight: 800;
+  font-size: 13px;
+  font-weight: 700;
   letter-spacing: 0.02em;
 }
 .print-hdr__subtitle {
   font-size: 9px;
-  color: #333;
+  color: #444;
   margin-top: 1px;
 }
 .print-hdr__info {
   text-align: right;
-  font-size: 9px;
+  font-size: 8.5px;
   line-height: 1.35;
+}
+.print-hdr__info strong {
+  font-weight: 600;
 }
 
 /* --------------------------------------------------------------------------
@@ -62,18 +65,18 @@
   width: 100%;
 }
 .print-hdr-80__company-name {
-  font-size: 13px;
-  font-weight: 800;
+  font-size: 12px;
+  font-weight: 700;
   letter-spacing: 0.02em;
 }
 .print-hdr-80__divider {
-  border-top: 1px dashed #000;
+  border-top: 1px dashed #777;
   margin: 4px 0;
 }
 .print-hdr-80__title {
   font-size: 11px;
-  font-weight: 800;
-  letter-spacing: 0.05em;
+  font-weight: 700;
+  letter-spacing: 0.04em;
 }
 .print-hdr-80__subtitle {
   font-size: 8px;
@@ -82,7 +85,7 @@
 .print-hdr-80__meta {
   margin-top: 4px;
   text-align: left;
-  font-size: 9px;
+  font-size: 8.5px;
 }
 .print-hdr-80__row {
   display: flex;
@@ -97,8 +100,8 @@
   margin-top: 8px;
 }
 .print-ftr__words {
-  font-size: 9px;
-  font-weight: 600;
+  font-size: 8.5px;
+  font-weight: 500;
   margin-bottom: 4px;
 }
 .print-ftr__note {
@@ -113,15 +116,16 @@
 }
 .print-ftr__sig-col {
   text-align: center;
-  font-size: 9px;
+  font-size: 8.5px;
 }
 .print-ftr__sig-line {
-  border-top: 1px solid #000;
+  border-top: 1px solid #777;
   padding-top: 3px;
-  font-weight: 500;
+  font-weight: 400;
 }
 .print-ftr__sig-name {
-  margin-top: 2px;
+  min-height: 14px;
+  margin-bottom: 2px;
   font-weight: 600;
 }
 
@@ -156,7 +160,21 @@
 .print-table {
   width: 100%;
   border-collapse: collapse;
-  font-size: 9px;
+  font-size: 8.5px;
+  border: 0.5px solid #ccc;
+}
+.print-table th {
+  font-weight: 600;
+  color: #111;
+  border: 0.5px solid #ccc;
+  border-bottom: 1px solid #777;
+  padding: 3px 4px;
+  background-color: transparent;
+}
+.print-table td {
+  padding: 2.5px 4px;
+  border: 0.5px solid #ccc;
+  color: #111;
 }
 
 /* --------------------------------------------------------------------------
@@ -164,12 +182,12 @@
    -------------------------------------------------------------------------- */
 .print-section__title {
   font-size: 9px;
-  font-weight: 700;
+  font-weight: 600;
   text-transform: uppercase;
-  letter-spacing: 0.04em;
-  border-bottom: 1px solid #000;
+  letter-spacing: 0.03em;
+  border-bottom: 1px solid #777;
   padding-bottom: 2px;
-  margin-bottom: 2px;
+  margin-bottom: 3px;
 }
 
 /* --------------------------------------------------------------------------
@@ -177,8 +195,8 @@
    -------------------------------------------------------------------------- */
 .print-metagrid {
   display: grid;
-  gap: 4px 12px;
-  padding: 3px 8px;
+  gap: 3px 10px;
+  padding: 3px 6px;
 }
 
 /* --------------------------------------------------------------------------
@@ -194,38 +212,38 @@
 .print-meta-item__label {
   font-size: 7px;
   text-transform: uppercase;
-  letter-spacing: 0.06em;
+  letter-spacing: 0.05em;
   color: #555;
 }
 .print-meta-item__value {
-  font-size: 10px;
-  font-weight: 600;
-  color: #000;
+  font-size: 9.5px;
+  font-weight: 500;
+  color: #111;
 }
 
 /* --------------------------------------------------------------------------
    Summary — right-aligned totals grid
    -------------------------------------------------------------------------- */
 .print-summary {
-  margin-top: 10px;
+  margin-top: 8px;
   margin-left: auto;
-  width: 52%;
-  font-size: 10px;
+  width: 50%;
+  font-size: 9.5px;
   display: grid;
   grid-template-columns: 1fr auto;
-  gap: 2px 12px;
+  gap: 2px 10px;
   align-items: center;
 }
 .print-summary__value {
   text-align: right;
 }
 .print-summary__row--strong {
-  font-weight: 700;
+  font-weight: 600;
 }
 .print-summary__row--divider {
-  border-top: 1px solid #000;
-  padding-top: 3px;
-  margin-top: 3px;
+  border-top: 1px solid #777;
+  padding-top: 2px;
+  margin-top: 2px;
 }
 
 /* --------------------------------------------------------------------------
@@ -290,25 +308,66 @@
    Contact / party block (shared by invoice, MRR, etc.)
    -------------------------------------------------------------------------- */
 .print-party-block {
-  border: 1px solid #ccc;
-  border-radius: 4px;
-  padding: 3px 8px;
+  border: 0.5px solid #ccc;
+  border-radius: 3px;
+  padding: 3px 6px;
   margin-bottom: 4px;
 }
 .print-party-detail {
   font-size: 8px;
-  color: #333;
+  color: #444;
   margin-top: 1px;
 }
 .print-remarks {
-  font-size: 9px;
+  font-size: 8.5px;
   padding: 0 2px 4px;
 }
 .print-table-footer {
-  border-top: 2px solid #000;
-  font-weight: 700;
+  border-top: 1px solid #777;
+  font-weight: 600;
 }
 .print-table-footer td {
   text-align: right;
-  padding: 2px 6px;
+  padding: 2.5px 6px;
+  border: 0.5px solid #ccc;
 }
+
+/* --------------------------------------------------------------------------
+   Page Break Helpers
+   -------------------------------------------------------------------------- */
+.page-break,
+.print-page-break {
+  break-before: page;
+  page-break-before: always;
+}
+
+@media screen {
+  .print-doc .page-break,
+  .print-doc .print-page-break {
+    margin-top: 14px;
+    padding-top: 10px;
+    border-top: 1px dashed #bbb;
+  }
+}
+
+@media print {
+  .page-break,
+  .print-page-break {
+    margin-top: 0 !important;
+    padding-top: 0 !important;
+    border-top: none !important;
+    break-before: page !important;
+    page-break-before: always !important;
+  }
+}
+
+/* --------------------------------------------------------------------------
+   Preview Canvas Orientations
+   -------------------------------------------------------------------------- */
+.print-preview__page--a4-landscape {
+  width: 1123px;
+  max-width: 100%;
+  min-height: 794px;
+  padding: 24px 28px;
+}
+

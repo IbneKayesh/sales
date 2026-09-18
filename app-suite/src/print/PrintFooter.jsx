@@ -58,10 +58,10 @@ export default function PrintFooter({
         >
           {roles.map((role) => (
             <div key={role} className="print-ftr__sig-col">
+              <div className="print-ftr__sig-name">
+                {role === "Prepared By" && signerName ? signerName : "\u00A0"}
+              </div>
               <div className="print-ftr__sig-line">{role}</div>
-              {role === "Prepared By" && signerName && (
-                <div className="print-ftr__sig-name">{signerName}</div>
-              )}
             </div>
           ))}
         </div>

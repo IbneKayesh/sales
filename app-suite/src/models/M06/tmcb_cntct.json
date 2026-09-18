@@ -115,5 +115,21 @@
     "type": "decimal",
     "label": "Credit Balance",
     "default": 0
+  },
+  "cntct_islgn": {
+    "type": "bool",
+    "label": "Login",
+    "default": false
+  },
+  "cntct_order": {
+    "type": "bool",
+    "label": "Pre-Order",
+    "default": true
+  },
+  "cntct_price": {
+    "type": "string",
+    "label": "Default Address",
+    "maxLength": 50,
+    "default": "price_mrrat"
   }
 }

@@ -96,20 +96,26 @@ const DOCUMENT_SHELL_CSS = `
 
     .report-print-area table { page-break-inside: auto; }
     .report-print-area table tr { page-break-inside: avoid; }
-    .report-print-area table:not(.print-sheet) th {
-      color: #000;
-      font-weight: 700;
-      border-bottom: 2px solid #999;
-      background-color: #e5e7eb;
+    .report-print-area table:not(.print-sheet) {
+      border: 0.5px solid #ccc;
     }
-    .report-print-area table:not(.print-sheet) td,
     .report-print-area table:not(.print-sheet) th {
-      padding: 2px 4px;
-      border: 1px solid #ccc;
-      color: #000;
-      font-size: 10px;
-      line-height: 1.1;
+      color: #111;
+      font-weight: 600;
+      border: 0.5px solid #ccc;
+      border-bottom: 1px solid #777;
+      background-color: transparent;
+    }
+    .report-print-area table:not(.print-sheet) td {
+      padding: 2.5px 4px;
+      border: 0.5px solid #ccc;
+      color: #111;
+      font-size: 9px;
+      line-height: 1.15;
       word-break: break-word;
+    }
+    .report-print-area .print-party-block {
+      border: 0.5px solid #ccc;
     }
 
     /* Repeat header / footer on every printed page */
@@ -127,7 +133,9 @@ const DOCUMENT_SHELL_CSS = `
 
     @page { size: A4 portrait; margin: 8mm; }
     @page print-mode-a4 { size: A4 portrait; margin: 8mm; }
+    @page print-mode-a4-landscape { size: A4 landscape; margin: 8mm; }
     .print-mode-a4 { page: print-mode-a4; }
+    .print-orientation-landscape { page: print-mode-a4-landscape; }
     @page print-mode-pos80 { size: 80mm auto; margin: 0; }
     .print-mode-pos80, .print-mode-80mm {
       page: print-mode-pos80;
@@ -140,8 +148,9 @@ const DOCUMENT_SHELL_CSS = `
  * Build a self-contained HTML string for the given print area element.
  * @param {HTMLElement} printAreaEl - The element to serialize
  * @param {string} [title] - Document title (falls back to data-report-title)
+ * @param {string} [orientation] - "portrait" | "landscape"
  */
-export function buildPrintHtml(printAreaEl, title = null) {
+export function buildPrintHtml(printAreaEl, title = null, orientation = "portrait") {
   if (!printAreaEl) return null;
   const docTitle =
     title || printAreaEl.getAttribute("data-report-title") || "Document";
@@ -151,6 +160,17 @@ export function buildPrintHtml(printAreaEl, title = null) {
   clone.style.position = "static";
   clone.style.width = "auto";
   clone.removeAttribute("data-report-title");
+  if (orientation === "landscape") {
+    clone.classList.add("print-orientation-landscape");
+  } else {
+    clone.classList.add("print-orientation-portrait");
+  }
+
+  const orientationCss = `
+    @page { size: A4 ${orientation}; margin: 8mm; }
+    ${orientation === "landscape" ? ".report-print-area { max-width: 1123px; }" : ""}
+  `;
+
   return `<!DOCTYPE html>
 <html lang="en">
 <head>
@@ -160,6 +180,7 @@ export function buildPrintHtml(printAreaEl, title = null) {
 <style>
 ${printStyles}
 ${DOCUMENT_SHELL_CSS}
+${orientationCss}
 </style>
 </head>
 <body>
@@ -173,8 +194,13 @@ ${clone.outerHTML}
 }
 
 /** Trigger a browser download of the document as a standalone HTML file. */
-export function downloadPrintHtml(printAreaEl, filename = "document.html", title = null) {
-  const html = buildPrintHtml(printAreaEl, title);
+export function downloadPrintHtml(
+  printAreaEl,
+  filename = "document.html",
+  title = null,
+  orientation = "portrait"
+) {
+  const html = buildPrintHtml(printAreaEl, title, orientation);
   if (!html) return;
   const blob = new Blob([html], { type: "text/html;charset=utf-8" });
   const url = URL.createObjectURL(blob);

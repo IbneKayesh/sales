@@ -31,6 +31,55 @@ import useGridOptions from "@/hooks/M01/useGridOptions";
 const setupGroups = [
   {
     id: "M02",
+    name: "Sales (M02)",
+    desc: "Sales module column settings",
+    icon: <IconPurchase size={20} />,
+    screens: [
+      {
+        id: "SYS_SALES_ORDER",
+        name: "Sales (M02) > Sales Order",
+        desc: "Sales Order",
+        sections: [
+          {
+            id: "M02-M01",
+            name: "Order List",
+            icon: <IconEdit size={14} />,
+            options: [
+              {
+                id: "SYS_ORDER_LIST",
+                name: "List Column",
+                desc: "Configure visible columns in the Order list",
+                modal: "SYS_SALES_ORDER",
+                table: "SYS_ORDER_LIST",
+                variant: "accent",
+                icon: <IconSettings size={20} />,
+                enabled: true,
+              },
+            ],
+          },
+          {
+            id: "M02-M02",
+            name: "Entry Form",
+            icon: <IconMenu size={14} />,
+            options: [
+              {
+                id: "SYS_FORMS_ITEMS",
+                name: "Item Grid",
+                desc: "Configure visible columns in the Item list",
+                modal: "SYS_SALES_ORDER",
+                table: "SYS_FORMS_ITEMS",
+                variant: "accent",
+                icon: <IconFile size={20} />,
+                enabled: true,
+              },
+            ],
+          },
+        ],
+      },
+    ],
+  },
+  {
+    id: "M01",
     name: "Purchase (M02)",
     desc: "Purchase module column settings",
     icon: <IconPurchase size={20} />,
@@ -224,7 +273,7 @@ const GridOptionsPage = () => {
     handleShowModal,
     handleHideModal,
   } = useGridOptions();
-  
+
   const [searchQuery, setSearchQuery] = useState("");
 
   const searchLC = searchQuery.trim().toLowerCase();
@@ -432,7 +481,8 @@ const GridOptionsPage = () => {
         </PageCardFooter>
       </PageCard>
 
-      {(showModal.modal === "SYS_MRR_DIRECT" ||
+      {(showModal.modal === "SYS_SALES_ORDER" ||
+        showModal.modal === "SYS_MRR_DIRECT" ||
         showModal.modal === "SYS_INVENTORY_ITEMS" ||
         showModal.modal === "SYS_INVENTORY_STOCK") && (
         <TableColumns

@@ -18,6 +18,11 @@ const DeliveryTripsForm = ({
   party_Options,
   refid_Options,
 }) => {
+  const sorce_Options = [
+    { label: "Sales Order", value: "Sales Order" },
+    { label: "Sales Invoice", value: "Sales Invoice" },
+  ];
+
   return (
     <div className="form-wrap">
       <div className="grid">
@@ -44,7 +49,7 @@ const DeliveryTripsForm = ({
             error={formErrors.tripm_party}
             required
             placeholder="Select..."
-            disabled={readOnly}
+            disabled={readOnly || stopEdit}
             optionValue="id"
             optionLabel="party_cname"
           />
@@ -99,30 +104,44 @@ const DeliveryTripsForm = ({
             disabled={readOnly}
           />
         </div>
-        <div className="col-span-12">
+        <div className="col-span-4">
           <Dropdown
-            label="Pending Delivery Invoice"
+            label="Source"
+            options={sorce_Options}
+            value={formData.tripm_sorce}
+            onChange={(e) => onChange("tripm_sorce", e.target.value)}
+            error={formErrors.tripm_sorce}
+            required
+            placeholder="Select..."
+            disabled={readOnly || stopEdit}
+            optionValue="value"
+            optionLabel="label"
+          />
+        </div>
+        <div className="col-span-8">
+          <Dropdown
+            label="Pending Delivery"
             options={refid_Options}
             value={formData.tripc_refid}
             onChange={(e) => onChange("tripc_refid", e.target.value)}
             error={formErrors.tripc_refid}
             required
             placeholder="Select..."
-            disabled={readOnly || stopEdit}
+            disabled={readOnly}
             optionValue="tripc_refid"
-            optionLabel="invcm_trnno"
-            optionGrid="invcm_trnno:No,cntct_cname:Customer,cntct_ofadr:Address"
+            optionLabel="tripm_trnno"
+            optionGrid="tripm_trnno:No,cntct_cname:Customer,tripc_addrs:Address"
           />
         </div>
       </div>
       {formData?.id && (
         <AuditData
-          actve={formData.brand_actve}
+          actve={formData.tripm_actve}
           cname={formData.crusr_cname}
-          cdate={formData.brand_crdat}
+          cdate={formData.tripm_crdat}
           uname={formData.upusr_cname}
-          udate={formData.brand_updat}
-          rvnmr={formData.brand_rvnmr}
+          udate={formData.tripm_updat}
+          rvnmr={formData.tripm_rvnmr}
         />
       )}
       <div className="form-actions">
