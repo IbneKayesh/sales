@@ -23,21 +23,21 @@ const DeliveryTripPrint = ({ open, onClose, formData }) => {
   const { user, business } = useApp();
 
   const summary = formData?.summary?.[0] || {};
-  let totalInv = 0;
-  let totalDue = 0;
-  let totalCol = 0;
-  const details = (formData?.details || []).map((row, idx) => {
-    const inv = Number(row.tripc_inval) || 0;
-    const due = Number(row.tripc_duval) || 0;
-    const col = Number(row.tripc_clval) || 0;
-    totalInv += inv;
-    totalDue += due;
-    totalCol += col;
-    return {
-      ...row,
-      _idx: idx + 1,
-    };
-  });
+  // Business-wide default currency. The Delivery Trip payload carries no
+  // currency column of its own, so an order only states its currency in the
+  // amount-in-words row when it differs from this default.
+  const businessCurrency = business?.bsins_crncy || "BDT";
+  const details = (formData?.details || []).map((row, idx) => ({
+    ...row,
+    _idx: idx + 1,
+  }));
+
+  const sumOf = (rows, field) =>
+    rows.reduce((sum, row) => sum + (Number(row?.[field]) || 0), 0);
+
+  const totalInv = sumOf(details, "tripc_inval");
+  const totalDue = sumOf(details, "tripc_duval");
+  const totalCol = sumOf(details, "tripc_clval");
   const totalDueBalance = Number(totalDue) - Number(totalCol);
 
   const items = (formData?.items || []).map((row, idx) => {
@@ -47,8 +47,33 @@ const DeliveryTripPrint = ({ open, onClose, formData }) => {
     };
   });
 
+  // Trip-charge status columns (delivered date / delivered flag / attempts) are
+  // not guaranteed to be on the order rows that make up a group — the print
+  // payload carries them on the trip-charge rows (the DETAILS table). Keep a
+  // lookup keyed by order no so each ORDER section can fall back to it.
+  const detailByOrder = new Map();
+  details.forEach((d) => {
+    const key = d.odrdm_trnno || d.odrdc_odrdm;
+    if (key && !detailByOrder.has(key)) detailByOrder.set(key, d);
+  });
+
+  // First non-empty value for a field across all rows of a group, since the
+  // trip-charge columns may only be populated on some of the returned rows.
+  const firstValue = (rows, field) => {
+    for (const row of rows) {
+      const value = row?.[field];
+      if (value !== null && value !== undefined && value !== "") return value;
+    }
+    return undefined;
+  };
+
+  const resolveTripField = (group, field) =>
+    firstValue(group.items, field) ??
+    detailByOrder.get(group.odrdm_trnno)?.[field] ??
+    detailByOrder.get(group.orderKey)?.[field];
+
   // Group orders by order (odrdm_trnno or odrdc_odrdm)
-  const orderGroups = (formData?.orders || []).reduce((acc, row) => {
+  const rawOrderGroups = (formData?.orders || []).reduce((acc, row) => {
     const key = row.odrdm_trnno || row.odrdc_odrdm || `order_${acc.length}`;
     let group = acc.find((g) => g.orderKey === key);
     if (!group) {
@@ -76,6 +101,70 @@ const DeliveryTripPrint = ({ open, onClose, formData }) => {
     // console.log("acc", acc);
     return acc;
   }, []);
+
+  // Order-level totals. The order master columns are used when the print
+  // payload carries them; otherwise they are summed from the order's rows the
+  // same way the Orders module derives them when saving
+  // (odrdm_pyamt = Σ odrdc_pyamt, odrdm_itmds = Σ odrdc_dsamt,
+  //  odrdm_duamt = payable - paid).
+  const orderGroups = rawOrderGroups.map((group) => {
+    const rows = group.items;
+    const payable =
+      firstValue(rows, "odrdm_pyamt") ?? sumOf(rows, "odrdc_pyamt");
+    // Payments are not part of the order rows, so "Paid" stays unknown ("—")
+    // when the payload omits the order master column.
+    const paid = firstValue(rows, "odrdm_pdamt");
+    const due =
+      firstValue(rows, "odrdm_duamt") ??
+      (paid == null ? null : payable - paid);
+
+    return {
+      ...group,
+      tripc_dldat: resolveTripField(group, "tripc_dldat"),
+      tripc_isdlv: resolveTripField(group, "tripc_isdlv"),
+      tripc_atmpt: resolveTripField(group, "tripc_atmpt"),
+      odrdm_pyamt: payable,
+      odrdm_pdamt: paid,
+      odrdm_duamt: due,
+      // Amount this order is answerable for — drives the order footer's
+      // amount-in-words line (its due, or its payable when payment is unknown).
+      _dueAmount: due ?? payable,
+      // Currency this order is printed in (falls back to the business default).
+      _currency: firstValue(rows, "odrdm_crncy") ?? businessCurrency,
+      odrdm_itmds: firstValue(rows, "odrdm_itmds") ?? sumOf(rows, "odrdc_dsamt"),
+    };
+  });
+
+  // Amount cell that shows a dash instead of a misleading 0.00 for values the
+  // print payload does not carry.
+  const money = (value) =>
+    value === null || value === undefined || value === "" ? "—" : fmt(value);
+
+  // Order footer rows: this order's totals, closing with the amount in words
+  // (omitted when the order amount is not known at all). The currency is only
+  // named when it differs from the business default, since that is what the
+  // trip is normally printed in.
+  const orderTotalsRows = (group) => {
+    const showsCurrency =
+      !!group._currency && group._currency !== businessCurrency;
+
+    return [
+      { label: "Discount", value: money(group.odrdm_itmds) },
+      { label: "Payable", value: money(group.odrdm_pyamt) },
+      { label: "Paid", value: money(group.odrdm_pdamt) },
+      { label: "Due", value: money(group.odrdm_duamt), strong: true, divider: true },
+      ...(group._dueAmount == null
+        ? []
+        : [
+            {
+              label: showsCurrency
+                ? `Amount in Words (${group._currency})`
+                : "Amount in Words",
+              value: amountInWords(group._dueAmount),
+            },
+          ]),
+    ];
+  };
 
   const statementTitle = `${summary.tripm_trnno || ""} ~ DELIVERY TRIP`;
 
@@ -151,7 +240,9 @@ const DeliveryTripPrint = ({ open, onClose, formData }) => {
               {
                 key: "cntct_cname",
                 header: "Customer",
-                render: (r) => `${r.cntct_cname}, ${r.tripc_addrs}` || "—",
+                render: (r) =>
+                  [r.cntct_cname, r.tripc_addrs].filter(Boolean).join(", ") ||
+                  "—",
               },
               {
                 key: "tripc_isdlv",
@@ -192,11 +283,11 @@ const DeliveryTripPrint = ({ open, onClose, formData }) => {
             emptyText="No data found"
             footer={
               <tr className="print-table-footer">
-                <td colSpan={6}>Total ({details.length} transactions)</td>
+                <td colSpan={5}>Total ({details.length} transactions)</td>
                 <td>{fmt(totalInv)}</td>
                 <td>{fmt(totalDue)}</td>
                 <td>{fmt(totalCol)}</td>
-                <td colSpan={2}></td>
+                <td></td>
               </tr>
             }
           />
@@ -303,7 +394,7 @@ const DeliveryTripPrint = ({ open, onClose, formData }) => {
                 <div className="print-party-block">
                   {/* {JSON.stringify(group)} */}
                   <MetaGrid
-                    columns="repeat(5, 1fr)"
+                    columns="repeat(3, 1fr)"
                     items={[
                       { label: "Customer", value: group.cntct_cname || "—" },
                       {
@@ -311,19 +402,26 @@ const DeliveryTripPrint = ({ open, onClose, formData }) => {
                         value: formatDate(group.odrdm_trdat) || "—",
                       },
                       { label: "Notes", value: group.odrdm_notes || "—" },
-                      { label: "Payable", value: fmt(group.odrdm_pyamt) },
-                      { label: "Paid", value: fmt(group.odrdm_pdamt) },
-                      { label: "Due", value: fmt(group.odrdm_duamt) },
-                      { label: "Discount", value: fmt(group.odrdm_itmds) },
                       {
                         label: "Delivered",
                         value: formatDate(group.tripc_dldat) || "—",
                       },
                       {
                         label: "Status",
-                        value: group.tripc_isdlv ? "Delivered" : "Pending",
+                        value:
+                          group.tripc_isdlv == null
+                            ? "—"
+                            : group.tripc_isdlv
+                              ? "Delivered"
+                              : "Pending",
                       },
-                      { label: "Attempt", value: group.tripc_atmpt || 0 },
+                      {
+                        label: "Attempt",
+                        value:
+                          group.tripc_atmpt == null
+                            ? "—"
+                            : String(group.tripc_atmpt),
+                      },
                     ]}
                   />
                 </div>
@@ -381,7 +479,7 @@ const DeliveryTripPrint = ({ open, onClose, formData }) => {
                   emptyText="No items found for this order"
                   footer={
                     <tr className="print-table-footer">
-                      <td colSpan={4}>Total ({group.items.length} items)</td>
+                      <td colSpan={2}>Total ({group.items.length} items)</td>
                       <td>
                         {fmt(
                           group.items.reduce(
@@ -390,19 +488,27 @@ const DeliveryTripPrint = ({ open, onClose, formData }) => {
                           ),
                         )}
                       </td>
+                      <td colSpan={3}></td>
                     </tr>
                   }
                 />
+
+                {/* Order footer — this order's totals and amount in words */}
+                <div className="print-ftr">
+                  <Summary rows={orderTotalsRows(group)} />
+                </div>
               </PrintSection>
             </div>
           ))}
         </>
       }
       footer={
+        // Trip-level footer: disclaimer + signatures only. The amount in words
+        // (and its currency) is printed once per order in that order's own
+        // footer below, so it is deliberately not repeated here — the trip
+        // footer shows on every page.
         <PrintFooter
-          currency={business?.bsins_crncy || "BDT"}
           docName="Delivery Trip"
-          amountInWordsText={amountInWords(totalDueBalance)}
           signerName={user?.users_cname || DEFAULT_SIGNER_NAME}
           roles={["Prepared By", "Checked By", "Authorized"]}
         />

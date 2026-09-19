@@ -18,7 +18,7 @@ import { downloadPrintHtml } from "./printFile";
  *   repeatFooter        — Boolean: repeat footer at the bottom of every page (default: true)
  *   header              — Header data object { company, title, subtitle, docNo, date, extra } OR custom JSX
  *   body / children     — Main JSX content (tables, meta blocks, summaries, etc.)
- *   footer              — Footer data object { amountInWords, note, currency, signerName, roles } OR custom JSX
+ *   footer              — Footer data object { note, signerName, roles } OR custom JSX
  *   body80 / posBody    — Optional compact 80mm receipt JSX (if omitted, standard body adapts to 80mm)
  *   className           — Extra CSS classes
  */
@@ -100,6 +100,20 @@ export default function PrintModal({
   const shouldRepeatHeader = !is80mm && repeatHeader && !!resolvedHeader;
   const shouldRepeatFooter = !is80mm && repeatFooter && !!resolvedFooter;
 
+  // Printed-at stamp. The same value feeds both the on-screen/print footer text
+  // and the @bottom-left page margin box, so the printed date/time always sits
+  // on the left edge of the sheet, on the same line as the page counter
+  // ("Page X of Y", rendered by @bottom-right in index.css).
+  const printedAt = new Date().toLocaleString("en-GB", {
+    day: "2-digit",
+    month: "short",
+    year: "numeric",
+    hour: "2-digit",
+    minute: "2-digit",
+    hour12: true,
+  });
+  const printedAtCss = printedAt.replace(/\\/g, "\\\\").replace(/"/g, '\\"');
+
   const renderDocument = (isPrintSource) => (
     <div
       ref={isPrintSource ? printSourceRef : null}
@@ -130,6 +144,12 @@ export default function PrintModal({
             @page {
               size: A4 ${orientation} !important;
               margin: 8mm !important;
+              @bottom-left {
+                content: "Printed: ${printedAtCss}";
+                font-family: var(--font-sans, system-ui, sans-serif);
+                font-size: 8px;
+                color: #555;
+              }
             }
           `}
         </style>
@@ -165,9 +185,7 @@ export default function PrintModal({
       </table>
       {isPrintSource && !is80mm && (
         <div className="print-page-info">
-          <span className="print-page-info__date">
-            Printed: {new Date().toLocaleString("en-GB", { day: "2-digit", month: "short", year: "numeric", hour: "2-digit", minute: "2-digit", hour12: true })}
-          </span>
+          <span className="print-page-info__date">Printed: {printedAt}</span>
           <span className="print-page-info__page"></span>
         </div>
       )}

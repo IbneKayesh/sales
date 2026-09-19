@@ -2,7 +2,6 @@ import { useApp } from "@/context/AppContext";
 import { formatDate } from "@/utils/datetime";
 import {
   fmt,
-  amountInWords,
   DEFAULT_SIGNER_NAME,
   PrintModal,
   PrintHeader,
@@ -184,9 +183,7 @@ const LedgerPrint = ({ open, onClose, listDataItem = [] }) => {
       }
       footer={
         <PrintFooter
-          currency={business?.bsins_crncy || "BDT"}
           docName="ledger statement"
-          amountInWordsText={amountInWords(Math.abs(closingBalance))}
           signerName={user?.users_cname || DEFAULT_SIGNER_NAME}
           roles={["Prepared By", "Checked By", "Authorized"]}
         />

@@ -28,6 +28,8 @@ CREATE TABLE tmob_odrdc (
   odrdc_notes VARCHAR(100),
   odrdc_csrat decimal(18,6) DEFAULT 0.00,
   odrdc_refid VARCHAR(50),
+  odrdc_ivqty decimal(18,6) DEFAULT 0.00,
+  odrdc_cnqty decimal(18,6) DEFAULT 0.00,
   
   -- default
   odrdc_actve boolean NOT NULL DEFAULT true,

@@ -3,7 +3,6 @@ import { useApp } from "@/context/AppContext";
 import {
   fmt,
   MetaItem,
-  amountInWords,
   DEFAULT_SIGNER_NAME,
   PrintModal,
   PrintHeader,
@@ -120,9 +119,7 @@ const InvoicePrint = ({ open, onClose, formData, listDataItem, dpart_Options }) 
       }
       footer={
         <PrintFooter
-          currency={formData.jrnlm_crncy || "BDT"}
           docName="invoice"
-          amountInWordsText={amountInWords(totalDr || totalCr)}
           signerName={formData.crusr_cname || DEFAULT_SIGNER_NAME}
           roles={["Prepared By", "Authorized"]}
         />

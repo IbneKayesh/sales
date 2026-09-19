@@ -19,11 +19,14 @@
 
 /* Layer the windows float in. Deliberately invisible and transparent to the
    mouse (pointer-events: none) so the page behind stays readable, clickable
-   and scrollable — only the window frames themselves take the pointer. */
+   and scrollable — only the window frames themselves take the pointer. Sits
+   below the taskbar/modal layers (--z-window) so a modal can dim and block
+   the whole screen, windows included. */
 .modal-overlay.win-overlay {
   background: transparent;
   backdrop-filter: none;
   pointer-events: none;
+  z-index: var(--z-window);
 }
 
 /* Maximized: no overlay padding, so the window fills the whole viewport. */

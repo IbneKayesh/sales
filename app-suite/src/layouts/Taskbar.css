@@ -16,7 +16,9 @@
   left: 0;
   right: 0;
   bottom: 0;
-  z-index: var(--z-toast, 2000);
+  /* Below the modal layer so a modal backdrop can cover the whole screen;
+     still above the floating windows. */
+  z-index: var(--z-taskbar, 1000);
   display: flex;
   align-items: center;
   gap: 6px;

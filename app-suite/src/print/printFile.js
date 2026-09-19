@@ -124,12 +124,10 @@ const DOCUMENT_SHELL_CSS = `
     .print-sheet tbody tr,
     .print-sheet tbody td { page-break-inside: auto; }
 
-    .print-page-info {
-      position: fixed;
-      bottom: 5px;
-      left: 15px;
-    }
-    .print-page-info__page { display: none; }
+    /* The printed date/time and "Page X of Y" are drawn by the @page margin
+       boxes injected per-document in buildPrintHtml, so the in-flow stamp is
+       dropped from the paper output. It stays visible on screen. */
+    .print-page-info { display: none !important; }
 
     @page { size: A4 portrait; margin: 8mm; }
     @page print-mode-a4 { size: A4 portrait; margin: 8mm; }
@@ -166,8 +164,31 @@ export function buildPrintHtml(printAreaEl, title = null, orientation = "portrai
     clone.classList.add("print-orientation-portrait");
   }
 
+  // Carry the "Printed: ..." stamp from the serialized footer into the page
+  // margin boxes, so the downloaded file prints exactly like the app does:
+  // stamp bottom-left, page counter bottom-right, on the same line.
+  const printedAt = (
+    clone.querySelector(".print-page-info__date")?.textContent || ""
+  ).trim();
+  const cssString = (value) => value.replace(/\\/g, "\\\\").replace(/"/g, '\\"');
+
   const orientationCss = `
-    @page { size: A4 ${orientation}; margin: 8mm; }
+    @page {
+      size: A4 ${orientation};
+      margin: 8mm;
+      @bottom-left {
+        content: "${cssString(printedAt)}";
+        font-family: system-ui, "Segoe UI", Roboto, sans-serif;
+        font-size: 8px;
+        color: #555;
+      }
+      @bottom-right {
+        content: "Page " counter(page) " of " counter(pages);
+        font-family: system-ui, "Segoe UI", Roboto, sans-serif;
+        font-size: 8px;
+        color: #555;
+      }
+    }
     ${orientation === "landscape" ? ".report-print-area { max-width: 1123px; }" : ""}
   `;
 

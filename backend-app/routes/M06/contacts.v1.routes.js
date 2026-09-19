@@ -115,6 +115,9 @@ const create = async (req, res) => {
       cntct_dspct,
       cntct_crlmt,
       cntct_crbal,
+      cntct_islgn,
+      cntct_order,
+      cntct_price,
       user_s,
       user_c,
       user_b,
@@ -169,13 +172,15 @@ const create = async (req, res) => {
     const newCode = await GenNewCode(user_c, "tmcb_cntct");
     scripts.push({
       sql: `INSERT INTO tmcb_cntct(id, cntct_users, cntct_bsins, cntct_ccode, cntct_ctype, cntct_sorce,
-        cntct_cname, cntct_cntps, cntct_cntno, cntct_email, cntct_tinno, cntct_trade,
-        cntct_ofadr, cntct_fcadr, cntct_trtry, cntct_tarea, cntct_dzone, cntct_cntry,
-        cntct_cntad, cntct_crncy, cntct_dspct, cntct_crlmt, cntct_crbal, cntct_crusr, cntct_upusr)
+                          cntct_cname, cntct_cntps, cntct_cntno, cntct_email, cntct_tinno, cntct_trade,
+                          cntct_ofadr, cntct_fcadr, cntct_trtry, cntct_tarea, cntct_dzone, cntct_cntry,
+                          cntct_cntad, cntct_crncy, cntct_dspct, cntct_crlmt, cntct_crbal, cntct_islgn, 
+                          cntct_order, cntct_price, cntct_crusr, cntct_upusr)
         VALUES ($1, $2, $3, $4, $5, $6,
-        $7, $8, $9, $10, $11, $12,
-        $13, $14, $15, $16, $17, $18,
-        $19, $20, $21, $22, $23, $24, $25)`,
+                $7, $8, $9, $10, $11, $12,
+                $13, $14, $15, $16, $17, $18,
+                $19, $20, $21, $22, $23, $24,
+                $25, $26, $27, $28)`,
       params: [
         masterId,
         user_c,
@@ -199,7 +204,10 @@ const create = async (req, res) => {
         cntct_crncy,
         cntct_dspct || 0,
         cntct_crlmt || 0,
-        0, //cntct_crbal
+        0, //cntct_crbal,
+        cntct_islgn,
+        cntct_order,
+        cntct_price,
         user_s,
         user_s,
       ],
@@ -247,7 +255,7 @@ const create = async (req, res) => {
 
 const update = async (req, res) => {
   try {
-    const {
+      const {
       id,
       cntct_users,
       cntct_bsins,
@@ -271,6 +279,9 @@ const update = async (req, res) => {
       cntct_dspct,
       cntct_crlmt,
       cntct_crbal,
+      cntct_islgn,
+      cntct_order,
+      cntct_price,
       user_s,
       user_c,
       user_b,
@@ -318,10 +329,13 @@ const update = async (req, res) => {
     cntct_crncy = $15,
     cntct_dspct = $16,
     cntct_crlmt = $17,
-    cntct_upusr = $18,
+    cntct_islgn = $18,
+    cntct_order = $19,
+    cntct_price = $20,
+    cntct_upusr = $21,
     cntct_updat = CURRENT_TIMESTAMP,
     cntct_rvnmr = cntct_rvnmr + 1
-    WHERE id = $19`,
+    WHERE id = $22`,
       params: [
         cntct_sorce,
         cntct_cname,
@@ -340,6 +354,9 @@ const update = async (req, res) => {
         cntct_crncy,
         cntct_dspct,
         cntct_crlmt,
+        cntct_islgn,
+        cntct_order,
+        cntct_price,
         user_s,
         id,
       ],
@@ -796,6 +813,7 @@ router.post("/get-customers-sales-order", async (req, res) => {
     JOIN tmtb_chtrt crt ON cht.chtac_chtno = crt.chtrt_chtno
     WHERE cnt.cntct_users = $1
     AND cnt.cntct_actve = TRUE
+    AND cnt.cntct_order = TRUE
     AND crt.chtrt_trnid = 'SYS_SALES'
 	  AND crt.chtrt_pegid = 'SYS_SALES_INVOICE'
     AND crt.chtrt_grpid ='SYS_AST_CUSTOMER'

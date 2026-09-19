@@ -371,7 +371,8 @@ export default function Calculator({ open, onClose }) {
         background: "transparent",
         backdropFilter: "none",
         pointerEvents: "none",
-        zIndex: 1001,
+        // Above the floating windows, below the taskbar (--z-window + 10).
+        zIndex: "calc(var(--z-window) + 10)",
         transform: `translate(${pos.x}px, ${pos.y}px)`,
       }}
     >

@@ -414,7 +414,12 @@
 
   --z-dropdown:           50;
   --z-sticky:             100;
-  --z-modal:              1000;
+  /* Floating menu windows sit under the taskbar; the taskbar sits under the
+     modal layer, so a modal backdrop covers (and blocks) the whole screen —
+     taskbar included — while the windows themselves stay non-blocking. */
+  --z-window:             900;
+  --z-taskbar:            1000;
+  --z-modal:              1100;
   --z-toast:              2000;
 
   /* ========================================================================
@@ -1734,16 +1739,13 @@ table {
     display: none !important;
   }
 
+  /* The printed date/time and the page counter are rendered by the page
+     margin boxes below (PrintModal injects the same @bottom-left box with the
+     live "Printed: ..." stamp), so the in-flow copy of the footer stamp is
+     dropped from the paper output to avoid a duplicate, off-position line.
+     It is still rendered for the downloaded HTML document (see printFile.js). */
   .print-page-info {
-    position: fixed;
-    bottom: 5px;
-    left: 15px;
-    font-size: 8px;
-    color: #555;
-  }
-
-  .print-page-info__page {
-    display: none;
+    display: none !important;
   }
 
   @page {

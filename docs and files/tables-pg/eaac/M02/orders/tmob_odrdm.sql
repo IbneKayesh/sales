@@ -36,6 +36,14 @@ CREATE TABLE tmob_odrdm (
   odrdm_ispad boolean NOT NULL DEFAULT false,
   odrdm_isqcp boolean NOT NULL DEFAULT false,
   odrdm_isapp boolean NOT NULL DEFAULT false,
+
+  --cancel
+  odrdm_iscnl boolean NOT NULL DEFAULT false, --is cancelled
+  odrdm_cndat timestamp NULL, --cancel date and time
+  odrdm_cnusr VARCHAR(50) NULL, --cancelled user
+  odrdm_cnrsn VARCHAR(50) NULL, --cancelled reason
+  odrdm_cnval decimal(18,6) DEFAULT 0.00, --cancelled value
+  odrdm_cnjrn VARCHAR(50) NULL, --cancelled journal
   
   -- default 2
   odrdm_actve boolean NOT NULL DEFAULT true,

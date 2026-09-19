@@ -141,13 +141,14 @@ const detectWindowSnap = (left, top, w, h, others) => {
 
 /**
  * Renders every open menu window as a non-blocking floating window (no
- * dimming overlay, page stays clickable and scrollable behind them). Must be
- * placed OUTSIDE the app's main <Routes> (see App.jsx) so each window can
- * render its own <Routes location={menuLink}> without the parent-match
- * pathname restriction. Drag the header to move a window (snapping to screen
- * edges and to other open windows); drag the right edge, bottom edge or
- * bottom-right corner to resize (or use the size buttons); close via the X
- * button or Escape.
+ * dimming overlay, page stays clickable and scrollable behind them) so the
+ * modules page underneath can keep opening more windows. Must be placed
+ * OUTSIDE the app's main <Routes> (see App.jsx) so each window can render its
+ * own <Routes location={menuLink}> without the parent-match pathname
+ * restriction. Drag the header to move a window (snapping to screen edges and
+ * to other open windows); drag the right edge, bottom edge or bottom-right
+ * corner to resize (or use the size buttons); close via the X button or
+ * Escape.
  */
 export default function Windows() {
   const { popups, closePopup, bringPopupToFront, hidePopup, user } = useApp();

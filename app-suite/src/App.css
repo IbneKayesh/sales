@@ -4095,8 +4095,11 @@ html[data-layout="boxed"] .layout__main {
   display: flex;
   align-items: center;
   justify-content: center;
-  background: var(--overlay-bg);
-  backdrop-filter: blur(0.7px);
+  /* Light scrim, no blur: the backdrop still swallows input everywhere, but
+     the page/window behind stays clearly readable through it. The tint is a
+     muted share of --overlay-bg so it still tracks the light/dark theme. */
+  background: color-mix(in srgb, var(--overlay-bg) 35%, transparent);
+  backdrop-filter: none;
   padding: var(--sp-6);
   animation: fade-in var(--transition-fast);
 }

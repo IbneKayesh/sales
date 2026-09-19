@@ -14,38 +14,41 @@ import {
 } from "@/print";
 
 /**
- * Compact 80mm thermal receipt variant for MRR.
+ * Compact 80mm thermal receipt variant for the Sales Order.
  */
-const PosReceipt = ({ business, formData, listDataItem, supplier }) => {
-  const currency = formData.mrrdm_crncy || business?.bsins_crncy || "BDT";
-
+const PosReceipt = ({ formData, listDataItem, customer }) => {
   const totals = [
-    { label: "Total Amount", value: fmt(formData.mrrdm_tramt) },
-    { label: "Item Discount", value: fmt(formData.mrrdm_itmds) },
-    ...(formData.mrrdm_invds
-      ? [{ label: "Invoice Discount", value: fmt(formData.mrrdm_invds) }]
+    { label: "Total Amount", value: fmt(formData.odrdm_tramt) },
+    { label: "Item Discount", value: fmt(formData.odrdm_itmds) },
+    ...(formData.odrdm_invds
+      ? [{ label: "Invoice Discount", value: fmt(formData.odrdm_invds) }]
       : []),
-    ...(Number(formData.mrrdm_ivtmt)
-      ? [{ label: "iVAT Amount", value: fmt(formData.mrrdm_ivtmt) }]
-      : []),
-    { label: "VAT", value: fmt(formData.mrrdm_vtamt) },
-    { label: "Payable", value: fmt(formData.mrrdm_pyamt), strong: true, top: true },
-    { label: "Paid", value: fmt(formData.mrrdm_pdamt) },
-    { label: "Due", value: fmt(formData.mrrdm_duamt), strong: true },
+    { label: "VAT", value: fmt(formData.odrdm_vtamt) },
+    { label: "Payable", value: fmt(formData.odrdm_pyamt), strong: true, top: true },
+    { label: "Paid", value: fmt(formData.odrdm_pdamt) },
+    { label: "Due", value: fmt(formData.odrdm_duamt), strong: true },
   ];
 
   return (
     <div className="pos-receipt">
-      {/* Supplier & Doc info */}
+      {/* Doc info */}
       <div style={{ marginBottom: 4 }}>
         <div className="pos-receipt__line">
-          <span>Supplier</span>
-          <strong>{supplier?.cntct_cname || formData.mrrdm_cntct || "—"}</strong>
+          <span>SO No</span>
+          <strong>{formData.odrdm_trnno || formData.odrdm_refno || "—"}</strong>
         </div>
-        {formData.mrrdm_refno && (
+        <div className="pos-receipt__line">
+          <span>Date</span>
+          <strong>{formatDate(formData.odrdm_trdat)}</strong>
+        </div>
+        <div className="pos-receipt__line">
+          <span>Customer</span>
+          <strong>{customer?.cntct_cname || formData.odrdm_cntct || "—"}</strong>
+        </div>
+        {formData.odrdm_refno && (
           <div className="pos-receipt__line">
             <span>Ref No</span>
-            <strong>{formData.mrrdm_refno}</strong>
+            <strong>{formData.odrdm_refno}</strong>
           </div>
         )}
       </div>
@@ -55,13 +58,13 @@ const PosReceipt = ({ business, formData, listDataItem, supplier }) => {
       {listDataItem.map((r, idx) => (
         <div key={r.id || idx} style={{ marginBottom: 3 }}>
           <div style={{ fontSize: 9, fontWeight: 600 }}>
-            {r.items_iname || "—"}
+            {r.items_iname || r.price_cname || "—"}
           </div>
           <div className="pos-receipt__line">
             <span>
-              {fmt(r.mrrdc_itqty)} {r.runit_uname || ""} x {fmt(r.mrrdc_itrat)}
+              {fmt(r.odrdc_itqty)} {r.runit_cname || ""} x {fmt(r.odrdc_itrat)}
             </span>
-            <span>{fmt(r.mrrdc_itamt)}</span>
+            <span>{fmt(r.odrdc_itamt)}</span>
           </div>
         </div>
       ))}
@@ -95,14 +98,17 @@ const PosReceipt = ({ business, formData, listDataItem, supplier }) => {
 
       {/* Amount in words */}
       <div className="print-ftr-80__words">
-        In words: {amountInWords(formData.mrrdm_pyamt)}
+        In words: {amountInWords(formData.odrdm_pyamt)}
       </div>
     </div>
   );
 };
 
 /**
- * MRR print — thin document wrapper around the generic PrintModal.
+ * Sales Order print (M02) — thin document wrapper around the generic
+ * PrintModal. `formData` is the order master (odrdm_*) and `listDataItem` the
+ * order lines (odrdc_*); costing (mrrcs_*) and payments (mrrpy_*) mirror the
+ * Orders module's own child tables.
  */
 const PrintPage = ({
   open,
@@ -116,16 +122,22 @@ const PrintPage = ({
 }) => {
   const { business } = useApp();
 
+  // Business-wide default currency — the amount-in-words row only names the
+  // currency when this order's currency differs from it.
+  const businessCurrency = business?.bsins_crncy || "BDT";
+  const docCurrency = formData.odrdm_crncy || businessCurrency;
+
   const deptName =
-    dpart_Options?.find((o) => o.id === formData.mrrdm_dpart)?.dpart_cname ||
-    formData.mrrdm_dpart ||
+    dpart_Options?.find((o) => o.id === formData.odrdm_dpart)?.dpart_cname ||
+    formData.dpart_cname ||
+    formData.odrdm_dpart ||
     "";
 
-  const supplier =
-    cntct_Options?.find((o) => o.id === formData.mrrdm_cntct) || null;
+  const customer =
+    cntct_Options?.find((o) => o.id === formData.odrdm_cntct) || null;
 
   const totalQty = listDataItem.reduce(
-    (s, i) => s + (Number(i.mrrdc_itqty) || 0),
+    (s, i) => s + (Number(i.odrdc_itqty) || 0),
     0,
   );
 
@@ -133,16 +145,15 @@ const PrintPage = ({
     <PrintModal
       open={open}
       onClose={onClose}
-      title={`MRR - ${formData.mrrdm_trnno || formData.mrrdm_refno || ""}`}
+      title={`Sales Order - ${formData.odrdm_trnno || formData.odrdm_refno || ""}`}
       mode="a4"
       repeatHeader
       repeatFooter
       body80={
         <PosReceipt
-          business={business}
           formData={formData}
           listDataItem={listDataItem}
-          supplier={supplier}
+          customer={customer}
         />
       }
       header={
@@ -152,46 +163,43 @@ const PrintPage = ({
             address: business?.bsins_ofadr || business?.bsins_addr,
             taxId: business?.bsins_bin,
           }}
-          title="Material Receipt Report"
+          title={formData.odrdm_ttype || "SALES ORDER"}
           subtitle={deptName || business?.bsins_cname || ""}
-          docNoLabel="MRR No"
-          docNo={formData.mrrdm_trnno || formData.mrrdm_refno}
-          date={formatDate(formData.mrrdm_trdat)}
+          docNoLabel="SO No"
+          docNo={formData.odrdm_trnno || formData.odrdm_refno}
+          date={formatDate(formData.odrdm_trdat)}
           extra={[
-            { label: "Ref No", value: formData.mrrdm_refno },
-            {
-              label: "Currency",
-              value: formData.mrrdm_crncy || business?.bsins_crncy || "BDT",
-            },
-            ...(formData.mrrdm_vehid
-              ? [{ label: "Vehicle", value: formData.mrrdm_vehid }]
+            { label: "Ref No", value: formData.odrdm_refno },
+            { label: "Currency", value: docCurrency },
+            ...(formData.odrdm_vehid
+              ? [{ label: "Vehicle", value: formData.odrdm_vehid }]
               : []),
           ]}
         />
       }
       body={
         <>
-          {/* Supplier block */}
+          {/* Customer block */}
           <div className="print-party-block">
             <MetaItem
-              label="Supplier"
-              value={supplier?.cntct_cname || formData.mrrdm_cntct || "—"}
+              label="Customer"
+              value={customer?.cntct_cname || formData.cntct_cname || "—"}
             />
-            {supplier?.cntct_ofadr && (
+            {customer?.cntct_ofadr && (
               <div className="print-party-detail">
-                {supplier.cntct_ofadr}
+                {customer.cntct_ofadr}
               </div>
             )}
-            {supplier?.cntct_cntno && (
+            {customer?.cntct_cntno && (
               <div className="print-party-detail">
-                {supplier.cntct_cntps || "Contact"}: {supplier.cntct_cntno}
+                {customer.cntct_cntps || "Contact"}: {customer.cntct_cntno}
               </div>
             )}
           </div>
-          {formData.mrrdm_notes && (
+          {formData.odrdm_notes && (
             <div className="print-remarks">
               <strong>Remarks: </strong>
-              {formData.mrrdm_notes}
+              {formData.odrdm_notes}
             </div>
           )}
 
@@ -199,15 +207,15 @@ const PrintPage = ({
           <PrintTable
             columns={[
               { key: "#", header: "#", width: 24, align: "right", render: (_, idx) => idx + 1 },
-              { key: "items_iname", header: "Item" },
-              { key: "runit_uname", header: "Unit" },
-              { key: "mrrdc_itqty", header: "Qty", width: 55, align: "right", render: (r) => fmt(r.mrrdc_itqty) },
-              { key: "mrrdc_itrat", header: "Rate", width: 70, align: "right", render: (r) => fmt(r.mrrdc_itrat) },
-              { key: "mrrdc_itamt", header: "Amount", width: 70, align: "right", render: (r) => fmt(r.mrrdc_itamt) },
-              { key: "mrrdc_dspct", header: "Disc %", width: 55, align: "right", render: (r) => (r.mrrdc_dspct ? Number(r.mrrdc_dspct) + "%" : "—") },
-              { key: "mrrdc_dsamt", header: "Disc Amt", width: 70, align: "right", render: (r) => fmt(r.mrrdc_dsamt) },
-              { key: "mrrdc_vtamt", header: "VAT", width: 70, align: "right", render: (r) => fmt(r.mrrdc_vtamt) },
-              { key: "mrrdc_ntamt", header: "Net", width: 70, align: "right", render: (r) => fmt(r.mrrdc_ntamt) },
+              { key: "items_iname", header: "Item", render: (r) => r.items_iname || r.price_cname || "—" },
+              { key: "runit_cname", header: "Unit" },
+              { key: "odrdc_itqty", header: "Qty", width: 55, align: "right", render: (r) => fmt(r.odrdc_itqty) },
+              { key: "odrdc_itrat", header: "Rate", width: 70, align: "right", render: (r) => fmt(r.odrdc_itrat) },
+              { key: "odrdc_itamt", header: "Amount", width: 70, align: "right", render: (r) => fmt(r.odrdc_itamt) },
+              { key: "odrdc_dspct", header: "Disc %", width: 55, align: "right", render: (r) => (r.odrdc_dspct ? Number(r.odrdc_dspct) + "%" : "—") },
+              { key: "odrdc_dsamt", header: "Disc Amt", width: 70, align: "right", render: (r) => fmt(r.odrdc_dsamt) },
+              { key: "odrdc_vtamt", header: "VAT", width: 70, align: "right", render: (r) => fmt(r.odrdc_vtamt) },
+              { key: "odrdc_pyamt", header: "Payable", width: 70, align: "right", render: (r) => fmt(r.odrdc_pyamt) },
             ]}
             rows={listDataItem}
             emptyText="No items"
@@ -216,11 +224,11 @@ const PrintPage = ({
                 <td colSpan={3}>Total ({listDataItem.length} lines)</td>
                 <td>{fmt(totalQty)}</td>
                 <td />
-                <td>{fmt(formData.mrrdm_tramt)}</td>
+                <td>{fmt(formData.odrdm_tramt)}</td>
                 <td />
-                <td>{fmt(formData.mrrdm_itmds)}</td>
-                <td>{fmt(formData.mrrdm_vtamt)}</td>
-                <td>{fmt(formData.mrrdm_pyamt)}</td>
+                <td>{fmt(formData.odrdm_itmds)}</td>
+                <td>{fmt(formData.odrdm_vtamt)}</td>
+                <td>{fmt(formData.odrdm_pyamt)}</td>
               </tr>
             }
           />
@@ -228,20 +236,24 @@ const PrintPage = ({
           {/* Summary */}
           <Summary
             rows={[
-              { label: "Total Amount", value: fmt(formData.mrrdm_tramt) },
-              { label: "Item Discount", value: fmt(formData.mrrdm_itmds) },
-              ...(formData.mrrdm_invds
-                ? [{ label: "Invoice Discount", value: fmt(formData.mrrdm_invds) }]
+              { label: "Total Amount", value: fmt(formData.odrdm_tramt) },
+              { label: "Item Discount", value: fmt(formData.odrdm_itmds) },
+              ...(formData.odrdm_invds
+                ? [{ label: "Invoice Discount", value: fmt(formData.odrdm_invds) }]
                 : []),
-              ...(Number(formData.mrrdm_ivtmt)
-                ? [{ label: "iVAT Amount", value: fmt(formData.mrrdm_ivtmt) }]
-                : []),
-              { label: "VAT Amount", value: fmt(formData.mrrdm_vtamt) },
-              { label: "Include Cost", value: fmt(formData.mrrdm_icamt) },
-              { label: "Exclude Cost", value: fmt(formData.mrrdm_ecamt) },
-              { label: "Payable Amount", value: fmt(formData.mrrdm_pyamt), strong: true, divider: true },
-              { label: "Paid Amount", value: fmt(formData.mrrdm_pdamt) },
-              { label: "Due Amount", value: fmt(formData.mrrdm_duamt), strong: true },
+              { label: "VAT Amount", value: fmt(formData.odrdm_vtamt) },
+              { label: "Include Cost", value: fmt(formData.odrdm_icamt) },
+              { label: "Exclude Cost", value: fmt(formData.odrdm_ecamt) },
+              { label: "Payable Amount", value: fmt(formData.odrdm_pyamt), strong: true, divider: true },
+              { label: "Paid Amount", value: fmt(formData.odrdm_pdamt) },
+              { label: "Due Amount", value: fmt(formData.odrdm_duamt), strong: true },
+              {
+                label:
+                  docCurrency === businessCurrency
+                    ? "Amount in Words"
+                    : `Amount in Words (${docCurrency})`,
+                value: amountInWords(formData.odrdm_pyamt),
+              },
             ]}
           />
 
@@ -280,9 +292,7 @@ const PrintPage = ({
       }
       footer={
         <PrintFooter
-          currency={formData.mrrdm_crncy || "BDT"}
-          docName="MRR"
-          amountInWordsText={amountInWords(formData.mrrdm_pyamt)}
+          docName="Sales Order"
           signerName={formData.crusr_cname || DEFAULT_SIGNER_NAME}
           roles={["Prepared By", "Authorized"]}
         />

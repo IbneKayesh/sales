@@ -111,7 +111,6 @@ const JournalPrint = ({
       }
       footer={
         <PrintFooter
-          currency={formData.jrnlm_crncy || "BDT"}
           docName="voucher"
           signerName={formData.crusr_cname || DEFAULT_SIGNER_NAME}
           roles={["Prepared By", "Checked By", "Approved By"]}

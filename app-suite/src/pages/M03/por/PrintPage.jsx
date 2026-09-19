@@ -16,9 +16,7 @@ import {
 /**
  * Compact 80mm thermal receipt variant for MRR.
  */
-const PosReceipt = ({ business, formData, listDataItem, supplier }) => {
-  const currency = formData.mrrdm_crncy || business?.bsins_crncy || "BDT";
-
+const PosReceipt = ({ formData, listDataItem, supplier }) => {
   const totals = [
     { label: "Total Amount", value: fmt(formData.mrrdm_tramt) },
     { label: "Item Discount", value: fmt(formData.mrrdm_itmds) },
@@ -139,7 +137,6 @@ const PrintPage = ({
       repeatFooter
       body80={
         <PosReceipt
-          business={business}
           formData={formData}
           listDataItem={listDataItem}
           supplier={supplier}
@@ -280,9 +277,7 @@ const PrintPage = ({
       }
       footer={
         <PrintFooter
-          currency={formData.mrrdm_crncy || "BDT"}
           docName="MRR"
-          amountInWordsText={amountInWords(formData.mrrdm_pyamt)}
           signerName={formData.crusr_cname || DEFAULT_SIGNER_NAME}
           roles={["Prepared By", "Authorized"]}
         />

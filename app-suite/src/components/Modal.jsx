@@ -1,4 +1,5 @@
 import { useEffect, useCallback, useState, useRef } from 'react'
+import { createPortal } from 'react-dom'
 import { IconClose } from '../icons'
 
 /**
@@ -9,6 +10,13 @@ import { IconClose } from '../icons'
  *
  * `className` styles the dialog card; `overlayClassName` styles the backdrop
  * layer it is centred in (used by the floating windows in layouts/Window).
+ *
+ * The overlay is portaled to <body> (like src/print/PrintModal) so its fixed
+ * backdrop is always sized against the viewport. Rendered in place, a modal
+ * opened from a page inside a floating window would inherit that window's
+ * translate() as its containing block — the backdrop would then cover only
+ * the window's own area (offset by wherever it was dragged) instead of the
+ * full screen.
  *
  *     <ModalHeader title="Title" subtitle="Optional subtitle" onClose={() => setIsOpen(false)} />
  *     <ModalBody>...</ModalBody>
@@ -31,7 +39,10 @@ export default function Modal({
   onClose,
   onBackdropClick,
   size = 'md',            // sm | md | lg | xl | xxl | xxxl |full
-  closeOnBackdrop = true,
+  // A click on the backdrop never dismisses the modal by default: an
+  // accidental click outside the card must not throw away the user's input.
+  // Pass closeOnBackdrop (or onBackdropClick) to opt back in.
+  closeOnBackdrop = false,
   closeOnEscape = true,
   blockScroll = true,
   children,
@@ -107,12 +118,13 @@ export default function Modal({
   const overlayClass = `modal-overlay${closing ? ' modal-overlay--closing' : ''}${overlayClassName ? ' ' + overlayClassName : ''}`
   const modalClass = `modal modal--${size}${closing ? ' modal--closing' : ''}${className ? ' ' + className : ''}`
 
-  return (
+  return createPortal(
     <div className={overlayClass} onClick={handleBackdrop} role="dialog" aria-modal="true" {...rest}>
       <div className={modalClass} style={modalStyle} ref={modalRef}>
         {children}
       </div>
-    </div>
+    </div>,
+    document.body,
   )
 }
 

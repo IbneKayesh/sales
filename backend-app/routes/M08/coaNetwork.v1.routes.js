@@ -364,7 +364,7 @@ router.post("/get-sales-invoice-delivery-trip", async (req, res) => {
       JOIN tmtb_chtac cht ON pty.party_chtac = cht.id
       JOIN tmtb_chtrt crt ON cht.chtac_chtno = crt.chtrt_chtno
       WHERE crt.chtrt_trnid = 'SYS_DELIVERY_TRIP'
-      AND crt.chtrt_pegid = 'SYS_SALES_INVOICE'
+      AND crt.chtrt_pegid = 'SYS_SALES_ORDER'
       AND crt.chtrt_grpid IN ('SYS_EXP_DELIVERY_COST','SYS_NONE')
       AND crt.chtrt_route IN ('OWN','SYS_NONE')
       AND pty.party_actve = TRUE

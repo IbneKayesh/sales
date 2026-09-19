@@ -157,6 +157,11 @@ const PrintPage = ({
 }) => {
   const { business } = useApp();
 
+  // Business-wide default currency — the amount-in-words row only names the
+  // currency when this document's currency differs from it.
+  const businessCurrency = business?.bsins_crncy || "BDT";
+  const docCurrency = formData.invcm_crncy || businessCurrency;
+
   const deptName =
     dpart_Options?.find((o) => o.id === formData.invcm_dpart)?.dpart_cname ||
     formData.invcm_dpart ||
@@ -277,6 +282,13 @@ const PrintPage = ({
               { label: "Payable Amount", value: fmt(formData.invcm_pyamt), strong: true, divider: true },
               { label: "Paid Amount", value: fmt(formData.invcm_pdamt) },
               { label: "Due Amount", value: fmt(formData.invcm_duamt), strong: true },
+              {
+                label:
+                  docCurrency === businessCurrency
+                    ? "Amount in Words"
+                    : `Amount in Words (${docCurrency})`,
+                value: amountInWords(formData.invcm_pyamt),
+              },
             ]}
           />
 
@@ -314,9 +326,7 @@ const PrintPage = ({
       }
       footer={
         <PrintFooter
-          currency={formData.invcm_crncy || "BDT"}
           docName="invoice"
-          amountInWordsText={amountInWords(formData.invcm_pyamt)}
           signerName={formData.crusr_cname || DEFAULT_SIGNER_NAME}
           roles={["Prepared By", "Authorized"]}
         />
