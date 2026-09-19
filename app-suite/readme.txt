@@ -1,0 +1,1 @@
+print bottom page 1 of 3 is correct possition, but left side print  date time is not place correct possition, make sure date time page most left bottom and inline with Page 1 of 3 counter

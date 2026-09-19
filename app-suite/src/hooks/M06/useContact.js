@@ -1,15 +1,15 @@
 import { useEffect, useState } from "react";
 import { useUI } from "@/context/AppUIContext.jsx";
-import { contactAPI } from "@/api/M06/contactAPI.js";
 import validate, { generateDataModel } from "@/models/validator";
 import tmcb_cntct from "@/models/M06/tmcb_cntct.json";
+import tmcb_cntad from "@/models/M06/tmcb_cntad.json";
 const dataModel = generateDataModel(tmcb_cntct);
+const dataModelAddress = generateDataModel(tmcb_cntad);
+import { contactAPI } from "@/api/M06/contactAPI.js";
 import { partyAPI } from "@/api/M08/partyAPI.js";
 import { districtZoneAPI } from "@/api/M06/districtZoneAPI.js";
 import { thanaAreaAPI } from "@/api/M06/thanaAreaAPI.js";
 import { territoryAPI } from "@/api/M06/territoryAPI.js";
-import tmcb_cntad from "@/models/M06/tmcb_cntad.json";
-const dataModelAddress = generateDataModel(tmcb_cntad);
 import { reportsAPI } from "@/api/M08/reportsAPI.js";
 
 const useContact = () => {

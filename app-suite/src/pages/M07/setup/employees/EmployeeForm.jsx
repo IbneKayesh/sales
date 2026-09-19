@@ -4,6 +4,7 @@ import Dropdown from "@/components/Dropdown";
 import AuditData from "@/components/AuditData";
 import { IconClose, IconSave } from "@/icons";
 import { bool_Options } from "@/utils/vtable.js";
+import PartyView from "@/pages/M08/setup/parties/PartyView.jsx";
 
 const EmployeeForm = ({
   isBusy,
@@ -14,14 +15,15 @@ const EmployeeForm = ({
   onChange,
   onCancel,
   onSubmit,
+  partyData,
 }) => {
   return (
     <div className="form-wrap">
       <div className="grid">
-        <div className="col-span-3">
+        <div className="col-span-2">
           <InputText
-            label="Employee Code"
-            placeholder="Enter employee code"
+            label="Code"
+            placeholder="Enter code"
             value={formData.emply_ccode}
             onChange={(e) => onChange("emply_ccode", e.target.value)}
             error={formErrors.emply_ccode}
@@ -29,21 +31,10 @@ const EmployeeForm = ({
             disabled={readOnly}
           />
         </div>
-        <div className="col-span-3">
-          <InputText
-            label="Card No"
-            placeholder="Enter card number"
-            value={formData.emply_crdno}
-            onChange={(e) => onChange("emply_crdno", e.target.value)}
-            error={formErrors.emply_crdno}
-            required
-            disabled={readOnly}
-          />
-        </div>
         <div className="col-span-6">
           <InputText
-            label="Employee Name"
-            placeholder="Enter employee name"
+            label="Name"
+            placeholder="Enter full name"
             value={formData.emply_cname}
             onChange={(e) => onChange("emply_cname", e.target.value)}
             error={formErrors.emply_cname}
@@ -51,13 +42,10 @@ const EmployeeForm = ({
             disabled={readOnly}
           />
         </div>
-      </div>
-
-      <div className="grid">
-        <div className="col-span-4">
+        <div className="col-span-2">
           <InputText
             label="Contact No"
-            placeholder="Enter contact number"
+            placeholder="Enter contact no"
             value={formData.emply_cntno}
             onChange={(e) => onChange("emply_cntno", e.target.value)}
             error={formErrors.emply_cntno}
@@ -65,7 +53,7 @@ const EmployeeForm = ({
             disabled={readOnly}
           />
         </div>
-        <div className="col-span-4">
+        <div className="col-span-2">
           <InputText
             label="Email"
             placeholder="email@example.com"
@@ -97,8 +85,18 @@ const EmployeeForm = ({
             disabled={readOnly}
           />
         </div>
+        <div className="col-span-2">
+          <InputText
+            label="Card No"
+            placeholder="Enter card number"
+            value={formData.emply_crdno}
+            onChange={(e) => onChange("emply_crdno", e.target.value)}
+            error={formErrors.emply_crdno}
+            required
+            disabled={readOnly}
+          />
+        </div>
       </div>
-
       {formData?.id && (
         <AuditData
           actve={formData.emply_actve}
@@ -109,6 +107,7 @@ const EmployeeForm = ({
           rvnmr={formData.emply_rvnmr}
         />
       )}
+      {formData?.id && <PartyView listData={partyData} />}
       <div className="form-actions">
         <Button variant="secondary" onClick={onCancel} disabled={isBusy}>
           <IconClose size={16} className="icon-left" />

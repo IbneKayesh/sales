@@ -20,7 +20,7 @@ router.post("/", async (req, res) => {
     }
 
     //database action
-    const sql = `SELECT odr.*, dpt.dpart_cname, cnt.cntct_cname, COALESCE(tpm.tripm_trnno, 'Delivery Trip is not assigned') tripm_trnno,
+    const sql = `SELECT odr.*, dpt.dpart_cname, cnt.cntct_cname, COALESCE(tpm.tripm_trnno, 'Delivery trip is not assigned') tripm_trnno,
     csr.emply_cname AS crusr_cname, usr.emply_cname AS upusr_cname, 0 as edit_stop
     FROM tmob_odrdm odr
     JOIN tmsb_dpart dpt ON odr.odrdm_dpart = dpt.id
@@ -116,6 +116,7 @@ const create = async (req, res) => {
       odrdm_stamt,
       odrdm_csamt,
       odrdm_vehid,
+      odrdm_pstby,
       odrdm_ispst,
       odrdm_ispad,
       odrdm_isqcp,
@@ -167,13 +168,13 @@ const create = async (req, res) => {
       sql: `INSERT INTO tmob_odrdm(id, odrdm_users, odrdm_bsins, odrdm_dpart, odrdm_cntct, odrdm_ttype,
                         odrdm_trnno, odrdm_trdat, odrdm_refno, odrdm_notes, odrdm_tramt, odrdm_itmds,
                         odrdm_dspct, odrdm_invds, odrdm_vtamt, odrdm_icamt, odrdm_ecamt, odrdm_pyamt,
-                        odrdm_pdamt, odrdm_duamt, odrdm_stamt, odrdm_csamt, odrdm_vehid, odrdm_ispst,
-                        odrdm_ispad, odrdm_isqcp, odrdm_isapp, odrdm_crusr, odrdm_upusr)
+                        odrdm_pdamt, odrdm_duamt, odrdm_stamt, odrdm_csamt, odrdm_vehid, odrdm_pstby,
+                        odrdm_ispst, odrdm_ispad, odrdm_isqcp, odrdm_isapp, odrdm_crusr, odrdm_upusr)
     VALUES ($1, $2, $3, $4, $5, $6,
             $7, $8, $9, $10, $11, $12,
             $13, $14, $15, $16, $17, $18,
             $19, $20, $21, $22, $23, $24,
-            $25, $26, $27, $28, $29)`,
+            $25, $26, $27, $28, $29, $30)`,
       params: [
         newId,
         user_c,
@@ -198,6 +199,7 @@ const create = async (req, res) => {
         odrdm_stamt || 0,
         odrdm_csamt || 0,
         odrdm_vehid,
+        odrdm_pstby,
         true,
         odrdm_ispad,
         true,
@@ -250,11 +252,10 @@ const create = async (req, res) => {
         label: `Created odr detail ${newTrnNo}`,
       });
 
-      //update sales booking
+      //update sales order booking
       scripts.push({
         sql: `UPDATE tmib_price
-              SET price_lprat = $1,
-                  price_sbqty = price_sbqty + $2,
+              SET price_pbqty = price_pbqty + $2,
                   price_upusr = $3,
                   price_updat = CURRENT_TIMESTAMP,
                   price_rvnmr = price_rvnmr + 1
@@ -263,7 +264,6 @@ const create = async (req, res) => {
                   AND price_items = $6
                   AND price_dpart = $7`,
         params: [
-          det.odrdc_itrat,
           det.odrdc_itqty || 0,
           user_s,
           det.odrdc_price,

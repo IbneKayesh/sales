@@ -43,6 +43,7 @@ const useOrders = () => {
   const [cntct_Options, setCntct_Options] = useState([]);
   const [items_Options, setItems_Options] = useState([]);
   const [allItems, setAllItems] = useState([]);
+  const [emply_Options, setEmply_Options] = useState([]);
 
   //costing
   const [mrrcs_Options, setMrrcs_Options] = useState([]);
@@ -457,11 +458,15 @@ const useOrders = () => {
     } catch (error) {}
   };
 
-  const getPOContacts = async (v) => {
+  const getPostEmployee = async () => {
+    if (emply_Options.length > 0) {
+      return;
+    }
     try {
-      const resp = await contactAPI.getSuppliersPendingMRR({ dpart_id: v });
+      const resp = await coaNetworkAPI.getSalesOrderPostedBy({});
       const list = resp.data || [];
-      setCntct_Options(list);
+      setEmply_Options(list);
+      //console.log("list",list)
     } catch (error) {}
   };
 
@@ -645,6 +650,7 @@ const useOrders = () => {
     getAllContacts();
     getAllDepartments();
     getExpnPaym();
+    getPostEmployee();
   };
 
   const handleCancel = () => {
@@ -1056,6 +1062,7 @@ const useOrders = () => {
     listDataCost,
     mrrpy_Options,
     listDataPayment,
+    emply_Options,
     //functions
     handleChange,
     handleEdit,

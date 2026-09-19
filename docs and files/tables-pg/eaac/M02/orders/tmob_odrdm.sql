@@ -31,6 +31,7 @@ CREATE TABLE tmob_odrdm (
   odrdm_stamt decimal(18,6) DEFAULT 0.00, --total amount
   odrdm_csamt decimal(18,6) DEFAULT 0.00, --inventory cost amount
   odrdm_vehid VARCHAR(50),
+  odrdm_pstby VARCHAR(50), --order collected by
   odrdm_ispst boolean NOT NULL DEFAULT false,
   odrdm_ispad boolean NOT NULL DEFAULT false,
   odrdm_isqcp boolean NOT NULL DEFAULT false,

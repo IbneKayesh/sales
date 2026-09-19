@@ -54,4 +54,8 @@ export const coaNetworkAPI = {
     apiRequest("/M08/v1/coa-network/get-sales-invoice-delivery-trip", {
       body: data,
     }),
+  getSalesOrderPostedBy: (data) =>
+    apiRequest("/M08/v1/coa-network/get-sales-order-posted-by", {
+      body: data,
+    }),
 };

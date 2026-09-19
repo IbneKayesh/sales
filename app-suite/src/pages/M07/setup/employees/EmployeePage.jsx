@@ -4,7 +4,7 @@ import PageCard, {
   PageCardActions,
   PageCardBody,
 } from "@/components/PageCard";
-import { IconSearch, IconClose, IconPlus, IconSave } from "@/icons";
+import { IconSearch, IconClose, IconPlus, IconSave, IconUser } from "@/icons";
 import Button from "@/components/Button";
 import useEmply from "@/hooks/M07/useEmply";
 import EmployeeList from "./EmployeeList";
@@ -30,6 +30,9 @@ const EmployeePage = () => {
     handleAddNew,
     handleCancel,
     handleSubmit,
+    //others
+    partyData,
+    handleAddNewFF,
   } = useEmply();
 
   return (
@@ -65,6 +68,12 @@ const EmployeePage = () => {
                 {formData?.id ? "Update" : "Create"}
               </Button>
             )}
+            {pgView === "SYS_VW_FRM_1" && formData?.id && (
+              <Button variant="info" size="sm" onClick={handleAddNewFF}>
+                <IconUser size={14} className="icon-left" />
+                Create Field Force ID
+              </Button>
+            )}
           </PageCardActions>
         </PageCardHeader>
         <PageCardBody>
@@ -85,6 +94,7 @@ const EmployeePage = () => {
               onChange={handleChange}
               onCancel={handleCancel}
               onSubmit={handleSubmit}
+              partyData={partyData}
             />
           )}
         </PageCardBody>

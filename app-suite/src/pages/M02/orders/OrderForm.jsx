@@ -19,6 +19,7 @@ const OrderForm = ({
   onSubmit,
   dpart_Options,
   cntct_Options,
+  emply_Options,
   //modal
   onShowModal,
 }) => {
@@ -80,10 +81,24 @@ const OrderForm = ({
       </PageSection>
       <PageSection title="Delivery and Remarks">
         <div className="grid">
-          <div className="col-span-4">
+          <div className="col-span-3">
             <InputLabel label="Trip" value={formData.tripm_trnno} />
           </div>
-          <div className="col-span-8">
+          <div className="col-span-3">
+            <Dropdown
+              label="Posted By"
+              options={emply_Options}
+              value={formData.odrdm_pstby}
+              onChange={(e) => onChange("odrdm_pstby", e.target.value)}
+              error={formErrors.odrdm_pstby}
+              placeholder="Select..."
+              disabled={readOnly || stopEdit}
+              optionValue="id"
+              optionLabel="party_cname"
+              optionGrid="party_cname:Name,chtac_chtno:COA,party_crbal:Balance"
+            />
+          </div>
+          <div className="col-span-6">
             <InputText
               label="Notes"
               placeholder="Enter notes"

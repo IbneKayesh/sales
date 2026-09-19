@@ -130,6 +130,13 @@
     "placeholder": "Enter vehicle",
     "required": false
   },
+  "odrdm_pstby": {
+    "type": "string",
+    "label": "Posted By",
+    "maxLength": 50,
+    "placeholder": "Enter posted by",
+    "required": false
+  },
   "odrdm_ispst": {
     "type": "boolean",
     "label": "Is Posted",

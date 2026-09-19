@@ -8,23 +8,23 @@
     "label": "Employee Code",
     "maxLength": 50,
     "minLength": 2,
-    "placeholder": "Enter employee code",
-    "required": true
+    "placeholder": "Enter code",
+    "required": false
   },
   "emply_cname": {
     "type": "string",
     "label": "Employee Name",
     "maxLength": 50,
     "minLength": 3,
-    "placeholder": "Enter employee name",
+    "placeholder": "Enter name",
     "required": true
   },
   "emply_cntno": {
     "type": "string",
     "label": "Contact No",
     "maxLength": 50,
-    "minLength": 7,
-    "placeholder": "Enter contact number",
+    "minLength": 11,
+    "placeholder": "Enter contact no",
     "required": true
   },
   "emply_email": {
@@ -33,6 +33,11 @@
     "maxLength": 50,
     "placeholder": "email@example.com",
     "required": true
+  },
+  "emply_isprm": {
+    "type": "boolean",
+    "label": "Is Permanent",
+    "default": false
   },
   "emply_urole": {
     "type": "string",
@@ -47,10 +52,5 @@
     "maxLength": 50,
     "placeholder": "Enter card number",
     "required": true
-  },
-  "emply_isprm": {
-    "type": "boolean",
-    "label": "Is Permanent",
-    "default": false
   }
 }

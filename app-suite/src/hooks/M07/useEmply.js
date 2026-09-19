@@ -1,9 +1,10 @@
 import { useEffect, useState } from "react";
 import { useUI } from "@/context/AppUIContext.jsx";
-import { emplyAPI } from "@/api/M07/emplyAPI.js";
 import validate, { generateDataModel } from "@/models/validator";
 import tmhb_emply from "@/models/M07/tmhb_emply.json";
 const dataModel = generateDataModel(tmhb_emply);
+import { emplyAPI } from "@/api/M07/emplyAPI.js";
+import { partyAPI } from "@/api/M08/partyAPI.js";
 
 const useEmply = () => {
   const { showToast, confirmBox, alertBox, isBusy, setIsBusy } = useUI();
@@ -22,6 +23,8 @@ const useEmply = () => {
   const [listDataItem, setListDataItem] = useState([]);
   const [formDataItem, setFormDataItem] = useState({});
   const [formErrors, setFormErrors] = useState({});
+  //others
+  const [partyData, setPartyData] = useState([]);
 
   const getAllEmply = async () => {
     try {
@@ -39,6 +42,18 @@ const useEmply = () => {
     getAllEmply();
   }, []);
 
+  const getPartyData = async (id) => {
+    try {
+      setIsBusy(true);
+      const resp = await partyAPI.getByVendorId({ party_vndor: id });
+      const data = resp.data || {};
+      setPartyData(data);
+    } catch (error) {
+    } finally {
+      setIsBusy(false);
+    }
+  };
+
   const handleChange = (f, v) => {
     setFormData((prev) => ({ ...prev, [f]: v }));
     const newErrors = validate({ ...formData, [f]: v }, tmhb_emply);
@@ -48,6 +63,7 @@ const useEmply = () => {
   const handleEdit = (rowData) => {
     setPgView("SYS_VW_FRM_1");
     setFormData(rowData);
+    getPartyData(rowData.id);
   };
 
   const handleDelete = async (rowData) => {
@@ -135,6 +151,34 @@ const useEmply = () => {
     }
   };
 
+  const handleAddNewFF = async () => {
+    const dataName = formData.emply_cname;
+    const confirmation = await confirmBox({
+      title: "Field Force ID",
+      message: `Are you sure you want to Create Field Force ID "${dataName}"?`,
+      confirmText: "Create",
+      variant: "success",
+    });
+    if (!confirmation) return;
+
+    try {
+      setIsBusy(true);
+      const resp = await emplyAPI.createFF(formData);
+      alertBox({
+        title: resp.success ? "Created" : "Error",
+        message: resp.message,
+        variant: resp.success ? "success" : "danger",
+        confirmText: resp.success ? "Done" : "Close",
+      });
+      if (resp.success) {
+        handleEdit(formData);
+      }
+    } catch (error) {
+    } finally {
+      setIsBusy(false);
+    }
+  };
+
   return {
     isBusy,
     pgView,
@@ -154,6 +198,9 @@ const useEmply = () => {
     handleAddNew,
     handleCancel,
     handleSubmit,
+    //others
+    partyData,
+    handleAddNewFF,
   };
 };
 export default useEmply;

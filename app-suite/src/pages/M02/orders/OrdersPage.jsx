@@ -43,6 +43,7 @@ const OrdersPage = () => {
     listDataCost,
     mrrpy_Options,
     listDataPayment,
+    emply_Options,
     //functions
     handleChange,
     handleEdit,
@@ -187,6 +188,7 @@ const OrdersPage = () => {
               onSubmit={handleSubmit}
               dpart_Options={dpart_Options}
               cntct_Options={cntct_Options}
+              emply_Options={emply_Options}
               //modal
               onShowModal={handleShowModal}
             />
