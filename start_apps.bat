@@ -56,9 +56,14 @@ start cmd /k "cd app-player && node index.js"
 echo  ---- Web Running ----
 goto MENU
 
-:M
+:MX
 start cmd /k "cd backend-app && node server.js"
 start cmd /k "cd app-suite && npm run dev"
+echo  ---- Suite + API Running ----
+goto MENU
+
+:M
+wt.exe -d "%~dp0backend-app" cmd /k "node server.js" ; -d "%~dp0app-suite" cmd /k "npm run dev"
 echo  ---- Suite + API Running ----
 goto MENU
 

@@ -4,19 +4,13 @@ import PageCard, {
   PageCardActions,
   PageCardBody,
 } from "@/components/PageCard";
-import {
-  IconSearch,
-  IconClose,
-  IconPlus,
-  IconSave,
-  IconChevronLeft,
-} from "@/icons";
+import { IconSearch, IconClose, IconPlus, IconSave } from "@/icons";
 import Button from "@/components/Button";
 import useThanaArea from "@/hooks/M06/useThanaArea";
 import ThanaAreaList from "./ThanaAreaList";
 import ThanaAreaForm from "./ThanaAreaForm";
 
-const ThanaAreaPage = () => {
+const DRoutePage = () => {
   const {
     isBusy,
     pgView,
@@ -38,9 +32,6 @@ const ThanaAreaPage = () => {
     handleAddNew,
     handleCancel,
     handleSubmit,
-    //on link
-    handleTerritory,
-    handleBackToDZ,
   } = useThanaArea();
 
   return (
@@ -48,16 +39,10 @@ const ThanaAreaPage = () => {
       <PageCard>
         <PageCardHeader>
           <PageCardTitle
-            title="Thana / Areas"
-            subtitle={`${listData.length} Thana Areas`}
+            title="Delivery Routes"
+            subtitle={`${listData.length} delivery routes`}
           />
           <PageCardActions>
-            {pgView === "SYS_VW_LST_1" && (
-              <Button variant="help" size="sm" onClick={handleBackToDZ}>
-                <IconChevronLeft size={14} className="icon-left" />
-                Back to District / Zone
-              </Button>
-            )}
             {pgView === "SYS_VW_LST_1" && (
               <Button variant="info" size="sm" onClick={handleSearch}>
                 <IconSearch size={14} className="icon-left" />
@@ -90,7 +75,6 @@ const ThanaAreaPage = () => {
               listData={listData}
               onEdit={handleEdit}
               onDelete={handleDelete}
-              onTerritory={handleTerritory}
             />
           )}
           {pgView === "SYS_VW_FRM_1" && (
@@ -111,4 +95,4 @@ const ThanaAreaPage = () => {
     </div>
   );
 };
-export default ThanaAreaPage;
+export default DRoutePage;

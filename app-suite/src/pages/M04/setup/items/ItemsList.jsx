@@ -3,7 +3,7 @@ import Badge from "@/components/Badge";
 import ActionButton from "@/components/ActionButton";
 import Button from "@/components/Button";
 import Chip from "@/components/Chip";
-import { IconClose, IconCheck, IconActivity, IconChevronDown } from "@/icons";
+import { IconClose, IconCheck, IconChevronDown } from "@/icons";
 import Dropdown from "@/components/Dropdown";
 import NegativeValue from "@/components/common/NegativeValue";
 import ConvertUOM from "@/components/common/ConvertUOM";

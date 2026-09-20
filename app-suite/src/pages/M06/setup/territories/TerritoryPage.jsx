@@ -4,7 +4,13 @@ import PageCard, {
   PageCardActions,
   PageCardBody,
 } from "@/components/PageCard";
-import { IconSearch, IconClose, IconPlus, IconSave } from "@/icons";
+import {
+  IconSearch,
+  IconClose,
+  IconPlus,
+  IconSave,
+  IconChevronLeft,
+} from "@/icons";
 import Button from "@/components/Button";
 import useTerritory from "@/hooks/M06/useTerritory";
 import TerritoryList from "./TerritoryList";
@@ -33,14 +39,26 @@ const TerritoryPage = () => {
     handleAddNew,
     handleCancel,
     handleSubmit,
+    //on link
+    handleRoutes,
+    handleBackToTA,
   } = useTerritory();
 
   return (
     <div className="page-wrap">
       <PageCard>
         <PageCardHeader>
-          <PageCardTitle title="Territories" subtitle="All Territories" />
+          <PageCardTitle
+            title="Territories"
+            subtitle={`${listData.length} Territories`}
+          />
           <PageCardActions>
+            {pgView === "SYS_VW_LST_1" && (
+              <Button variant="help" size="sm" onClick={handleBackToTA}>
+                <IconChevronLeft size={14} className="icon-left" />
+                Back to Thana / Area
+              </Button>
+            )}
             {pgView === "SYS_VW_LST_1" && (
               <Button variant="info" size="sm" onClick={handleSearch}>
                 <IconSearch size={14} className="icon-left" />
@@ -73,6 +91,7 @@ const TerritoryPage = () => {
               listData={listData}
               onEdit={handleEdit}
               onDelete={handleDelete}
+              onRoutes={handleRoutes}
             />
           )}
           {pgView === "SYS_VW_FRM_1" && (

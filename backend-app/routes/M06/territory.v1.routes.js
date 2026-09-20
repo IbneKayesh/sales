@@ -7,7 +7,7 @@ const { GenNewCode } = require("../../db/genHelper");
 // get all
 router.post("/", async (req, res) => {
   try {
-    const { user_s, user_c, user_b } = req.body;
+    const { tarea_id, user_s, user_c, user_b } = req.body;
 
     // Validate input
     if (!user_c) {
@@ -19,17 +19,24 @@ router.post("/", async (req, res) => {
     }
 
     //database action
-    const sql = `SELECT try.*, ta.tarea_cname, dzn.id tarea_dzone, dzn.dzone_cname, 
+    let sql = `SELECT try.*, ta.tarea_cname, dzn.id tarea_dzone, dzn.dzone_cname, 
     csr.emply_cname AS crusr_cname, usr.emply_cname AS upusr_cname, 0 as edit_stop
     FROM tmcb_trtry try
     LEFT JOIN tmcb_tarea ta ON try.trtry_tarea = ta.id
     LEFT JOIN tmcb_dzone dzn ON ta.tarea_dzone = dzn.id
     LEFT JOIN tmhb_emply csr ON try.trtry_crusr = csr.id
     LEFT JOIN tmhb_emply usr ON try.trtry_upusr = usr.id
-    WHERE try.trtry_users = $1
-    ORDER BY try.trtry_cname ASC`;
+    WHERE try.trtry_users = $1`;
 
     const params = [user_c];
+    
+    // Optional area thana filter
+    if (tarea_id) {
+      sql += ` AND try.trtry_tarea = $2`;
+      params.push(tarea_id);
+    }
+    sql += ` ORDER BY try.trtry_cname ASC`;
+
     const rows = await dbGetAll(sql, params, `get territory- ${user_c}`);
     res.json({
       success: true,

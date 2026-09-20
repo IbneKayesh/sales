@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { useSearchParams, useNavigate } from "react-router-dom";
 import { useUI } from "@/context/AppUIContext.jsx";
 import { thanaAreaAPI } from "@/api/M06/thanaAreaAPI.js";
 import validate, { generateDataModel } from "@/models/validator";
@@ -7,6 +8,10 @@ const dataModel = generateDataModel(tmcb_tarea);
 import { districtZoneAPI } from "@/api/M06/districtZoneAPI.js";
 
 const useThanaArea = () => {
+  const [searchParams] = useSearchParams();
+  const dzone = searchParams.get("dzone");
+  const navigate = useNavigate();
+
   const { showToast, confirmBox, alertBox, isBusy, setIsBusy } = useUI();
   const [pgView, setPgView] = useState("SYS_VW_LST_1");
   const [pgId, setPgId] = useState("M06-M0003");
@@ -29,7 +34,7 @@ const useThanaArea = () => {
   const getAllThanaArea = async () => {
     try {
       setIsBusy(true);
-      const resp = await thanaAreaAPI.getAll({});
+      const resp = await thanaAreaAPI.getAll({ dzone_id: dzone });
       const list = resp.data || [];
       setListData(list);
     } catch (error) {
@@ -151,6 +156,13 @@ const useThanaArea = () => {
     }
   };
 
+  //on link
+  const handleTerritory = (rowData) => {
+    navigate(`/crm/setup/territories?tarea=${rowData.id}`);
+  };
+  const handleBackToDZ = () => {
+    navigate(`/crm/setup/district-zones`);
+  };
   return {
     isBusy,
     pgView,
@@ -172,6 +184,9 @@ const useThanaArea = () => {
     handleAddNew,
     handleCancel,
     handleSubmit,
+    //on link
+    handleTerritory,
+    handleBackToDZ,
   };
 };
 export default useThanaArea;

@@ -30,6 +30,8 @@ const DistrictZonePage = () => {
     handleAddNew,
     handleCancel,
     handleSubmit,
+    //on link
+    handleTArea,
   } = useDistrictZone();
 
   return (
@@ -38,7 +40,7 @@ const DistrictZonePage = () => {
         <PageCardHeader>
           <PageCardTitle
             title="District / Zone"
-            subtitle="All District / Zone"
+            subtitle={`${listData.length} District / Zone`}
           />
           <PageCardActions>
             {pgView === "SYS_VW_LST_1" && (
@@ -73,6 +75,7 @@ const DistrictZonePage = () => {
               listData={listData}
               onEdit={handleEdit}
               onDelete={handleDelete}
+              onTArea={handleTArea}
             />
           )}
           {pgView === "SYS_VW_FRM_1" && (

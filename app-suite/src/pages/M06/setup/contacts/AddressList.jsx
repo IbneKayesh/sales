@@ -44,7 +44,7 @@ const AddressList = ({ listData, onEdit, onDelete }) => {
       <DataTable
         columns={dtColumns}
         data={listData}
-        pageSize={20}
+        pageSize={25}
         sortable
         searchable={false}
         striped

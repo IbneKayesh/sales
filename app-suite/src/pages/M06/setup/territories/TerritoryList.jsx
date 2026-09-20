@@ -1,38 +1,47 @@
 import DataTable from "@/components/DataTable";
 import Badge from "@/components/Badge";
 import ActionButton from "@/components/ActionButton";
-import { IconClose, IconCheck } from "@/icons";
+import { IconClose, IconCheck, IconChevronDown } from "@/icons";
+import InactiveText from "@/components/InactiveText";
+import Button from "@/components/Button";
 
-const TerritoryList = ({ listData, onEdit, onDelete }) => {
+const TerritoryList = ({ listData, onEdit, onDelete, onRoutes }) => {
   const dtColumns = [
-    { key: "trtry_cname", header: "Territory Name", width: "80px" },
-    { key: "tarea_cname", header: "T/Area", width: "80px" },
-    { key: "dzone_cname", header: "D/Zone", width: "80px" },
     {
-      key: "trtry_actve",
-      header: "Status",
-      width: "110px",
-      body: (v) => {
-        return (
-          <Badge variant={v ? "success" : "danger"}>
-            {v ? <IconCheck size={12} /> : <IconClose size={12} />}
-            {v ? "Active" : "Inactive"}
-          </Badge>
-        );
+      key: "trtry_cname",
+      header: "Territory Name",
+      width: "80px",
+      body: (_, row) => {
+        return <InactiveText text={row.trtry_cname} active={row.trtry_actve} />;
       },
     },
+    { key: "tarea_cname", header: "T/Area", width: "80px" },
+    { key: "dzone_cname", header: "D/Zone", width: "80px" },
     {
       key: "actions",
       header: "Actions",
       width: "110px",
       sortable: false,
       body: (_, row) => (
-        <ActionButton
-          rowData={row}
-          actve={row.trtry_actve}
-          onEdit={onEdit}
-          onDelete={onDelete}
-        />
+        <>
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={(e) => {
+              e.stopPropagation();
+              onRoutes(row);
+            }}
+            title="Routes"
+          >
+            <IconChevronDown size={14} />
+          </Button>
+          <ActionButton
+            rowData={row}
+            actve={row.trtry_actve}
+            onEdit={onEdit}
+            onDelete={onDelete}
+          />
+        </>
       ),
     },
   ];
@@ -40,7 +49,7 @@ const TerritoryList = ({ listData, onEdit, onDelete }) => {
     <DataTable
       columns={dtColumns}
       data={listData}
-      pageSize={15}
+      pageSize={25}
       sortable
       searchable
       striped

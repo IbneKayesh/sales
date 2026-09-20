@@ -7,7 +7,7 @@ const { GenNewCode } = require("../../db/genHelper");
 // get all
 router.post("/", async (req, res) => {
   try {
-    const { user_s, user_c, user_b } = req.body;
+    const { dzone_id, user_s, user_c, user_b } = req.body;
 
     // Validate input
     if (!user_c) {
@@ -19,16 +19,21 @@ router.post("/", async (req, res) => {
     }
 
     //database action
-    const sql = `SELECT ta.*, dzn.dzone_cname, 
+    let sql = `SELECT ta.*, dzn.dzone_cname, 
     csr.emply_cname AS crusr_cname, usr.emply_cname AS upusr_cname, 0 as edit_stop
     FROM tmcb_tarea ta
     LEFT JOIN tmcb_dzone dzn ON ta.tarea_dzone = dzn.id
     LEFT JOIN tmhb_emply csr ON ta.tarea_crusr = csr.id
     LEFT JOIN tmhb_emply usr ON ta.tarea_upusr = usr.id
-    WHERE ta.tarea_users = $1
-    ORDER BY ta.tarea_cname ASC`;
-
+    WHERE ta.tarea_users = $1`;
     const params = [user_c];
+    
+    // Optional district zone filter
+    if (dzone_id) {
+      sql += ` AND ta.tarea_dzone = $2`;
+      params.push(dzone_id);
+    }
+    sql += ` ORDER BY ta.tarea_cname ASC`;
     const rows = await dbGetAll(sql, params, `get tarea- ${user_c}`);
     res.json({
       success: true,

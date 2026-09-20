@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { useUI } from "@/context/AppUIContext.jsx";
 import { districtZoneAPI } from "@/api/M06/districtZoneAPI.js";
 import validate, { generateDataModel } from "@/models/validator";
@@ -6,6 +7,7 @@ import tmcb_dzone from "@/models/M06/tmcb_dzone.json";
 const dataModel = generateDataModel(tmcb_dzone);
 
 const useDistrictZone = () => {
+  const navigate = useNavigate();
   const { showToast, confirmBox, alertBox, isBusy, setIsBusy } = useUI();
   const [pgView, setPgView] = useState("SYS_VW_LST_1");
   const [pgId, setPgId] = useState("M06-M02-M001");
@@ -135,6 +137,11 @@ const useDistrictZone = () => {
     }
   };
 
+  //on link
+  const handleTArea = (rowData) => {
+    navigate(`/crm/setup/thana-areas?dzone=${rowData.id}`);
+  };
+
   return {
     isBusy,
     pgView,
@@ -154,6 +161,8 @@ const useDistrictZone = () => {
     handleAddNew,
     handleCancel,
     handleSubmit,
+    //on link
+    handleTArea,
   };
 };
 export default useDistrictZone;
