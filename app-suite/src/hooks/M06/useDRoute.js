@@ -1,21 +1,20 @@
 import { useEffect, useState } from "react";
 import { useSearchParams, useNavigate } from "react-router-dom";
 import { useUI } from "@/context/AppUIContext.jsx";
-import { territoryAPI } from "@/api/M06/territoryAPI.js";
+import { droutesAPI } from "@/api/M06/droutesAPI.js";
 import validate, { generateDataModel } from "@/models/validator";
-import tmcb_trtry from "@/models/M06/tmcb_trtry.json";
-const dataModel = generateDataModel(tmcb_trtry);
-import { districtZoneAPI } from "@/api/M06/districtZoneAPI.js";
-import { thanaAreaAPI } from "@/api/M06/thanaAreaAPI.js";
+import tmcb_route from "@/models/M06/tmcb_route.json";
+const dataModel = generateDataModel(tmcb_route);
 
-const useTerritory = () => {
+const useDRoute = () => {
   const [searchParams] = useSearchParams();
-  const tarea = searchParams.get("tarea");
+  const territory = searchParams.get("territory");
+  const territoryname = searchParams.get("territoryname");
   const navigate = useNavigate();
 
   const { showToast, confirmBox, alertBox, isBusy, setIsBusy } = useUI();
   const [pgView, setPgView] = useState("SYS_VW_LST_1");
-  const [pgId, setPgId] = useState("M06-M0002");
+  const [pgId, setPgId] = useState("M06-M0003");
   const [pageAuth, setPageAuth] = useState({
     extpr: false,
     addpr: false,
@@ -31,12 +30,11 @@ const useTerritory = () => {
   const [formErrors, setFormErrors] = useState({});
   //others
   const [dzone_Options, setDzone_Options] = useState([]);
-  const [tarea_Options, setTarea_Options] = useState([]);
 
-  const getAllTerritory = async () => {
+  const getAllDRoutes = async () => {
     try {
       setIsBusy(true);
-      const resp = await territoryAPI.getAll({ tarea_id: tarea });
+      const resp = await droutesAPI.getAll({ trtry_id: territory });
       const list = resp.data || [];
       setListData(list);
     } catch (error) {
@@ -46,45 +44,27 @@ const useTerritory = () => {
   };
 
   useEffect(() => {
-    getAllTerritory();
+    getAllDRoutes();
   }, []);
 
-  const getAllDZones = async () => {
-    if (dzone_Options.length > 0) {
-      return;
-    }
-    try {
-      const resp = await districtZoneAPI.getAllActive({});
-      const list = resp.data || [];
-      setDzone_Options(list);
-    } catch (error) {}
-  };
-  const getAllTAreas = async (id) => {
-    try {
-      const resp = await thanaAreaAPI.getByZone({ tarea_dzone: id });
-      const list = resp.data || [];
-      setTarea_Options(list);
-    } catch (error) {}
-  };
 
-  const handleChange = async (f, v) => {
+
+  
+  const handleChange = (f, v) => {
     setFormData((prev) => ({ ...prev, [f]: v }));
-    const newErrors = validate({ ...formData, [f]: v }, tmcb_trtry);
+    const newErrors = validate({ ...formData, [f]: v }, tmcb_route);
     setFormErrors(newErrors);
-    if (f === "tarea_dzone") {
-      getAllTAreas(v);
-    }
   };
 
-  const handleEdit = (rowData) => {
+  const handleEdit = async (rowData) => {
     setPgView("SYS_VW_FRM_1");
     setFormData(rowData);
-    getAllDZones();
+    //getAllDZones();
   };
 
   const handleDelete = async (rowData) => {
-    const isActive = rowData.trtry_actve;
-    const dataName = rowData.trtry_cname;
+    const isActive = rowData.tarea_actve;
+    const dataName = rowData.tarea_cname;
     const confirmation = await confirmBox({
       title: isActive ? "Deactivate" : "Activate",
       message: `Are you sure you want to ${
@@ -97,7 +77,7 @@ const useTerritory = () => {
 
     try {
       setIsBusy(true);
-      const resp = await territoryAPI.delete(rowData);
+      const resp = await droutesAPI.delete(rowData);
       alertBox({
         title: resp.success
           ? isActive
@@ -111,7 +91,7 @@ const useTerritory = () => {
       if (resp.success) {
         setPgView("SYS_VW_LST_1");
         setFormData(dataModel);
-        getAllTerritory();
+        getAllDRoutes();
       }
     } catch (error) {
     } finally {
@@ -120,14 +100,19 @@ const useTerritory = () => {
   };
 
   const handleSearch = async () => {
-    getAllTerritory();
+    getAllDRoutes();
   };
-  const handleAddNew = () => {
+  const handleAddNew = async () => {
     setPgView("SYS_VW_FRM_1");
-    setFormData(dataModel);
+    //setFormData(dataModel);
+    setFormData({
+      ...dataModel,
+      route_trtry: territory,
+      trtry_cname: territoryname,
+    });
     setReadOnly(false);
     setStopEdit(false);
-    getAllDZones();
+    //getAllDZones();
   };
 
   const handleCancel = () => {
@@ -139,7 +124,7 @@ const useTerritory = () => {
 
   const handleSubmit = async () => {
     try {
-      const newErrors = validate(formData, tmcb_trtry);
+      const newErrors = validate(formData, tmcb_route);
       setFormErrors(newErrors);
       if (Object.keys(newErrors).length > 0) {
         return;
@@ -150,7 +135,7 @@ const useTerritory = () => {
       };
       setIsBusy(true);
 
-      const resp = await territoryAPI.upsert(reqBody);
+      const resp = await droutesAPI.upsert(reqBody);
       alertBox({
         title: resp.success ? (formData.id ? "Updated" : "Saved") : "Error",
         message: resp.message,
@@ -160,7 +145,7 @@ const useTerritory = () => {
       if (resp.success) {
         setPgView("SYS_VW_LST_1");
         setFormData(dataModel);
-        getAllTerritory();
+        getAllDRoutes();
       }
     } catch (error) {
     } finally {
@@ -169,11 +154,11 @@ const useTerritory = () => {
   };
 
   //on link
-  const handleRoutes = (rowData) => {
-    navigate(`/crm/ff/delivery-routes?territory=${rowData.id}&territoryname=${rowData.trtry_cname}`);
+  const handleCRoutes = (rowData) => {
+    navigate(`/crm/ff/contacts-routes?droutes=${rowData.id}&droutesname=${rowData.route_rname}`);
   };
-  const handleBackToTA = () => {
-    navigate(`/crm/setup/thana-areas`);
+  const handleBackToTrtry = () => {
+    navigate(`/crm/setup/territories`);
   };
   return {
     isBusy,
@@ -188,7 +173,6 @@ const useTerritory = () => {
     formErrors,
     //others
     dzone_Options,
-    tarea_Options,
     //functions
     handleChange,
     handleEdit,
@@ -198,8 +182,8 @@ const useTerritory = () => {
     handleCancel,
     handleSubmit,
     //on link
-    handleRoutes,
-    handleBackToTA,
+    handleCRoutes,
+    handleBackToTrtry,
   };
 };
-export default useTerritory;
+export default useDRoute;

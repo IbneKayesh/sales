@@ -4,13 +4,19 @@ import PageCard, {
   PageCardActions,
   PageCardBody,
 } from "@/components/PageCard";
-import { IconSearch, IconClose, IconPlus, IconSave, IconChevronLeft } from "@/icons";
+import {
+  IconSearch,
+  IconClose,
+  IconPlus,
+  IconSave,
+  IconChevronLeft,
+} from "@/icons";
 import Button from "@/components/Button";
-import useDRoute from "@/hooks/M06/useDRoute";
-import DRouteList from "./DRouteList";
-import DRouteForm from "./DRouteForm";
+import useCRoute from "@/hooks/M06/useCRoute";
+import CRouteList from "./CRouteList";
+import CRouteForm from "./CRouteForm";
 
-const DRoutePage = () => {
+const CRoutePage = () => {
   const {
     isBusy,
     pgView,
@@ -23,7 +29,8 @@ const DRoutePage = () => {
     formDataItem,
     formErrors,
     //others
-    dzone_Options,
+    cntct_Options,
+    emply_Options,
     //functions
     handleChange,
     handleEdit,
@@ -33,23 +40,22 @@ const DRoutePage = () => {
     handleCancel,
     handleSubmit,
     //on link
-    handleCRoutes,
-    handleBackToTrtry,
-  } = useDRoute();
+    handleBackToDr,
+  } = useCRoute();
 
   return (
     <div className="page-wrap">
       <PageCard>
         <PageCardHeader>
           <PageCardTitle
-            title="Delivery Routes"
-            subtitle={`${listData.length} delivery routes`}
+            title="Contact Routes"
+            subtitle={`${listData.length} contact routes`}
           />
           <PageCardActions>
             {pgView === "SYS_VW_LST_1" && (
-              <Button variant="help" size="sm" onClick={handleBackToTrtry}>
+              <Button variant="help" size="sm" onClick={handleBackToDr}>
                 <IconChevronLeft size={14} className="icon-left" />
-                Back to Territories
+                Back to Delivery Routes
               </Button>
             )}
             {pgView === "SYS_VW_LST_1" && (
@@ -80,15 +86,14 @@ const DRoutePage = () => {
         </PageCardHeader>
         <PageCardBody>
           {pgView === "SYS_VW_LST_1" && (
-            <DRouteList
+            <CRouteList
               listData={listData}
               onEdit={handleEdit}
               onDelete={handleDelete}
-              onCRoutes={handleCRoutes}
             />
           )}
           {pgView === "SYS_VW_FRM_1" && (
-            <DRouteForm
+            <CRouteForm
               isBusy={isBusy}
               readOnly={readOnly}
               stopEdit={stopEdit}
@@ -97,7 +102,8 @@ const DRoutePage = () => {
               onChange={handleChange}
               onCancel={handleCancel}
               onSubmit={handleSubmit}
-              dzone_Options={dzone_Options}
+              cntct_Options={cntct_Options}
+              emply_Options={emply_Options}
             />
           )}
         </PageCardBody>
@@ -105,4 +111,4 @@ const DRoutePage = () => {
     </div>
   );
 };
-export default DRoutePage;
+export default CRoutePage;

@@ -7,6 +7,7 @@ CREATE TABLE tmcb_route (
 
   route_users varchar(50) NOT NULL,
   route_bsins varchar(50) NOT NULL,
+  route_ccode varchar(50) NOT NULL,
   route_rname varchar(50) NOT NULL,
   route_dname varchar(50) NOT NULL,
   route_trtry varchar(50) NOT NULL,  

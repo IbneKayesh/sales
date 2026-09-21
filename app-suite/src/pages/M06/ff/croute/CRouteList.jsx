@@ -2,24 +2,21 @@ import DataTable from "@/components/DataTable";
 import Badge from "@/components/Badge";
 import ActionButton from "@/components/ActionButton";
 import { IconClose, IconCheck } from "@/icons";
+import InactiveText from "@/components/InactiveText";
 
-const ThanaAreaList = ({ listData, onEdit, onDelete }) => {
+const CRouteList = ({ listData, onEdit, onDelete }) => {
   const dtColumns = [
-    { key: "tarea_cname", header: "Area Name", width: "80px" },
-    { key: "dzone_cname", header: "District Zone", width: "80px" },
     {
-      key: "tarea_actve",
-      header: "Status",
-      width: "110px",
-      body: (v) => {
-        return (
-          <Badge variant={v ? "success" : "danger"}>
-            {v ? <IconCheck size={12} /> : <IconClose size={12} />}
-            {v ? "Active" : "Inactive"}
-          </Badge>
-        );
+      key: "route_rname",
+      header: "Route Name",
+      width: "80px",
+      body: (_, row) => {
+        return <InactiveText text={row.route_rname} active={row.route_actve} />;
       },
     },
+    { key: "route_dname", header: "Day", width: "80px" },
+    { key: "trtry_cname", header: "Territory", width: "80px" },
+    { key: "route_srial", header: "Serial", width: "80px" },
     {
       key: "actions",
       header: "Actions",
@@ -28,7 +25,7 @@ const ThanaAreaList = ({ listData, onEdit, onDelete }) => {
       body: (_, row) => (
         <ActionButton
           rowData={row}
-          actve={row.tarea_actve}
+          actve={row.route_actve}
           onEdit={onEdit}
           onDelete={onDelete}
         />
@@ -39,7 +36,7 @@ const ThanaAreaList = ({ listData, onEdit, onDelete }) => {
     <DataTable
       columns={dtColumns}
       data={listData}
-      pageSize={15}
+      pageSize={25}
       sortable
       searchable
       striped
@@ -47,8 +44,8 @@ const ThanaAreaList = ({ listData, onEdit, onDelete }) => {
       exportable
       exportFilename="data-export.csv"
       onRowClick={(row) => onEdit(row)}
-      emptyMessage="No territory areas found"
+      emptyMessage="No data found"
     />
   );
 };
-export default ThanaAreaList;
+export default CRouteList;

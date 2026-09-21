@@ -10,8 +10,8 @@ CREATE TABLE tmcb_rtcnt (
   rtcnt_ccode varchar(50) NOT NULL,
 
   rtcnt_route varchar(50) NOT NULL,
-  rtcnt_emply varchar(50) NOT NULL,
   rtcnt_cntct varchar(50) NOT NULL,
+  rtcnt_emply varchar(50) NOT NULL,
   -- optional
   -- default
   rtcnt_srial integer NOT NULL DEFAULT 1,

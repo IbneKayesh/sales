@@ -1,21 +1,22 @@
 import { useEffect, useState } from "react";
 import { useSearchParams, useNavigate } from "react-router-dom";
 import { useUI } from "@/context/AppUIContext.jsx";
-import { territoryAPI } from "@/api/M06/territoryAPI.js";
 import validate, { generateDataModel } from "@/models/validator";
-import tmcb_trtry from "@/models/M06/tmcb_trtry.json";
-const dataModel = generateDataModel(tmcb_trtry);
-import { districtZoneAPI } from "@/api/M06/districtZoneAPI.js";
-import { thanaAreaAPI } from "@/api/M06/thanaAreaAPI.js";
+import tmcb_rtcnt from "@/models/M06/tmcb_rtcnt.json";
+const dataModel = generateDataModel(tmcb_rtcnt);
+import { croutesAPI } from "@/api/M06/croutesAPI.js";
+import { emplyAPI } from "@/api/M07/emplyAPI.js";
+import { contactAPI } from "@/api/M06/contactAPI.js";
 
-const useTerritory = () => {
+const useCRoute = () => {
   const [searchParams] = useSearchParams();
-  const tarea = searchParams.get("tarea");
+  const droutes = searchParams.get("droutes");
+  const droutesname = searchParams.get("droutesname");
   const navigate = useNavigate();
 
   const { showToast, confirmBox, alertBox, isBusy, setIsBusy } = useUI();
   const [pgView, setPgView] = useState("SYS_VW_LST_1");
-  const [pgId, setPgId] = useState("M06-M0002");
+  const [pgId, setPgId] = useState("M06-M0003");
   const [pageAuth, setPageAuth] = useState({
     extpr: false,
     addpr: false,
@@ -30,14 +31,16 @@ const useTerritory = () => {
   const [formDataItem, setFormDataItem] = useState({});
   const [formErrors, setFormErrors] = useState({});
   //others
-  const [dzone_Options, setDzone_Options] = useState([]);
-  const [tarea_Options, setTarea_Options] = useState([]);
+  const [cntct_Options, setCntct_Options] = useState([]);
+  const [emply_Options, setEmply_Options] = useState([]);
 
-  const getAllTerritory = async () => {
+  const getAllDCoutes = async () => {
     try {
+      console.log("resp")
       setIsBusy(true);
-      const resp = await territoryAPI.getAll({ tarea_id: tarea });
+      const resp = await croutesAPI.getAll({ route_id: droutes });
       const list = resp.data || [];
+      console.log("resp",resp)
       setListData(list);
     } catch (error) {
     } finally {
@@ -46,45 +49,48 @@ const useTerritory = () => {
   };
 
   useEffect(() => {
-    getAllTerritory();
+    getAllDCoutes();
   }, []);
 
-  const getAllDZones = async () => {
-    if (dzone_Options.length > 0) {
-      return;
+  const getAllCustomers = async () => {
+    try {
+      setIsBusy(true);
+      const resp = await contactAPI.getCustomersSalesOrder({ droutes_id: droutes });
+      const list = resp.data || [];
+      setCntct_Options(list);
+    } catch (error) {
+    } finally {
+      setIsBusy(false);
     }
-    try {
-      const resp = await districtZoneAPI.getAllActive({});
-      const list = resp.data || [];
-      setDzone_Options(list);
-    } catch (error) {}
-  };
-  const getAllTAreas = async (id) => {
-    try {
-      const resp = await thanaAreaAPI.getByZone({ tarea_dzone: id });
-      const list = resp.data || [];
-      setTarea_Options(list);
-    } catch (error) {}
   };
 
-  const handleChange = async (f, v) => {
+  const getAllFFUserId = async () => {
+    try {
+      setIsBusy(true);
+      const resp = await emplyAPI.GetFF({ droutes_id: droutes });
+      const list = resp.data || [];
+      setEmply_Options(list);
+    } catch (error) {
+    } finally {
+      setIsBusy(false);
+    }
+  };
+
+  const handleChange = (f, v) => {
     setFormData((prev) => ({ ...prev, [f]: v }));
-    const newErrors = validate({ ...formData, [f]: v }, tmcb_trtry);
+    const newErrors = validate({ ...formData, [f]: v }, tmcb_rtcnt);
     setFormErrors(newErrors);
-    if (f === "tarea_dzone") {
-      getAllTAreas(v);
-    }
   };
 
-  const handleEdit = (rowData) => {
+  const handleEdit = async (rowData) => {
     setPgView("SYS_VW_FRM_1");
     setFormData(rowData);
-    getAllDZones();
+    //getAllDZones();
   };
 
   const handleDelete = async (rowData) => {
-    const isActive = rowData.trtry_actve;
-    const dataName = rowData.trtry_cname;
+    const isActive = rowData.tarea_actve;
+    const dataName = rowData.tarea_cname;
     const confirmation = await confirmBox({
       title: isActive ? "Deactivate" : "Activate",
       message: `Are you sure you want to ${
@@ -97,7 +103,7 @@ const useTerritory = () => {
 
     try {
       setIsBusy(true);
-      const resp = await territoryAPI.delete(rowData);
+      const resp = await croutesAPI.delete(rowData);
       alertBox({
         title: resp.success
           ? isActive
@@ -111,7 +117,7 @@ const useTerritory = () => {
       if (resp.success) {
         setPgView("SYS_VW_LST_1");
         setFormData(dataModel);
-        getAllTerritory();
+        getAllDCoutes();
       }
     } catch (error) {
     } finally {
@@ -120,14 +126,20 @@ const useTerritory = () => {
   };
 
   const handleSearch = async () => {
-    getAllTerritory();
+    getAllDCoutes();
   };
-  const handleAddNew = () => {
+  const handleAddNew = async () => {
     setPgView("SYS_VW_FRM_1");
-    setFormData(dataModel);
+    //setFormData(dataModel);
+    setFormData({
+      ...dataModel,
+      rtcnt_route: droutes,
+      route_rname: droutesname,
+    });
     setReadOnly(false);
     setStopEdit(false);
-    getAllDZones();
+    getAllFFUserId();
+    getAllCustomers();
   };
 
   const handleCancel = () => {
@@ -139,7 +151,7 @@ const useTerritory = () => {
 
   const handleSubmit = async () => {
     try {
-      const newErrors = validate(formData, tmcb_trtry);
+      const newErrors = validate(formData, tmcb_rtcnt);
       setFormErrors(newErrors);
       if (Object.keys(newErrors).length > 0) {
         return;
@@ -150,7 +162,7 @@ const useTerritory = () => {
       };
       setIsBusy(true);
 
-      const resp = await territoryAPI.upsert(reqBody);
+      const resp = await croutesAPI.upsert(reqBody);
       alertBox({
         title: resp.success ? (formData.id ? "Updated" : "Saved") : "Error",
         message: resp.message,
@@ -160,7 +172,7 @@ const useTerritory = () => {
       if (resp.success) {
         setPgView("SYS_VW_LST_1");
         setFormData(dataModel);
-        getAllTerritory();
+        getAllDCoutes();
       }
     } catch (error) {
     } finally {
@@ -169,11 +181,11 @@ const useTerritory = () => {
   };
 
   //on link
-  const handleRoutes = (rowData) => {
-    navigate(`/crm/ff/delivery-routes?territory=${rowData.id}&territoryname=${rowData.trtry_cname}`);
+  const handleTerritory = (rowData) => {
+    navigate(`/crm/setup/territories?tarea=${rowData.id}`);
   };
-  const handleBackToTA = () => {
-    navigate(`/crm/setup/thana-areas`);
+  const handleBackToDr = () => {
+    navigate(`/crm/ff/delivery-routes`);
   };
   return {
     isBusy,
@@ -187,8 +199,8 @@ const useTerritory = () => {
     formDataItem,
     formErrors,
     //others
-    dzone_Options,
-    tarea_Options,
+    cntct_Options,
+    emply_Options,
     //functions
     handleChange,
     handleEdit,
@@ -198,8 +210,7 @@ const useTerritory = () => {
     handleCancel,
     handleSubmit,
     //on link
-    handleRoutes,
-    handleBackToTA,
+    handleBackToDr,
   };
 };
-export default useTerritory;
+export default useCRoute;

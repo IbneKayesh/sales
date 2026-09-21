@@ -30,4 +30,8 @@ export const emplyAPI = {
     apiRequest("/M07/v1/employees/create-ff", {
       body: data,
     }),
+  GetFF: (data) =>
+    apiRequest("/M07/v1/employees/get-ff", {
+      body: data,
+    }),
 };

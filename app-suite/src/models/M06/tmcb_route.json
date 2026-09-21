@@ -1,0 +1,38 @@
+{
+  "id": {
+    "type": "string",
+    "label": "Id"
+  },
+  "route_rname": {
+    "type": "string",
+    "label": "Route Name",
+    "maxLength": 50,
+    "minLength": 3,
+    "placeholder": "Enter route name",
+    "required": true
+  },
+  "route_dname": {
+    "type": "string",
+    "label": "Day Name",
+    "maxLength": 50,
+    "minLength": 3,
+    "placeholder": "Enter day name",
+    "required": true
+  },
+  "route_trtry": {
+    "type": "string",
+    "label": "Territory",
+    "maxLength": 50,
+    "placeholder": "Enter territory",
+    "required": true
+  },
+  "route_srial": {
+    "type": "number",
+    "label": "Serial no",
+    "maxLength": 50,
+    "minLength": 1,
+    "placeholder": "Enter serial no",
+    "required": true,
+    "default": 1
+  }
+}

@@ -336,6 +336,16 @@ const price_Options = [
   },
 ];
 
+const day_Options = [
+  { label: "SATURDAY", value: "SATURDAY" },
+  { label: "SUNDAY", value: "SUNDAY" },
+  { label: "MONDAY", value: "MONDAY" },
+  { label: "TUESDAY", value: "TUESDAY" },
+  { label: "WEDNESDAY", value: "WEDNESDAY" },
+  { label: "THURSDAY", value: "THURSDAY" },
+  { label: "FRIDAY", value: "FRIDAY" },
+];
+
 export {
   cntry_Options,
   crncy_Options,
@@ -363,4 +373,5 @@ export {
   fetur_tagno_Options,
   ledger_types_Options,
   price_Options,
+  day_Options,
 };
