@@ -476,7 +476,7 @@ router.post("/get-stock-line", async (req, res) => {
     }
 
     const sql = `SELECT stk.*, 
-    itm.items_iname, itm.items_pkqty, itm.items_szqty,
+    itm.items_iname, itm.items_pkqty, itm.items_szqty, itm.items_itype,
     prc.price_cname,    
     runit.units_cname as runit_cname,
     punit.units_cname as punit_cname,

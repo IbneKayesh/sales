@@ -1206,4 +1206,86 @@ ORDER BY prc.price_cname`;
   }
 });
 
+// transfer-items
+router.post("/transfer-items", async (req, res) => {
+  try {
+    const { dpart_id, user_s, user_c, user_b } = req.body;
+
+    // Validate input
+    if (!user_c || !dpart_id) {
+      return res.json({
+        success: false,
+        message: "All fields in the request body are required.",
+        data: [],
+      });
+    }
+
+    //database action
+    //set as chtrt for adjustment inventory in and out item types
+    const sql = `SELECT stk.id stock_id, stk.stock_sorce, stk.stock_trnno, TO_CHAR(stk.stock_trdat, 'YYYY-MM-DD') as stock_trdat, stk.stock_items, stk.stock_price,
+      stk.stock_refid, stk.stock_brcod, stk.stock_batch, stk.stock_srial, stk.stock_wrdat, stk.stock_fgdat, 
+      stk.stock_exdat, stk.stock_ohqty, stk.stock_cprat,
+      prc.id price_id, prc.price_cname, prc.price_lprat,
+      prc.price_dprat, prc.price_tprat, prc.price_mrrat, prc.price_dspct, prc.price_gdstk, prc.price_bdstk,
+      itm.id items_id, itm.items_icode, itm.items_iname, itm.items_brcod, itm.items_hscod, itm.items_runit,
+      itm.items_pkqty, itm.items_slvat, itm.items_stvat, itm.items_szqty,
+      runit.units_cname as runit_cname,
+      punit.units_cname as punit_cname,
+      sunit.units_cname as sunit_cname,
+      sgrup.sgrup_cname as sgrup_cname,
+      scatg.scatg_cname as scatg_cname,
+      brand.brand_cname as brand_cname,
+      pty.id party_id, pty.party_chtac chtac_id
+FROM tmib_stock stk
+JOIN tmib_price prc ON stk.stock_price = prc.id
+					AND stk.stock_users = prc.price_users
+					AND stk.stock_bsins = prc.price_bsins
+          AND stk.stock_dpart = prc.price_dpart
+JOIN tmib_items itm ON stk.stock_items = itm.id
+					AND stk.stock_users = itm.items_users
+					AND stk.stock_bsins = itm.items_bsins 
+JOIN tmib_units runit ON itm.items_runit = runit.id
+JOIN tmib_units punit ON itm.items_punit = punit.id
+JOIN tmib_units sunit ON itm.items_sunit = sunit.id
+JOIN tmib_sgrup sgrup ON itm.items_sgrup = sgrup.id
+JOIN tmib_scatg scatg ON itm.items_scatg = scatg.id
+JOIN tmib_brand brand ON itm.items_brand = brand.id
+JOIN tmtb_party pty ON itm.items_itype = pty.party_vndor
+JOIN tmtb_chtac cht ON pty.party_chtac = cht.id
+JOIN tmtb_chtrt crt ON cht.chtac_chtno = crt.chtrt_chtno
+                    AND crt.chtrt_trnid = 'SYS_TRANSFER'
+                    AND crt.chtrt_pegid = 'SYS_TRANSFER_IN_OUT'
+                    AND crt.chtrt_grpid = 'SYS_AST_INVENTORY'
+                    AND crt.chtrt_route = itm.items_itype
+WHERE stk.stock_ohqty > 0
+AND stk.stock_users = $1
+AND stk.stock_bsins = $2
+AND stk.stock_dpart = $3
+AND itm.items_stadj = FALSE
+AND itm.items_actve = TRUE
+AND prc.price_actve = TRUE
+AND pty.party_actve = TRUE
+AND cht.chtac_actve = TRUE
+AND crt.chtrt_actve = TRUE
+ORDER BY prc.price_cname, stk.stock_crdat`;
+    const params = [user_c, user_b, dpart_id];
+    const rows = await dbGetAll(
+      sql,
+      params,
+      `get for transfer out items - ${user_c}`,
+    );
+    res.json({
+      success: true,
+      message: "Query executed successfully.",
+      data: rows,
+    });
+  } catch (error) {
+    console.error("database action error:", error);
+    return res.json({
+      success: false,
+      message: error.message || "An error occurred during db action",
+      data: [],
+    });
+  }
+});
 module.exports = router;

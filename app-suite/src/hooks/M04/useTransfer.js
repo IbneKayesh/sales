@@ -3,7 +3,7 @@ import { useUI } from "@/context/AppUIContext.jsx";
 import validate, { generateDataModel } from "@/models/validator";
 import { generateGuid } from "@/utils/guid.js";
 import { validNumber, divNumber } from "@/utils/misc.js";
-import tmib_trndm from "@/models/M04/tmib_trndm.json";
+import tmib_trndm from "@/models/M04/trns/tmib_trndm.json";
 import tmpb_mrrdc from "@/models/M03/tmpb_mrrdc.json";
 import tmpb_mrrcs from "@/models/M03/tmpb_mrrcs.json";
 const dataModel = generateDataModel(tmib_trndm);
@@ -292,39 +292,16 @@ const useTransfer = () => {
     );
 
     //---------------------------------------------------
-    // Payments
-    //---------------------------------------------------
-
-    const newPayments = [...(paymList || [])];
-
-    const totalPayment = newPayments.reduce(
-      (sum, item) => sum + validNumber(item.mrrpy_pdamt),
-      0,
-    );
-
-    setListDataPayment(newPayments);
-
-    //---------------------------------------------------
     // Master
     //---------------------------------------------------
-
-    const duamt = totals.pyamt - totalPayment;
 
     setFormData({
       ...master,
       trndm_tramt: validNumber(totals.tramt).toFixed(4),
-      trndm_itmds: validNumber(totals.itmds).toFixed(4),
-      trndm_invds: invoice_discount_amount,
-      trndm_vtamt: validNumber(totals.vtamt).toFixed(4),
-      trndm_icamt: validNumber(totals.icamt).toFixed(4),
       trndm_ecamt: validNumber(totals.ecamt).toFixed(4),
-      trndm_pyamt: validNumber(totals.pyamt).toFixed(4),
-      trndm_pdamt: validNumber(totalPayment).toFixed(4),
-      trndm_duamt: validNumber(duamt).toFixed(4),
       trndm_stamt: validNumber(totals.stamt).toFixed(4),
       trndm_csamt: validNumber(totals.csamt).toFixed(4),
     });
-
   }
 
   const getAllDepartments = async () => {
@@ -387,20 +364,14 @@ const useTransfer = () => {
     } catch (error) {}
   };
 
-  const getMrrItems = async (id, dpart_id) => {
+  const getTransferItems = async (dpart_id) => {
     try {
-      const resp = await itemsAPI.getMrrItems({
-        cntct_id: id,
-        price_dpart: dpart_id,
-        from_po: fromPO,
+      const resp = await itemsAPI.getTransferItems({
+        dpart_id: dpart_id,
       });
       const list = resp.data || [];
       //setItems_Options(list);
-      if (fromPO) {
-        setAllItems(list);
-      } else {
-        setItems_Options(list);
-      }
+      setAllItems(list);
     } catch (error) {}
   };
 
@@ -409,33 +380,11 @@ const useTransfer = () => {
     const newErrors = validate({ ...formData, [f]: v }, tmib_trndm);
     setFormErrors(newErrors);
 
-    if (f === "trndm_cntct") {
-      const cntct_id = cntct_Options.find((opt) => opt.id === v);
-      const dspct = cntct_id?.cntct_dspct || 0;
-      const newformData = {
-        ...formData,
-        trndm_cntct: v,
-        trndm_dspct: dspct,
-        party_id: cntct_id?.party_id,
-        chtac_id: cntct_id?.chtac_id,
-        // new supplier has no discount % -> clear any stale computed amount
-        ...(dspct === 0 ? { trndm_invds: 0 } : {}),
-      };
-      reCalculate(listDataItem, newformData, listDataCost, listDataPayment);
-      await getMrrItems(v, formData.trndm_dpart);
-      await getPOExpnPaym(v, formData.trndm_dpart);
-    }
-    if (f === "trndm_invds" || f === "trndm_dspct") {
-      const newformData = {
-        ...formData,
-        [f]: v,
-        // % cleared -> also clear the derived/stale amount
-        ...(f === "trndm_dspct" && Number(v) === 0 ? { trndm_invds: 0 } : {}),
-      };
-      reCalculate(listDataItem, newformData, listDataCost, listDataPayment);
-    }
-    if (f === "trndm_dpart" && fromPO) {
-      await getPOContacts(v);
+    if (f === "trndm_dpart") {
+      await getTransferItems(v);
+      await getPOExpnPaym(v);
+      //temp off
+      //reCalculate(listDataItem, formData, listDataCost);
     }
   };
 
@@ -789,6 +738,7 @@ const useTransfer = () => {
         subTitle: "Item Details",
       });
     }
+
     if (modal === "COSTING") {
       setFormDataCost(dataModelItem);
       setModalTitle({

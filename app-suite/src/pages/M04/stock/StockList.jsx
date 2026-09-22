@@ -9,6 +9,7 @@ const StockList = ({ cfColumns = [], listData, onEdit }) => {
   const dtColumns = [
     { key: "price_cname", header: "Name", width: "80px" },
     { key: "items_iname", header: "Item", width: "80px" },
+    { key: "items_itype", header: "Type", width: "80px" },
     { key: "runit_cname", header: "Unit", width: "80px" },
     { key: "stock_sorce", header: "Source", width: "80px" },
     { key: "stock_trnno", header: "Trn", width: "80px" },

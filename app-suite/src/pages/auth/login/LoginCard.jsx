@@ -39,7 +39,7 @@ export default function LoginCard({
   retryAttempt,
   maxRetryAttempts,
   autoRetryStopped,
-  title = "Welcome back",
+  title = "E.A.A.C",
   subtitle = "Sign in to continue to your workspace",
 }) {
   // Reveals the reset instructions inline instead of sending the user to a

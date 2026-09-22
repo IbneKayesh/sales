@@ -1,0 +1,21 @@
+1. Cold and Reserve Store (Warehouse) — stock goes out
+
+Account	Debit (BDT)	Credit (BDT)
+Expenses / Cost of Goods Sold / Direct Costs / Product COGS	8,000	
+Assets / Current Assets / Inventory / Products		8,000
+
+
+2. Sales and Display Center — stock comes in
+
+Account	Debit (BDT)	Credit (BDT)
+Assets / Current Assets / Inventory / Products	8,000	
+Expenses / Cost of Goods Sold / Direct Costs / Product COGS		8,000
+
+
+Cold & Reserve Store
+    Dr Product COGS                         8,000
+        Cr Inventory / Products                    8,000
+
+Sales & Display Center
+    Dr Inventory / Products                 8,000
+        Cr Product COGS                            8,000

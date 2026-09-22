@@ -54,4 +54,8 @@ export const itemsAPI = {
     apiRequest("/M04/v1/items/adjustment-in-out-items", {
       body: data,
     }),
+  getTransferItems: (data) =>
+    apiRequest("/M04/v1/items/transfer-items", {
+      body: data,
+    }),
 };
