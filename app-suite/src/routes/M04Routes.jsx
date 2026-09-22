@@ -6,6 +6,7 @@ import ItemsPage from "@/pages/M04/setup/items/ItemsPage";
 import StockPage from "@/pages/M04/stock/StockPage";
 import BundlePage from "@/pages/M04/setup/bundle/BundlePage";
 import AdjustmentPage from "@/pages/M04/adjustment/AdjustmentPage";
+import TransferPage from "@/pages/M04/transfer/TransferPage";
 
 const routes = [
   { path: "/inventory/setup/brands", element: <BrandPage /> },
@@ -16,6 +17,7 @@ const routes = [
   { path: "/inventory/stock", element: <StockPage /> },
   { path: "/inventory/setup/items-price-bundle", element: <BundlePage /> },
   { path: "/inventory/adjustment-stock", element: <AdjustmentPage /> },
+  { path: "/inventory/transfer-stock", element: <TransferPage /> },
 ];
 
 export default routes;

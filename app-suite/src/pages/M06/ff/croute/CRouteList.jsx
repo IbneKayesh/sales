@@ -11,12 +11,20 @@ const CRouteList = ({ listData, onEdit, onDelete }) => {
       header: "Route Name",
       width: "80px",
       body: (_, row) => {
-        return <InactiveText text={row.route_rname} active={row.route_actve} />;
+        return <InactiveText text={row.route_rname} active={row.rtcnt_actve} />;
       },
     },
     { key: "route_dname", header: "Day", width: "80px" },
-    { key: "trtry_cname", header: "Territory", width: "80px" },
-    { key: "route_srial", header: "Serial", width: "80px" },
+    { key: "emply_cname", header: "FF User", width: "80px" },
+    {
+      key: "cntct_cname",
+      header: "Outlet",
+      width: "80px",
+      body: (_, row) => {
+        return `${row.cntct_cname}, ${row.cntct_cntps}, ${row.cntct_cntno}`;
+      },
+    },
+    { key: "rtcnt_srial", header: "Serial", width: "80px" },
     {
       key: "actions",
       header: "Actions",
@@ -25,7 +33,7 @@ const CRouteList = ({ listData, onEdit, onDelete }) => {
       body: (_, row) => (
         <ActionButton
           rowData={row}
-          actve={row.route_actve}
+          actve={row.rtcnt_actve}
           onEdit={onEdit}
           onDelete={onDelete}
         />

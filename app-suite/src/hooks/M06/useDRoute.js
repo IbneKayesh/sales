@@ -49,7 +49,7 @@ const useDRoute = () => {
 
 
 
-  
+
   const handleChange = (f, v) => {
     setFormData((prev) => ({ ...prev, [f]: v }));
     const newErrors = validate({ ...formData, [f]: v }, tmcb_route);
@@ -102,6 +102,7 @@ const useDRoute = () => {
   const handleSearch = async () => {
     getAllDRoutes();
   };
+
   const handleAddNew = async () => {
     setPgView("SYS_VW_FRM_1");
     //setFormData(dataModel);
@@ -157,9 +158,11 @@ const useDRoute = () => {
   const handleCRoutes = (rowData) => {
     navigate(`/crm/ff/contacts-routes?droutes=${rowData.id}&droutesname=${rowData.route_rname}`);
   };
+
   const handleBackToTrtry = () => {
     navigate(`/crm/setup/territories`);
   };
+  
   return {
     isBusy,
     pgView,

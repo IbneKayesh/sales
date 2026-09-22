@@ -76,12 +76,12 @@ const CRouteForm = ({
       </div>
       {formData?.id && (
         <AuditData
-          actve={formData.route_actve}
+          actve={formData.rtcnt_actve}
           cname={formData.crusr_cname}
-          cdate={formData.route_crdat}
+          cdate={formData.rtcnt_crdat}
           uname={formData.upusr_cname}
-          udate={formData.route_updat}
-          rvnmr={formData.route_rvnmr}
+          udate={formData.rtcnt_updat}
+          rvnmr={formData.rtcnt_rvnmr}
         />
       )}
       <div className="form-actions">

@@ -42,4 +42,8 @@ export const departmentAPI = {
     apiRequest("/M01/v1/departments/get-production", {
       body: data,
     }),
+  getTransfer: (data) =>
+    apiRequest("/M01/v1/departments/get-transfer", {
+      body: data,
+    }),
 };

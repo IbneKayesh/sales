@@ -36,11 +36,11 @@ const useCRoute = () => {
 
   const getAllDCoutes = async () => {
     try {
-      console.log("resp")
+      //console.log("resp")
       setIsBusy(true);
       const resp = await croutesAPI.getAll({ route_id: droutes });
       const list = resp.data || [];
-      console.log("resp",resp)
+      //console.log("resp",resp)
       setListData(list);
     } catch (error) {
     } finally {
@@ -55,7 +55,9 @@ const useCRoute = () => {
   const getAllCustomers = async () => {
     try {
       setIsBusy(true);
-      const resp = await contactAPI.getCustomersSalesOrder({ droutes_id: droutes });
+      const resp = await contactAPI.getCustomersSalesOrder({
+        droutes_id: droutes,
+      });
       const list = resp.data || [];
       setCntct_Options(list);
     } catch (error) {
@@ -83,6 +85,9 @@ const useCRoute = () => {
   };
 
   const handleEdit = async (rowData) => {
+    // showToast("Edit is not available", { type: "warning" });
+    // return;
+
     setPgView("SYS_VW_FRM_1");
     setFormData(rowData);
     //getAllDZones();

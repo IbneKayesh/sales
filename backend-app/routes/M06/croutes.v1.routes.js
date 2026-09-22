@@ -36,7 +36,7 @@ router.post("/", async (req, res) => {
       sql += ` AND crt.rtcnt_route = $2`;
       params.push(route_id);
     }
-    sql += ` ORDER BY crt.route_srial ASC`;
+    sql += ` ORDER BY crt.rtcnt_srial ASC`;
     const rows = await dbGetAll(sql, params, `get rtcnt- ${user_c}`);
     res.json({
       success: true,
@@ -125,6 +125,30 @@ const create = async (req, res) => {
     }
 
     //database action
+    const sql_exist = `SELECT *
+    FROM tmcb_rtcnt
+    WHERE rtcnt_route = $1
+    AND rtcnt_cntct = $2`;
+    const rows_exist = await dbGetAll(sql_exist, [rtcnt_route, rtcnt_cntct]);
+    if (rows_exist.length > 0) {
+      return res.json({
+        success: false,
+        message: `Route and Outlet is already configured.`,
+        data: {},
+      });
+    }
+    const sql_emply = `SELECT *
+    FROM tmcb_rtcnt
+    WHERE rtcnt_route = $1`;
+    const rows_emply = await dbGetAll(sql_emply, [rtcnt_route]);
+    if (rows_emply.length > 0 && rows_emply[0].rtcnt_emply !== rtcnt_emply) {
+      return res.json({
+        success: false,
+        message: `In single route only a FF User can be configured.`,
+        data: {},
+      });
+    }
+
     const newCode = await GenNewCode(user_c, "tmcb_rtcnt");
 
     const sql = `INSERT INTO tmcb_rtcnt(id, rtcnt_users, rtcnt_bsins, rtcnt_ccode, rtcnt_route, rtcnt_cntct,
@@ -192,16 +216,15 @@ const update = async (req, res) => {
         data: {},
       });
     }
+
     //database action
     const sql = `UPDATE tmcb_rtcnt
-    SET rtcnt_cntct = $1,
-    rtcnt_emply = $2,
-    rtcnt_srial = $3,
-    rtcnt_upusr = $4,
+    SET rtcnt_srial = $1,
+    rtcnt_upusr = $2,
     rtcnt_updat = CURRENT_TIMESTAMP,
     rtcnt_rvnmr = rtcnt_rvnmr + 1
-    WHERE id = $5`;
-    const params = [rtcnt_cntct, rtcnt_emply, rtcnt_srial, user_s, id];
+    WHERE id = $3`;
+    const params = [rtcnt_srial, user_s, id];
 
     await dbRun(sql, params, `update rtcnt- ${user_c}`);
     res.json({

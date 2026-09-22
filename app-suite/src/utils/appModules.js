@@ -339,12 +339,21 @@ export const rawAppModules = [
         menus: [
           {
             id: "M04-G02-M001",
-            name: "Inventory Stock Adjustment",
+            name: "Stock Adjustment",
             color: "#f97316",
             icon: "Package",
             order: 1,
             link: "/inventory/adjustment-stock",
             desc: "Manage inventory stock adjustment records",
+          },
+          {
+            id: "M04-G02-M002",
+            name: "Stock Transfer",
+            color: "#f97316",
+            icon: "Package",
+            order: 2,
+            link: "/inventory/transfer-stock",
+            desc: "Manage inventory stock transfer records",
           },
         ],
       },
