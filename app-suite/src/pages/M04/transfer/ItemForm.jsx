@@ -3,7 +3,6 @@ import InputText from "@/components/InputText";
 import InputNumber from "@/components/InputNumber";
 import Dropdown from "@/components/Dropdown";
 import { IconPlus } from "@/icons";
-import { txmod_Options } from "@/utils/vtable.js";
 
 const ItemForm = ({
   isBusy,
@@ -22,83 +21,54 @@ const ItemForm = ({
           <Dropdown
             label="Item"
             options={items_Options}
-            value={formData.mrrdc_refid}
-            onChange={(e) => onChange("mrrdc_refid", e.target.value)}
-            error={formErrors.mrrdc_refid}
+            value={formData.trndc_refid}
+            onChange={(e) => onChange("trndc_refid", e.target.value)}
+            error={formErrors.trndc_refid}
             required
             placeholder="Select..."
             disabled={readOnly}
-            optionValue="price_refid"
+            optionValue="stock_id"
             optionLabel="price_cname"
-            optionGrid="price_cname:Item, runit_cname:Unit, price_lprat:l.Purchase, price_gdstk:g.Stock, items_itype:Type, items_prvat:VAT (%), items_ptvat:VAT Type, refid_trnno:Ref"
+            optionGrid="price_cname:Item, runit_cname:Unit, stock_cprat:C.Rate, stock_ohqty:Stock, items_itype:Type, stock_sorce:Source, stock_trnno:Ref, stock_trdat:Ref Date, stock_batch:Batch, stock_srial:Serial, stock_wrdat:Warranty, stock_fgdat:MFG, Expiry:stock_exdat"
+            gridMaxHeight={120}
           />
         </div>
-        <div className="col-span-3">
+        <div className="col-span-2">
           <InputNumber
             label="Rate"
             placeholder="0.00"
-            value={formData.mrrdc_itrat}
-            onChange={(e) => onChange("mrrdc_itrat", e.target.value)}
-            error={formErrors.mrrdc_itrat}
+            value={formData.trndc_itrat}
+            onChange={(e) => onChange("trndc_itrat", e.target.value)}
+            error={formErrors.trndc_itrat}
             step="0.01"
-            disabled={readOnly}
+            disabled={readOnly || true}
           />
         </div>
         <div className="col-span-2">
           <InputNumber
             label="Quantity"
             placeholder="0"
-            value={formData.mrrdc_itqty}
-            onChange={(e) => onChange("mrrdc_itqty", e.target.value)}
-            error={formErrors.mrrdc_itqty}
+            value={formData.trndc_itqty}
+            onChange={(e) => onChange("trndc_itqty", e.target.value)}
+            error={formErrors.trndc_itqty}
             step="0.01"
             disabled={readOnly}
           />
         </div>
-        <div className="col-span-2">
-          <InputNumber
-            label="Disc (%)"
-            placeholder="0.00"
-            value={formData.mrrdc_dspct}
-            onChange={(e) => onChange("mrrdc_dspct", e.target.value)}
-            error={formErrors.mrrdc_dspct}
-            step="0.01"
-            disabled={readOnly}
-          />
-        </div>
-        <div className="col-span-2">
-          <InputNumber
-            label="VAT (%)"
-            placeholder="0.00"
-            value={formData.mrrdc_vtpct}
-            onChange={(e) => onChange("mrrdc_vtpct", e.target.value)}
-            error={formErrors.mrrdc_vtpct}
-            step="0.01"
-            disabled={readOnly}
-          />
-        </div>
-        <div className="col-span-3">
-          <Dropdown
-            label="VAT Type"
-            options={txmod_Options}
-            value={formData.mrrdc_vtype}
-            onChange={(e) => onChange("mrrdc_vtype", e.target.value)}
-            error={formErrors.mrrdc_vtype}
-            placeholder="Select..."
-            disabled={readOnly}
-          />
-        </div>
-        
-        <div className="col-span-12">
+        <div className="col-span-8">
           <InputText
             label="Notes"
             placeholder="Enter notes"
-            value={formData.mrrdc_notes}
-            onChange={(e) => onChange("mrrdc_notes", e.target.value)}
-            error={formErrors.mrrdc_notes}
+            value={formData.trndc_notes}
+            onChange={(e) => onChange("trndc_notes", e.target.value)}
+            error={formErrors.trndc_notes}
             disabled={readOnly}
           />
         </div>
+        <div className="col-span-12 mt-5"></div>
+        <div className="col-span-12 mt-5"></div>
+        <div className="col-span-12 mt-5"></div>
+        <div className="col-span-12 mt-5"></div>
       </div>
       <div className="form-actions">
         <Button

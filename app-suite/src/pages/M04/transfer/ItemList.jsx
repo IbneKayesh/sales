@@ -30,80 +30,41 @@ const ItemList = ({ cfColumns = [], readOnly, listData, onEdit, onDelete }) => {
       },
     },
     {
-      key: "mrrdc_itrat",
+      key: "trndc_itrat",
       header: "Rate * Qty",
       width: "80px",
       body: (_, rowData) => {
         return (
           <>
-            {formatNumber(rowData.mrrdc_itrat)} x{" "}
-            {formatNumber(rowData.mrrdc_itqty)} {rowData.runit_cname} ={" "}
-            {formatNumber(rowData.mrrdc_itamt)}
+            {formatNumber(rowData.trndc_itrat)} x{" "}
+            {formatNumber(rowData.trndc_itqty)} {rowData.runit_cname} ={" "}
+            {formatNumber(rowData.trndc_itamt)}
           </>
         );
       },
       footer: (_, row) => {
         return (
-          row.reduce((sum, row) => sum + Number(row.mrrdc_itqty ?? 0), 0) +
+          row.reduce((sum, row) => sum + Number(row.trndc_itqty ?? 0), 0) +
           " = " +
-          row.reduce((sum, row) => sum + Number(row.mrrdc_itamt ?? 0), 0)
+          row.reduce((sum, row) => sum + Number(row.trndc_itamt ?? 0), 0)
         );
       },
     },
     {
-      key: "mrrdc_dsamt",
-      header: "Discount",
-      width: "80px",
-      body: (_, rowData) => {
-        return (
-          <>
-            {formatNumber(rowData.mrrdc_dsamt)} (
-            {formatNumber(rowData.mrrdc_dspct)}%) [Other:{" "}
-            {formatNumber(rowData.mrrdc_edamt)}]
-          </>
-        );
-      },
-    },
-    {
-      key: "mrrdc_vtpct",
-      header: "VAT",
-      width: "80px",
-      body: (_, rowData) => {
-        return (
-          <>
-            {formatNumber(rowData.mrrdc_vtamt)} (
-            {formatNumber(rowData.mrrdc_vtpct)}% {rowData.mrrdc_vtype})
-          </>
-        );
-      },
-    },
-    {
-      key: "mrrdc_icamt",
-      header: "In Cost",
-      width: "80px",
-      body: (v) => formatNumber(v),
-    },
-    {
-      key: "mrrdc_ecamt",
+      key: "trndc_ecamt",
       header: "Ex Cost",
       width: "80px",
       body: (v) => formatNumber(v),
     },
     {
-      key: "mrrdc_pyamt",
-      header: "Payable",
-      width: "80px",
-      body: (v) => formatNumber(v),
-    },
-    {
-      key: "mrrdc_stamt",
+      key: "trndc_stamt",
       header: "Sub Total",
       width: "80px",
       body: (v) => formatNumber(v),
     },
-    { key: "mrrdc_notes", header: "Notes", width: "100px" },
+    { key: "trndc_notes", header: "Notes", width: "100px" },
     {
-      key: "mrrdc_csrat",
+      key: "trndc_csrat",
       header: "Unit Cost",
       width: "80px",
       body: (v) => formatNumber(v),
@@ -116,7 +77,7 @@ const ItemList = ({ cfColumns = [], readOnly, listData, onEdit, onDelete }) => {
         return (
           <>
             <ConvertUOM
-              qty={rowData.mrrdc_itqty}
+              qty={rowData.trndc_itqty}
               dfQty={rowData.items_pkqty}
               runit={rowData.runit_cname}
               punit={rowData.punit_cname}
@@ -133,7 +94,7 @@ const ItemList = ({ cfColumns = [], readOnly, listData, onEdit, onDelete }) => {
         return (
           <>
             <ConvertSize
-              qty={rowData.mrrdc_itqty}
+              qty={rowData.trndc_itqty}
               dfQty={rowData.items_szqty}
               sunit={rowData.sunit_cname}
             />
@@ -152,7 +113,7 @@ const ItemList = ({ cfColumns = [], readOnly, listData, onEdit, onDelete }) => {
       body: (_, row) => (
         <ActionButton
           rowData={row}
-          actve={row.mrrdc_actve}
+          actve={row.trndc_actve}
           onCopy={onEdit}
           onDelete={onDelete}
         />

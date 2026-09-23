@@ -23,11 +23,12 @@ router.post("/", async (req, res) => {
     }
 
     //database action
-    const sql = `SELECT jrn.*, fsy.fsyar_cname, acp.acprd_cname,
+    const sql = `SELECT jrn.*, fsy.fsyar_cname, acp.acprd_cname, dpt.dpart_cname,
     csr.emply_cname AS crusr_cname, usr.emply_cname AS upusr_cname, 0 as edit_stop
     FROM tmtb_jrnlm jrn
     LEFT JOIN tmtb_fsyar fsy ON jrn.jrnlm_fsyar = fsy.id
     LEFT JOIN tmtb_acprd acp ON jrn.jrnlm_acprd = acp.id
+    LEFT JOIN tmsb_dpart dpt ON jrn.jrnlm_dpart = dpt.id
     LEFT JOIN tmhb_emply csr ON jrn.jrnlm_crusr = csr.id
     LEFT JOIN tmhb_emply usr ON jrn.jrnlm_upusr = usr.id
     WHERE jrn.jrnlm_users = $1

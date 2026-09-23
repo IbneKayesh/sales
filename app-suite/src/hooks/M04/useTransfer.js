@@ -4,15 +4,14 @@ import validate, { generateDataModel } from "@/models/validator";
 import { generateGuid } from "@/utils/guid.js";
 import { validNumber, divNumber } from "@/utils/misc.js";
 import tmib_trndm from "@/models/M04/trns/tmib_trndm.json";
-import tmpb_mrrdc from "@/models/M03/tmpb_mrrdc.json";
-import tmpb_mrrcs from "@/models/M03/tmpb_mrrcs.json";
+import tmib_trndc from "@/models/M04/trns/tmib_trndc.json";
+import tmib_trncs from "@/models/M04/trns/tmib_trncs.json";
 const dataModel = generateDataModel(tmib_trndm);
-const dataModelItem = generateDataModel(tmpb_mrrdc);
+const dataModelItem = generateDataModel(tmib_trndc);
 import { tabColumnsAPI } from "@/api/M01/tabColumnsAPI.js";
 import { departmentAPI } from "@/api/M01/departmentAPI.js";
-import { mrrAPI } from "@/api/M03/mrrAPI.js";
+import { transferAPI } from "@/api/M04/transferAPI.js";
 import { itemsAPI } from "@/api/M04/itemsAPI.js";
-import { contactAPI } from "@/api/M06/contactAPI.js";
 import { coaNetworkAPI } from "@/api/M08/coaNetworkAPI.js";
 
 const useTransfer = () => {
@@ -43,7 +42,7 @@ const useTransfer = () => {
   const [allItems, setAllItems] = useState([]);
 
   //costing
-  const [mrrcs_Options, setMrrcs_Options] = useState([]);
+  const [trncs_Options, settrncs_Options] = useState([]);
   const [listDataCost, setListDataCost] = useState([]);
   const [formDataCost, setFormDataCost] = useState({});
 
@@ -65,10 +64,10 @@ const useTransfer = () => {
   };
 
   // ---------- MRR Master ----------
-  const getAllMRR = async () => {
+  const getAllTransfer = async () => {
     try {
       setIsBusy(true);
-      const resp = await mrrAPI.getAll({});
+      const resp = await transferAPI.getAll({});
       const list = resp.data || [];
       setListData(list);
     } catch (error) {
@@ -80,7 +79,7 @@ const useTransfer = () => {
 
   useEffect(() => {
     getTabColumns();
-    getAllMRR();
+    getAllTransfer();
   }, []);
 
   useEffect(() => {
@@ -92,10 +91,10 @@ const useTransfer = () => {
   }, [listDataItem]);
 
   useEffect(() => {
-    const addedItemIds = new Set(listDataItem.map((item) => item.mrrdc_refid));
+    const addedItemIds = new Set(listDataItem.map((item) => item.trndc_refid));
 
     const availableItems = allItems.filter(
-      (item) => !addedItemIds.has(item.price_refid),
+      (item) => !addedItemIds.has(item.stock_id),
     );
 
     setItems_Options(availableItems);
@@ -114,12 +113,12 @@ const useTransfer = () => {
     //---------------------------------------------------
     const totalAmount = newItems.reduce(
       (sum, item) =>
-        sum + validNumber(item.mrrdc_itrat) * validNumber(item.mrrdc_itqty),
+        sum + validNumber(item.trndc_itrat) * validNumber(item.trndc_itqty),
       0,
     );
 
     const totalQty = newItems.reduce(
-      (sum, item) => sum + validNumber(item.mrrdc_itqty),
+      (sum, item) => sum + validNumber(item.trndc_itqty),
       0,
     );
 
@@ -132,9 +131,9 @@ const useTransfer = () => {
     const sumCost = (csmod, clmod) =>
       newCosting
         .filter(
-          (item) => item.mrrcs_csmod === csmod && item.mrrcs_clmod === clmod,
+          (item) => item.trncs_csmod === csmod && item.trncs_clmod === clmod,
         )
-        .reduce((sum, item) => sum + validNumber(item.mrrcs_value), 0);
+        .reduce((sum, item) => sum + validNumber(item.trncs_value), 0);
 
     const incAmt = sumCost("Include", "By Amount");
     const incQty = sumCost("Include", "By Qty");
@@ -153,74 +152,20 @@ const useTransfer = () => {
     const excLineRate = divNumber(excLine, totalLine);
 
     //---------------------------------------------------
-    // 1. Split Invoice Discount
-    //---------------------------------------------------
-    // Invoice discount has two input modes:
-    //   A) Percentage mode (trndm_dspct > 0): the % is auto-filled from the supplier
-    //      (cntct_dspct) when trndm_cntct changes, or entered directly. The amount is
-    //      DERIVED from it: amount = totalAmount * pct / 100, and trndm_invds is a
-    //      read-only display value (the field is disabled in the form while pct > 0).
-    //   B) Amount mode (trndm_dspct === 0): the user types the discount amount directly
-    //      into trndm_invds. The value is used as-is (kept raw, never reformatted),
-    //      because re-formatting it to 4 decimals mid-typing would break the input.
-    // The effective amount computed here is then split proportionally across the item
-    // lines (mrrdc_edamt).
-    // write the effective discount amount back: computed (formatted) in % mode,
-    // or the raw user-typed value (unformatted, so typing stays usable) in amount mode
-    const invoice_discount_pct = Number(master?.trndm_dspct || 0);
-    let invoice_discount_amount = 0;
-    if (invoice_discount_pct > 0) {
-      invoice_discount_amount = (totalAmount * invoice_discount_pct) / 100;
-    } else {
-      invoice_discount_amount = master?.trndm_invds;
-    }
-
-    newItems = newItems.map((item) => {
-      const mrrdc_edamt = divNumber(
-        validNumber(invoice_discount_amount) * validNumber(item.mrrdc_itqty),
-        totalQty,
-      );
-
-      return {
-        ...item,
-        mrrdc_edamt: Number(mrrdc_edamt).toFixed(4),
-      };
-    });
-
-    //---------------------------------------------------
     // 2. Calculate Item Values
     //---------------------------------------------------
 
     newItems = newItems.map((item) => {
-      const qty = validNumber(item.mrrdc_itqty);
-      const rate = validNumber(item.mrrdc_itrat);
+      const qty = validNumber(item.trndc_itqty);
+      const rate = validNumber(item.trndc_itrat);
 
-      const mrrdc_itamt = rate * qty;
-
-      const mrrdc_dsamt = mrrdc_itamt * (validNumber(item.mrrdc_dspct) / 100);
-
-      const afterDisc =
-        mrrdc_itamt - (mrrdc_dsamt + validNumber(item.mrrdc_edamt));
-
-      //AS BD NBR Rules
-      let inclusive_vat = 0;
-      let exclusive_vat = 0;
-      if (item.mrrdc_vtype === "INCLUSIVE") {
-        inclusive_vat = (afterDisc * validNumber(item.mrrdc_vtpct)) / 115;
-      }
-
-      if (item.mrrdc_vtype === "EXCLUSIVE") {
-        exclusive_vat = (afterDisc * validNumber(item.mrrdc_vtpct)) / 100;
-      }
-      const mrrdc_vtamt = (
-        Number(inclusive_vat || 0) + Number(exclusive_vat || 0)
-      ).toFixed(4);
+      const trndc_itamt = rate * qty;
 
       //---------------------------------------------------
       // Including Cost
       //---------------------------------------------------
 
-      const iAmt = afterDisc * incAmtRate;
+      const iAmt = trndc_itamt * incAmtRate;
       const iQty = qty * incQtyRate;
       const iLine = incLineRate;
 
@@ -228,35 +173,30 @@ const useTransfer = () => {
       // Excluding Cost
       //---------------------------------------------------
 
-      const eAmt = afterDisc * excAmtRate;
+      const eAmt = trndc_itamt * excAmtRate;
       const eQty = qty * excQtyRate;
       const eLine = excLineRate;
 
-      const mrrdc_icamt = iAmt + iQty + iLine;
-      const mrrdc_ecamt = eAmt + eQty + eLine;
+      const trndc_icamt = iAmt + iQty + iLine;
+      const trndc_ecamt = eAmt + eQty + eLine;
 
       //---------------------------------------------------
       // Amount
       //---------------------------------------------------
 
-      const mrrdc_pyamt = afterDisc + exclusive_vat + mrrdc_icamt;
-      const mrrdc_stamt = afterDisc + exclusive_vat + mrrdc_icamt + mrrdc_ecamt;
+      const trndc_stamt = trndc_itamt + trndc_icamt + trndc_ecamt;
 
-      const mrrdc_csrat = divNumber(
-        afterDisc - inclusive_vat + mrrdc_icamt + mrrdc_ecamt,
+      const trndc_csrat = divNumber(
+        trndc_itamt + trndc_icamt + trndc_ecamt,
         qty,
       );
 
       return {
         ...item,
-        mrrdc_itamt,
-        mrrdc_dsamt,
-        mrrdc_vtamt,
-        mrrdc_icamt,
-        mrrdc_ecamt,
-        mrrdc_pyamt,
-        mrrdc_stamt,
-        mrrdc_csrat,
+        trndc_itamt,
+        trndc_ecamt,
+        trndc_stamt,
+        trndc_csrat,
       };
     });
 
@@ -268,24 +208,16 @@ const useTransfer = () => {
 
     const totals = newItems.reduce(
       (acc, item) => ({
-        tramt: acc.tramt + validNumber(item.mrrdc_itamt),
-        itmds: acc.itmds + validNumber(item.mrrdc_dsamt),
-        vtamt: acc.vtamt + validNumber(item.mrrdc_vtamt),
-        icamt: acc.icamt + validNumber(item.mrrdc_icamt),
-        ecamt: acc.ecamt + validNumber(item.mrrdc_ecamt),
-        pyamt: acc.pyamt + validNumber(item.mrrdc_pyamt),
-        stamt: acc.stamt + validNumber(item.mrrdc_stamt),
+        tramt: acc.tramt + validNumber(item.trndc_itamt),
+        ecamt: acc.ecamt + validNumber(item.trndc_ecamt),
+        stamt: acc.stamt + validNumber(item.trndc_stamt),
         csamt:
           acc.csamt +
-          validNumber(item.mrrdc_csrat) * validNumber(item.mrrdc_itqty),
+          validNumber(item.trndc_csrat) * validNumber(item.trndc_itqty),
       }),
       {
         tramt: 0,
-        itmds: 0,
-        vtamt: 0,
-        icamt: 0,
         ecamt: 0,
-        pyamt: 0,
         stamt: 0,
         csamt: 0,
       },
@@ -295,12 +227,14 @@ const useTransfer = () => {
     // Master
     //---------------------------------------------------
 
+    //console.log("master", totals);
+
     setFormData({
       ...master,
-      trndm_tramt: validNumber(totals.tramt).toFixed(4),
-      trndm_ecamt: validNumber(totals.ecamt).toFixed(4),
-      trndm_stamt: validNumber(totals.stamt).toFixed(4),
-      trndm_csamt: validNumber(totals.csamt).toFixed(4),
+      trndm_tramt: validNumber(totals.tramt),
+      trndm_ecamt: validNumber(totals.ecamt),
+      trndm_stamt: validNumber(totals.stamt),
+      trndm_csamt: validNumber(totals.csamt),
     });
   }
 
@@ -315,16 +249,8 @@ const useTransfer = () => {
     } catch (error) {}
   };
 
-  const getPOContacts = async (v) => {
-    try {
-      const resp = await contactAPI.getSuppliersPendingMRR({ dpart_id: v });
-      const list = resp.data || [];
-      setCntct_Options(list);
-    } catch (error) {}
-  };
-
   const getExpnPaym = async () => {
-    // if (mrrcs_Options.length > 0) {
+    // if (trncs_Options.length > 0) {
     //   return;
     //updated balance
     // }
@@ -338,7 +264,7 @@ const useTransfer = () => {
         ["SYS_AST_PAYMENT", "SYS_NONE"].includes(f.chtrt_grpid),
       );
       //console.log("list",list)
-      setMrrcs_Options(mrrcs);
+      settrncs_Options(mrrcs);
       const listActive = mrrpy.filter((f) => validNumber(f.party_crbal) > 0);
       setMrrpy_Options(listActive);
     } catch (error) {}
@@ -358,7 +284,7 @@ const useTransfer = () => {
         ["SYS_AST_SUPPLIER", "SYS_NONE"].includes(f.chtrt_grpid),
       );
       //console.log("list",list)
-      setMrrcs_Options(mrrcs);
+      settrncs_Options(mrrcs);
       const listActive = mrrpy.filter((f) => validNumber(f.party_crbal) > 0);
       setMrrpy_Options(listActive);
     } catch (error) {}
@@ -383,7 +309,7 @@ const useTransfer = () => {
     if (f === "trndm_dpart") {
       await getTransferItems(v);
       await getPOExpnPaym(v);
-      //temp off
+      //full off
       //reCalculate(listDataItem, formData, listDataCost);
     }
   };
@@ -395,21 +321,17 @@ const useTransfer = () => {
     loadAllDetails(rowData.id);
     getAllDepartments();
     getExpnPaym();
-    setFormPO(false);
   };
 
   const loadAllDetails = async (id) => {
     try {
       setIsBusy(true);
-      const [dtResp, csResp, pyResp, dtOfr] = await Promise.all([
-        mrrAPI.getDetailsByMasterId({ mrrdc_trndm: id }),
-        mrrAPI.getCostsByMasterId({ mrrcs_trndm: id }),
-        mrrAPI.getPaymentsByMasterId({ mrrpy_trndm: id }),
-        mrrAPI.getBundlesByMasterId({ mrrdf_trndm: id }),
+      const [dtResp, csResp] = await Promise.all([
+        transferAPI.getDetailsByMasterId({ trndc_trndm: id }),
+        transferAPI.getCostsByMasterId({ trncs_trndm: id }),
       ]);
       setListDataItem(dtResp.data || []);
       setListDataCost(csResp.data || []);
-      setListDataBundle(dtOfr.data || []);
     } catch (error) {
     } finally {
       setIsBusy(false);
@@ -436,7 +358,7 @@ const useTransfer = () => {
 
     try {
       setIsBusy(true);
-      const resp = await mrrAPI.delete(rowData);
+      const resp = await transferAPI.delete(rowData);
       alertBox({
         title: resp.success
           ? isActive
@@ -450,7 +372,7 @@ const useTransfer = () => {
       if (resp.success) {
         setPgView("SYS_VW_LST_1");
         setFormData(dataModel);
-        getAllMRR();
+        getAllTransfer();
       }
     } catch (error) {
     } finally {
@@ -459,7 +381,7 @@ const useTransfer = () => {
   };
 
   const handleSearch = async () => {
-    getAllMRR();
+    getAllTransfer();
   };
 
   const handleAddNew = () => {
@@ -500,36 +422,21 @@ const useTransfer = () => {
         return;
       }
 
-      if (validNumber(formData.trndm_duamt) < 0) {
-        showToast(`${formData.trndm_duamt} Overpaid is not valid`, {
-          type: "warning",
-        });
+      if (formData.trndm_dpart === formData.trndm_dparz) {
+        showToast("Same WH can not make transfer", { type: "warning" });
         return;
-      }
-
-      if (fromPO && validNumber(formData.trndm_pdamt) < 0.1) {
-        const confirmation = await confirmBox({
-          title: "With PO → MRR without payment",
-          message: `This MRR has no payment or adjust with Supplier advance. Are you want to continue?`,
-          confirmText: "Continue",
-          variant: "danger",
-        });
-        if (!confirmation) return;
       }
 
       const reqBody = {
         ...formData,
-        fromPO,
-        tmpb_mrrdc: listDataItem,
-        tmpb_mrrcs: listDataCost,
-        tmpb_mrrpy: listDataPayment,
-        tmpb_mrrdf: listDataBundle,
+        tmib_trndc: listDataItem,
+        tmib_trncs: listDataCost,
       };
 
       //console.log(reqBody);
       //return;
       setIsBusy(true);
-      const resp = await mrrAPI.upsert(reqBody);
+      const resp = await transferAPI.upsert(reqBody);
       alertBox({
         title: resp.success ? (formData.id ? "Updated" : "Saved") : "Error",
         message: resp.message,
@@ -539,7 +446,7 @@ const useTransfer = () => {
       if (resp.success) {
         setPgView("SYS_VW_LST_1");
         setFormData(dataModel);
-        getAllMRR();
+        getAllTransfer();
       }
     } catch (error) {
     } finally {
@@ -551,74 +458,59 @@ const useTransfer = () => {
 
   const handleChangeItem = async (f, v) => {
     setFormDataItem((prev) => ({ ...prev, [f]: v }));
-    const newErrors = validate({ ...formDataItem, [f]: v }, tmpb_mrrdc);
+    const newErrors = validate({ ...formDataItem, [f]: v }, tmib_trndc);
     setFormErrors(newErrors);
-    if (f === "mrrdc_refid") {
-      const price_id = items_Options.find((opt) => opt.price_refid === v);
-      //console.log("price_id", price_id);
-      let defQty = 1;
-      if (fromPO) {
-        defQty = price_id?.price_gdstk || 1;
-      }
+    if (f === "trndc_refid") {
+      const stock_id = items_Options.find((opt) => opt.stock_id === v);
+      //console.log("stock_id", stock_id);
+      let defQty = stock_id?.stock_ohqty || 1;
       setFormDataItem((prev) => ({
         ...prev,
-        mrrdc_items: price_id?.id,
-        mrrdc_price: price_id?.price_id,
-        mrrdc_units: price_id?.items_runit,
-        mrrdc_itrat: price_id?.price_lprat || 0,
-        mrrdc_vtpct: price_id?.items_prvat || 0,
-        mrrdc_vtype: price_id?.items_ptvat || "-",
-        party_id: price_id?.party_id || "-",
-        chtac_id: price_id?.chtac_id || "-",
-        mrrdc_refid: price_id?.price_refid || "-",
-        refid_trnno: price_id?.refid_trnno || "-",
-        mrrdc_itqty: defQty,
-        items_iname: price_id?.items_iname || "Invalid Item",
-        price_cname: price_id?.price_cname || "Invalid Item",
-        runit_cname: price_id?.runit_cname || "Invalid Retail Unit",
-        items_pkqty: price_id?.items_pkqty || 1,
-        punit_cname: price_id?.punit_cname || "Invalid Pack Unit",
-        items_szqty: price_id?.items_szqty || 1,
-        sunit_cname: price_id?.sunit_cname || "Invalid Size Unit",
-        sgrup_cname: price_id?.sgrup_cname || "Invalid Sub Group",
-        scatg_cname: price_id?.scatg_cname || "Invalid Sub Category",
-        brand_cname: price_id?.brand_cname || "Invalid Brand",
-        mrrdc_actve: true,
+        trndc_items: stock_id?.stock_items,
+        trndc_price: stock_id?.stock_price,
+        trndc_units: stock_id?.items_runit,
+        trndc_itrat: stock_id?.stock_cprat || 0,
+        party_id: stock_id?.party_id || "-",
+        chtac_id: stock_id?.chtac_id || "-",
+        trndc_refid: stock_id?.stock_id || "-",
+        refid_trnno: stock_id?.stock_trnno || "-",
+        trndc_itqty: defQty,
+        items_iname: stock_id?.items_iname || "Invalid Item",
+        price_cname: stock_id?.price_cname || "Invalid Item",
+        runit_cname: stock_id?.runit_cname || "Invalid Retail Unit",
+        items_pkqty: stock_id?.items_pkqty || 1,
+        punit_cname: stock_id?.punit_cname || "Invalid Pack Unit",
+        items_szqty: stock_id?.items_szqty || 1,
+        sunit_cname: stock_id?.sunit_cname || "Invalid Size Unit",
+        sgrup_cname: stock_id?.sgrup_cname || "Invalid Sub Group",
+        scatg_cname: stock_id?.scatg_cname || "Invalid Sub Category",
+        brand_cname: stock_id?.brand_cname || "Invalid Brand",
+        trndc_actve: true,
+        stock_brcod: stock_id?.stock_brcod || "",
+        stock_batch: stock_id?.stock_batch || "",
+        stock_srial: stock_id?.stock_srial || "",
+        stock_wrdat: stock_id?.stock_wrdat || "",
+        stock_fgdat: stock_id?.stock_fgdat || "",
+        stock_exdat: stock_id?.stock_exdat || "",
       }));
     }
   };
 
   const handleAddToListItem = (value) => {
-    const newErrors = validate(formDataItem, tmpb_mrrdc);
+    const newErrors = validate(formDataItem, tmib_trndc);
     setFormErrors(newErrors);
     if (Object.keys(newErrors).length > 0) {
       return;
     }
-    if (validNumber(formDataItem.mrrdc_itqty) <= 0.1) {
+    if (validNumber(formDataItem.trndc_itqty) <= 0.1) {
       showToast("Quantity is required", { type: "warning" });
       return;
     }
-    if (validNumber(formDataItem.mrrdc_itrat) <= 0) {
+    if (validNumber(formDataItem.trndc_itrat) <= 0) {
       showToast("Price is required", { type: "warning" });
       return;
     }
 
-    if (formDataItem.mrrdc_vtype === "EXEMPT") {
-      if (validNumber(formDataItem.mrrdc_vtpct) !== 0) {
-        showToast("Purchase VAT % must be 0 for EXEMPT", { type: "danger" });
-        return;
-      }
-    } else {
-      if (validNumber(formDataItem.mrrdc_vtpct) === 0) {
-        showToast("Purchase VAT % must not be 0", { type: "danger" });
-        return;
-      }
-    }
-
-    // const items_iname = items_Options.find(
-    //   (opt) => opt.price_refid === formDataItem.mrrdc_refid,
-    // );
-    //console.log("items_iname", items_iname);
     //create new row
     const newItem = {
       ...formDataItem,
@@ -626,7 +518,7 @@ const useTransfer = () => {
     };
 
     const newItemList = [...listDataItem, newItem];
-    reCalculate(newItemList, formData, listDataCost, listDataPayment);
+    reCalculate(newItemList, formData, listDataCost);
     setFormDataItem({});
     if (value === "CLOSE") {
       handleHideModal();
@@ -649,7 +541,7 @@ const useTransfer = () => {
     if (!confirmation) return;
 
     const newItemList = listDataItem.filter((item) => item.id !== rowData.id);
-    reCalculate(newItemList, formData, listDataCost, listDataPayment);
+    reCalculate(newItemList, formData, listDataCost);
     showToast("Removed successfully", { type: "success" });
   };
 
@@ -657,45 +549,45 @@ const useTransfer = () => {
 
   const handleChangeCost = (f, v) => {
     setFormDataCost((prev) => ({ ...prev, [f]: v }));
-    const newErrors = validate({ ...formDataCost, [f]: v }, tmpb_mrrcs);
+    const newErrors = validate({ ...formDataCost, [f]: v }, tmib_trncs);
     setFormErrors(newErrors);
     //console.log(f, v);
-    if (f === "mrrcs_party") {
-      const mrrcs_id = mrrcs_Options.find((opt) => opt.id === v);
-      //console.log("mrrcs_id", mrrcs_id);
+    if (f === "trncs_party") {
+      const trncs_id = trncs_Options.find((opt) => opt.id === v);
+      //console.log("trncs_id", trncs_id);
       setFormDataCost((prev) => ({
         ...prev,
-        party_cname: mrrcs_id?.party_cname,
-        mrrcs_party: v,
-        chtac_chtno: mrrcs_id?.chtac_chtno,
-        chtac_id: mrrcs_id?.party_chtac,
+        party_cname: trncs_id?.party_cname,
+        trncs_party: v,
+        chtac_chtno: trncs_id?.chtac_chtno,
+        chtac_id: trncs_id?.party_chtac,
         party_id: v,
       }));
     }
   };
 
   const handleAddToListCost = () => {
-    const newErrors = validate(formDataCost, tmpb_mrrcs);
+    const newErrors = validate(formDataCost, tmib_trncs);
     setFormErrors(newErrors);
     if (Object.keys(newErrors).length > 0) {
       return;
     }
 
     const isExists = listDataCost.find(
-      (f) => f.party_id === formDataCost.mrrcs_party,
+      (f) => f.party_id === formDataCost.trncs_party,
     );
     if (isExists) {
       showToast("This Cost is already added", { type: "warning" });
       return;
     }
 
-    if (validNumber(formDataCost.mrrcs_value) < 0.01) {
+    if (validNumber(formDataCost.trncs_value) < 0.01) {
       showToast("Amount is required", { type: "warning" });
       return;
     }
 
-    const party_cname = mrrcs_Options.find(
-      (opt) => opt.id === formDataCost.mrrcs_party,
+    const party_cname = trncs_Options.find(
+      (opt) => opt.id === formDataCost.trncs_party,
     );
 
     //create new row
@@ -703,10 +595,10 @@ const useTransfer = () => {
       ...formDataCost,
       id: generateGuid(),
       party_cname: party_cname?.party_cname || "Invalid Item",
-      mrrcs_actve: true,
+      trncs_actve: true,
     };
     const newCostList = [...listDataCost, newItem];
-    reCalculate(listDataItem, formData, newCostList, listDataPayment);
+    reCalculate(listDataItem, formData, newCostList);
     setFormDataCost({});
     handleHideModal();
   };
@@ -771,7 +663,7 @@ const useTransfer = () => {
     dpart_Options,
     cntct_Options,
     items_Options,
-    mrrcs_Options,
+    trncs_Options,
     listDataCost,
     //functions
     handleChange,

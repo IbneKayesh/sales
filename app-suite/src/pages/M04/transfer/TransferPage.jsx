@@ -15,7 +15,7 @@ import Button from "@/components/Button";
 import Modal, { ModalHeader, ModalTitle, ModalBody } from "@/components/Modal";
 import useTransfer from "@/hooks/M04/useTransfer";
 import usePrint from "@/hooks/usePrint";
-import MrrList from "./MrrList";
+import TransferList from "./TransferList";
 import TransferForm from "./TransferForm";
 import ItemForm from "./ItemForm";
 import ItemList from "./ItemList";
@@ -142,7 +142,7 @@ const TransferPage = () => {
         </PageCardHeader>
         <PageCardBody>
           {pgView === "SYS_VW_LST_1" && (
-            <MrrList
+            <TransferList
               listData={listData}
               onEdit={handleEdit}
               onDelete={handleDelete}

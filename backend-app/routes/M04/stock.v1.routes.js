@@ -485,8 +485,8 @@ router.post("/get-stock-line", async (req, res) => {
     scatg.scatg_cname as scatg_cname,
     brand.brand_cname as brand_cname
         FROM tmib_stock stk
-        JOIN tmib_price prc ON stk.stock_price = prc.id
-        JOIN tmib_items itm ON stk.stock_items = itm.id
+        LEFT JOIN tmib_price prc ON stk.stock_price = prc.id
+        LEFT JOIN tmib_items itm ON stk.stock_items = itm.id
         LEFT JOIN tmib_units runit ON itm.items_runit = runit.id
         LEFT JOIN tmib_units punit ON itm.items_punit = punit.id
         LEFT JOIN tmib_units sunit ON itm.items_sunit = sunit.id

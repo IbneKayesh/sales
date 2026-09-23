@@ -170,40 +170,6 @@ const getFiscalYearPeriod_v2 = async (user_c, user_b, dept_id, trnDate) => {
   return result[0];
 };
 
-const getFiscalYearPeriod_v1 = async (user_c, user_b, dept_id, trnDate) => {
-  const sql = `select fsy.id AS fsyar_id, acp.id AS acprd_id
-from tmtb_fsyar fsy
-JOIN tmtb_acprd acp ON fsy.id = acp.acprd_fsyar
-	AND fsy.fsyar_apusr = acp.acprd_apusr
-	AND fsy.fsyar_bsins = acp.acprd_bsins
-	AND fsy.fsyar_dpart = acp.acprd_dpart
-WHERE fsy.fsyar_apusr = $1
-	AND fsy.fsyar_bsins = $2
-	AND fsy.fsyar_dpart = $3
-	AND fsy.fsyar_stdat = '2026-01-01 00:00:00'
-	AND fsy.fsyar_endat = '2026-12-31 00:00:00'
-	AND fsy.fsyar_stats = 'open'
-	AND fsy.fsyar_iscur = TRUE
-	AND fsy.fsyar_actve = TRUE
-	AND acp.acprd_stdat = '2026-05-01 00:00:00'
-	AND acp.acprd_endat = '2026-05-31 00:00:00'
-	AND acp.acprd_stats = 'open'
-	AND acp.acprd_iscur = TRUE
-	AND acp.acprd_actve = TRUE`;
-
-  const result = await dbGet(sql, [
-    user_c,
-    user_b,
-    dept_id,
-    trnDate,
-    trnDate,
-    trnDate,
-    trnDate,
-  ]);
-
-  return result;
-};
-
 const getDefaultCOAforPartyId = async (user_c, user_b, src_id) => {
   const sql = `
     SELECT pty.prtya_chtac

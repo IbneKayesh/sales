@@ -6,6 +6,7 @@ import { getRelativeDays } from "@/utils/datetime.js";
 
 const JournalList = ({ listData, onEdit, onDelete }) => {
   const dtColumns = [
+    { key: "dpart_cname", header: "Department", width: "80px" },
     {
       key: "jrnlm_trtyp",
       header: "Type",

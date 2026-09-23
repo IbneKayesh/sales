@@ -15,6 +15,7 @@ const itemContactV1Routes = require("./itemContact.v1.routes");
 const priceCostingV1Routes = require("./priceCosting.v1.routes");
 const bundleV1Routes = require("./bundle.v1.routes");
 const adjustmentsV1Routes = require("./adjustments.v1.routes.js");
+const transferIOV1Routes = require("./transferIO.v1.routes.js");
 
 
 router.use("/v1/brands", brandsV1Routes);
@@ -31,4 +32,5 @@ router.use("/v1/item-contact", itemContactV1Routes);
 router.use("/v1/price-costing", priceCostingV1Routes);
 router.use("/v1/bundle", bundleV1Routes);
 router.use("/v1/adjustments", adjustmentsV1Routes);
+router.use("/v1/transferIO", transferIOV1Routes);
 module.exports = router;

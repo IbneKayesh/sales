@@ -1228,7 +1228,7 @@ router.post("/transfer-items", async (req, res) => {
       prc.id price_id, prc.price_cname, prc.price_lprat,
       prc.price_dprat, prc.price_tprat, prc.price_mrrat, prc.price_dspct, prc.price_gdstk, prc.price_bdstk,
       itm.id items_id, itm.items_icode, itm.items_iname, itm.items_brcod, itm.items_hscod, itm.items_runit,
-      itm.items_pkqty, itm.items_slvat, itm.items_stvat, itm.items_szqty,
+      itm.items_pkqty, itm.items_slvat, itm.items_stvat, itm.items_szqty, itm.items_itype,
       runit.units_cname as runit_cname,
       punit.units_cname as punit_cname,
       sunit.units_cname as sunit_cname,

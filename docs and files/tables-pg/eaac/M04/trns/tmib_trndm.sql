@@ -19,7 +19,7 @@ CREATE TABLE tmib_trndm (
   trndm_tramt decimal(18,6) NOT NULL DEFAULT 0,
   trndm_ecamt decimal(18,6) NOT NULL DEFAULT 0,
   trndm_stamt decimal(18,6) NOT NULL DEFAULT 0,
-  trnsm_csamt decimal(18,6) NOT NULL DEFAULT 0,
+  trndm_csamt decimal(18,6) NOT NULL DEFAULT 0,
   trndm_vehid varchar(50),
   trndm_ispst boolean NOT NULL DEFAULT true,
   trndm_isrcv varchar(50),
