@@ -277,7 +277,7 @@ router.post("/get-by-territory", async (req, res) => {
     const { route_trtry, user_s, user_c, user_b } = req.body;
 
     // Validate input
-    if (!route_route_trtrytrtry || !user_c) {
+    if (!route_trtry || !user_c) {
       return res.json({
         success: false,
         message: "All fields in the request body are required.",

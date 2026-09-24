@@ -312,6 +312,13 @@ const useTransfer = () => {
       //full off
       //reCalculate(listDataItem, formData, listDataCost);
     }
+
+    if (
+      (f === "trndm_dpart" && v === formData.trndm_dparz) ||
+      (v === formData.trndm_dpart && f === "trndm_dparz")
+    ) {
+      showToast("Same WH can not make transfer", { type: "error" });
+    }
   };
 
   const handleEdit = async (rowData) => {

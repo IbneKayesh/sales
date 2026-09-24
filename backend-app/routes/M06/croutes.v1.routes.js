@@ -297,13 +297,14 @@ router.post("/delete", async (req, res) => {
   }
 });
 
-// get by territory
-router.post("/get-by-territory", async (req, res) => {
+// get by droutes
+router.post("/get-by-droutes", async (req, res) => {
   try {
-    const { rtcnt_trtry, user_s, user_c, user_b } = req.body;
+    const { dzone_id, tarea_id, trtry_id, route_id, user_s, user_c, user_b } =
+      req.body;
 
     // Validate input
-    if (!rtcnt_rtcnt_trtrytrtry || !user_c) {
+    if (!user_c) {
       return res.json({
         success: false,
         message: "All fields in the request body are required.",
@@ -312,14 +313,33 @@ router.post("/get-by-territory", async (req, res) => {
     }
 
     //database action
-    const sql = `SELECT crt.*, 0 as edit_stop
-    FROM tmcb_rtcnt crt
-    WHERE crt.rtcnt_users = $1
-    AND crt.rtcnt_trtry = $2
-    AND crt.rtcnt_actve = TRUE
-    ORDER BY crt.rtcnt_rname ASC`;
+    let sql = `SELECT cnt.*, rct.rtcnt_srial, emp.emply_cname
+FROM tmcb_cntct cnt
+LEFT JOIN tmcb_rtcnt rct ON cnt.id = rct.rtcnt_cntct
+LEFT JOIN tmhb_emply emp ON rct.rtcnt_emply = emp.id
+WHERE cnt.cntct_users = $1
+AND cnt.cntct_actve = TRUE
+AND cnt.cntct_order = TRUE
+AND cnt.cntct_ctype = 'Customer'`;
+    const params = [user_c];
 
-    const params = [user_c, rtcnt_trtry];
+    if (dzone_id) {
+      params.push(dzone_id);
+      sql += ` AND cnt.cntct_dzone = $${params.length}`;
+    }
+    if (tarea_id) {
+      params.push(tarea_id);
+      sql += ` AND cnt.cntct_tarea = $${params.length}`;
+    }
+    if (trtry_id) {
+      params.push(trtry_id);
+      sql += ` AND cnt.cntct_trtry = $${params.length}`;
+    }
+    if (route_id) {
+      params.push(route_id);
+      sql += ` AND rct.rtcnt_route = $${params.length}`;
+    }
+
     const rows = await dbGetAll(sql, params, `get rtcnt- ${user_c}`);
     res.json({
       success: true,

@@ -7,7 +7,7 @@ CREATE TABLE tmib_trncs (
 
   trncs_users VARCHAR(50) NOT NULL,
   trncs_bsins VARCHAR(50) NOT NULL,
-  trncs_trnsm VARCHAR(50) NOT NULL,
+  trncs_trndm VARCHAR(50) NOT NULL,
   trncs_party VARCHAR(50) NOT NULL,
   trncs_csmod VARCHAR(50) NOT NULL,
   trncs_clmod VARCHAR(50) NOT NULL,

@@ -12,6 +12,7 @@ import DeliveryTripsForm from "./DeliveryTripsForm";
 import ItemList from "./ItemList";
 import DeliveryTripPrint from "./DeliveryTripPrint";
 import usePrint from "@/hooks/usePrint";
+import InvoiceForm from "./InvoiceForm";
 
 const DeliveryTripsPage = () => {
   const print = usePrint();
@@ -40,6 +41,9 @@ const DeliveryTripsPage = () => {
     handleSubmit,
     //invoice items
     handleDeleteItem,
+    handleChangeInvoice,
+    route_Options,
+    cntct_Options,
     //print
     formDataPrint,
     handlePrint,
@@ -112,6 +116,20 @@ const DeliveryTripsPage = () => {
               dpart_Options={dpart_Options}
               party_Options={party_Options}
               refid_Options={refid_Options}
+            />
+          )}
+          {pgView === "SYS_VW_FRM_1" && (
+            <InvoiceForm
+              isBusy={isBusy}
+              readOnly={readOnly}
+              stopEdit={stopEdit}
+              formData={formData}
+              formErrors={formErrors}
+              onChange={handleChangeInvoice}
+              onCancel={handleCancel}
+              onSubmit={handleSubmit}
+              route_Options={route_Options}
+              cntct_Options={cntct_Options}
             />
           )}
           {pgView === "SYS_VW_FRM_1" && listDataItem.length > 0 && (

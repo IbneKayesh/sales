@@ -26,7 +26,7 @@ export const droutesAPI = {
     apiRequest("/M06/v1/droutes/get-all-active", {
       body: data,
     }),
-  getByZone: (data) =>
+  getByTerritory: (data) =>
     apiRequest("/M06/v1/droutes/get-by-territory", {
       body: data,
     }),

@@ -6,6 +6,11 @@ const dataModel = generateDataModel(tmob_tripm);
 import { departmentAPI } from "@/api/M01/departmentAPI.js";
 import { deliveryTripAPI } from "@/api/M02/deliveryTripAPI.js";
 import { coaNetworkAPI } from "@/api/M08/coaNetworkAPI.js";
+import { districtZoneAPI } from "@/api/M06/districtZoneAPI.js";
+import { thanaAreaAPI } from "@/api/M06/thanaAreaAPI.js";
+import { territoryAPI } from "@/api/M06/territoryAPI.js";
+import { droutesAPI } from "@/api/M06/droutesAPI.js";
+import { croutesAPI } from "@/api/M06/croutesAPI.js";
 
 const useDeliveryTrips = () => {
   const { showToast, confirmBox, alertBox, isBusy, setIsBusy } = useUI();
@@ -172,7 +177,7 @@ const useDeliveryTrips = () => {
   const handleSearch = async () => {
     getAllDeliveryTrips();
   };
-  const handleAddNew = () => {
+  const handleAddNew = async () => {
     setPgView("SYS_VW_FRM_1");
     setFormData(dataModel);
     setReadOnly(false);
@@ -180,6 +185,7 @@ const useDeliveryTrips = () => {
     setListDataItem([]);
     getAllDepartments();
     getDeliveryTrip();
+    getDZone();
   };
 
   const handleCancel = () => {
@@ -232,6 +238,142 @@ const useDeliveryTrips = () => {
   };
 
   // ---------- Item Details ----------
+  const [rstep_Options, setRstep_Options] = useState("DISTRICT");
+  const [route_Options, setRoute_Options] = useState([]);
+  const [cntct_Options, setCntct_Options] = useState([]);
+
+  const getDZone = async () => {
+    try {
+      const resp = await districtZoneAPI.getByCountry({
+        dzone_cntry: "Bangladesh",
+      });
+      const list = resp.data || [];
+      const listActive = list
+        .filter((item) => item.dzone_actve === true)
+        .map((item) => ({
+          label: item.dzone_cname,
+          value: item.id,
+        }));
+
+      if (listActive.length > 0) {
+        setRoute_Options(listActive);
+        setRstep_Options("DISTRICT");
+      }
+    } catch (error) {}
+  };
+
+  const getTArea = async (id) => {
+    try {
+      const resp = await thanaAreaAPI.getByZone({
+        tarea_dzone: id,
+      });
+      const list = resp.data || [];
+      const listActive = list
+        .filter((item) => item.tarea_actve === true)
+        .map((item) => ({
+          label: item.tarea_cname,
+          value: item.id,
+        }));
+      if (listActive.length > 0) {
+        setRoute_Options(listActive);
+        setRstep_Options("THANA");
+      }
+    } catch (error) {}
+  };
+
+  const getTerritory = async (id) => {
+    try {
+      const resp = await territoryAPI.getByTArea({
+        trtry_tarea: id,
+      });
+      const list = resp.data || [];
+      const listActive = list
+        .filter((item) => item.trtry_actve === true)
+        .map((item) => ({
+          label: item.trtry_cname,
+          value: item.id,
+        }));
+      if (listActive.length > 0) {
+        setRoute_Options(listActive);
+        setRstep_Options("TERRITORY");
+      }
+    } catch (error) {}
+  };
+
+  const getDRoute = async (id) => {
+    try {
+      const resp = await droutesAPI.getByTerritory({
+        route_trtry: id,
+      });
+      const list = resp.data || [];
+      const listActive = list
+        .filter((item) => item.route_actve === true)
+        .map((item) => ({
+          label: item.route_rname + "~" + item.route_dname,
+          value: item.id,
+        }));
+      if (listActive.length > 0) {
+        setRoute_Options(listActive);
+        setRstep_Options("DROUTE");
+      }
+    } catch (error) {}
+  };
+  const getRouteContacts = async (obs) => {
+    try {
+      setCntct_Options([]);
+      const resp = await croutesAPI.getByCRoutes(obs);
+      const list = resp.data || [];
+      const listActive = list
+        .filter((item) => item.cntct_actve === true)
+        .map((item) => ({
+          cntct_cname:
+            item.cntct_cname +
+            "~" +
+            item.cntct_ofadr +
+            "~" +
+            item.emply_cname +
+            "~" +
+            item.rtcnt_srial,
+          value: item.id,
+        }));
+      //console.log("listActive", list);
+      if (listActive.length > 0) {
+        setCntct_Options(listActive);
+        //setRstep_Options("DROUTE");
+      }
+    } catch (error) {}
+  };
+  const handleChangeInvoice = async (f, v) => {
+    setFormData((prev) => ({ ...prev, [f]: v }));
+    const newErrors = validate({ ...formData, [f]: v }, tmob_tripm);
+    setFormErrors(newErrors);
+    if (f === "rtcnt_route" && !v) {
+      await getDZone();
+      return;
+    }
+    if (f === "rtcnt_route") {
+      if (rstep_Options === "DISTRICT") {
+        await getTArea(v);
+        await getRouteContacts({
+          dzone_id: v,
+        });
+      }
+      if (rstep_Options === "THANA") {
+        await getTerritory(v);
+      }
+      if (rstep_Options === "TERRITORY") {
+        await getDRoute(v);
+      }
+      if (rstep_Options === "DROUTE") {
+        await getRouteContacts({
+          route_id: v,
+        });
+      }
+    }
+    console.log(f, v);
+    console.log("rstep_Options", rstep_Options);
+  };
+
   const handleDeleteItem = async (rowData) => {
     const dataName = rowData.invcm_trnno;
     const confirmation = await confirmBox({
@@ -285,6 +427,9 @@ const useDeliveryTrips = () => {
     handleSubmit,
     //invoice items
     handleDeleteItem,
+    handleChangeInvoice,
+    route_Options,
+    cntct_Options,
     //print
     formDataPrint,
     handlePrint,

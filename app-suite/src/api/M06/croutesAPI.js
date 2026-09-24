@@ -26,8 +26,8 @@ export const croutesAPI = {
     apiRequest("/M06/v1/croutes/get-all-active", {
       body: data,
     }),
-  getByZone: (data) =>
-    apiRequest("/M06/v1/croutes/get-by-territory", {
+  getByCRoutes: (data) =>
+    apiRequest("/M06/v1/croutes/get-by-droutes", {
       body: data,
     }),
 };

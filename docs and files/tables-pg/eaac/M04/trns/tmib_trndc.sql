@@ -7,7 +7,7 @@ CREATE TABLE tmib_trndc (
 
   trndc_users VARCHAR(50) NOT NULL,
   trndc_bsins VARCHAR(50) NOT NULL,
-  trndc_trnsm VARCHAR(50) NOT NULL,
+  trndc_trndm VARCHAR(50) NOT NULL,
   trndc_price VARCHAR(50) NOT NULL,
   trndc_items VARCHAR(50) NOT NULL,
   trndc_units VARCHAR(50) NOT NULL,

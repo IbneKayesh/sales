@@ -3,6 +3,7 @@ import InputText from "@/components/InputText";
 import Dropdown from "@/components/Dropdown";
 import AuditData from "@/components/AuditData";
 import { IconClose, IconSave } from "@/icons";
+import InputLabel from "@/components/InputLabel";
 import { cntry_Options } from "@/utils/vtable.js";
 
 const DeliveryTripsForm = ({
@@ -120,7 +121,7 @@ const DeliveryTripsForm = ({
         </div>
         <div className="col-span-8">
           <Dropdown
-            label="Pending Delivery"
+            label="Pending Orders"
             options={refid_Options}
             value={formData.tripc_refid}
             onChange={(e) => onChange("tripc_refid", e.target.value)}
