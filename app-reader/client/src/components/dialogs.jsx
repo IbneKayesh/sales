@@ -1,4 +1,5 @@
 import { useId, useState } from 'react'
+import { Plus, X } from 'lucide-react'
 import { api } from '../lib/api.js'
 import { IMPORTANCE, NODE_TYPES, NODE_TYPE_LABEL } from '../lib/format.js'
 import { descendantIds, flattenNodes } from '../lib/hierarchy.js'
@@ -153,7 +154,9 @@ export function NodeDialog({ bookId, nodes, node, parentId = null, defaultType =
     parentId: node ? node.parentId || '' : parentId || '',
     importance: node?.importance || 'medium',
     tags: node?.tags || [],
-    text: node?._text ?? '',
+    title: node?.title || node?.label || '',
+    subtitles: Array.isArray(node?.subtitles) ? node.subtitles : [],
+    notes: node?._text ?? '',
     relatedNodeIds: node?.relatedNodeIds || [],
     favorite: Boolean(node?.favorite),
     currentTopic: Boolean(node?.currentTopic),
@@ -178,15 +181,17 @@ export function NodeDialog({ bookId, nodes, node, parentId = null, defaultType =
         parentId: values.parentId || null,
         importance: values.importance,
         tags: values.tags,
-        text: values.text,
+        title: values.title,
+        subtitles: values.subtitles,
+        notes: values.notes,
+        text: values.notes, // backwards-compat
         relatedNodeIds: values.relatedNodeIds,
         favorite: values.favorite,
         currentTopic: values.currentTopic,
         themes: values.themes,
       }
-      if (isEdit) await api.updateNode(bookId, node.id, payload)
-      else await api.createNode(bookId, payload)
-      await onSaved?.()
+      const result = isEdit ? await api.updateNode(bookId, node.id, payload) : await api.createNode(bookId, payload)
+      await onSaved?.(result?.node || result, isEdit)
       onClose()
     } catch (err) {
       setError(err)
@@ -198,7 +203,7 @@ export function NodeDialog({ bookId, nodes, node, parentId = null, defaultType =
   return (
     <DialogForm
       title={isEdit ? 'Edit node' : 'Add node'}
-      description="Every record is one node in the hierarchy: serial, type, parent, importance, tags, text, links, favourite, current topic and themes."
+      description="Fill in the title and any details. All fields except type are optional."
       onClose={onClose}
       onSubmit={submit}
       busy={busy}
@@ -278,13 +283,72 @@ export function NodeDialog({ bookId, nodes, node, parentId = null, defaultType =
         </div>
       </div>
 
+      {/* Title */}
+      <div>
+        <label htmlFor="node-title" className="label">
+          Title
+        </label>
+        <input
+          id="node-title"
+          className="input text-base font-medium"
+          value={values.title}
+          onChange={(e) => set({ title: e.target.value })}
+          placeholder="Node title…"
+        />
+      </div>
+
+      {/* Subtitles */}
+      <div>
+        <div className="flex items-center justify-between gap-2 mb-1">
+          <label className="label mb-0">
+            Subtitles <span className="text-xs font-normal text-stone-400">(optional)</span>
+          </label>
+          <button
+            type="button"
+            className="btn btn-secondary btn-sm"
+            onClick={() => set({ subtitles: [...values.subtitles, ''] })}
+          >
+            <Plus aria-hidden="true" className="h-3.5 w-3.5" />
+            Add
+          </button>
+        </div>
+        {values.subtitles.length === 0 ? (
+          <p className="text-xs text-stone-400">No subtitles.</p>
+        ) : (
+          <ul className="space-y-1.5">
+            {values.subtitles.map((sub, idx) => (
+              <li key={idx} className="flex items-center gap-2">
+                <span className="shrink-0 text-xs text-stone-400 tabular-nums w-4 text-right">{idx + 1}.</span>
+                <input
+                  id={`dialog-subtitle-${idx}`}
+                  className="input flex-1"
+                  value={sub}
+                  onChange={(e) =>
+                    set({ subtitles: values.subtitles.map((s, i) => (i === idx ? e.target.value : s)) })
+                  }
+                  placeholder={`Subtitle ${idx + 1}…`}
+                />
+                <button
+                  type="button"
+                  aria-label="Remove subtitle"
+                  className="shrink-0 rounded p-1 text-stone-400 hover:bg-red-50 hover:text-red-500 transition-colors"
+                  onClick={() => set({ subtitles: values.subtitles.filter((_, i) => i !== idx) })}
+                >
+                  <X className="h-3.5 w-3.5" />
+                </button>
+              </li>
+            ))}
+          </ul>
+        )}
+      </div>
+
       <MarkdownEditor
-        id="node-text"
-        label="Text"
-        value={values.text}
-        onChange={(text) => set({ text })}
-        rows={8}
-        hint="Markdown supported. The first line becomes the node's display label."
+        id="node-notes"
+        label="Notes"
+        value={values.notes}
+        onChange={(notes) => set({ notes })}
+        rows={6}
+        hint="Markdown supported."
       />
 
       <div>

@@ -21,7 +21,7 @@ import { migrateBookDir } from './migrate.js'
 
 /** Legacy folder names stay accepted so schema-v1 backups can be imported and migrated. */
 const ALLOWED_ENTRY =
-  /^(book\.md|index\.json|index\.v1\.bak\.json|(?:nodes|chapters|passages|notes|themes|sources|thesis)\/[A-Za-z0-9._-]+\.md)$/
+  /^(book\.md|index\.json|index\.v1\.bak\.json|(?:nodes|chapters|passages|notes|themes|sources|thesis)\/[A-Za-z0-9._-]+\.md|media\/[A-Za-z0-9._-]+\.(?:mp3|wav|ogg|m4a|aac|webm|flac))$/i
 const MAX_ENTRIES = 5000
 const MAX_UNCOMPRESSED = 120 * 1024 * 1024
 

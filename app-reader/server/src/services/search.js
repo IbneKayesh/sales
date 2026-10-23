@@ -73,26 +73,37 @@ export async function searchBooks({ query, bookId = null, limit = MAX_RESULTS } 
 
     for (const node of index.nodes) {
       const content = await readContent(id, node.file).catch(() => '')
-      const haystack = [node.slNo, node.label, (node.tags || []).join(' '), node.themes, content].join('\n')
+      const haystack = [
+        node.slNo,
+        node.title,
+        node.label,
+        (node.subtitles || []).join(' '),
+        (node.tags || []).join(' '),
+        node.themes,
+        content,
+      ].join('\n')
       const hits = countOccurrences(haystack, pattern)
       if (!hits) continue
       const chapter = findChapter(index.nodes, node.id)
+      const displayTitle = node.title || node.label || node.type
       push({
         type: node.type,
-        title: node.label || node.type,
+        title: displayTitle,
         nodeId: node.id,
         slNo: node.slNo || '',
         subtitle: [
           node.type,
           node.slNo ? `sl. ${node.slNo}` : '',
+          ...(node.subtitles || []).slice(0, 2),
           node.tags?.length ? node.tags.join(', ') : '',
         ]
           .filter(Boolean)
           .join(' · '),
-        snippet: makeSnippet(content || node.label || '', q),
+        snippet: makeSnippet(content || displayTitle || '', q),
         score:
           20 +
-          countOccurrences(node.label || '', pattern) * 25 +
+          countOccurrences(displayTitle, pattern) * 25 +
+          countOccurrences((node.subtitles || []).join(' '), pattern) * 20 +
           countOccurrences(node.slNo || '', pattern) * 15 +
           Math.min(hits, 10),
         chapterTitle: chapter && chapter.id !== node.id ? chapter.label : '',

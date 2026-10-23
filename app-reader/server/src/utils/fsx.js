@@ -76,7 +76,7 @@ export async function listDirectories(dir) {
 const ID_PATTERN = /^[A-Za-z0-9][A-Za-z0-9_-]{0,63}$/
 const BOOK_ID_PATTERN = /^[a-z0-9][a-z0-9-]{0,63}$/
 const RELATIVE_FILE_PATTERN =
-  /^(book\.md|index\.json|(?:nodes|chapters|passages|notes|themes|sources|thesis)\/[A-Za-z0-9._-]+\.md)$/
+  /^(book\.md|index\.json|(?:nodes|chapters|passages|notes|themes|sources|thesis)\/[A-Za-z0-9._-]+\.md|media\/[A-Za-z0-9._-]+\.(?:mp3|wav|ogg|m4a|aac|webm|flac))$/i
 
 export function assertId(value, label = 'id') {
   if (typeof value !== 'string' || !ID_PATTERN.test(value)) {
@@ -110,19 +110,18 @@ export function resolveInside(baseDir, ...segments) {
   return target
 }
 
-export async function nextFileName(dir, prefix) {
-  let names = []
-  try {
-    names = await fs.readdir(dir)
-  } catch (error) {
-    if (error.code !== 'ENOENT') throw error
-  }
-  let max = 0
-  for (const name of names) {
-    const match = name.match(new RegExp(`^${prefix}-(\\d+)\\.md$`))
-    if (match) max = Math.max(max, Number(match[1]))
-  }
-  return `${prefix}-${String(max + 1).padStart(3, '0')}.md`
+/**
+ * Generate a unique filename for a new content file.
+ * Uses a random UUID slug so the name is:
+ *   - never sequential (no implied position / order)
+ *   - never reused after deletion (no gap-filling confusion)
+ *   - collision-resistant (2^48 possibilities from 12 hex chars)
+ *
+ * Example output: "node-3f8a1c04b2e7.md"
+ */
+export function nextFileName(_dir, prefix) {
+  const slug = crypto.randomUUID().replace(/-/g, '').slice(0, 12)
+  return Promise.resolve(`${prefix}-${slug}.md`)
 }
 
 export async function removeFile(file) {

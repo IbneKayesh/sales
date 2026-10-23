@@ -1,10 +1,18 @@
 import crypto from 'node:crypto'
-import { notFound } from '../utils/errors.js'
+import path from 'node:path'
+import { badRequest, notFound } from '../utils/errors.js'
 import { cleanTags } from '../validation/schemas.js'
 import {
+  ensureDir,
+  pathExists,
+  writeFileAtomic,
+} from '../utils/fsx.js'
+import {
   allocateContentPath,
+  bookDir,
   deleteContent,
   mutateIndex,
+  pathForContent,
   readContent,
   readIndex,
   writeContent,
@@ -35,6 +43,10 @@ function nodeFrontmatter(node) {
     favorite: Boolean(node.favorite),
     currentTopic: Boolean(node.currentTopic),
     themes: node.themes || '',
+    title: node.title || '',
+    subtitles: Array.isArray(node.subtitles) ? node.subtitles : [],
+    audioFile: node.audioFile || null,
+    audioOriginalName: node.audioOriginalName || null,
     updatedAt: node.updatedAt,
   }
 }
@@ -55,13 +67,20 @@ export async function getNode(bookId, nodeId) {
   const node = index.nodes.find((item) => item.id === nodeId)
   if (!node) throw notFound('Node not found')
 
-  const text = await readContent(bookId, node.file).catch(() => '')
+  const notes = await readContent(bookId, node.file).catch(() => '')
   const children = sortNodes(index.nodes.filter((item) => item.parentId === nodeId))
   const related = index.nodes.filter((item) => (node.relatedNodeIds || []).includes(item.id))
 
+  const title = node.title || node.label || labelFromText(notes, nodeFallbackLabel(node))
+
   return {
-    node,
-    text,
+    node: {
+      ...node,
+      title,
+      subtitles: Array.isArray(node.subtitles) ? node.subtitles : [],
+    },
+    text: notes,
+    notes,
     children,
     related,
     ancestors: getAncestors(index.nodes, nodeId).reverse(),
@@ -74,7 +93,14 @@ export async function createNode(bookId, input) {
     if (input.parentId) assertValidParent(index.nodes, input.parentId, null)
     const file = await allocateContentPath(bookId, 'nodes', 'node')
     const now = new Date().toISOString()
-    const text = input.text ?? ''
+    const notes = input.notes !== undefined ? input.notes : input.text ?? ''
+    const title = input.title !== undefined ? String(input.title).trim() : labelFromText(notes, '')
+    const subtitles = Array.isArray(input.subtitles)
+      ? input.subtitles.map((s) => String(s).trim()).filter(Boolean)
+      : []
+
+    const displayLabel = title || labelFromText(notes, nodeFallbackLabel({ type: input.type, slNo: input.slNo }))
+
     const node = {
       id: `node_${crypto.randomUUID()}`,
       slNo: String(input.slNo || '').trim().slice(0, MAX_SL_NO),
@@ -88,13 +114,17 @@ export async function createNode(bookId, input) {
       favorite: Boolean(input.favorite),
       currentTopic: Boolean(input.currentTopic),
       themes: String(input.themes || '').slice(0, MAX_THEMES),
-      label: labelFromText(text, nodeFallbackLabel({ type: input.type, slNo: input.slNo })),
+      title: title || displayLabel,
+      subtitles,
+      audioFile: input.audioFile || null,
+      audioOriginalName: input.audioOriginalName || null,
+      label: displayLabel,
       createdAt: now,
       updatedAt: now,
     }
     index.nodes.push(node)
-    await writeContent(bookId, file, nodeFrontmatter(node), text)
-    return node
+    await writeContent(bookId, file, nodeFrontmatter(node), notes)
+    return { ...node, notes, text: notes }
   })
 
   return created
@@ -124,15 +154,35 @@ export async function updateNode(bookId, nodeId, input) {
     if (input.favorite !== undefined) node.favorite = Boolean(input.favorite)
     if (input.currentTopic !== undefined) node.currentTopic = Boolean(input.currentTopic)
     if (input.themes !== undefined) node.themes = String(input.themes).slice(0, MAX_THEMES)
+    if (input.audioFile !== undefined) node.audioFile = input.audioFile || null
+    if (input.audioOriginalName !== undefined) node.audioOriginalName = input.audioOriginalName || null
+    if (input.title !== undefined) {
+      node.title = String(input.title).trim()
+      node.label = node.title || nodeFallbackLabel(node)
+    }
+    if (input.subtitles !== undefined) {
+      node.subtitles = Array.isArray(input.subtitles)
+        ? input.subtitles.map((s) => String(s).trim()).filter(Boolean)
+        : []
+    }
     if (input.order !== undefined) node.order = input.order
 
-    let text = await readContent(bookId, node.file).catch(() => '')
-    if (input.text !== undefined) text = String(input.text)
-    node.label = labelFromText(text, nodeFallbackLabel(node))
-    await writeContent(bookId, node.file, nodeFrontmatter(node), text)
+    let notes = await readContent(bookId, node.file).catch(() => '')
+    if (input.notes !== undefined) {
+      notes = String(input.notes)
+    } else if (input.text !== undefined) {
+      notes = String(input.text)
+    }
+
+    if (!node.title) {
+      node.label = labelFromText(notes, nodeFallbackLabel(node))
+      node.title = node.label
+    }
+
+    await writeContent(bookId, node.file, nodeFrontmatter(node), notes)
 
     node.updatedAt = new Date().toISOString()
-    return node
+    return { ...node, notes, text: notes }
   })
   return result
 }
@@ -144,7 +194,12 @@ export async function deleteNode(bookId, nodeId) {
     const ids = new Set([nodeId, ...getDescendantIds(index.nodes, nodeId)])
     const doomed = index.nodes.filter((item) => ids.has(item.id))
 
-    for (const item of doomed) await deleteContent(bookId, item.file)
+    for (const item of doomed) {
+      await deleteContent(bookId, item.file)
+      if (item.audioFile) {
+        await deleteContent(bookId, item.audioFile).catch(() => {})
+      }
+    }
     const now = new Date().toISOString()
 
     // Drop dangling related-node links from surviving records and keep their
@@ -181,4 +236,74 @@ export async function reorderNode(bookId, nodeId, direction) {
     return working
   })
   return index.nodes.find((item) => item.id === nodeId)
+}
+
+const ALLOWED_AUDIO_EXTS = ['mp3', 'wav', 'ogg', 'm4a', 'aac', 'webm', 'flac']
+
+export async function attachNodeAudio(bookId, nodeId, originalName, buffer) {
+  const ext = path.extname(originalName || '').toLowerCase().replace(/^\./, '')
+  if (!ALLOWED_AUDIO_EXTS.includes(ext)) {
+    throw badRequest(`Unsupported audio format (.${ext || 'unknown'}). Allowed: ${ALLOWED_AUDIO_EXTS.join(', ')}`)
+  }
+  if (!buffer || buffer.length === 0) {
+    throw badRequest('Audio file data is empty')
+  }
+
+  const uniqueName = `audio_${crypto.randomUUID()}.${ext}`
+  const relativeAudioPath = `media/${uniqueName}`
+  const targetDir = path.join(bookDir(bookId), 'media')
+  await ensureDir(targetDir)
+  await writeFileAtomic(path.join(targetDir, uniqueName), buffer)
+
+  const updatedNode = await mutateIndex(bookId, async (index) => {
+    const node = index.nodes.find((item) => item.id === nodeId)
+    if (!node) throw notFound('Node not found')
+
+    if (node.audioFile && node.audioFile !== relativeAudioPath) {
+      await deleteContent(bookId, node.audioFile).catch(() => {})
+    }
+
+    node.audioFile = relativeAudioPath
+    node.audioOriginalName = path.basename(originalName || `audio.${ext}`).slice(0, 200)
+    node.updatedAt = new Date().toISOString()
+
+    const text = await readContent(bookId, node.file).catch(() => '')
+    await writeContent(bookId, node.file, nodeFrontmatter(node), text)
+    return node
+  })
+
+  return updatedNode
+}
+
+export async function removeNodeAudio(bookId, nodeId) {
+  const updatedNode = await mutateIndex(bookId, async (index) => {
+    const node = index.nodes.find((item) => item.id === nodeId)
+    if (!node) throw notFound('Node not found')
+
+    if (node.audioFile) {
+      await deleteContent(bookId, node.audioFile).catch(() => {})
+    }
+
+    node.audioFile = null
+    node.audioOriginalName = null
+    node.updatedAt = new Date().toISOString()
+
+    const text = await readContent(bookId, node.file).catch(() => '')
+    await writeContent(bookId, node.file, nodeFrontmatter(node), text)
+    return node
+  })
+
+  return updatedNode
+}
+
+export async function getNodeAudioFile(bookId, nodeId) {
+  const index = await readIndex(bookId)
+  const node = index.nodes.find((item) => item.id === nodeId)
+  if (!node) throw notFound('Node not found')
+  if (!node.audioFile) throw notFound('No audio attached to this node')
+
+  const filePath = await pathForContent(bookId, node.audioFile)
+  if (!(await pathExists(filePath))) throw notFound('Audio file missing on disk')
+
+  return { filePath, originalName: node.audioOriginalName || path.basename(node.audioFile) }
 }

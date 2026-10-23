@@ -180,3 +180,70 @@ test('E2E: Client SPA routing and static assets serve correctly', async () => {
   const readHtml = await readRes.text()
   assert.ok(readHtml.includes('<!DOCTYPE html>') || readHtml.includes('<html'))
 })
+
+test('E2E: Node audio lifecycle (upload, stream with range, download, delete)', async () => {
+  const booksRes = await fetch(`${baseUrl}/api/books`)
+  const books = (await booksRes.json()).books
+  const bookId = books[0].id
+
+  // Create a node to attach audio to
+  const nodeRes = await fetch(`${baseUrl}/api/books/${bookId}/nodes`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      type: 'chapter',
+      slNo: 'Audio-01',
+      text: '# Chapter with Audio\nListening while reading.',
+    }),
+  })
+  assert.equal(nodeRes.status, 201)
+  const node = (await nodeRes.json()).node
+
+  // Upload an MP3 audio buffer
+  const fakeMp3Data = Buffer.from('ID3fake-mp3-audio-bytes-for-testing-range-playback')
+  const uploadRes = await fetch(
+    `${baseUrl}/api/books/${bookId}/nodes/${node.id}/audio?name=chapter1_recitation.mp3`,
+    {
+      method: 'POST',
+      headers: { 'Content-Type': 'audio/mpeg' },
+      body: fakeMp3Data,
+    },
+  )
+  assert.equal(uploadRes.status, 201)
+  const uploadData = await uploadRes.json()
+  assert.ok(uploadData.node.audioFile)
+  assert.equal(uploadData.node.audioOriginalName, 'chapter1_recitation.mp3')
+
+  // Stream audio (200)
+  const streamRes = await fetch(`${baseUrl}/api/books/${bookId}/nodes/${node.id}/audio`)
+  assert.equal(streamRes.status, 200)
+  assert.equal(streamRes.headers.get('content-type'), 'audio/mpeg')
+  const streamBuffer = Buffer.from(await streamRes.arrayBuffer())
+  assert.deepEqual(streamBuffer, fakeMp3Data)
+
+  // Stream with Range request
+  const rangeRes = await fetch(`${baseUrl}/api/books/${bookId}/nodes/${node.id}/audio`, {
+    headers: { Range: 'bytes=0-9' },
+  })
+  assert.equal(rangeRes.status, 206)
+  const rangeBuffer = Buffer.from(await rangeRes.arrayBuffer())
+  assert.equal(rangeBuffer.length, 10)
+
+  // Download audio
+  const downloadRes = await fetch(`${baseUrl}/api/books/${bookId}/nodes/${node.id}/audio?download=1`)
+  assert.equal(downloadRes.status, 200)
+  assert.ok(downloadRes.headers.get('content-disposition')?.includes('chapter1_recitation.mp3'))
+
+  // Delete audio
+  const deleteRes = await fetch(`${baseUrl}/api/books/${bookId}/nodes/${node.id}/audio`, {
+    method: 'DELETE',
+  })
+  assert.equal(deleteRes.status, 200)
+  const deletedNode = (await deleteRes.json()).node
+  assert.equal(deletedNode.audioFile, null)
+  assert.equal(deletedNode.audioOriginalName, null)
+
+  // Subsequent fetch of audio should be 404
+  const missingRes = await fetch(`${baseUrl}/api/books/${bookId}/nodes/${node.id}/audio`)
+  assert.equal(missingRes.status, 404)
+})

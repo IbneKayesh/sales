@@ -7,6 +7,7 @@ import {
   ChevronRight,
   ExternalLink,
   FileText,
+  Headphones,
   List,
   Maximize2,
   Minimize2,
@@ -21,6 +22,7 @@ import {
   MarkdownView,
   Spinner,
 } from '../components/ui.jsx'
+import AudioPlayer from '../components/AudioPlayer.jsx'
 import { flattenNodes, nodeDisplay, nodeLabel } from '../lib/hierarchy.js'
 import {
   NODE_TYPE_LABEL,
@@ -392,29 +394,29 @@ export default function ReadingMode() {
       )}
 
       {/* Main Reader Layout */}
-      <div className="relative mx-auto flex max-w-7xl items-start justify-center px-4 py-6 sm:px-6 sm:py-10">
-        {/* Table of Contents Drawer/Sidebar */}
+      <div className="relative flex h-[calc(100vh-3.5rem)] items-stretch justify-center overflow-hidden">
+        {/* Table of Contents Sidebar */}
         {showToc && (
           <aside
             className={cx(
-              'fixed inset-y-0 left-0 z-40 w-80 max-w-[85vw] overflow-y-auto border-r p-4 shadow-2xl backdrop-blur-lg transition-transform lg:static lg:mr-6 lg:h-[calc(100vh-6rem)] lg:w-72 lg:rounded-lg lg:border lg:shadow-md',
+              'flex w-60 xl:w-72 shrink-0 flex-col overflow-hidden border-r',
               activeTheme.sheetBg,
               activeTheme.border,
             )}
             aria-label="Table of contents"
           >
-            <div className="mb-3 flex items-center justify-between border-b pb-2 dark:border-stone-800">
-              <h2 className={cx('font-serif text-sm font-semibold', activeTheme.text)}>Table of Contents</h2>
+            <div className={cx('flex shrink-0 items-center justify-between border-b px-3 py-2', activeTheme.border)}>
+              <h2 className={cx('font-serif text-xs font-semibold tracking-wide uppercase', activeTheme.subtext)}>Contents</h2>
               <button
                 type="button"
                 onClick={() => setShowToc(false)}
-                className="btn btn-ghost btn-sm lg:hidden"
+                className="btn btn-ghost btn-sm text-xs"
                 aria-label="Close contents"
               >
                 ✕
               </button>
             </div>
-            <nav className="space-y-1 text-xs">
+            <nav className="flex-1 overflow-y-auto py-1 text-xs">
               {orderedNodes.map((n, idx) => {
                 const isSelected = idx === currentIndex
                 return (
@@ -425,15 +427,15 @@ export default function ReadingMode() {
                       goToPage(idx)
                       if (window.innerWidth < 1024) setShowToc(false)
                     }}
-                    style={{ paddingLeft: `${Math.min(n.depth, 5) * 12 + 8}px` }}
+                    style={{ paddingLeft: `${Math.min(n.depth, 5) * 10 + 8}px` }}
                     className={cx(
-                      'flex w-full items-center gap-1.5 rounded py-1.5 pr-2 text-left transition',
+                      'flex w-full items-center gap-1.5 py-1 pr-2 text-left transition',
                       isSelected
                         ? 'bg-amber-100 font-semibold text-amber-950 dark:bg-stone-800 dark:text-amber-300'
                         : 'text-stone-600 hover:bg-stone-200/50 hover:text-stone-900 dark:text-stone-400 dark:hover:text-stone-200',
                     )}
                   >
-                    <span className="shrink-0 text-[10px] text-stone-400 tabular-nums">
+                    <span className="shrink-0 text-[9px] text-stone-400 tabular-nums">
                       {n.slNo ? `${n.slNo}.` : `${idx + 1}.`}
                     </span>
                     <span className="truncate">{nodeLabel(n)}</span>
@@ -445,13 +447,12 @@ export default function ReadingMode() {
         )}
 
         {/* The PDF / Book Leaf Page */}
-        <main className="w-full max-w-3xl min-w-0 flex-1">
+        <main className="flex min-w-0 flex-1 flex-col overflow-hidden">
           <article
             className={cx(
-              'relative mx-auto rounded-lg border p-6 shadow-xl transition-all duration-150 sm:p-12 md:p-16',
+              'relative flex flex-1 flex-col overflow-y-auto border-x px-6 py-5 sm:px-10 sm:py-6 transition-all duration-150',
               activeTheme.sheetBg,
               activeTheme.border,
-              'min-h-[720px] flex flex-col justify-between',
             )}
             aria-label={`Page ${pageNumber}: ${currentNode?.label || currentNode?.type}`}
           >
@@ -459,7 +460,7 @@ export default function ReadingMode() {
             <div>
               <div
                 className={cx(
-                  'flex items-center justify-between border-b pb-3 text-[11px] tracking-wider uppercase',
+                  'flex items-center justify-between border-b pb-2 text-[10px] tracking-wider uppercase',
                   activeTheme.border,
                   activeTheme.subtext,
                 )}
@@ -483,21 +484,41 @@ export default function ReadingMode() {
                   {currentNode?.favorite ? (
                     <Star aria-hidden="true" className="h-3 w-3 fill-amber-400 text-amber-500" />
                   ) : null}
+                  {currentNode?.audioFile || nodeDetail?.node?.audioFile ? (
+                    <Badge className="border-emerald-300 bg-emerald-50 text-emerald-800">
+                      <Headphones aria-hidden="true" className="mr-1 inline h-3 w-3" /> Audio
+                    </Badge>
+                  ) : null}
                 </div>
               </div>
 
               {/* Node Title / Heading */}
-              <div className="mt-8 mb-6">
+              <div className="mt-5 mb-3">
                 <h1
                   className={cx(
                     'font-serif text-2xl font-semibold sm:text-3xl lg:text-4xl leading-tight',
                     activeTheme.text,
                   )}
                 >
-                  {nodeDetail?.text
-                    ? (nodeDetail.text.split('\n').find((l) => l.trim()) || '').replace(/^#{1,6}\s+/, '')
-                    : currentNode?.label || NODE_TYPE_LABEL[currentNode?.type] || 'Untitled'}
+                  {nodeDetail?.node?.title ||
+                    currentNode?.title ||
+                    (nodeDetail?.text
+                      ? (nodeDetail.text.split('\n').find((l) => l.trim()) || '').replace(/^#{1,6}\s+/, '')
+                      : currentNode?.label || NODE_TYPE_LABEL[currentNode?.type] || 'Untitled')}
                 </h1>
+
+                {/* Subtitles */}
+                {((nodeDetail?.node?.subtitles ?? currentNode?.subtitles) || []).filter(Boolean).length > 0 && (
+                  <ul className={cx('mt-2 space-y-0.5', activeTheme.subtext)}>
+                    {((nodeDetail?.node?.subtitles ?? currentNode?.subtitles) || [])
+                      .filter(Boolean)
+                      .map((sub, i) => (
+                        <li key={i} className="text-base font-medium leading-snug">
+                          {sub}
+                        </li>
+                      ))}
+                  </ul>
+                )}
 
                 {/* Tags and themes */}
                 {((currentNode?.tags && currentNode.tags.length > 0) || currentNode?.themes) && (
@@ -519,6 +540,27 @@ export default function ReadingMode() {
                 )}
               </div>
 
+              {/* Audio player if node has an audio recording */}
+              {currentNode?.audioFile || nodeDetail?.node?.audioFile ? (
+                <div className="mb-6">
+                  <AudioPlayer
+                    src={api.nodeAudioUrl(
+                      bookId,
+                      currentNode.id,
+                      false,
+                      currentNode?.updatedAt || nodeDetail?.node?.updatedAt,
+                    )}
+                    title={currentNode?.audioOriginalName || nodeDetail?.node?.audioOriginalName || 'Audio recording'}
+                    downloadUrl={api.nodeAudioUrl(
+                      bookId,
+                      currentNode.id,
+                      true,
+                      currentNode?.updatedAt || nodeDetail?.node?.updatedAt,
+                    )}
+                  />
+                </div>
+              ) : null}
+
               {/* Page Body Content (Markdown) */}
               <div className={cx('mt-6', fontClass, activeFontSize.prose, activeTheme.text)}>
                 {nodeLoading ? (
@@ -531,7 +573,7 @@ export default function ReadingMode() {
                     <ErrorBlock error={nodeError} onRetry={() => fetchNode(currentNode.id)} />
                   </div>
                 ) : (
-                  <MarkdownView>{nodeDetail?.text || ''}</MarkdownView>
+                  <MarkdownView>{nodeDetail?.notes || nodeDetail?.text || ''}</MarkdownView>
                 )}
               </div>
 
@@ -600,7 +642,7 @@ export default function ReadingMode() {
             {/* Bottom Running Footer of the Page */}
             <footer
               className={cx(
-                'mt-12 flex items-center justify-between border-t pt-4 text-xs',
+                'mt-6 flex items-center justify-between border-t pt-3 text-[11px]',
                 activeTheme.border,
                 activeTheme.subtext,
               )}
@@ -623,10 +665,10 @@ export default function ReadingMode() {
             </footer>
           </article>
 
-          {/* Floating / Sticky Paged Navigation Controls */}
+          {/* Sticky bottom nav */}
           <nav
             className={cx(
-              'mt-6 flex items-center justify-between gap-4 rounded-lg border p-3 shadow-md backdrop-blur-md',
+              'flex shrink-0 items-center justify-between gap-4 border-t px-4 py-2 shadow-md',
               activeTheme.sheetBg,
               activeTheme.border,
             )}
@@ -640,24 +682,21 @@ export default function ReadingMode() {
               title="Previous page (Left Arrow, K)"
             >
               <ChevronLeft aria-hidden="true" className="h-4 w-4" />
-              <span>Previous</span>
+              <span>Prev</span>
             </button>
 
             {/* Jump slider / Page status */}
             <div className="flex items-center gap-2 text-xs">
-              <span className={cx('hidden text-stone-500 sm:inline', activeTheme.subtext)}>
-                Jump to page:
-              </span>
               <input
                 type="range"
                 min="0"
                 max={Math.max(0, totalPages - 1)}
                 value={currentIndex}
                 onChange={(e) => goToPage(Number(e.target.value))}
-                className="w-24 accent-stone-800 sm:w-40"
+                className="w-28 accent-stone-800 sm:w-44"
                 aria-label="Page progress slider"
               />
-              <span className={cx('font-mono font-medium tabular-nums', activeTheme.text)}>
+              <span className={cx('font-mono font-medium tabular-nums text-xs', activeTheme.text)}>
                 {pageNumber} / {totalPages}
               </span>
             </div>

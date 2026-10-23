@@ -5,6 +5,7 @@ import {
   BookMarked,
   BookOpen,
   ChevronRight,
+  Headphones,
   Lightbulb,
   MessageSquare,
   Star,
@@ -79,6 +80,9 @@ function TreeItem({ node, bookId, selectedId, depth }) {
         ) : null}
         {node.favorite ? (
           <Star aria-hidden="true" className="h-3 w-3 shrink-0 fill-amber-400 text-amber-500" aria-label="Favourite" />
+        ) : null}
+        {node.audioFile ? (
+          <Headphones aria-hidden="true" className="h-3 w-3 shrink-0 text-emerald-600" title="Has audio recording" aria-label="Has audio recording" />
         ) : null}
         {pageLabel(node) ? (
           <span className="shrink-0 pr-1 text-[10px] text-stone-400 tabular-nums">{pageLabel(node)}</span>

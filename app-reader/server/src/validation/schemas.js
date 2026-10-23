@@ -45,11 +45,16 @@ export const nodeCreateSchema = z.object({
   parentId: z.string().nullable().optional(),
   importance: z.enum(IMPORTANCE_LEVELS).optional(),
   tags: tagsInput,
+  title: optionalText(300),
+  subtitles: z.array(trimmed(500)).max(50).optional(),
+  notes: body,
   text: body,
   relatedNodeIds: ids,
   favorite: z.boolean().optional(),
   currentTopic: z.boolean().optional(),
   themes: optionalText(5000),
+  audioFile: z.string().nullable().optional(),
+  audioOriginalName: optionalText(200).nullable(),
 })
 
 export const nodeUpdateSchema = nodeCreateSchema.partial().extend({

@@ -56,7 +56,54 @@ export const api = {
     request(`/books/${enc(bookId)}/nodes/${enc(nodeId)}`, { method: 'PATCH', body }),
   deleteNode: (bookId, nodeId) => request(`/books/${enc(bookId)}/nodes/${enc(nodeId)}`, { method: 'DELETE' }),
   reorderNode: (bookId, nodeId, direction) =>
-    request(`/books/${enc(bookId)}/nodes/${enc(nodeId)}/reorder`, { method: 'POST', body: { direction } }),  listNodes: (bookId) => request(`/books/${enc(bookId)}/nodes`),
+    request(`/books/${enc(bookId)}/nodes/${enc(nodeId)}/reorder`, { method: 'POST', body: { direction } }),
+  listNodes: (bookId) => request(`/books/${enc(bookId)}/nodes`),
+
+  nodeAudioUrl: (bookId, nodeId, download = false, version = '') => {
+    const params = new URLSearchParams()
+    if (download) params.set('download', '1')
+    if (version) params.set('v', String(version))
+    const q = params.toString()
+    return `${BASE}/books/${enc(bookId)}/nodes/${enc(nodeId)}/audio${q ? `?${q}` : ''}`
+  },
+
+  uploadNodeAudio: async (bookId, nodeId, file) => {
+    let response
+    try {
+      const buffer = await file.arrayBuffer()
+      response = await fetch(
+        `${BASE}/books/${enc(bookId)}/nodes/${enc(nodeId)}/audio?name=${enc(file.name)}`,
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': file.type || 'application/octet-stream',
+          },
+          body: buffer,
+        },
+      )
+    } catch (err) {
+      console.error('Audio upload network error:', err)
+      throw new ApiError(
+        err?.message && !err.message.includes('fetch')
+          ? `Upload failed: ${err.message}`
+          : 'Cannot reach the local server. Is it running on port 5174?',
+        0,
+      )
+    }
+    if (!response.ok) {
+      let payload = null
+      try {
+        payload = await response.json()
+      } catch {
+        // Non-JSON response body
+      }
+      throw new ApiError(payload?.error || `Upload failed (${response.status})`, response.status)
+    }
+    return response.json()
+  },
+
+  deleteNodeAudio: (bookId, nodeId) =>
+    request(`/books/${enc(bookId)}/nodes/${enc(nodeId)}/audio`, { method: 'DELETE' }),
 
   search: ({ q, bookId, limit }) => {
     const params = new URLSearchParams({ q })

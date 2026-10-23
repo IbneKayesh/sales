@@ -13,6 +13,7 @@ echo 4. Web
 echo 5. Suite + API
 echo 6. Docs (active)
 echo 7. API + vMart
+echo 8. Reader
 echo 0. Exit
 echo.
 
@@ -25,6 +26,7 @@ if %choice%==4 goto W
 if %choice%==5 goto M
 if %choice%==6 goto DOC
 if %choice%==7 goto vMart
+if %choice%==8 goto R
 if %choice%==0 goto END
 
 echo Invalid choice. Try again.
@@ -77,6 +79,13 @@ start cmd /k "cd backend-app && node server.js"
 start cmd /k "cd vmart-app && npm run dev"
 echo  ---- vMart + API Running ----
 goto MENU
+
+
+:R
+start cmd /k "cd app-reader && npm run dev"
+echo  ---- Reader Running ----
+goto MENU
+
 
 :END
 echo Process finished.

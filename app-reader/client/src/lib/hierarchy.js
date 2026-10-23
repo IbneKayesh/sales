@@ -41,7 +41,7 @@ export function descendantIds(nodes = [], nodeId) {
 
 export function nodeLabel(node) {
   if (!node) return ''
-  return node.label || node.type || 'node'
+  return node.title || node.label || node.type || 'node'
 }
 
 export function nodeDisplay(node) {
