@@ -1,0 +1,45 @@
+{
+  "name": "book-thesis-lab",
+  "private": true,
+  "version": "0.1.0",
+  "type": "module",
+  "description": "Local-first book reading, analysis and thesis research app with Markdown file storage.",
+  "scripts": {
+    "dev": "concurrently -n server,client -c blue,magenta \"npm:dev:server\" \"npm:dev:client\"",
+    "dev:client": "vite --config client/vite.config.js",
+    "dev:server": "node --watch server/src/index.js",
+    "build": "vite build --config client/vite.config.js",
+    "start": "node server/src/index.js",
+    "test": "node --test \"server/test/*.test.js\"",
+    "lint": "eslint .",
+    "seed:sample": "node server/scripts/seed-sample.js"
+  },
+  "dependencies": {
+    "adm-zip": "^0.5.16",
+    "archiver": "^7.0.1",
+    "dotenv": "^17.2.3",
+    "express": "^5.1.0",
+    "gray-matter": "^4.0.3",
+    "lucide-react": "^0.545.0",
+    "react": "^19.3.1",
+    "react-dom": "^19.3.1",
+    "react-markdown": "^10.1.0",
+    "react-router-dom": "^7.9.6",
+    "remark-gfm": "^4.0.1",
+    "zod": "^4.1.13"
+  },
+  "devDependencies": {
+    "@eslint/js": "^10.0.1",
+    "@tailwindcss/vite": "^4.1.17",
+    "@types/react": "^19.3.0",
+    "@types/react-dom": "^19.3.0",
+    "@vitejs/plugin-react": "^6.1.2",
+    "concurrently": "^9.2.1",
+    "eslint": "^10.13.0",
+    "eslint-plugin-react-hooks": "^7.1.1",
+    "eslint-plugin-react-refresh": "^0.5.7",
+    "globals": "^17.13.0",
+    "tailwindcss": "^4.1.17",
+    "vite": "^8.3.4"
+  }
+}
