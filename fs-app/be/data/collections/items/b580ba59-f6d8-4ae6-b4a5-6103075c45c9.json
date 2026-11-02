@@ -1,0 +1,16 @@
+{
+  "code": "SKU-MECHKB",
+  "name": "Keychron Q1 Pro Mechanical Keyboard",
+  "sku": "SKU-MECHKB",
+  "category": "Accessories",
+  "unit": "pcs",
+  "price": 199,
+  "cost": 120,
+  "stock": 45,
+  "status": "active",
+  "description": "75% layout, CNC aluminum body, hot-swappable",
+  "_id": "b580ba59-f6d8-4ae6-b4a5-6103075c45c9",
+  "_version": 1,
+  "createdAt": "2026-11-02T17:31:15.289Z",
+  "updatedAt": "2026-11-02T17:31:15.289Z"
+}

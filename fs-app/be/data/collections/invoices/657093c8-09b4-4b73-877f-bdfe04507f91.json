@@ -1,0 +1,34 @@
+{
+  "invoiceNumber": "INV-0001",
+  "customerId": "f6b3c461-fb4d-4d43-9360-7da96a2474ad",
+  "customerName": "Apex Innovations Ltd",
+  "customerEmail": "david@apexinno.com",
+  "customerAddress": "742 Evergreen Terrace, Springfield, OR",
+  "issueDate": "2026-11-02",
+  "dueDate": "2026-11-16",
+  "status": "paid",
+  "items": [
+    {
+      "description": "MacBook Pro 16 M3 Max",
+      "quantity": 2,
+      "unitPrice": 3499,
+      "amount": 6998
+    },
+    {
+      "description": "Keychron Q1 Pro Mechanical Keyboard",
+      "quantity": 2,
+      "unitPrice": 199,
+      "amount": 398
+    }
+  ],
+  "subtotal": 7396,
+  "taxRate": 5,
+  "taxAmount": 369.8,
+  "discount": 0,
+  "total": 7765.8,
+  "notes": "Paid in full via Wire Transfer.",
+  "_id": "657093c8-09b4-4b73-877f-bdfe04507f91",
+  "_version": 1,
+  "createdAt": "2026-11-02T17:31:15.299Z",
+  "updatedAt": "2026-11-02T17:31:15.299Z"
+}

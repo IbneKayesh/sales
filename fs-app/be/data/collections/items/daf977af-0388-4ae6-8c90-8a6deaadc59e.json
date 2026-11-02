@@ -1,0 +1,16 @@
+{
+  "code": "SKU-4KMON",
+  "name": "Dell UltraSharp 32 4K USB-C Monitor",
+  "sku": "SKU-4KMON",
+  "category": "Hardware",
+  "unit": "pcs",
+  "price": 899,
+  "cost": 650,
+  "stock": 28,
+  "status": "active",
+  "description": "IPS Black panel, 90W power delivery, 98% DCI-P3",
+  "_id": "daf977af-0388-4ae6-8c90-8a6deaadc59e",
+  "_version": 1,
+  "createdAt": "2026-11-02T17:31:15.282Z",
+  "updatedAt": "2026-11-02T17:31:15.282Z"
+}

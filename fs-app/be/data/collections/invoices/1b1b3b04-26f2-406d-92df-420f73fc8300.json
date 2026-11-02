@@ -1,0 +1,28 @@
+{
+  "invoiceNumber": "INV-0002",
+  "customerId": "dd175894-2eb7-4125-8337-47c3891f3267",
+  "customerName": "Starlight Media Group",
+  "customerEmail": "sarah.j@starlightmedia.io",
+  "customerAddress": "100 Sunset Blvd, Suite 400, Los Angeles, CA",
+  "issueDate": "2026-11-02",
+  "dueDate": "2026-12-02",
+  "status": "sent",
+  "items": [
+    {
+      "description": "Dell UltraSharp 32 4K USB-C Monitor",
+      "quantity": 3,
+      "unitPrice": 899,
+      "amount": 2697
+    }
+  ],
+  "subtotal": 2697,
+  "taxRate": 5,
+  "taxAmount": 134.85,
+  "discount": 50,
+  "total": 2781.85,
+  "notes": "Payment due within 30 days",
+  "_id": "1b1b3b04-26f2-406d-92df-420f73fc8300",
+  "_version": 1,
+  "createdAt": "2026-11-02T17:31:15.302Z",
+  "updatedAt": "2026-11-02T17:31:15.302Z"
+}

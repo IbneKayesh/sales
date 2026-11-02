@@ -1,0 +1,14 @@
+{
+  "code": "CUST-003",
+  "name": "Vanguard Logistics",
+  "contactPerson": "Michael Chang",
+  "phone": "+1 (555) 345-6789",
+  "email": "m.chang@vanguardlog.com",
+  "address": "12 Harbor Way, Terminal 4, Seattle, WA",
+  "status": "inactive",
+  "notes": "Account temporarily on hold",
+  "_id": "dae1275e-b4bb-49d4-8d44-8dad363e6c26",
+  "_version": 1,
+  "createdAt": "2026-11-02T17:31:15.274Z",
+  "updatedAt": "2026-11-02T17:31:15.274Z"
+}

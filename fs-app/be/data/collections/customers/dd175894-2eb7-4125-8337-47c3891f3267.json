@@ -1,0 +1,14 @@
+{
+  "code": "CUST-002",
+  "name": "Starlight Media Group",
+  "contactPerson": "Sarah Jenkins",
+  "phone": "+1 (555) 876-5432",
+  "email": "sarah.j@starlightmedia.io",
+  "address": "100 Sunset Blvd, Suite 400, Los Angeles, CA",
+  "status": "active",
+  "notes": "Net 30 payment terms",
+  "_id": "dd175894-2eb7-4125-8337-47c3891f3267",
+  "_version": 1,
+  "createdAt": "2026-11-02T17:31:15.270Z",
+  "updatedAt": "2026-11-02T17:31:15.270Z"
+}
