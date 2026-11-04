@@ -1,0 +1,39 @@
+{
+  "date": "2026-10-31",
+  "type": "charge",
+  "amount": 600,
+  "entries": [
+    {
+      "side": "debit",
+      "kind": "system",
+      "id": "CHARGES",
+      "type": "CHARGES",
+      "accountNo": "",
+      "name": "Bank charges",
+      "bankId": "",
+      "bankName": "",
+      "amount": 600
+    },
+    {
+      "side": "credit",
+      "kind": "account",
+      "id": "4",
+      "type": "Savings",
+      "accountNo": "1011200089012",
+      "name": "Travel trading · Eastern Bank Ltd",
+      "bankId": "4",
+      "bankName": "Eastern Bank Ltd",
+      "amount": 600
+    }
+  ],
+  "debitTotal": 600,
+  "creditTotal": 600,
+  "bankId": "4",
+  "bankName": "Eastern Bank Ltd",
+  "reference": "",
+  "description": "Account maintenance charge",
+  "_id": "22",
+  "_version": 1,
+  "createdAt": "2026-11-02T18:29:29.872Z",
+  "updatedAt": "2026-11-02T18:29:29.872Z"
+}

@@ -1,0 +1,10 @@
+{
+  "name": "City Bank Ltd",
+  "branch": "Dhanmondi",
+  "status": "active",
+  "notes": "Marketing and petty cash",
+  "_id": "3",
+  "_version": 1,
+  "createdAt": "2026-11-02T18:29:29.390Z",
+  "updatedAt": "2026-11-02T18:29:29.390Z"
+}

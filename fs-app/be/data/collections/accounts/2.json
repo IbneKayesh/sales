@@ -1,0 +1,15 @@
+{
+  "accountName": "Travel trading",
+  "accountNo": "1021300045678",
+  "type": "Savings",
+  "openingBalance": 280000,
+  "status": "active",
+  "notes": "Used for vendor payouts",
+  "bankId": "2",
+  "bankName": "Dutch-Bangla Bank Ltd",
+  "branch": "Motijheel",
+  "_id": "2",
+  "_version": 1,
+  "createdAt": "2026-11-02T18:29:29.089Z",
+  "updatedAt": "2026-11-02T18:29:29.089Z"
+}

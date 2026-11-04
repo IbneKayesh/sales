@@ -1,0 +1,39 @@
+{
+  "date": "2026-10-20",
+  "type": "withdraw",
+  "amount": 40000,
+  "entries": [
+    {
+      "side": "debit",
+      "kind": "system",
+      "id": "EXTERNAL",
+      "type": "EXTERNAL",
+      "accountNo": "",
+      "name": "External / Cash",
+      "bankId": "",
+      "bankName": "",
+      "amount": 40000
+    },
+    {
+      "side": "credit",
+      "kind": "account",
+      "id": "1",
+      "type": "Savings",
+      "accountNo": "15001000001",
+      "name": "Travel trading · Brac Bank Ltd",
+      "bankId": "1",
+      "bankName": "Brac Bank Ltd",
+      "amount": 40000
+    }
+  ],
+  "debitTotal": 40000,
+  "creditTotal": 40000,
+  "bankId": "1",
+  "bankName": "Brac Bank Ltd",
+  "reference": "CHQ-0041",
+  "description": "Supplier payment - hotel booking",
+  "_id": "5",
+  "_version": 1,
+  "createdAt": "2026-11-02T18:29:28.991Z",
+  "updatedAt": "2026-11-02T18:29:28.991Z"
+}

@@ -1,0 +1,10 @@
+{
+  "name": "abc bank",
+  "branch": "gulshan",
+  "status": "active",
+  "notes": "",
+  "_id": "5",
+  "_version": 1,
+  "createdAt": "2026-11-03T04:15:25.369Z",
+  "updatedAt": "2026-11-03T04:15:25.369Z"
+}

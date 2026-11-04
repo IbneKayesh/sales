@@ -1,0 +1,39 @@
+{
+  "date": "2026-10-01",
+  "type": "deposit",
+  "amount": 150000,
+  "entries": [
+    {
+      "side": "debit",
+      "kind": "account",
+      "id": "1",
+      "type": "Savings",
+      "accountNo": "15001000001",
+      "name": "Travel trading · Brac Bank Ltd",
+      "bankId": "1",
+      "bankName": "Brac Bank Ltd",
+      "amount": 150000
+    },
+    {
+      "side": "credit",
+      "kind": "system",
+      "id": "EXTERNAL",
+      "type": "EXTERNAL",
+      "accountNo": "",
+      "name": "External / Cash",
+      "bankId": "",
+      "bankName": "",
+      "amount": 150000
+    }
+  ],
+  "debitTotal": 150000,
+  "creditTotal": 150000,
+  "bankId": "1",
+  "bankName": "Brac Bank Ltd",
+  "reference": "TRX-88121",
+  "description": "Client payment - Cox's Bazar tour package",
+  "_id": "2",
+  "_version": 1,
+  "createdAt": "2026-11-02T18:29:28.928Z",
+  "updatedAt": "2026-11-02T18:29:28.928Z"
+}

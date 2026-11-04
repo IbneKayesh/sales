@@ -1,0 +1,15 @@
+{
+  "bankId": "5",
+  "accountName": "ac 1",
+  "accountNo": "123",
+  "type": "Savings",
+  "openingBalance": 0,
+  "status": "active",
+  "notes": "",
+  "bankName": "abc bank",
+  "branch": "gulshan",
+  "_id": "5",
+  "_version": 1,
+  "createdAt": "2026-11-03T04:15:36.779Z",
+  "updatedAt": "2026-11-03T04:15:36.779Z"
+}

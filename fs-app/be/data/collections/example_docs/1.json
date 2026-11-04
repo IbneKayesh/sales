@@ -1,0 +1,17 @@
+{
+  "title": "Monthly savings target",
+  "owner": "Travel trading",
+  "amount": 50000,
+  "currency": "BDT",
+  "month": "2026-11",
+  "tags": [
+    "savings",
+    "target"
+  ],
+  "done": false,
+  "note": "Free-form JSON document - edit this directly to see CRUD on any shape of data",
+  "_id": "1",
+  "_version": 1,
+  "createdAt": "2026-11-02T18:29:29.891Z",
+  "updatedAt": "2026-11-02T18:29:29.891Z"
+}

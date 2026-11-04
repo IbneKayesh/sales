@@ -1,0 +1,39 @@
+{
+  "date": "2026-10-22",
+  "type": "withdraw",
+  "amount": 20000,
+  "entries": [
+    {
+      "side": "debit",
+      "kind": "system",
+      "id": "EXTERNAL",
+      "type": "EXTERNAL",
+      "accountNo": "",
+      "name": "External / Cash",
+      "bankId": "",
+      "bankName": "",
+      "amount": 20000
+    },
+    {
+      "side": "credit",
+      "kind": "account",
+      "id": "3",
+      "type": "Savings",
+      "accountNo": "1402500012345",
+      "name": "Travel trading · City Bank Ltd",
+      "bankId": "3",
+      "bankName": "City Bank Ltd",
+      "amount": 20000
+    }
+  ],
+  "debitTotal": 20000,
+  "creditTotal": 20000,
+  "bankId": "3",
+  "bankName": "City Bank Ltd",
+  "reference": "CHQ-0012",
+  "description": "Facebook ads campaign",
+  "_id": "16",
+  "_version": 1,
+  "createdAt": "2026-11-02T18:29:29.561Z",
+  "updatedAt": "2026-11-02T18:29:29.561Z"
+}

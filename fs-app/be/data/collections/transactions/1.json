@@ -1,0 +1,39 @@
+{
+  "date": "2026-01-10",
+  "type": "fd-deposit",
+  "amount": 100000,
+  "entries": [
+    {
+      "side": "debit",
+      "kind": "child",
+      "id": "1",
+      "type": "FD",
+      "accountNo": "15001000008",
+      "name": "1st FD · 15001000008",
+      "bankId": "1",
+      "bankName": "Brac Bank Ltd",
+      "amount": 100000
+    },
+    {
+      "side": "credit",
+      "kind": "account",
+      "id": "1",
+      "type": "Savings",
+      "accountNo": "15001000001",
+      "name": "Travel trading · Brac Bank Ltd",
+      "bankId": "1",
+      "bankName": "Brac Bank Ltd",
+      "amount": 100000
+    }
+  ],
+  "debitTotal": 100000,
+  "creditTotal": 100000,
+  "bankId": "1",
+  "bankName": "Brac Bank Ltd",
+  "reference": "FD opening",
+  "description": "Funded 1st FD from savings",
+  "_id": "1",
+  "_version": 1,
+  "createdAt": "2026-11-02T18:29:28.902Z",
+  "updatedAt": "2026-11-02T18:29:28.902Z"
+}

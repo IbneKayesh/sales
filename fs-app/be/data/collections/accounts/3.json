@@ -1,0 +1,15 @@
+{
+  "accountName": "Travel trading",
+  "accountNo": "1402500012345",
+  "type": "Savings",
+  "openingBalance": 175000,
+  "status": "active",
+  "notes": "Marketing and petty cash",
+  "bankId": "3",
+  "bankName": "City Bank Ltd",
+  "branch": "Dhanmondi",
+  "_id": "3",
+  "_version": 1,
+  "createdAt": "2026-11-02T18:29:29.414Z",
+  "updatedAt": "2026-11-02T18:29:29.414Z"
+}

@@ -1,0 +1,39 @@
+{
+  "date": "2026-10-06",
+  "type": "deposit",
+  "amount": 120000,
+  "entries": [
+    {
+      "side": "debit",
+      "kind": "account",
+      "id": "4",
+      "type": "Savings",
+      "accountNo": "1011200089012",
+      "name": "Travel trading · Eastern Bank Ltd",
+      "bankId": "4",
+      "bankName": "Eastern Bank Ltd",
+      "amount": 120000
+    },
+    {
+      "side": "credit",
+      "kind": "system",
+      "id": "EXTERNAL",
+      "type": "EXTERNAL",
+      "accountNo": "",
+      "name": "External / Cash",
+      "bankId": "",
+      "bankName": "",
+      "amount": 120000
+    }
+  ],
+  "debitTotal": 120000,
+  "creditTotal": 120000,
+  "bankId": "4",
+  "bankName": "Eastern Bank Ltd",
+  "reference": "TRX-99331",
+  "description": "Hajj package payment",
+  "_id": "19",
+  "_version": 1,
+  "createdAt": "2026-11-02T18:29:29.808Z",
+  "updatedAt": "2026-11-02T18:29:29.808Z"
+}

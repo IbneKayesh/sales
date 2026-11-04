@@ -1,0 +1,39 @@
+{
+  "date": "2026-10-02",
+  "type": "deposit",
+  "amount": 90000,
+  "entries": [
+    {
+      "side": "debit",
+      "kind": "account",
+      "id": "2",
+      "type": "Savings",
+      "accountNo": "1021300045678",
+      "name": "Travel trading · Dutch-Bangla Bank Ltd",
+      "bankId": "2",
+      "bankName": "Dutch-Bangla Bank Ltd",
+      "amount": 90000
+    },
+    {
+      "side": "credit",
+      "kind": "system",
+      "id": "EXTERNAL",
+      "type": "EXTERNAL",
+      "accountNo": "",
+      "name": "External / Cash",
+      "bankId": "",
+      "bankName": "",
+      "amount": 90000
+    }
+  ],
+  "debitTotal": 90000,
+  "creditTotal": 90000,
+  "bankId": "2",
+  "bankName": "Dutch-Bangla Bank Ltd",
+  "reference": "TRX-77410",
+  "description": "Corporate booking advance",
+  "_id": "9",
+  "_version": 1,
+  "createdAt": "2026-11-02T18:29:29.292Z",
+  "updatedAt": "2026-11-02T18:29:29.292Z"
+}

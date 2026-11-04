@@ -1,0 +1,136 @@
+{
+  "model": "dps",
+  "collection": "dps",
+  "title": "DPS child account",
+  "primaryKey": {
+    "name": "id",
+    "field": "_id",
+    "type": "string",
+    "generated": true,
+    "strategy": "max-file-name+1"
+  },
+  "fields": [
+    {
+      "name": "accountId",
+      "label": "Bank account",
+      "type": "string",
+      "required": true,
+      "table": true
+    },
+    {
+      "name": "accountNo",
+      "label": "Account no",
+      "type": "string",
+      "required": true,
+      "maxLength": 32,
+      "table": true
+    },
+    {
+      "name": "label",
+      "label": "Label",
+      "type": "string",
+      "required": true,
+      "maxLength": 60,
+      "table": true
+    },
+    {
+      "name": "installmentAmount",
+      "label": "Installment amount",
+      "type": "number",
+      "min": 1,
+      "required": true,
+      "table": true
+    },
+    {
+      "name": "installmentsTotal",
+      "label": "No. of installments",
+      "type": "number",
+      "min": 1,
+      "required": true,
+      "table": true
+    },
+    {
+      "name": "installmentsPaid",
+      "label": "Installments paid",
+      "type": "number",
+      "min": 0,
+      "table": true
+    },
+    {
+      "name": "installmentDay",
+      "label": "Installment day",
+      "type": "number",
+      "min": 1,
+      "table": false
+    },
+    {
+      "name": "rate",
+      "label": "Rate (%)",
+      "type": "number",
+      "min": 0,
+      "table": true
+    },
+    {
+      "name": "totalPayable",
+      "label": "Total payable",
+      "type": "number",
+      "min": 0,
+      "table": false
+    },
+    {
+      "name": "totalPaid",
+      "label": "Total paid",
+      "type": "number",
+      "min": 0,
+      "table": false
+    },
+    {
+      "name": "totalInterest",
+      "label": "Total interest",
+      "type": "number",
+      "min": 0,
+      "table": false
+    },
+    {
+      "name": "interestEarned",
+      "label": "Interest earned",
+      "type": "number",
+      "min": 0,
+      "table": false
+    },
+    {
+      "name": "openDate",
+      "label": "Open date",
+      "type": "date",
+      "required": true,
+      "table": false
+    },
+    {
+      "name": "closeDate",
+      "label": "Close date",
+      "type": "date",
+      "table": false
+    },
+    {
+      "name": "nextInstallmentDate",
+      "label": "Next installment date",
+      "type": "date",
+      "table": true
+    },
+    {
+      "name": "status",
+      "label": "Status",
+      "type": "enum",
+      "values": ["active", "closed"],
+      "required": true,
+      "table": true
+    },
+    {
+      "name": "notes",
+      "label": "Notes",
+      "type": "string",
+      "maxLength": 300,
+      "table": false
+    }
+  ]
+}

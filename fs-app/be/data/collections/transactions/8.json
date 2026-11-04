@@ -1,0 +1,39 @@
+{
+  "date": "2026-09-30",
+  "type": "fd-deposit",
+  "amount": 60000,
+  "entries": [
+    {
+      "side": "debit",
+      "kind": "child",
+      "id": "8",
+      "type": "FD",
+      "accountNo": "1021300045692",
+      "name": "3rd FD · 1021300045692",
+      "bankId": "2",
+      "bankName": "Dutch-Bangla Bank Ltd",
+      "amount": 60000
+    },
+    {
+      "side": "credit",
+      "kind": "account",
+      "id": "2",
+      "type": "Savings",
+      "accountNo": "1021300045678",
+      "name": "Travel trading · Dutch-Bangla Bank Ltd",
+      "bankId": "2",
+      "bankName": "Dutch-Bangla Bank Ltd",
+      "amount": 60000
+    }
+  ],
+  "debitTotal": 60000,
+  "creditTotal": 60000,
+  "bankId": "2",
+  "bankName": "Dutch-Bangla Bank Ltd",
+  "reference": "FD opening",
+  "description": "3rd FD funded",
+  "_id": "8",
+  "_version": 1,
+  "createdAt": "2026-11-02T18:29:29.266Z",
+  "updatedAt": "2026-11-02T18:29:29.266Z"
+}

@@ -1,0 +1,39 @@
+{
+  "date": "2026-10-07",
+  "type": "dps-installment",
+  "amount": 4000,
+  "entries": [
+    {
+      "side": "debit",
+      "kind": "child",
+      "id": "4",
+      "type": "DPS",
+      "accountNo": "1021300045680",
+      "name": "1st DPS · 1021300045680",
+      "bankId": "2",
+      "bankName": "Dutch-Bangla Bank Ltd",
+      "amount": 4000
+    },
+    {
+      "side": "credit",
+      "kind": "account",
+      "id": "2",
+      "type": "Savings",
+      "accountNo": "1021300045678",
+      "name": "Travel trading · Dutch-Bangla Bank Ltd",
+      "bankId": "2",
+      "bankName": "Dutch-Bangla Bank Ltd",
+      "amount": 4000
+    }
+  ],
+  "debitTotal": 4000,
+  "creditTotal": 4000,
+  "bankId": "2",
+  "bankName": "Dutch-Bangla Bank Ltd",
+  "reference": "DPS Oct-26",
+  "description": "1st DPS installment",
+  "_id": "10",
+  "_version": 1,
+  "createdAt": "2026-11-02T18:29:29.307Z",
+  "updatedAt": "2026-11-02T18:29:29.307Z"
+}

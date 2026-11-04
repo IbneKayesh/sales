@@ -1,0 +1,39 @@
+{
+  "date": "2026-10-31",
+  "type": "charge",
+  "amount": 550,
+  "entries": [
+    {
+      "side": "debit",
+      "kind": "system",
+      "id": "CHARGES",
+      "type": "CHARGES",
+      "accountNo": "",
+      "name": "Bank charges",
+      "bankId": "",
+      "bankName": "",
+      "amount": 550
+    },
+    {
+      "side": "credit",
+      "kind": "account",
+      "id": "1",
+      "type": "Savings",
+      "accountNo": "15001000001",
+      "name": "Travel trading · Brac Bank Ltd",
+      "bankId": "1",
+      "bankName": "Brac Bank Ltd",
+      "amount": 550
+    }
+  ],
+  "debitTotal": 550,
+  "creditTotal": 550,
+  "bankId": "1",
+  "bankName": "Brac Bank Ltd",
+  "reference": "",
+  "description": "Account maintenance charge",
+  "_id": "7",
+  "_version": 1,
+  "createdAt": "2026-11-02T18:29:29.036Z",
+  "updatedAt": "2026-11-02T18:29:29.036Z"
+}

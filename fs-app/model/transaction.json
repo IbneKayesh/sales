@@ -1,0 +1,81 @@
+{
+  "model": "transaction",
+  "collection": "transactions",
+  "title": "Transaction",
+  "primaryKey": {
+    "name": "id",
+    "field": "_id",
+    "type": "string",
+    "generated": true,
+    "strategy": "max-file-name+1"
+  },
+  "balancedEntries": true,
+  "fields": [
+    {
+      "name": "date",
+      "label": "Date",
+      "type": "date",
+      "required": true,
+      "table": true
+    },
+    {
+      "name": "type",
+      "label": "Type",
+      "type": "enum",
+      "values": [
+        "deposit",
+        "withdraw",
+        "transfer",
+        "dps-installment",
+        "fd-deposit",
+        "profit",
+        "charge"
+      ],
+      "required": true,
+      "table": true
+    },
+    {
+      "name": "amount",
+      "label": "Amount",
+      "type": "number",
+      "min": 0.01,
+      "required": true,
+      "table": true
+    },
+    {
+      "name": "entries",
+      "label": "Debit / credit entries",
+      "type": "array",
+      "required": true,
+      "table": false
+    },
+    {
+      "name": "debitTotal",
+      "label": "Total debit",
+      "type": "number",
+      "min": 0,
+      "table": true
+    },
+    {
+      "name": "creditTotal",
+      "label": "Total credit",
+      "type": "number",
+      "min": 0,
+      "table": true
+    },
+    {
+      "name": "reference",
+      "label": "Reference",
+      "type": "string",
+      "maxLength": 60,
+      "table": true
+    },
+    {
+      "name": "description",
+      "label": "Description",
+      "type": "string",
+      "maxLength": 300,
+      "table": true
+    }
+  ]
+}

@@ -1,0 +1,39 @@
+{
+  "date": "2026-10-28",
+  "type": "profit",
+  "amount": 1600,
+  "entries": [
+    {
+      "side": "debit",
+      "kind": "account",
+      "id": "2",
+      "type": "Savings",
+      "accountNo": "1021300045678",
+      "name": "Travel trading · Dutch-Bangla Bank Ltd",
+      "bankId": "2",
+      "bankName": "Dutch-Bangla Bank Ltd",
+      "amount": 1600
+    },
+    {
+      "side": "credit",
+      "kind": "system",
+      "id": "PROFIT",
+      "type": "PROFIT",
+      "accountNo": "",
+      "name": "Profit income",
+      "bankId": "",
+      "bankName": "",
+      "amount": 1600
+    }
+  ],
+  "debitTotal": 1600,
+  "creditTotal": 1600,
+  "bankId": "2",
+  "bankName": "Dutch-Bangla Bank Ltd",
+  "reference": "",
+  "description": "Savings profit",
+  "_id": "12",
+  "_version": 1,
+  "createdAt": "2026-11-02T18:29:29.351Z",
+  "updatedAt": "2026-11-02T18:29:29.351Z"
+}

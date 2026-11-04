@@ -1,0 +1,39 @@
+{
+  "date": "2026-10-05",
+  "type": "dps-installment",
+  "amount": 5000,
+  "entries": [
+    {
+      "side": "debit",
+      "kind": "child",
+      "id": "1",
+      "type": "DPS",
+      "accountNo": "15001000005",
+      "name": "1st DPS · 15001000005",
+      "bankId": "1",
+      "bankName": "Brac Bank Ltd",
+      "amount": 5000
+    },
+    {
+      "side": "credit",
+      "kind": "account",
+      "id": "1",
+      "type": "Savings",
+      "accountNo": "15001000001",
+      "name": "Travel trading · Brac Bank Ltd",
+      "bankId": "1",
+      "bankName": "Brac Bank Ltd",
+      "amount": 5000
+    }
+  ],
+  "debitTotal": 5000,
+  "creditTotal": 5000,
+  "bankId": "1",
+  "bankName": "Brac Bank Ltd",
+  "reference": "DPS Oct-26",
+  "description": "1st DPS installment",
+  "_id": "3",
+  "_version": 1,
+  "createdAt": "2026-11-02T18:29:28.950Z",
+  "updatedAt": "2026-11-02T18:29:28.950Z"
+}

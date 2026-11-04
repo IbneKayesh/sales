@@ -1,0 +1,108 @@
+{
+  "model": "fd",
+  "collection": "fd",
+  "title": "FD child account",
+  "primaryKey": {
+    "name": "id",
+    "field": "_id",
+    "type": "string",
+    "generated": true,
+    "strategy": "max-file-name+1"
+  },
+  "fields": [
+    {
+      "name": "accountId",
+      "label": "Bank account",
+      "type": "string",
+      "required": true,
+      "table": true
+    },
+    {
+      "name": "accountNo",
+      "label": "Account no",
+      "type": "string",
+      "required": true,
+      "maxLength": 32,
+      "table": true
+    },
+    {
+      "name": "label",
+      "label": "Label",
+      "type": "string",
+      "required": true,
+      "maxLength": 60,
+      "table": true
+    },
+    {
+      "name": "principal",
+      "label": "Total amount",
+      "type": "number",
+      "min": 1,
+      "required": true,
+      "table": true
+    },
+    {
+      "name": "rate",
+      "label": "Rate (%)",
+      "type": "number",
+      "min": 0,
+      "table": true
+    },
+    {
+      "name": "totalInterest",
+      "label": "Total interest",
+      "type": "number",
+      "min": 0,
+      "table": false
+    },
+    {
+      "name": "maturityAmount",
+      "label": "Total with interest",
+      "type": "number",
+      "min": 0,
+      "table": true
+    },
+    {
+      "name": "interestPaymentType",
+      "label": "Interest payment type",
+      "type": "enum",
+      "values": ["Yearly", "Half Yearly"],
+      "required": true,
+      "table": true
+    },
+    {
+      "name": "openDate",
+      "label": "Open date",
+      "type": "date",
+      "required": true,
+      "table": false
+    },
+    {
+      "name": "closeDate",
+      "label": "Close date",
+      "type": "date",
+      "table": false
+    },
+    {
+      "name": "nextInterestPaymentDate",
+      "label": "Next interest payment",
+      "type": "date",
+      "table": true
+    },
+    {
+      "name": "status",
+      "label": "Status",
+      "type": "enum",
+      "values": ["active", "closed"],
+      "required": true,
+      "table": true
+    },
+    {
+      "name": "notes",
+      "label": "Notes",
+      "type": "string",
+      "maxLength": 300,
+      "table": false
+    }
+  ]
+}

@@ -1,0 +1,39 @@
+{
+  "date": "2026-10-12",
+  "type": "dps-installment",
+  "amount": 2500,
+  "entries": [
+    {
+      "side": "debit",
+      "kind": "child",
+      "id": "6",
+      "type": "DPS",
+      "accountNo": "1402500012346",
+      "name": "1st DPS · 1402500012346",
+      "bankId": "3",
+      "bankName": "City Bank Ltd",
+      "amount": 2500
+    },
+    {
+      "side": "credit",
+      "kind": "account",
+      "id": "3",
+      "type": "Savings",
+      "accountNo": "1402500012345",
+      "name": "Travel trading · City Bank Ltd",
+      "bankId": "3",
+      "bankName": "City Bank Ltd",
+      "amount": 2500
+    }
+  ],
+  "debitTotal": 2500,
+  "creditTotal": 2500,
+  "bankId": "3",
+  "bankName": "City Bank Ltd",
+  "reference": "DPS Oct-26",
+  "description": "1st DPS installment",
+  "_id": "15",
+  "_version": 1,
+  "createdAt": "2026-11-02T18:29:29.542Z",
+  "updatedAt": "2026-11-02T18:29:29.542Z"
+}

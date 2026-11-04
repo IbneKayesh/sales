@@ -1,0 +1,39 @@
+{
+  "date": "2026-10-18",
+  "type": "withdraw",
+  "amount": 35000,
+  "entries": [
+    {
+      "side": "debit",
+      "kind": "system",
+      "id": "EXTERNAL",
+      "type": "EXTERNAL",
+      "accountNo": "",
+      "name": "External / Cash",
+      "bankId": "",
+      "bankName": "",
+      "amount": 35000
+    },
+    {
+      "side": "credit",
+      "kind": "account",
+      "id": "2",
+      "type": "Savings",
+      "accountNo": "1021300045678",
+      "name": "Travel trading · Dutch-Bangla Bank Ltd",
+      "bankId": "2",
+      "bankName": "Dutch-Bangla Bank Ltd",
+      "amount": 35000
+    }
+  ],
+  "debitTotal": 35000,
+  "creditTotal": 35000,
+  "bankId": "2",
+  "bankName": "Dutch-Bangla Bank Ltd",
+  "reference": "ATM-2210",
+  "description": "Cash withdrawal for office expenses",
+  "_id": "11",
+  "_version": 1,
+  "createdAt": "2026-11-02T18:29:29.332Z",
+  "updatedAt": "2026-11-02T18:29:29.332Z"
+}

@@ -1,0 +1,67 @@
+{
+  "model": "account",
+  "collection": "accounts",
+  "title": "Bank account",
+  "primaryKey": {
+    "name": "id",
+    "field": "_id",
+    "type": "string",
+    "generated": true,
+    "strategy": "max-file-name+1"
+  },
+  "fields": [
+    {
+      "name": "bankId",
+      "label": "Bank",
+      "type": "string",
+      "required": true,
+      "table": true
+    },
+    {
+      "name": "accountName",
+      "label": "Account name",
+      "type": "string",
+      "required": true,
+      "maxLength": 80,
+      "table": true
+    },
+    {
+      "name": "accountNo",
+      "label": "Account no",
+      "type": "string",
+      "required": true,
+      "maxLength": 32,
+      "table": true
+    },
+    {
+      "name": "type",
+      "label": "Type",
+      "type": "enum",
+      "values": ["Savings", "Current"],
+      "required": true,
+      "table": true
+    },
+    {
+      "name": "openingBalance",
+      "label": "Opening balance",
+      "type": "number",
+      "min": 0,
+      "table": true
+    },
+    {
+      "name": "status",
+      "label": "Status",
+      "type": "enum",
+      "values": ["active", "inactive"],
+      "required": true,
+      "table": true
+    },
+    {
+      "name": "notes",
+      "label": "Notes",
+      "type": "string",
+      "maxLength": 300,
+      "table": false
+    }
+  ]
+}

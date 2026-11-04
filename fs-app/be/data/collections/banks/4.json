@@ -1,0 +1,10 @@
+{
+  "name": "Eastern Bank Ltd",
+  "branch": "Banani",
+  "status": "active",
+  "notes": "Reserve account",
+  "_id": "4",
+  "_version": 1,
+  "createdAt": "2026-11-02T18:29:29.594Z",
+  "updatedAt": "2026-11-02T18:29:29.594Z"
+}

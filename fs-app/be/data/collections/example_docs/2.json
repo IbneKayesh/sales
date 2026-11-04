@@ -1,0 +1,14 @@
+{
+  "title": "Bank visit checklist",
+  "owner": "Travel trading",
+  "done": true,
+  "steps": [
+    "Collect DPS passbook",
+    "Submit FD renewal form",
+    "Verify Q3 profit credit"
+  ],
+  "_id": "2",
+  "_version": 1,
+  "createdAt": "2026-11-02T18:29:29.914Z",
+  "updatedAt": "2026-11-02T18:29:29.914Z"
+}

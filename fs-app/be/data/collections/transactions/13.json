@@ -1,0 +1,39 @@
+{
+  "date": "2026-10-28",
+  "type": "charge",
+  "amount": 400,
+  "entries": [
+    {
+      "side": "debit",
+      "kind": "system",
+      "id": "CHARGES",
+      "type": "CHARGES",
+      "accountNo": "",
+      "name": "Bank charges",
+      "bankId": "",
+      "bankName": "",
+      "amount": 400
+    },
+    {
+      "side": "credit",
+      "kind": "account",
+      "id": "2",
+      "type": "Savings",
+      "accountNo": "1021300045678",
+      "name": "Travel trading · Dutch-Bangla Bank Ltd",
+      "bankId": "2",
+      "bankName": "Dutch-Bangla Bank Ltd",
+      "amount": 400
+    }
+  ],
+  "debitTotal": 400,
+  "creditTotal": 400,
+  "bankId": "2",
+  "bankName": "Dutch-Bangla Bank Ltd",
+  "reference": "",
+  "description": "Quarterly service charge",
+  "_id": "13",
+  "_version": 1,
+  "createdAt": "2026-11-02T18:29:29.375Z",
+  "updatedAt": "2026-11-02T18:29:29.375Z"
+}

@@ -1,0 +1,41 @@
+{
+  "date": "2026-11-03",
+  "type": "deposit",
+  "amount": 123,
+  "entries": [
+    {
+      "side": "debit",
+      "kind": "child",
+      "id": "1",
+      "type": "Savings",
+      "accountId": "5",
+      "accountNo": "123",
+      "name": "abc bank · Savings 123",
+      "bankId": "5",
+      "bankName": "abc bank",
+      "amount": 123
+    },
+    {
+      "side": "credit",
+      "kind": "child",
+      "id": "7",
+      "type": "DPS",
+      "accountId": "4",
+      "accountNo": "1011200089015",
+      "name": "Eastern Bank Ltd · DPS 1011200089015",
+      "bankId": "4",
+      "bankName": "Eastern Bank Ltd",
+      "amount": 123
+    }
+  ],
+  "debitTotal": 123,
+  "creditTotal": 123,
+  "bankId": "5",
+  "bankName": "abc bank",
+  "reference": "",
+  "description": "",
+  "_id": "23",
+  "_version": 1,
+  "createdAt": "2026-11-03T04:16:40.861Z",
+  "updatedAt": "2026-11-03T04:16:40.861Z"
+}

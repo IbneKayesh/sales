@@ -1,0 +1,10 @@
+{
+  "name": "Brac Bank Ltd",
+  "branch": "Gulshan 2",
+  "status": "active",
+  "notes": "Primary banking partner",
+  "_id": "1",
+  "_version": 1,
+  "createdAt": "2026-11-02T18:29:28.625Z",
+  "updatedAt": "2026-11-02T18:29:28.625Z"
+}

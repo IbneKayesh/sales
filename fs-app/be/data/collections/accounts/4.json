@@ -1,0 +1,15 @@
+{
+  "accountName": "Travel trading",
+  "accountNo": "1011200089012",
+  "type": "Savings",
+  "openingBalance": 320000,
+  "status": "active",
+  "notes": "Reserve account",
+  "bankId": "4",
+  "bankName": "Eastern Bank Ltd",
+  "branch": "Banani",
+  "_id": "4",
+  "_version": 1,
+  "createdAt": "2026-11-02T18:29:29.631Z",
+  "updatedAt": "2026-11-02T18:29:29.631Z"
+}

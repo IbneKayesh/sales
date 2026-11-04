@@ -1,6 +1,5 @@
 import fs from "node:fs/promises";
 import path from "node:path";
-import { randomUUID } from "node:crypto";
 
 import { matches, sortDocuments } from "./query.js";
 import { StorageError } from "./errors.js";
@@ -21,11 +20,7 @@ function validateId(id) {
 }
 
 function validateDocument(data) {
-  if (
-    !data ||
-    typeof data !== "object" ||
-    Array.isArray(data)
-  ) {
+  if (!data || typeof data !== "object" || Array.isArray(data)) {
     throw new StorageError("Document must be an object", 400);
   }
 
@@ -40,16 +35,6 @@ function validateDocument(data) {
   return structuredClone(data);
 }
 
-// Before running the application, make sure the collection directory is created before any operation.
-
-// In collection.js, add this helper:
-
-
-
-// function async ensureDirectory() {
-//   await fs.mkdir(this.directory, { recursive: true });
-// }
-
 export class Collection {
   constructor(engine, name) {
     validateCollection(name);
@@ -57,14 +42,16 @@ export class Collection {
     this.engine = engine;
     this.name = name;
 
-    this.directory = path.join(
-      engine.collectionsPath,
-      name
-    );
+    this.directory = path.join(engine.collectionsPath, name);
+  }
+
+  /** Create the collection directory on demand, before any operation. */
+  async ensureDirectory() {
+    await fs.mkdir(this.directory, { recursive: true });
   }
 
   async initialize() {
-    await fs.mkdir(this.directory, { recursive: true });
+    await this.ensureDirectory();
   }
 
   documentPath(id) {
@@ -75,10 +62,7 @@ export class Collection {
 
   async readFile(id) {
     try {
-      const content = await fs.readFile(
-        this.documentPath(id),
-        "utf8"
-      );
+      const content = await fs.readFile(this.documentPath(id), "utf8");
 
       return JSON.parse(content);
     } catch (error) {
@@ -90,16 +74,32 @@ export class Collection {
     }
   }
 
-  async ensureDirectory() {
-    await fs.mkdir(this.directory, { recursive: true });
+  /**
+   * Sequential file ids: the next document uses the highest existing
+   * numeric file name + 1 (1.json, 2.json, 3.json, ...).
+   */
+  async nextId() {
+    await this.ensureDirectory();
+
+    const entries = await fs.readdir(this.directory);
+
+    let max = 0;
+    for (const entry of entries) {
+      if (!entry.endsWith(".json")) continue;
+      const numeric = Number(entry.slice(0, -5));
+      if (Number.isInteger(numeric) && numeric > max) max = numeric;
+    }
+
+    return String(max + 1);
   }
 
   async insert(data) {
     await this.ensureDirectory();
+
     return this.engine.queue.run(async () => {
       const document = validateDocument(data);
 
-      const id = randomUUID();
+      const id = await this.nextId();
       const now = new Date().toISOString();
 
       const record = {
@@ -110,29 +110,21 @@ export class Collection {
         updatedAt: now
       };
 
-      await this.engine.atomicWrite(
-        this.documentPath(id),
-        record
-      );
+      await this.engine.atomicWrite(this.documentPath(id), record);
 
       return record;
     });
   }
 
   async findById(id) {
+    await this.ensureDirectory();
     return this.readFile(id);
   }
 
   async find(filter = {}, options = {}) {
-    let files;
-    try {
-      files = await fs.readdir(this.directory);
-    } catch (error) {
-      if (error.code === "ENOENT") {
-        return [];
-      }
-      throw error;
-    }
+    await this.ensureDirectory();
+
+    const files = await fs.readdir(this.directory);
 
     const records = [];
 
@@ -161,6 +153,8 @@ export class Collection {
   }
 
   async update(id, changes) {
+    await this.ensureDirectory();
+
     return this.engine.queue.run(async () => {
       const current = await this.readFile(id);
 
@@ -170,16 +164,9 @@ export class Collection {
 
       const patch = validateDocument(changes);
 
-      for (const protectedField of [
-        "_id",
-        "_version",
-        "createdAt"
-      ]) {
+      for (const protectedField of ["_id", "_version", "createdAt"]) {
         if (Object.hasOwn(patch, protectedField)) {
-          throw new StorageError(
-            `Cannot modify ${protectedField}`,
-            400
-          );
+          throw new StorageError(`Cannot modify ${protectedField}`, 400);
         }
       }
 
@@ -192,16 +179,15 @@ export class Collection {
         updatedAt: new Date().toISOString()
       };
 
-      await this.engine.atomicWrite(
-        this.documentPath(id),
-        updated
-      );
+      await this.engine.atomicWrite(this.documentPath(id), updated);
 
       return updated;
     });
   }
 
   async delete(id) {
+    await this.ensureDirectory();
+
     return this.engine.queue.run(async () => {
       const filename = this.documentPath(id);
 

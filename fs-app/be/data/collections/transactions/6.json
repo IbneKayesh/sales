@@ -1,0 +1,39 @@
+{
+  "date": "2026-10-31",
+  "type": "profit",
+  "amount": 2450,
+  "entries": [
+    {
+      "side": "debit",
+      "kind": "account",
+      "id": "1",
+      "type": "Savings",
+      "accountNo": "15001000001",
+      "name": "Travel trading · Brac Bank Ltd",
+      "bankId": "1",
+      "bankName": "Brac Bank Ltd",
+      "amount": 2450
+    },
+    {
+      "side": "credit",
+      "kind": "system",
+      "id": "PROFIT",
+      "type": "PROFIT",
+      "accountNo": "",
+      "name": "Profit income",
+      "bankId": "",
+      "bankName": "",
+      "amount": 2450
+    }
+  ],
+  "debitTotal": 2450,
+  "creditTotal": 2450,
+  "bankId": "1",
+  "bankName": "Brac Bank Ltd",
+  "reference": "",
+  "description": "Monthly savings profit credited",
+  "_id": "6",
+  "_version": 1,
+  "createdAt": "2026-11-02T18:29:29.018Z",
+  "updatedAt": "2026-11-02T18:29:29.018Z"
+}

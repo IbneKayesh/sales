@@ -1,0 +1,39 @@
+{
+  "date": "2026-10-25",
+  "type": "dps-installment",
+  "amount": 1500,
+  "entries": [
+    {
+      "side": "debit",
+      "kind": "child",
+      "id": "8",
+      "type": "DPS",
+      "accountNo": "1011200089016",
+      "name": "2nd DPS · 1011200089016",
+      "bankId": "4",
+      "bankName": "Eastern Bank Ltd",
+      "amount": 1500
+    },
+    {
+      "side": "credit",
+      "kind": "account",
+      "id": "4",
+      "type": "Savings",
+      "accountNo": "1011200089012",
+      "name": "Travel trading · Eastern Bank Ltd",
+      "bankId": "4",
+      "bankName": "Eastern Bank Ltd",
+      "amount": 1500
+    }
+  ],
+  "debitTotal": 1500,
+  "creditTotal": 1500,
+  "bankId": "4",
+  "bankName": "Eastern Bank Ltd",
+  "reference": "DPS Oct-26",
+  "description": "2nd DPS installment",
+  "_id": "21",
+  "_version": 1,
+  "createdAt": "2026-11-02T18:29:29.849Z",
+  "updatedAt": "2026-11-02T18:29:29.849Z"
+}

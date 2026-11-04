@@ -1,0 +1,39 @@
+{
+  "date": "2026-07-11",
+  "type": "fd-deposit",
+  "amount": 90000,
+  "entries": [
+    {
+      "side": "debit",
+      "kind": "child",
+      "id": "12",
+      "type": "FD",
+      "accountNo": "1011200089021",
+      "name": "2nd FD · 1011200089021",
+      "bankId": "4",
+      "bankName": "Eastern Bank Ltd",
+      "amount": 90000
+    },
+    {
+      "side": "credit",
+      "kind": "account",
+      "id": "4",
+      "type": "Savings",
+      "accountNo": "1011200089012",
+      "name": "Travel trading · Eastern Bank Ltd",
+      "bankId": "4",
+      "bankName": "Eastern Bank Ltd",
+      "amount": 90000
+    }
+  ],
+  "debitTotal": 90000,
+  "creditTotal": 90000,
+  "bankId": "4",
+  "bankName": "Eastern Bank Ltd",
+  "reference": "FD opening",
+  "description": "2nd FD funded",
+  "_id": "18",
+  "_version": 1,
+  "createdAt": "2026-11-02T18:29:29.789Z",
+  "updatedAt": "2026-11-02T18:29:29.789Z"
+}
