@@ -1,4 +1,5 @@
-import { useState, useRef, useEffect, useId } from "react";
+import { useState, useRef, useEffect, useLayoutEffect, useCallback, useId } from "react";
+import { createPortal } from "react-dom";
 import { IconClose, IconChevronDown, IconCheck } from "../icons";
 
 /* ------------------------------------------------------------------ */
@@ -27,16 +28,74 @@ export default function MultiSelect({
   const [open, setOpen] = useState(false);
   const [focused, setFocused] = useState(false);
   const wrapRef = useRef(null);
+  const triggerRef = useRef(null);
+  const menuRef = useRef(null);
   const fallbackId = useId();
   const inputId = name || fallbackId;
+  const [menuStyle, setMenuStyle] = useState({});
 
   const selected = (Array.isArray(value) ? value : String(value ?? "").split(","))
     .map((v) => v.trim())
     .filter(Boolean);
 
+  const updatePosition = useCallback(() => {
+    if (!triggerRef.current) return;
+    const rect = triggerRef.current.getBoundingClientRect();
+    const viewportHeight = window.innerHeight;
+    const viewportWidth = window.innerWidth;
+
+    if (rect.width === 0 && rect.height === 0) return;
+    if (rect.bottom < 0 || rect.top > viewportHeight) {
+      setOpen(false);
+      return;
+    }
+
+    const spaceBelow = viewportHeight - rect.bottom;
+    const spaceAbove = rect.top;
+    const openUp = spaceBelow < 250 && spaceAbove > spaceBelow;
+
+    let left = rect.left;
+    const targetWidth = Math.max(200, rect.width);
+    if (left + targetWidth > viewportWidth - 12) {
+      left = Math.max(12, viewportWidth - 12 - targetWidth);
+    }
+
+    setMenuStyle({
+      position: "fixed",
+      zIndex: 1200,
+      margin: 0,
+      top: openUp ? "auto" : `${rect.bottom + 4}px`,
+      bottom: openUp ? `${Math.max(4, viewportHeight - rect.top + 4)}px` : "auto",
+      left: `${left}px`,
+      right: "auto",
+      width: `${rect.width}px`,
+      minWidth: `${targetWidth}px`,
+      maxHeight: `${Math.max(120, (openUp ? spaceAbove : spaceBelow) - 16)}px`,
+    });
+  }, []);
+
+  useLayoutEffect(() => {
+    if (!open) return;
+    updatePosition();
+
+    const handleScroll = (e) => {
+      if (menuRef.current && menuRef.current.contains(e.target)) return;
+      updatePosition();
+    };
+
+    window.addEventListener("resize", updatePosition);
+    window.addEventListener("scroll", handleScroll, true);
+    return () => {
+      window.removeEventListener("resize", updatePosition);
+      window.removeEventListener("scroll", handleScroll, true);
+    };
+  }, [open, updatePosition]);
+
   useEffect(() => {
     function handleClick(e) {
-      if (wrapRef.current && !wrapRef.current.contains(e.target)) {
+      const inWrap = wrapRef.current && wrapRef.current.contains(e.target);
+      const inMenu = menuRef.current && menuRef.current.contains(e.target);
+      if (!inWrap && !inMenu) {
         setOpen(false);
       }
     }
@@ -86,6 +145,7 @@ export default function MultiSelect({
       )}
       <div
         id={inputId}
+        ref={triggerRef}
         className="dropdown__trigger"
         onClick={toggleOpen}
         tabIndex={0}
@@ -125,43 +185,52 @@ export default function MultiSelect({
           </span>
         </div>
       </div>
-      {open && (
-        <div className="dropdown__menu" role="listbox" aria-multiselectable="true">
-          <div className="dropdown__options">
-            {options.length > 0 ? (
-              options.map((opt, idx) => {
-                const v = String(opt?.[optionValue] ?? "");
-                const isSelected = selected.includes(v);
-                return (
-                  <button
-                    key={v || idx}
-                    type="button"
-                    className={`dropdown__option${isSelected ? " dropdown__option--selected" : ""}`}
-                    role="option"
-                    aria-selected={isSelected}
-                    onClick={() => handleToggle(opt)}
-                  >
-                    {isSelected && (
-                      <span
-                        className="dropdown__check"
-                        style={{ marginLeft: 0, flex: "0 0 auto" }}
-                      >
-                        <IconCheck size={14} />
-                      </span>
-                    )}
-                    {opt?.icon && (
-                      <span className="dropdown__option-icon">{opt.icon}</span>
-                    )}
-                    <span>{opt?.[optionLabel] ?? ""}</span>
-                  </button>
-                );
-              })
-            ) : (
-              <div className="dropdown__empty">No options</div>
-            )}
-          </div>
-        </div>
-      )}
+      {open &&
+        typeof document !== "undefined" &&
+        createPortal(
+          <div
+            ref={menuRef}
+            className="dropdown__menu"
+            role="listbox"
+            aria-multiselectable="true"
+            style={menuStyle}
+          >
+            <div className="dropdown__options">
+              {options.length > 0 ? (
+                options.map((opt, idx) => {
+                  const v = String(opt?.[optionValue] ?? "");
+                  const isSelected = selected.includes(v);
+                  return (
+                    <button
+                      key={v || idx}
+                      type="button"
+                      className={`dropdown__option${isSelected ? " dropdown__option--selected" : ""}`}
+                      role="option"
+                      aria-selected={isSelected}
+                      onClick={() => handleToggle(opt)}
+                    >
+                      {isSelected && (
+                        <span
+                          className="dropdown__check"
+                          style={{ marginLeft: 0, flex: "0 0 auto" }}
+                        >
+                          <IconCheck size={14} />
+                        </span>
+                      )}
+                      {opt?.icon && (
+                        <span className="dropdown__option-icon">{opt.icon}</span>
+                      )}
+                      <span>{opt?.[optionLabel] ?? ""}</span>
+                    </button>
+                  );
+                })
+              ) : (
+                <div className="dropdown__empty">No options</div>
+              )}
+            </div>
+          </div>,
+          document.body,
+        )}
       {error && <span className="dropdown__error">{error}</span>}
     </div>
   );

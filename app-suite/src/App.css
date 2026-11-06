@@ -1071,6 +1071,10 @@ code {
   text-align: left;
 }
 
+.dropdown--open {
+  z-index: var(--z-dropdown);
+}
+
 .dropdown__label {
   font-size: var(--fs-sm);
   font-weight: var(--fw-medium);

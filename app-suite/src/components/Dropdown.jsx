@@ -1,4 +1,5 @@
-import { useState, useRef, useEffect, useId } from "react";
+import { useState, useRef, useEffect, useLayoutEffect, useCallback, useId } from "react";
+import { createPortal } from "react-dom";
 import { IconClose, IconChevronDown, IconSearch, IconCheck } from "../icons";
 
 /* ------------------------------------------------------------------ */
@@ -70,16 +71,98 @@ export default function Dropdown({
   const [focused, setFocused] = useState(false);
   const [hoverIdx, setHoverIdx] = useState(null);
   const wrapRef = useRef(null);
+  const triggerRef = useRef(null);
+  const menuRef = useRef(null);
   const searchRef = useRef(null);
   const fallbackId = useId();
   const inputId = name || fallbackId;
+  const [menuStyle, setMenuStyle] = useState({});
 
   const columns = parseOptionGrid(optionGrid);
   const isGrid = columns.length > 0;
 
+  const updatePosition = useCallback(() => {
+    if (!triggerRef.current) return;
+    const rect = triggerRef.current.getBoundingClientRect();
+    const viewportHeight = window.innerHeight;
+    const viewportWidth = window.innerWidth;
+
+    if (rect.width === 0 && rect.height === 0) return;
+    if (rect.bottom < 0 || rect.top > viewportHeight) {
+      setOpen(false);
+      return;
+    }
+
+    const spaceBelow = viewportHeight - rect.bottom;
+    const spaceAbove = rect.top;
+    const estHeight = isGrid ? gridMaxHeight + 60 : 260;
+    const openUp = spaceBelow < estHeight && spaceAbove > spaceBelow;
+
+    let left = rect.left;
+    const style = {
+      position: "fixed",
+      zIndex: 1200,
+      margin: 0,
+    };
+
+    if (openUp) {
+      style.bottom = `${Math.max(4, viewportHeight - rect.top + 4)}px`;
+      style.top = "auto";
+      style.maxHeight = `${Math.max(120, spaceAbove - 16)}px`;
+    } else {
+      style.top = `${rect.bottom + 4}px`;
+      style.bottom = "auto";
+      style.maxHeight = `${Math.max(120, spaceBelow - 16)}px`;
+    }
+
+    if (isGrid) {
+      const targetMinWidth = gridMinWidth
+        ? Math.max(gridMinWidth, rect.width)
+        : rect.width;
+      style.width = "max-content";
+      style.minWidth = `${targetMinWidth}px`;
+      style.maxWidth = "calc(100vw - 24px)";
+      if (left + targetMinWidth > viewportWidth - 12) {
+        left = Math.max(12, viewportWidth - 12 - targetMinWidth);
+      }
+      style.left = `${left}px`;
+      style.right = "auto";
+    } else {
+      const targetWidth = Math.max(200, rect.width);
+      style.width = `${rect.width}px`;
+      style.minWidth = `${targetWidth}px`;
+      if (left + targetWidth > viewportWidth - 12) {
+        left = Math.max(12, viewportWidth - 12 - targetWidth);
+      }
+      style.left = `${left}px`;
+      style.right = "auto";
+    }
+
+    setMenuStyle(style);
+  }, [isGrid, gridMinWidth, gridMaxHeight]);
+
+  useLayoutEffect(() => {
+    if (!open) return;
+    updatePosition();
+
+    const handleScroll = (e) => {
+      if (menuRef.current && menuRef.current.contains(e.target)) return;
+      updatePosition();
+    };
+
+    window.addEventListener("resize", updatePosition);
+    window.addEventListener("scroll", handleScroll, true);
+    return () => {
+      window.removeEventListener("resize", updatePosition);
+      window.removeEventListener("scroll", handleScroll, true);
+    };
+  }, [open, updatePosition]);
+
   useEffect(() => {
     function handleClick(e) {
-      if (wrapRef.current && !wrapRef.current.contains(e.target)) {
+      const inWrap = wrapRef.current && wrapRef.current.contains(e.target);
+      const inMenu = menuRef.current && menuRef.current.contains(e.target);
+      if (!inWrap && !inMenu) {
         setOpen(false);
         setSearch("");
         setHoverIdx(null);
@@ -158,6 +241,7 @@ export default function Dropdown({
       )}
       <div
         id={inputId}
+        ref={triggerRef}
         className="dropdown__trigger"
         onClick={toggleOpen}
         tabIndex={0}
@@ -198,21 +282,15 @@ export default function Dropdown({
           </span>
         </div>
       </div>
-      {open && (
-        <div
-          className="dropdown__menu"
-          role="listbox"
-          style={
-            isGrid
-              ? {
-                  right: "auto",
-                  width: "max-content",
-                  maxWidth: "calc(100vw - 24px)",
-                  ...(gridMinWidth ? { minWidth: gridMinWidth } : {}),
-                }
-              : undefined
-          }
-        >
+      {open &&
+        typeof document !== "undefined" &&
+        createPortal(
+          <div
+            ref={menuRef}
+            className="dropdown__menu"
+            role="listbox"
+            style={menuStyle}
+          >
           {searchable && (
             <div
               className="dropdown__search"
@@ -436,7 +514,8 @@ export default function Dropdown({
               )}
             </div>
           )}
-        </div>
+        </div>,
+        document.body,
       )}
       {error && <span className="dropdown__error">{error}</span>}
     </div>
