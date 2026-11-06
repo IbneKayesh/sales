@@ -1,10 +1,3 @@
-- app-suite/src/components/AccordionCard.jsx
-
-change implementaion to below-
-<AccordionCard allowMultiple=true/false, default false>
-<AccordionBody title="" disabled=true/false, default true, onToggle, defaultExpanded>
-    render content
-<AccordionBody>
-</AccordionCard>
-
-treeView = Selected/Checked row/rows
+task status: pending
+1. dropdown expaned areas goes under the panel body or any body, it should show up of body
+2. src/pages/M06/tool/unifiedprofitroi/*.jsx need to fix UI using src/components/*.jsx and all the calculations moved to useUnifiedProfitROI.js
