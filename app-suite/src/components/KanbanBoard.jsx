@@ -1,271 +1,332 @@
-import { useState, useRef, useCallback } from 'react'
+import { Children, createContext, useContext, useState } from 'react'
 import { IconPlus, IconMenu } from '@/icons'
 
 /**
- * KanbanBoard — Drag-and-drop task board with configurable columns.
+ * KanbanBoard — Drag-and-drop task board with a compound API.
  *
  * Usage:
  *   <KanbanBoard
- *     columns={columns}
  *     onCardMove={(cardId, fromCol, toCol, toIndex) => {}}
  *     onCardClick={(card) => {}}
- *   />
+ *     onAddCard={(columnId) => {}}
+ *   >
+ *     <KanbanColumn id="todo" title="To Do">
+ *       <KanbanCard
+ *         id="k1"
+ *         title="Design dashboard"
+ *         description="Wireframes for the analytics view"
+ *         labels={[{ text: 'Design', color: 'var(--primary)' }]}
+ *         assignees={[{ name: 'Alice' }]}
+ *       />
+ *     </KanbanColumn>
+ *   </KanbanBoard>
  *
- * Each column: { id, title, cards: [{ id, title, description?, labels?, assignees? }] }
+ * Card `id`s must be unique across the whole board — they track the card while
+ * it is dragged between columns.
  */
+
+const KanbanBoardContext = createContext(null)
+const KanbanColumnContext = createContext(null)
+const KanbanCardIdContext = createContext(null)
+
 export default function KanbanBoard({
-  columns: initialColumns = [],
   onCardMove,
   onCardClick,
+  onAddCard,
   className = '',
+  children,
+  ...rest
 }) {
-  const [columns, setColumns] = useState(initialColumns)
-  const [draggedCard, setDraggedCard] = useState(null)
-  const [dragOverCol, setDragOverCol] = useState(null)
-  const [dragOverIdx, setDragOverIdx] = useState(null)
-  const dragCardRef = useRef(null)
-  const dragSourceRef = useRef(null)
+  const columnElements = Children.toArray(children)
 
-  // Sync when initialColumns changes
-  const prevColsRef = useRef(initialColumns)
-  if (initialColumns !== prevColsRef.current) {
-    prevColsRef.current = initialColumns
-    setColumns(initialColumns)
-  }
+  // Model the columns/cards from the children so drag-and-drop can reorder them.
+  const columns = columnElements.map((el, i) => {
+    const id = el.props?.id ?? `kanban-col-${i}`
+    const cards = Children.toArray(el.props?.children).map((card, j) => ({
+      id: card.props?.id ?? `kanban-card-${id}-${j}`,
+      element: card,
+    }))
+    return { id, title: el.props?.title, element: el, cards }
+  })
 
-  // ── Drag handlers ──
-
-  const handleDragStart = useCallback((e, card, colId) => {
-    dragCardRef.current = card
-    dragSourceRef.current = colId
-    setDraggedCard(card.id)
-    e.dataTransfer.effectAllowed = 'move'
-    e.dataTransfer.setData('text/plain', card.id)
-    // Slight delay for drag ghost
-    setTimeout(() => {
-      e.target.classList.add('kanban-card--dragging')
-    }, 0)
-  }, [])
-
-  const handleDragEnd = useCallback((e) => {
-    e.target.classList.remove('kanban-card--dragging')
-    setDraggedCard(null)
-    setDragOverCol(null)
-    setDragOverIdx(null)
-    dragCardRef.current = null
-    dragSourceRef.current = null
-  }, [])
-
-  const handleDragOver = useCallback((e, colId) => {
-    e.preventDefault()
-    e.dataTransfer.dropEffect = 'move'
-    setDragOverCol(colId)
-
-    // Calculate which card position we're over
-    const col = columns.find((c) => c.id === colId)
-    if (!col) return
-
-    const cardElements = e.currentTarget.querySelectorAll('.kanban-card')
-    let insertIdx = col.cards.length
-    cardElements.forEach((el, i) => {
-      const rect = el.getBoundingClientRect()
-      const mid = rect.top + rect.height / 2
-      if (e.clientY > mid) {
-        insertIdx = i + 1
-      }
-    })
-    setDragOverIdx(insertIdx)
-  }, [columns])
-
-  const handleDragLeave = useCallback((e) => {
-    // Only clear if leaving the column, not entering a child
-    if (!e.currentTarget.contains(e.relatedTarget)) {
-      setDragOverCol(null)
-      setDragOverIdx(null)
-    }
-  }, [])
-
-  const handleDrop = useCallback(
-    (e, targetColId) => {
-      e.preventDefault()
-      const cardId = dragCardRef.current?.id
-      const sourceColId = dragSourceRef.current
-
-      if (!cardId || !sourceColId) return
-
-      // Calculate insert index
-      const targetCol = columns.find((c) => c.id === targetColId)
-      if (!targetCol) return
-
-      let toIndex = targetCol.cards.length
-      const cardElements = e.currentTarget.querySelectorAll('.kanban-card')
-      cardElements.forEach((el, i) => {
-        const rect = el.getBoundingClientRect()
-        const mid = rect.top + rect.height / 2
-        if (e.clientY > mid) {
-          toIndex = i + 1
-        }
-      })
-
-      // Optimistic local update
-      setColumns((prev) => {
-        const newCols = prev.map((c) => ({
-          ...c,
-          cards: [...c.cards],
-        }))
-        const sourceCol = newCols.find((c) => c.id === sourceColId)
-        const targetCol2 = newCols.find((c) => c.id === targetColId)
-        if (!sourceCol || !targetCol2) return prev
-
-        const cardIdx = sourceCol.cards.findIndex((c) => c.id === cardId)
-        if (cardIdx === -1) return prev
-
-        const [movedCard] = sourceCol.cards.splice(cardIdx, 1)
-
-        // Adjust index if moving within same column and above original position
-        let adjustedIdx = toIndex
-        if (sourceColId === targetColId && cardIdx < toIndex) {
-          adjustedIdx = toIndex - 1
-        }
-
-        targetCol2.cards.splice(adjustedIdx, 0, movedCard)
-        return newCols
-      })
-
-      setDraggedCard(null)
-      setDragOverCol(null)
-      setDragOverIdx(null)
-
-      // Notify parent
-      onCardMove?.(cardId, sourceColId, targetColId, toIndex)
-    },
-    [columns, onCardMove],
+  const cardElements = new Map()
+  columns.forEach((col) =>
+    col.cards.forEach((card) => cardElements.set(card.id, card.element)),
   )
 
-  const totalCards = columns.reduce((sum, col) => sum + col.cards.length, 0)
+  const [order, setOrder] = useState(() => {
+    const initial = {}
+    columns.forEach((col) => {
+      initial[col.id] = col.cards.map((card) => card.id)
+    })
+    return initial
+  })
+  const [dragged, setDragged] = useState(null) // { cardId, columnId }
+  const [dragOver, setDragOver] = useState(null) // { columnId, index }
+
+  // Resolve each column's card order: local order first, then any cards it
+  // still owns but that are not in the order yet. Ids are deduped so a moved
+  // card never renders in two columns.
+  const seen = new Set()
+  const resolved = columns.map((col) => {
+    const ids = []
+    for (const id of order[col.id] ?? []) {
+      if (!cardElements.has(id) || seen.has(id)) continue
+      seen.add(id)
+      ids.push(id)
+    }
+    for (const { id } of col.cards) {
+      if (seen.has(id)) continue
+      seen.add(id)
+      ids.push(id)
+    }
+    return { ...col, ids }
+  })
+
+  const getDropIndex = (e) => {
+    const cardNodes = e.currentTarget.querySelectorAll('.kanban-card')
+    let index = cardNodes.length
+    cardNodes.forEach((el, i) => {
+      const rect = el.getBoundingClientRect()
+      if (e.clientY > rect.top + rect.height / 2) index = i + 1
+    })
+    return index
+  }
+
+  const handleDragStart = (cardId, columnId) => {
+    setDragged({ cardId, columnId })
+  }
+
+  const handleDragEnd = () => {
+    setDragged(null)
+    setDragOver(null)
+  }
+
+  const handleDragOver = (columnId, e) => {
+    e.preventDefault()
+    e.dataTransfer.dropEffect = 'move'
+    setDragOver({ columnId, index: getDropIndex(e) })
+  }
+
+  const handleDragLeave = (e) => {
+    if (!e.currentTarget.contains(e.relatedTarget)) setDragOver(null)
+  }
+
+  const handleDrop = (columnId, e) => {
+    e.preventDefault()
+    if (!dragged) return
+
+    const { cardId, columnId: fromColumnId } = dragged
+    let toIndex = getDropIndex(e)
+
+    const fromIds = order[fromColumnId] ?? []
+    const fromIndex = fromIds.indexOf(cardId)
+    if (fromColumnId === columnId && fromIndex !== -1 && fromIndex < toIndex) {
+      toIndex -= 1
+    }
+
+    setOrder((prev) => {
+      const next = {}
+      Object.keys(prev).forEach((key) => {
+        next[key] = prev[key].filter((id) => id !== cardId)
+      })
+      const target = next[columnId] ? [...next[columnId]] : []
+      target.splice(Math.min(toIndex, target.length), 0, cardId)
+      next[columnId] = target
+      return next
+    })
+
+    setDragged(null)
+    setDragOver(null)
+
+    onCardMove?.(cardId, fromColumnId, columnId, toIndex)
+  }
 
   return (
-    <div className={`kanban-board${className ? ' ' + className : ''}`}>
-      <div className="kanban-board__columns">
-        {columns.map((col) => (
-          <div
-            key={col.id}
-            className={`kanban-column${dragOverCol === col.id ? ' kanban-column--drag-over' : ''}`}
-            onDragOver={(e) => handleDragOver(e, col.id)}
-            onDragLeave={handleDragLeave}
-            onDrop={(e) => handleDrop(e, col.id)}
-          >
-            <div className="kanban-column__header">
-              <div className="kanban-column__header-left">
-                <span className="kanban-column__title">{col.title}</span>
-                <span className="kanban-column__count">{col.cards.length}</span>
-              </div>
-              <button
-                type="button"
-                className="kanban-column__add-btn"
-                aria-label={`Add card to ${col.title}`}
-                title={`Add to ${col.title}`}
-              >
-                <IconPlus size={16} />
-              </button>
-            </div>
+    <KanbanBoardContext.Provider
+      value={{
+        draggedCardId: dragged?.cardId ?? null,
+        onCardClick,
+        onAddCard,
+        handleDragStart,
+        handleDragEnd,
+      }}
+    >
+      <div className={`kanban-board${className ? ' ' + className : ''}`} {...rest}>
+        <div className="kanban-board__columns">
+          {resolved.map((col) => (
+            <KanbanColumnContext.Provider
+              key={col.id}
+              value={{
+                columnId: col.id,
+                cards: col.ids.map((id) => ({
+                  id,
+                  element: cardElements.get(id),
+                })),
+                isDragOver: dragOver?.columnId === col.id,
+                onDragOver: (e) => handleDragOver(col.id, e),
+                onDragLeave: handleDragLeave,
+                onDrop: (e) => handleDrop(col.id, e),
+              }}
+            >
+              {col.element}
+            </KanbanColumnContext.Provider>
+          ))}
+        </div>
 
-            <div className="kanban-column__cards">
-              {col.cards.map((card) => (
-                <div
-                  key={card.id}
-                  className={`kanban-card${draggedCard === card.id ? ' kanban-card--dragging' : ''}`}
-                  draggable
-                  onDragStart={(e) => handleDragStart(e, card, col.id)}
-                  onDragEnd={handleDragEnd}
-                  onClick={() => onCardClick?.(card)}
-                  role="button"
-                  tabIndex={0}
-                  aria-label={card.title}
-                  onKeyDown={(e) => {
-                    if (e.key === 'Enter' || e.key === ' ') {
-                      e.preventDefault()
-                      onCardClick?.(card)
-                    }
-                  }}
-                >
-                  {/* Labels */}
-                  {card.labels && card.labels.length > 0 && (
-                    <div className="kanban-card__labels">
-                      {card.labels.map((label, i) => (
-                        <span
-                          key={i}
-                          className="kanban-card__label"
-                          style={
-                            label.color
-                              ? { background: label.color, color: '#fff' }
-                              : undefined
-                          }
-                        >
-                          {label.text}
-                        </span>
-                      ))}
-                    </div>
-                  )}
-
-                  {/* Title */}
-                  <span className="kanban-card__title">{card.title}</span>
-
-                  {/* Description */}
-                  {card.description && (
-                    <span className="kanban-card__desc">{card.description}</span>
-                  )}
-
-                  {/* Footer */}
-                  <div className="kanban-card__footer">
-                    {card.assignees && card.assignees.length > 0 && (
-                      <div className="kanban-card__avatars">
-                        {card.assignees.slice(0, 3).map((a, i) => (
-                          <span
-                            key={i}
-                            className="kanban-card__avatar"
-                            title={a.name}
-                          >
-                            {a.avatar ? (
-                              <img src={a.avatar} alt={a.name} />
-                            ) : (
-                              <span className="kanban-card__avatar-letter">
-                                {a.name.charAt(0).toUpperCase()}
-                              </span>
-                            )}
-                          </span>
-                        ))}
-                        {card.assignees.length > 3 && (
-                          <span className="kanban-card__avatar-more">
-                            +{card.assignees.length - 3}
-                          </span>
-                        )}
-                      </div>
-                    )}
-
-                    <span className="kanban-card__drag-handle" aria-hidden="true">
-                      <IconMenu size={14} />
-                    </span>
-                  </div>
-                </div>
-              ))}
-
-              {/* Empty state */}
-              {col.cards.length === 0 && (
-                <div className="kanban-column__empty">
-                  <span>No tasks</span>
-                </div>
-              )}
-            </div>
+        {columns.length === 0 && (
+          <div className="kanban-board__empty">
+            <span>No columns defined</span>
           </div>
-        ))}
+        )}
+      </div>
+    </KanbanBoardContext.Provider>
+  )
+}
+
+/* ---------- Column ---------- */
+
+export function KanbanColumn({ id, title, className = '', ...rest }) {
+  const board = useContext(KanbanBoardContext)
+  const column = useContext(KanbanColumnContext)
+
+  if (!column) return null
+
+  const cards = column.cards.filter((card) => card.element)
+
+  return (
+    <div
+      className={`kanban-column${column.isDragOver ? ' kanban-column--drag-over' : ''}${className ? ' ' + className : ''}`}
+      data-column-id={id ?? column.columnId}
+      onDragOver={column.onDragOver}
+      onDragLeave={column.onDragLeave}
+      onDrop={column.onDrop}
+      {...rest}
+    >
+      <div className="kanban-column__header">
+        <div className="kanban-column__header-left">
+          <span className="kanban-column__title">{title}</span>
+          <span className="kanban-column__count">{cards.length}</span>
+        </div>
+        <button
+          type="button"
+          className="kanban-column__add-btn"
+          aria-label={`Add card to ${title}`}
+          title={`Add to ${title}`}
+          onClick={() => board?.onAddCard?.(column.columnId)}
+        >
+          <IconPlus size={16} />
+        </button>
       </div>
 
-      {columns.length === 0 && (
-        <div className="kanban-board__empty">
-          <span>No columns defined</span>
+      <div className="kanban-column__cards">
+        {cards.map(({ id: cardId, element }) => (
+          <KanbanCardIdContext.Provider key={cardId} value={cardId}>
+            {element}
+          </KanbanCardIdContext.Provider>
+        ))}
+
+        {cards.length === 0 && (
+          <div className="kanban-column__empty">
+            <span>No tasks</span>
+          </div>
+        )}
+      </div>
+    </div>
+  )
+}
+
+/* ---------- Card ---------- */
+
+export function KanbanCard({
+  id,
+  title,
+  description,
+  labels,
+  assignees,
+  className = '',
+  ...rest
+}) {
+  const board = useContext(KanbanBoardContext)
+  const column = useContext(KanbanColumnContext)
+  const resolvedId = useContext(KanbanCardIdContext) ?? id
+  const card = { id: resolvedId, title, description, labels, assignees }
+  const isDragging = board?.draggedCardId === resolvedId
+
+  return (
+    <div
+      className={`kanban-card${isDragging ? ' kanban-card--dragging' : ''}${className ? ' ' + className : ''}`}
+      draggable
+      data-card-id={resolvedId}
+      onDragStart={(e) => {
+        e.dataTransfer.effectAllowed = 'move'
+        e.dataTransfer.setData('text/plain', resolvedId)
+        board?.handleDragStart(resolvedId, column?.columnId)
+        // Slight delay so the drag ghost keeps the un-styled card
+        setTimeout(() => e.target.classList.add('kanban-card--dragging'), 0)
+      }}
+      onDragEnd={(e) => {
+        e.target.classList.remove('kanban-card--dragging')
+        board?.handleDragEnd()
+      }}
+      onClick={() => board?.onCardClick?.(card)}
+      role="button"
+      tabIndex={0}
+      aria-label={title}
+      onKeyDown={(e) => {
+        if (e.key === 'Enter' || e.key === ' ') {
+          e.preventDefault()
+          board?.onCardClick?.(card)
+        }
+      }}
+      {...rest}
+    >
+      {labels && labels.length > 0 && (
+        <div className="kanban-card__labels">
+          {labels.map((label, i) => (
+            <span
+              key={i}
+              className="kanban-card__label"
+              style={
+                label.color ? { background: label.color, color: '#fff' } : undefined
+              }
+            >
+              {label.text}
+            </span>
+          ))}
         </div>
       )}
+
+      <span className="kanban-card__title">{title}</span>
+
+      {description && <span className="kanban-card__desc">{description}</span>}
+
+      <div className="kanban-card__footer">
+        {assignees && assignees.length > 0 && (
+          <div className="kanban-card__avatars">
+            {assignees.slice(0, 3).map((a, i) => (
+              <span key={i} className="kanban-card__avatar" title={a.name}>
+                {a.avatar ? (
+                  <img src={a.avatar} alt={a.name} />
+                ) : (
+                  <span className="kanban-card__avatar-letter">
+                    {a.name.charAt(0).toUpperCase()}
+                  </span>
+                )}
+              </span>
+            ))}
+            {assignees.length > 3 && (
+              <span className="kanban-card__avatar-more">
+                +{assignees.length - 3}
+              </span>
+            )}
+          </div>
+        )}
+
+        <span className="kanban-card__drag-handle" aria-hidden="true">
+          <IconMenu size={14} />
+        </span>
+      </div>
     </div>
   )
 }

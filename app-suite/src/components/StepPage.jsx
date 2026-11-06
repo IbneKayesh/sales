@@ -1,19 +1,40 @@
-import { useState } from 'react'
+import { Children, useState } from 'react'
 import { IconCheck, IconChevronRight, IconChevronLeft } from '@/icons'
 
+/**
+ * StepPage — Step wizard with a compound (Modal/SidePanel style) API.
+ *
+ * Usage:
+ *   <StepPage orientation="horizontal" variant="circles" showNav defaultStep={0}>
+ *     <StepPageStep label="Account" description="Basic info">
+ *       Enter your email and create a password.
+ *     </StepPageStep>
+ *     <StepPageStep label="Profile" description="Personal details">
+ *       Fill in your name and contact information.
+ *     </StepPageStep>
+ *   </StepPage>
+ *
+ * The step's `label`, `description` and `disabled` drive the indicator; its
+ * children render in the content panel while it is the active step. Pass
+ * `activeStep` + `onStepChange` to control the selection, or leave them out and
+ * the component keeps its own state (starting at `defaultStep`).
+ */
+
 export default function StepPage({
-  steps = [],
+  defaultStep = 0,
   activeStep,
   onStepChange,
-  orientation = 'horizontal',
+  orientation = 'horizontal',   // horizontal | vertical
   variant = 'circles',
   showNav = true,
   className = '',
+  children,
   ...rest
 }) {
-  const [localStep, setLocalStep] = useState(0)
+  const steps = Children.toArray(children)
+  const [localStep, setLocalStep] = useState(defaultStep)
   const currentStep = activeStep !== undefined ? activeStep : localStep
-  const safeStep = Math.min(currentStep, steps.length - 1)
+  const safeStep = Math.max(0, Math.min(currentStep, steps.length - 1))
 
   const goTo = (i) => {
     const step = Math.max(0, Math.min(i, steps.length - 1))
@@ -35,13 +56,18 @@ export default function StepPage({
       {...rest}
     >
       {/* Step indicators */}
-      <div className="step-page__indicators" role="tablist" aria-label="Progress steps">
+      <div
+        className="step-page__indicators"
+        role="tablist"
+        aria-label="Progress steps"
+      >
         {steps.map((step, i) => {
+          const { label, title, description, disabled = false } =
+            step.props ?? {}
           const isActive = i === safeStep
           const isCompleted = i < safeStep
           const isFuture = i > safeStep
           const isLast = i === steps.length - 1
-          const disabled = step.disabled || false
 
           return (
             <div
@@ -55,8 +81,8 @@ export default function StepPage({
                   role="tab"
                   aria-selected={isActive}
                   aria-disabled={disabled}
-                  aria-label={`Step ${i + 1}: ${step.label || step.title}`}
-                  onClick={() => !disabled && (isCompleted || isFuture) && goTo(i)}
+                  aria-label={`Step ${i + 1}: ${label || title}`}
+                  onClick={() => !disabled && isCompleted && goTo(i)}
                   disabled={disabled}
                 >
                   {isCompleted ? (
@@ -66,17 +92,23 @@ export default function StepPage({
                   )}
                 </button>
                 {!isLast && orientation === 'horizontal' && (
-                  <span className="step-page__connector" aria-hidden="true" />
+                  <span
+                    className="step-page__connector"
+                    aria-hidden="true"
+                  />
                 )}
               </div>
               <div className="step-page__label-wrap">
-                <span className="step-page__label">{step.label || step.title}</span>
-                {step.description && (
-                  <span className="step-page__desc">{step.description}</span>
+                <span className="step-page__label">{label || title}</span>
+                {description && (
+                  <span className="step-page__desc">{description}</span>
                 )}
               </div>
               {!isLast && orientation === 'vertical' && (
-                <span className="step-page__connector step-page__connector--vert" aria-hidden="true" />
+                <span
+                  className="step-page__connector step-page__connector--vert"
+                  aria-hidden="true"
+                />
               )}
             </div>
           )
@@ -85,9 +117,7 @@ export default function StepPage({
 
       {/* Content panel */}
       <div className="step-page__body">
-        <div className="step-page__content" role="tabpanel">
-          {steps[safeStep]?.content}
-        </div>
+        {steps[safeStep]}
 
         {/* Navigation */}
         {showNav && (
@@ -116,6 +146,28 @@ export default function StepPage({
           </div>
         )}
       </div>
+    </div>
+  )
+}
+
+/* ---------- Step (indicator metadata + content panel) ---------- */
+
+export function StepPageStep({ children, className = '', ...rest }) {
+  // `label`, `title`, `description` and `disabled` are read by StepPage for the
+  // indicator, so they must not be forwarded to the DOM element.
+  const domProps = { ...rest }
+  delete domProps.label
+  delete domProps.title
+  delete domProps.description
+  delete domProps.disabled
+
+  return (
+    <div
+      className={`step-page__content${className ? ' ' + className : ''}`}
+      role="tabpanel"
+      {...domProps}
+    >
+      {children}
     </div>
   )
 }

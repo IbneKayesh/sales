@@ -1,57 +1,101 @@
-import { useState, useEffect, useCallback } from 'react'
+import {
+  Children,
+  createContext,
+  useCallback,
+  useContext,
+  useEffect,
+  useState,
+} from 'react'
 import { IconChevronLeft, IconChevronRight, IconClose } from '../icons'
 
 /**
  * ImageGallery — Responsive grid gallery with lightbox preview.
  *
  * Usage:
- *   <ImageGallery
- *     items={[
- *       { src: '...', thumbnail: '...', alt: '...', caption: '...' },
- *       ...
- *     ]}
- *     columns={3}
- *   />
+ *   <ImageGallery columns={3}>
+ *     <ImageGalleryItem
+ *       bg="linear-gradient(135deg, var(--primary-bg), var(--surface-alt))"
+ *       icon={<IconChart size={24} />}
+ *       label="Revenue Dashboard"
+ *       caption="Revenue Dashboard"
+ *       subtitle="Q2 2026 performance"
+ *     />
+ *   </ImageGallery>
+ *
+ * Each item renders a default thumbnail from `bg`/`icon`/`label`; pass children
+ * to replace it with custom thumbnail content. `caption`/`subtitle` render the
+ * overlay caption, and the same content is shown in the lightbox.
+ *
+ * The lightbox is uncontrolled by default. Pass `lightboxIndex` (null = closed)
+ * together with `onLightboxChange` to control it and observe which image is open.
  */
 
+const ImageGalleryContext = createContext(null)
+const ImageGalleryItemIndexContext = createContext(null)
+
 export default function ImageGallery({
-  items = [],
-  columns = 3,           // 2 | 3 | 4
+  columns = 3,                        // 2 | 3 | 4
   gap = 'var(--sp-3)',
   lightbox = true,
+  lightboxIndex,
+  onLightboxChange,
   className = '',
-  renderThumbnail,
+  children,
   ...rest
 }) {
-  const [lightboxOpen, setLightboxOpen] = useState(false)
-  const [lightboxIdx, setLightboxIdx] = useState(0)
+  const items = Children.toArray(children)
   const len = items.length
+  const [localIndex, setLocalIndex] = useState(null)
+  const currentIndex = lightboxIndex !== undefined ? lightboxIndex : localIndex
+  const lightboxOpen = currentIndex !== null && currentIndex !== undefined
 
-  const openLightbox = useCallback((index) => {
-    if (!lightbox || !len) return
-    setLightboxIdx(index)
-    setLightboxOpen(true)
-  }, [lightbox, len])
+  const setIndex = useCallback(
+    (next) => {
+      if (lightboxIndex === undefined) setLocalIndex(next)
+      onLightboxChange?.(next)
+    },
+    [lightboxIndex, onLightboxChange],
+  )
 
-  const closeLightbox = useCallback(() => {
-    setLightboxOpen(false)
-  }, [])
+  const openLightbox = useCallback(
+    (index) => {
+      if (!lightbox || !len) return
+      setIndex(index)
+    },
+    [lightbox, len, setIndex],
+  )
+
+  const closeLightbox = useCallback(() => setIndex(null), [setIndex])
 
   const goNext = useCallback(() => {
-    setLightboxIdx((prev) => (prev + 1) % len)
-  }, [len])
+    if (!lightboxOpen) return
+    setIndex((currentIndex + 1) % len)
+  }, [lightboxOpen, currentIndex, len, setIndex])
 
   const goPrev = useCallback(() => {
-    setLightboxIdx((prev) => (prev - 1 + len) % len)
-  }, [len])
+    if (!lightboxOpen) return
+    setIndex((currentIndex - 1 + len) % len)
+  }, [lightboxOpen, currentIndex, len, setIndex])
 
   // Keyboard navigation for lightbox
-  const handleKeyDown = useCallback((e) => {
-    if (!lightboxOpen) return
-    if (e.key === 'Escape') { e.preventDefault(); closeLightbox() }
-    if (e.key === 'ArrowRight') { e.preventDefault(); goNext() }
-    if (e.key === 'ArrowLeft') { e.preventDefault(); goPrev() }
-  }, [lightboxOpen, closeLightbox, goNext, goPrev])
+  const handleKeyDown = useCallback(
+    (e) => {
+      if (!lightboxOpen) return
+      if (e.key === 'Escape') {
+        e.preventDefault()
+        closeLightbox()
+      }
+      if (e.key === 'ArrowRight') {
+        e.preventDefault()
+        goNext()
+      }
+      if (e.key === 'ArrowLeft') {
+        e.preventDefault()
+        goPrev()
+      }
+    },
+    [lightboxOpen, closeLightbox, goNext, goPrev],
+  )
 
   useEffect(() => {
     if (!lightboxOpen) return
@@ -70,41 +114,18 @@ export default function ImageGallery({
 
   if (!len) return null
 
+  const activeItem = lightboxOpen ? items[currentIndex]?.props ?? {} : {}
+
   const gridClass = `image-gallery image-gallery--cols-${Math.min(Math.max(columns, 2), 4)}${className ? ' ' + className : ''}`
 
   return (
-    <>
+    <ImageGalleryContext.Provider value={{ open: openLightbox, count: len }}>
       <div className={gridClass} style={{ gap }} {...rest}>
-        {items.map((item, i) => {
-          const thumb = renderThumbnail ? renderThumbnail(item, i) : (
-            <div className="image-gallery__thumb" style={{ background: item.bg || 'var(--surface-alt)' }}>
-              {item.icon && (
-                <span className="image-gallery__thumb-icon">{item.icon}</span>
-              )}
-              {item.label && (
-                <span className="image-gallery__thumb-label">{item.label}</span>
-              )}
-            </div>
-          )
-
-          return (
-            <button
-              key={item.key ?? i}
-              type="button"
-              className="image-gallery__item"
-              onClick={() => openLightbox(i)}
-              aria-label={`View ${item.alt || item.label || `image ${i + 1}`}`}
-            >
-              {thumb}
-              {item.caption && (
-                <div className="image-gallery__caption">
-                  <span className="image-gallery__caption-title">{item.caption}</span>
-                  {item.subtitle && <span className="image-gallery__caption-sub">{item.subtitle}</span>}
-                </div>
-              )}
-            </button>
-          )
-        })}
+        {items.map((item, i) => (
+          <ImageGalleryItemIndexContext.Provider key={item.key ?? i} value={i}>
+            {item}
+          </ImageGalleryItemIndexContext.Provider>
+        ))}
       </div>
 
       {/* Lightbox */}
@@ -143,18 +164,16 @@ export default function ImageGallery({
             <div className="image-gallery__lightbox-image-wrap">
               <div
                 className="image-gallery__lightbox-image"
-                style={{
-                  background: items[lightboxIdx]?.bg || 'var(--surface-alt)',
-                }}
+                style={{ background: activeItem.bg || 'var(--surface-alt)' }}
               >
-                {items[lightboxIdx]?.icon && (
+                {activeItem.icon && (
                   <span className="image-gallery__lightbox-icon">
-                    {items[lightboxIdx].icon}
+                    {activeItem.icon}
                   </span>
                 )}
-                {items[lightboxIdx]?.label && (
+                {activeItem.label && (
                   <span className="image-gallery__lightbox-label">
-                    {items[lightboxIdx].label}
+                    {activeItem.label}
                   </span>
                 )}
               </div>
@@ -175,17 +194,67 @@ export default function ImageGallery({
             {/* Counter + caption */}
             <div className="image-gallery__lightbox-info">
               <span className="image-gallery__lightbox-counter">
-                {lightboxIdx + 1} / {len}
+                {currentIndex + 1} / {len}
               </span>
-              {items[lightboxIdx]?.caption && (
+              {activeItem.caption && (
                 <span className="image-gallery__lightbox-caption">
-                  {items[lightboxIdx].caption}
+                  {activeItem.caption}
                 </span>
               )}
             </div>
           </div>
         </div>
       )}
-    </>
+    </ImageGalleryContext.Provider>
+  )
+}
+
+/* ---------- Item ---------- */
+
+export function ImageGalleryItem({
+  bg,
+  icon,
+  label,
+  alt,
+  caption,
+  subtitle,
+  children,
+  className = '',
+  ...rest
+}) {
+  const gallery = useContext(ImageGalleryContext)
+  const index = useContext(ImageGalleryItemIndexContext)
+
+  if (!gallery || index === null) return null
+
+  return (
+    <button
+      type="button"
+      className={`image-gallery__item${className ? ' ' + className : ''}`}
+      onClick={() => gallery.open(index)}
+      aria-label={`View ${alt || label || `image ${index + 1}`}`}
+      {...rest}
+    >
+      {children ?? (
+        <div
+          className="image-gallery__thumb"
+          style={{ background: bg || 'var(--surface-alt)' }}
+        >
+          {icon && <span className="image-gallery__thumb-icon">{icon}</span>}
+          {label && (
+            <span className="image-gallery__thumb-label">{label}</span>
+          )}
+        </div>
+      )}
+
+      {caption && (
+        <div className="image-gallery__caption">
+          <span className="image-gallery__caption-title">{caption}</span>
+          {subtitle && (
+            <span className="image-gallery__caption-sub">{subtitle}</span>
+          )}
+        </div>
+      )}
+    </button>
   )
 }

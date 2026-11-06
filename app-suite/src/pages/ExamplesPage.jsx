@@ -43,9 +43,17 @@ import ActionButton from "@/components/ActionButton";
 import AuditData from "@/components/AuditData";
 import StatListItem from "@/components/StatListItem";
 import NotificationBell from "@/components/NotificationBell";
-import KanbanBoard from "@/components/KanbanBoard";
-import TabPage from "@/components/TabPage";
-import StepPage from "@/components/StepPage";
+import KanbanBoard, {
+  KanbanColumn,
+  KanbanCard,
+} from "@/components/KanbanBoard";
+import TabPage, {
+  TabPageHeader,
+  TabPageTab,
+  TabPageBody,
+  TabPagePanel,
+} from "@/components/TabPage";
+import StepPage, { StepPageStep } from "@/components/StepPage";
 import Chip from "@/components/Chip";
 import InputTime from "@/components/InputTime";
 import InputSlider from "@/components/InputSlider";
@@ -55,7 +63,7 @@ import InputColor from "@/components/InputColor";
 import InputSwitch from "@/components/InputSwitch";
 import TreeView from "@/components/TreeView";
 import TreeDataTable from "@/components/TreeDataTable";
-import AccordionCard from "@/components/AccordionCard";
+import AccordionCard, { AccordionBody } from "@/components/AccordionCard";
 import Breadcrumb from "@/components/Breadcrumb";
 import Drawer, {
   DrawerHeader,
@@ -64,8 +72,10 @@ import Drawer, {
   DrawerItem,
   DrawerFooter,
 } from "@/components/Drawer";
-import Carousel from "@/components/Carousel";
-import ImageGallery from "@/components/ImageGallery";
+import Carousel, { CarouselSlide } from "@/components/Carousel";
+import ImageGallery, {
+  ImageGalleryItem,
+} from "@/components/ImageGallery";
 import {
   IconUsers,
   IconDollar,
@@ -299,105 +309,10 @@ export default function ExamplesPage() {
       color: "var(--accent)",
     },
   ]);
-  const [kanbanColumns] = useState([
-    {
-      id: "todo",
-      title: "To Do",
-      cards: [
-        {
-          id: "k1",
-          title: "Design new dashboard layout",
-          description:
-            "Create wireframes for the analytics dashboard with real-time widgets",
-          labels: [{ text: "Design", color: "var(--primary)" }],
-          assignees: [{ name: "Alice" }, { name: "Bob" }],
-        },
-        {
-          id: "k2",
-          title: "Implement user authentication",
-          description: "Add OAuth2 support with Google and GitHub providers",
-          labels: [{ text: "Backend", color: "var(--accent)" }],
-          assignees: [{ name: "Carol" }],
-        },
-        {
-          id: "k3",
-          title: "Write API documentation",
-          description:
-            "Document all REST endpoints with request/response examples",
-          labels: [{ text: "Docs", color: "var(--info)" }],
-          assignees: [{ name: "Dave" }, { name: "Eve" }],
-        },
-      ],
-    },
-    {
-      id: "in-progress",
-      title: "In Progress",
-      cards: [
-        {
-          id: "k4",
-          title: "Refactor data layer",
-          description:
-            "Migrate from class-based to functional data access patterns",
-          labels: [{ text: "Refactor", color: "var(--warning)" }],
-          assignees: [{ name: "Frank" }, { name: "Grace" }],
-        },
-        {
-          id: "k5",
-          title: "Add dark mode support",
-          description: "Implement CSS custom properties for theme switching",
-          labels: [
-            { text: "UI", color: "var(--primary)" },
-            { text: "Enhancement", color: "var(--success)" },
-          ],
-          assignees: [{ name: "Heidi" }],
-        },
-      ],
-    },
-    {
-      id: "review",
-      title: "Review",
-      cards: [
-        {
-          id: "k6",
-          title: "Optimize database queries",
-          description:
-            "Add indexes and query optimization for report generation",
-          labels: [{ text: "Performance", color: "var(--danger)" }],
-          assignees: [{ name: "Ivan" }],
-        },
-      ],
-    },
-    {
-      id: "done",
-      title: "Done",
-      cards: [
-        {
-          id: "k7",
-          title: "Set up CI/CD pipeline",
-          description:
-            "Configure GitHub Actions for automated testing and deployment",
-          labels: [{ text: "DevOps", color: "var(--accent)" }],
-          assignees: [{ name: "Judy" }],
-        },
-        {
-          id: "k8",
-          title: "Create onboarding guide",
-          description: "Write a getting-started guide for new team members",
-          labels: [{ text: "Docs", color: "var(--info)" }],
-          assignees: [{ name: "Mallory" }],
-        },
-        {
-          id: "k9",
-          title: "Deploy staging environment",
-          description:
-            "Set up staging server with production-like configuration",
-          labels: [{ text: "DevOps", color: "var(--accent)" }],
-          assignees: [{ name: "Niaj" }],
-        },
-      ],
-    },
-  ]);
 
+
+  const [carouselSlide, setCarouselSlide] = useState(0);
+  const [galleryIndex, setGalleryIndex] = useState(null);
   const [sliderVolume, setSliderVolume] = useState(65);
   const [sliderPrice, setSliderPrice] = useState(50);
   const [sliderDecimal, setSliderDecimal] = useState(3.5);
@@ -2884,79 +2799,77 @@ export default function ExamplesPage() {
                     Slide Transition
                   </h4>
                   <Carousel
-                    slides={[
-                      {
-                        content: (
-                          <div className="carousel-slide-card carousel-slide-card--primary">
-                            <span className="carousel-slide-card__icon">
-                              <IconChart size={24} />
-                            </span>
-                            <h3 className="carousel-slide-card__title">
-                              Revenue Analytics
-                            </h3>
-                            <p className="carousel-slide-card__desc">
-                              Real-time revenue tracking with interactive charts
-                              and forecasting tools.
-                            </p>
-                          </div>
-                        ),
-                        label: "Revenue Analytics",
-                      },
-                      {
-                        content: (
-                          <div className="carousel-slide-card carousel-slide-card--success">
-                            <span className="carousel-slide-card__icon">
-                              <IconUser size={24} />
-                            </span>
-                            <h3 className="carousel-slide-card__title">
-                              User Management
-                            </h3>
-                            <p className="carousel-slide-card__desc">
-                              Manage team members, roles, permissions, and
-                              access controls from one place.
-                            </p>
-                          </div>
-                        ),
-                        label: "User Management",
-                      },
-                      {
-                        content: (
-                          <div className="carousel-slide-card carousel-slide-card--warning">
-                            <span className="carousel-slide-card__icon">
-                              <IconBox size={24} />
-                            </span>
-                            <h3 className="carousel-slide-card__title">
-                              Inventory Overview
-                            </h3>
-                            <p className="carousel-slide-card__desc">
-                              Track stock levels, manage suppliers, and optimize
-                              your supply chain.
-                            </p>
-                          </div>
-                        ),
-                        label: "Inventory Overview",
-                      },
-                      {
-                        content: (
-                          <div className="carousel-slide-card carousel-slide-card--danger">
-                            <span className="carousel-slide-card__icon">
-                              <IconActivity size={24} />
-                            </span>
-                            <h3 className="carousel-slide-card__title">
-                              System Health
-                            </h3>
-                            <p className="carousel-slide-card__desc">
-                              Monitor uptime, response times, and infrastructure
-                              performance metrics.
-                            </p>
-                          </div>
-                        ),
-                        label: "System Health",
-                      },
-                    ]}
                     autoPlay={4000}
                     transition="slide"
-                  />
+                    activeSlide={carouselSlide}
+                    onChange={setCarouselSlide}
+                  >
+                    <CarouselSlide label="Revenue Analytics">
+                      <div className="carousel-slide-card carousel-slide-card--primary">
+                        <span className="carousel-slide-card__icon">
+                          <IconChart size={24} />
+                        </span>
+                        <h3 className="carousel-slide-card__title">
+                          Revenue Analytics
+                        </h3>
+                        <p className="carousel-slide-card__desc">
+                          Real-time revenue tracking with interactive charts and
+                          forecasting tools.
+                        </p>
+                      </div>
+                    </CarouselSlide>
+                    <CarouselSlide label="User Management">
+                      <div className="carousel-slide-card carousel-slide-card--success">
+                        <span className="carousel-slide-card__icon">
+                          <IconUser size={24} />
+                        </span>
+                        <h3 className="carousel-slide-card__title">
+                          User Management
+                        </h3>
+                        <p className="carousel-slide-card__desc">
+                          Manage team members, roles, permissions, and access
+                          controls from one place.
+                        </p>
+                      </div>
+                    </CarouselSlide>
+                    <CarouselSlide label="Inventory Overview">
+                      <div className="carousel-slide-card carousel-slide-card--warning">
+                        <span className="carousel-slide-card__icon">
+                          <IconBox size={24} />
+                        </span>
+                        <h3 className="carousel-slide-card__title">
+                          Inventory Overview
+                        </h3>
+                        <p className="carousel-slide-card__desc">
+                          Track stock levels, manage suppliers, and optimize your
+                          supply chain.
+                        </p>
+                      </div>
+                    </CarouselSlide>
+                    <CarouselSlide label="System Health">
+                      <div className="carousel-slide-card carousel-slide-card--danger">
+                        <span className="carousel-slide-card__icon">
+                          <IconActivity size={24} />
+                        </span>
+                        <h3 className="carousel-slide-card__title">
+                          System Health
+                        </h3>
+                        <p className="carousel-slide-card__desc">
+                          Monitor uptime, response times, and infrastructure
+                          performance metrics.
+                        </p>
+                      </div>
+                    </CarouselSlide>
+                  </Carousel>
+                  <p
+                    style={{
+                      margin: "var(--sp-2) 0 0",
+                      fontSize: "var(--fs-xs)",
+                      color: "var(--text-secondary)",
+                    }}
+                  >
+                    Active slide: {carouselSlide + 1} of 4
+                  </p>
                 </div>
                 <div>
                   <h4
@@ -2969,63 +2882,50 @@ export default function ExamplesPage() {
                   >
                     Fade Transition
                   </h4>
-                  <Carousel
-                    slides={[
-                      {
-                        content: (
-                          <div className="carousel-slide-card carousel-slide-card--accent">
-                            <span className="carousel-slide-card__icon">
-                              <IconTrendingUp size={24} />
-                            </span>
-                            <h3 className="carousel-slide-card__title">
-                              Growth Trends
-                            </h3>
-                            <p className="carousel-slide-card__desc">
-                              Monthly growth analytics with year-over-year
-                              comparisons.
-                            </p>
-                          </div>
-                        ),
-                        label: "Growth Trends",
-                      },
-                      {
-                        content: (
-                          <div className="carousel-slide-card carousel-slide-card--primary">
-                            <span className="carousel-slide-card__icon">
-                              <IconStar size={24} />
-                            </span>
-                            <h3 className="carousel-slide-card__title">
-                              Top Performers
-                            </h3>
-                            <p className="carousel-slide-card__desc">
-                              Highlight your best-selling products and
-                              top-performing teams.
-                            </p>
-                          </div>
-                        ),
-                        label: "Top Performers",
-                      },
-                      {
-                        content: (
-                          <div className="carousel-slide-card carousel-slide-card--success">
-                            <span className="carousel-slide-card__icon">
-                              <IconCheck size={24} />
-                            </span>
-                            <h3 className="carousel-slide-card__title">
-                              Goals Achieved
-                            </h3>
-                            <p className="carousel-slide-card__desc">
-                              Track quarterly OKRs, milestones, and team
-                              accomplishments.
-                            </p>
-                          </div>
-                        ),
-                        label: "Goals Achieved",
-                      },
-                    ]}
-                    autoPlay={6000}
-                    transition="fade"
-                  />
+                  <Carousel autoPlay={6000} transition="fade">
+                    <CarouselSlide label="Growth Trends">
+                      <div className="carousel-slide-card carousel-slide-card--accent">
+                        <span className="carousel-slide-card__icon">
+                          <IconTrendingUp size={24} />
+                        </span>
+                        <h3 className="carousel-slide-card__title">
+                          Growth Trends
+                        </h3>
+                        <p className="carousel-slide-card__desc">
+                          Monthly growth analytics with year-over-year
+                          comparisons.
+                        </p>
+                      </div>
+                    </CarouselSlide>
+                    <CarouselSlide label="Top Performers">
+                      <div className="carousel-slide-card carousel-slide-card--primary">
+                        <span className="carousel-slide-card__icon">
+                          <IconStar size={24} />
+                        </span>
+                        <h3 className="carousel-slide-card__title">
+                          Top Performers
+                        </h3>
+                        <p className="carousel-slide-card__desc">
+                          Highlight your best-selling products and
+                          top-performing teams.
+                        </p>
+                      </div>
+                    </CarouselSlide>
+                    <CarouselSlide label="Goals Achieved">
+                      <div className="carousel-slide-card carousel-slide-card--success">
+                        <span className="carousel-slide-card__icon">
+                          <IconCheck size={24} />
+                        </span>
+                        <h3 className="carousel-slide-card__title">
+                          Goals Achieved
+                        </h3>
+                        <p className="carousel-slide-card__desc">
+                          Track quarterly OKRs, milestones, and team
+                          accomplishments.
+                        </p>
+                      </div>
+                    </CarouselSlide>
+                  </Carousel>
                 </div>
               </div>
             </PageCardBody>
@@ -3042,117 +2942,129 @@ export default function ExamplesPage() {
             <PageCardBody>
               <ImageGallery
                 columns={3}
-                items={[
-                  {
-                    icon: (
-                      <span
-                        className="image-gallery__thumb-icon"
-                        style={{
-                          background: "var(--primary-bg)",
-                          color: "var(--primary)",
-                          fontSize: "24px",
-                        }}
-                      >
-                        <IconChart size={24} />
-                      </span>
-                    ),
-                    label: "Revenue Dashboard",
-                    caption: "Revenue Dashboard",
-                    subtitle: "Q2 2026 performance",
-                    bg: "linear-gradient(135deg, var(--primary-bg), var(--surface-alt))",
-                  },
-                  {
-                    icon: (
-                      <span
-                        className="image-gallery__thumb-icon"
-                        style={{
-                          background: "var(--success-bg)",
-                          color: "var(--success)",
-                          fontSize: "24px",
-                        }}
-                      >
-                        <IconUser size={24} />
-                      </span>
-                    ),
-                    label: "User Analytics",
-                    caption: "User Analytics",
-                    subtitle: "Active users & growth",
-                    bg: "linear-gradient(135deg, var(--success-bg), var(--surface-alt))",
-                  },
-                  {
-                    icon: (
-                      <span
-                        className="image-gallery__thumb-icon"
-                        style={{
-                          background: "var(--warning-bg)",
-                          color: "var(--warning)",
-                          fontSize: "24px",
-                        }}
-                      >
-                        <IconBox size={24} />
-                      </span>
-                    ),
-                    label: "Inventory Map",
-                    caption: "Inventory Map",
-                    subtitle: "Warehouse distribution",
-                    bg: "linear-gradient(135deg, var(--warning-bg), var(--surface-alt))",
-                  },
-                  {
-                    icon: (
-                      <span
-                        className="image-gallery__thumb-icon"
-                        style={{
-                          background: "var(--danger-bg)",
-                          color: "var(--danger)",
-                          fontSize: "24px",
-                        }}
-                      >
-                        <IconActivity size={24} />
-                      </span>
-                    ),
-                    label: "System Monitor",
-                    caption: "System Monitor",
-                    subtitle: "Real-time infrastructure",
-                    bg: "linear-gradient(135deg, var(--danger-bg), var(--surface-alt))",
-                  },
-                  {
-                    icon: (
-                      <span
-                        className="image-gallery__thumb-icon"
-                        style={{
-                          background: "var(--accent-bg)",
-                          color: "var(--accent)",
-                          fontSize: "24px",
-                        }}
-                      >
-                        <IconStar size={24} />
-                      </span>
-                    ),
-                    label: "Performance Metrics",
-                    caption: "Performance Metrics",
-                    subtitle: "KPI tracking dashboard",
-                    bg: "linear-gradient(135deg, var(--accent-bg), var(--surface-alt))",
-                  },
-                  {
-                    icon: (
-                      <span
-                        className="image-gallery__thumb-icon"
-                        style={{
-                          background: "var(--info-bg)",
-                          color: "var(--info)",
-                          fontSize: "24px",
-                        }}
-                      >
-                        <IconSettings size={24} />
-                      </span>
-                    ),
-                    label: "Settings Panel",
-                    caption: "Settings Panel",
-                    subtitle: "Configuration overview",
-                    bg: "linear-gradient(135deg, var(--info-bg), var(--surface-alt))",
-                  },
-                ]}
-              />
+                lightboxIndex={galleryIndex}
+                onLightboxChange={setGalleryIndex}
+              >
+                <ImageGalleryItem
+                  icon={
+                    <span
+                      className="image-gallery__thumb-icon"
+                      style={{
+                        background: "var(--primary-bg)",
+                        color: "var(--primary)",
+                        fontSize: "24px",
+                      }}
+                    >
+                      <IconChart size={24} />
+                    </span>
+                  }
+                  label="Revenue Dashboard"
+                  caption="Revenue Dashboard"
+                  subtitle="Q2 2026 performance"
+                  bg="linear-gradient(135deg, var(--primary-bg), var(--surface-alt))"
+                />
+                <ImageGalleryItem
+                  icon={
+                    <span
+                      className="image-gallery__thumb-icon"
+                      style={{
+                        background: "var(--success-bg)",
+                        color: "var(--success)",
+                        fontSize: "24px",
+                      }}
+                    >
+                      <IconUser size={24} />
+                    </span>
+                  }
+                  label="User Analytics"
+                  caption="User Analytics"
+                  subtitle="Active users & growth"
+                  bg="linear-gradient(135deg, var(--success-bg), var(--surface-alt))"
+                />
+                <ImageGalleryItem
+                  icon={
+                    <span
+                      className="image-gallery__thumb-icon"
+                      style={{
+                        background: "var(--warning-bg)",
+                        color: "var(--warning)",
+                        fontSize: "24px",
+                      }}
+                    >
+                      <IconBox size={24} />
+                    </span>
+                  }
+                  label="Inventory Map"
+                  caption="Inventory Map"
+                  subtitle="Warehouse distribution"
+                  bg="linear-gradient(135deg, var(--warning-bg), var(--surface-alt))"
+                />
+                <ImageGalleryItem
+                  icon={
+                    <span
+                      className="image-gallery__thumb-icon"
+                      style={{
+                        background: "var(--danger-bg)",
+                        color: "var(--danger)",
+                        fontSize: "24px",
+                      }}
+                    >
+                      <IconActivity size={24} />
+                    </span>
+                  }
+                  label="System Monitor"
+                  caption="System Monitor"
+                  subtitle="Real-time infrastructure"
+                  bg="linear-gradient(135deg, var(--danger-bg), var(--surface-alt))"
+                />
+                <ImageGalleryItem
+                  icon={
+                    <span
+                      className="image-gallery__thumb-icon"
+                      style={{
+                        background: "var(--accent-bg)",
+                        color: "var(--accent)",
+                        fontSize: "24px",
+                      }}
+                    >
+                      <IconStar size={24} />
+                    </span>
+                  }
+                  label="Performance Metrics"
+                  caption="Performance Metrics"
+                  subtitle="KPI tracking dashboard"
+                  bg="linear-gradient(135deg, var(--accent-bg), var(--surface-alt))"
+                />
+                <ImageGalleryItem
+                  icon={
+                    <span
+                      className="image-gallery__thumb-icon"
+                      style={{
+                        background: "var(--info-bg)",
+                        color: "var(--info)",
+                        fontSize: "24px",
+                      }}
+                    >
+                      <IconSettings size={24} />
+                    </span>
+                  }
+                  label="Settings Panel"
+                  caption="Settings Panel"
+                  subtitle="Configuration overview"
+                  bg="linear-gradient(135deg, var(--info-bg), var(--surface-alt))"
+                />
+              </ImageGallery>
+              <p
+                style={{
+                  margin: "var(--sp-3) 0 0",
+                  fontSize: "var(--fs-xs)",
+                  color: "var(--text-secondary)",
+                }}
+              >
+                {galleryIndex === null
+                  ? "Lightbox: closed — click a tile to open"
+                  : `Lightbox: image ${galleryIndex + 1} of 6`}
+              </p>
             </PageCardBody>
           </PageCard>
 
@@ -3177,69 +3089,42 @@ export default function ExamplesPage() {
                   >
                     Single Expand (default)
                   </h4>
-                  <AccordionCard
-                    items={[
-                      {
-                        title: "General Settings",
-                        content: (
-                          <div
-                            style={{
-                              padding: "var(--sp-3)",
-                              color: "var(--text-secondary)",
-                              lineHeight: 1.6,
-                            }}
-                          >
-                            Configure system preferences, language, and regional
-                            settings for your workspace.
-                          </div>
-                        ),
-                      },
-                      {
-                        title: "Notifications",
-                        content: (
-                          <div
-                            style={{
-                              padding: "var(--sp-3)",
-                              color: "var(--text-secondary)",
-                              lineHeight: 1.6,
-                            }}
-                          >
-                            Manage email, push, and in-app notification
-                            preferences per channel.
-                          </div>
-                        ),
-                      },
-                      {
-                        title: "Security",
-                        content: (
-                          <div
-                            style={{
-                              padding: "var(--sp-3)",
-                              color: "var(--text-secondary)",
-                              lineHeight: 1.6,
-                            }}
-                          >
-                            Update password, enable two-factor authentication,
-                            and review active sessions.
-                          </div>
-                        ),
-                      },
-                      {
-                        title: "Disabled Section",
-                        disabled: true,
-                        content: (
-                          <div
-                            style={{
-                              padding: "var(--sp-3)",
-                              color: "var(--text-secondary)",
-                            }}
-                          >
-                            This section is not available.
-                          </div>
-                        ),
-                      },
-                    ]}
-                  />
+                  <AccordionCard>
+                    <AccordionBody title="General Settings" defaultExpanded>
+                      <div
+                        style={{ padding: "var(--sp-3)", lineHeight: 1.6 }}
+                      >
+                        Configure system preferences, language, and regional
+                        settings for your workspace.
+                      </div>
+                    </AccordionBody>
+                    <AccordionBody
+                      title="Notifications"
+                      onToggle={(expanded) =>
+                        console.log("Notifications", expanded)
+                      }
+                    >
+                      <div
+                        style={{ padding: "var(--sp-3)", lineHeight: 1.6 }}
+                      >
+                        Manage email, push, and in-app notification preferences
+                        per channel.
+                      </div>
+                    </AccordionBody>
+                    <AccordionBody title="Security">
+                      <div
+                        style={{ padding: "var(--sp-3)", lineHeight: 1.6 }}
+                      >
+                        Update password, enable two-factor authentication, and
+                        review active sessions.
+                      </div>
+                    </AccordionBody>
+                    <AccordionBody title="Disabled Section" disabled>
+                      <div style={{ padding: "var(--sp-3)" }}>
+                        This section is not available.
+                      </div>
+                    </AccordionBody>
+                  </AccordionCard>
                 </div>
                 <div className="col-span-6">
                   <h4
@@ -3252,56 +3137,32 @@ export default function ExamplesPage() {
                   >
                     Multiple Expand (allowMultiple)
                   </h4>
-                  <AccordionCard
-                    allowMultiple
-                    items={[
-                      {
-                        title: "FAQ: Getting Started",
-                        content: (
-                          <div
-                            style={{
-                              padding: "var(--sp-3)",
-                              color: "var(--text-secondary)",
-                              lineHeight: 1.6,
-                            }}
-                          >
-                            Sign up for an account, verify your email, and
-                            complete your profile to get started.
-                          </div>
-                        ),
-                      },
-                      {
-                        title: "FAQ: Billing",
-                        content: (
-                          <div
-                            style={{
-                              padding: "var(--sp-3)",
-                              color: "var(--text-secondary)",
-                              lineHeight: 1.6,
-                            }}
-                          >
-                            Billing cycles, invoicing, and payment methods —
-                            everything you need to manage subscriptions.
-                          </div>
-                        ),
-                      },
-                      {
-                        title: "FAQ: Integrations",
-                        content: (
-                          <div
-                            style={{
-                              padding: "var(--sp-3)",
-                              color: "var(--text-secondary)",
-                              lineHeight: 1.6,
-                            }}
-                          >
-                            Connect with third-party tools using our API and
-                            pre-built connectors.
-                          </div>
-                        ),
-                      },
-                    ]}
-                  />
+                  <AccordionCard allowMultiple>
+                    <AccordionBody title="FAQ: Getting Started">
+                      <div
+                        style={{ padding: "var(--sp-3)", lineHeight: 1.6 }}
+                      >
+                        Sign up for an account, verify your email, and complete
+                        your profile to get started.
+                      </div>
+                    </AccordionBody>
+                    <AccordionBody title="FAQ: Billing">
+                      <div
+                        style={{ padding: "var(--sp-3)", lineHeight: 1.6 }}
+                      >
+                        Billing cycles, invoicing, and payment methods —
+                        everything you need to manage subscriptions.
+                      </div>
+                    </AccordionBody>
+                    <AccordionBody title="FAQ: Integrations">
+                      <div
+                        style={{ padding: "var(--sp-3)", lineHeight: 1.6 }}
+                      >
+                        Connect with third-party tools using our API and
+                        pre-built connectors.
+                      </div>
+                    </AccordionBody>
+                  </AccordionCard>
                 </div>
               </div>
             </PageCardBody>
@@ -3599,55 +3460,50 @@ export default function ExamplesPage() {
                   >
                     Underline
                   </h4>
-                  <TabPage
-                    variant="underline"
-                    tabs={[
-                      {
-                        label: "Overview",
-                        content: (
-                          <div
-                            style={{
-                              padding: "var(--sp-3)",
-                              color: "var(--text-secondary)",
-                            }}
-                          >
-                            Overview content — general account information and
-                            quick stats.
-                          </div>
-                        ),
-                      },
-                      {
-                        label: "Settings",
-                        content: (
-                          <div
-                            style={{
-                              padding: "var(--sp-3)",
-                              color: "var(--text-secondary)",
-                            }}
-                          >
-                            Settings panel — configure preferences and
-                            notifications.
-                          </div>
-                        ),
-                      },
-                      {
-                        label: "Billing",
-                        badge: 3,
-                        content: (
-                          <div
-                            style={{
-                              padding: "var(--sp-3)",
-                              color: "var(--text-secondary)",
-                            }}
-                          >
-                            Billing section — invoices, payment methods, and
-                            plans.
-                          </div>
-                        ),
-                      },
-                      { label: "Disabled", disabled: true, content: <div /> },
-                    ]}
-                  />
+                  <TabPage variant="underline">
+                    <TabPageHeader>
+                      <TabPageTab label="Overview" />
+                      <TabPageTab label="Settings" />
+                      <TabPageTab label="Billing" badge={3} />
+                      <TabPageTab label="Disabled" disabled />
+                    </TabPageHeader>
+                    <TabPageBody>
+                      <TabPagePanel>
+                        <div
+                          style={{
+                            padding: "var(--sp-3)",
+                            color: "var(--text-secondary)",
+                          }}
+                        >
+                          Overview content — general account information and
+                          quick stats.
+                        </div>
+                      </TabPagePanel>
+                      <TabPagePanel>
+                        <div
+                          style={{
+                            padding: "var(--sp-3)",
+                            color: "var(--text-secondary)",
+                          }}
+                        >
+                          Settings panel — configure preferences and
+                          notifications.
+                        </div>
+                      </TabPagePanel>
+                      <TabPagePanel>
+                        <div
+                          style={{
+                            padding: "var(--sp-3)",
+                            color: "var(--text-secondary)",
+                          }}
+                        >
+                          Billing section — invoices, payment methods, and
+                          plans.
+                        </div>
+                      </TabPagePanel>
+                      <TabPagePanel />
+                    </TabPageBody>
+                  </TabPage>
                 </div>
                 <div>
                   <h4
@@ -3660,55 +3516,56 @@ export default function ExamplesPage() {
                   >
                     Pills
                   </h4>
-                  <TabPage
-                    variant="pills"
-                    tabs={[
-                      {
-                        icon: <IconUsers size={14} />,
-                        label: "Users",
-                        content: (
-                          <div
-                            style={{
-                              padding: "var(--sp-3)",
-                              color: "var(--text-secondary)",
-                            }}
-                          >
-                            User management — add, edit, and deactivate team
-                            members.
-                          </div>
-                        ),
-                      },
-                      {
-                        icon: <IconBox size={14} />,
-                        label: "Products",
-                        badge: 12,
-                        content: (
-                          <div
-                            style={{
-                              padding: "var(--sp-3)",
-                              color: "var(--text-secondary)",
-                            }}
-                          >
-                            Product catalog — manage inventory and pricing.
-                          </div>
-                        ),
-                      },
-                      {
-                        icon: <IconActivity size={14} />,
-                        label: "Activity",
-                        content: (
-                          <div
-                            style={{
-                              padding: "var(--sp-3)",
-                              color: "var(--text-secondary)",
-                            }}
-                          >
-                            Activity log — track changes and user actions.
-                          </div>
-                        ),
-                      },
-                    ]}
-                  />
+                  <TabPage variant="pills">
+                    <TabPageHeader>
+                      <TabPageTab
+                        icon={<IconUsers size={14} />}
+                        label="Users"
+                      />
+                      <TabPageTab
+                        icon={<IconBox size={14} />}
+                        label="Products"
+                        badge={12}
+                      />
+                      <TabPageTab
+                        icon={<IconActivity size={14} />}
+                        label="Activity"
+                      />
+                    </TabPageHeader>
+                    <TabPageBody>
+                      <TabPagePanel>
+                        <div
+                          style={{
+                            padding: "var(--sp-3)",
+                            color: "var(--text-secondary)",
+                          }}
+                        >
+                          User management — add, edit, and deactivate team
+                          members.
+                        </div>
+                      </TabPagePanel>
+                      <TabPagePanel>
+                        <div
+                          style={{
+                            padding: "var(--sp-3)",
+                            color: "var(--text-secondary)",
+                          }}
+                        >
+                          Product catalog — manage inventory and pricing.
+                        </div>
+                      </TabPagePanel>
+                      <TabPagePanel>
+                        <div
+                          style={{
+                            padding: "var(--sp-3)",
+                            color: "var(--text-secondary)",
+                          }}
+                        >
+                          Activity log — track changes and user actions.
+                        </div>
+                      </TabPagePanel>
+                    </TabPageBody>
+                  </TabPage>
                 </div>
                 <div>
                   <h4
@@ -3721,51 +3578,45 @@ export default function ExamplesPage() {
                   >
                     Buttons
                   </h4>
-                  <TabPage
-                    variant="buttons"
-                    tabs={[
-                      {
-                        label: "Details",
-                        content: (
-                          <div
-                            style={{
-                              padding: "var(--sp-3)",
-                              color: "var(--text-secondary)",
-                            }}
-                          >
-                            Detailed view with comprehensive data and metadata.
-                          </div>
-                        ),
-                      },
-                      {
-                        label: "History",
-                        badge: 7,
-                        content: (
-                          <div
-                            style={{
-                              padding: "var(--sp-3)",
-                              color: "var(--text-secondary)",
-                            }}
-                          >
-                            Change history — full audit trail of modifications.
-                          </div>
-                        ),
-                      },
-                      {
-                        label: "Attachments",
-                        content: (
-                          <div
-                            style={{
-                              padding: "var(--sp-3)",
-                              color: "var(--text-secondary)",
-                            }}
-                          >
-                            Attachments — uploaded files, documents, and images.
-                          </div>
-                        ),
-                      },
-                    ]}
-                  />
+                  <TabPage variant="buttons">
+                    <TabPageHeader>
+                      <TabPageTab label="Details" />
+                      <TabPageTab label="History" badge={7} />
+                      <TabPageTab label="Attachments" />
+                    </TabPageHeader>
+                    <TabPageBody>
+                      <TabPagePanel>
+                        <div
+                          style={{
+                            padding: "var(--sp-3)",
+                            color: "var(--text-secondary)",
+                          }}
+                        >
+                          Detailed view with comprehensive data and metadata.
+                        </div>
+                      </TabPagePanel>
+                      <TabPagePanel>
+                        <div
+                          style={{
+                            padding: "var(--sp-3)",
+                            color: "var(--text-secondary)",
+                          }}
+                        >
+                          Change history — full audit trail of modifications.
+                        </div>
+                      </TabPagePanel>
+                      <TabPagePanel>
+                        <div
+                          style={{
+                            padding: "var(--sp-3)",
+                            color: "var(--text-secondary)",
+                          }}
+                        >
+                          Attachments — uploaded files, documents, and images.
+                        </div>
+                      </TabPagePanel>
+                    </TabPageBody>
+                  </TabPage>
                 </div>
               </div>
             </PageCardBody>
@@ -3798,69 +3649,52 @@ export default function ExamplesPage() {
                   >
                     Horizontal
                   </h4>
-                  <StepPage
-                    orientation="horizontal"
-                    steps={[
-                      {
-                        label: "Account",
-                        description: "Basic info",
-                        content: (
-                          <div
-                            style={{
-                              padding: "var(--sp-3)",
-                              color: "var(--text-secondary)",
-                            }}
-                          >
-                            Enter your email and create a password for your
-                            account.
-                          </div>
-                        ),
-                      },
-                      {
-                        label: "Profile",
-                        description: "Personal details",
-                        content: (
-                          <div
-                            style={{
-                              padding: "var(--sp-3)",
-                              color: "var(--text-secondary)",
-                            }}
-                          >
-                            Fill in your name, avatar, and contact information.
-                          </div>
-                        ),
-                      },
-                      {
-                        label: "Preferences",
-                        description: "Notifications & privacy",
-                        content: (
-                          <div
-                            style={{
-                              padding: "var(--sp-3)",
-                              color: "var(--text-secondary)",
-                            }}
-                          >
-                            Configure your notification preferences and privacy
-                            settings.
-                          </div>
-                        ),
-                      },
-                      {
-                        label: "Confirm",
-                        description: "Review & submit",
-                        content: (
-                          <div
-                            style={{
-                              padding: "var(--sp-3)",
-                              color: "var(--text-secondary)",
-                            }}
-                          >
-                            Review all information and submit your registration.
-                          </div>
-                        ),
-                      },
-                    ]}
-                  />
+                  <StepPage orientation="horizontal">
+                    <StepPageStep label="Account" description="Basic info">
+                      <div
+                        style={{
+                          padding: "var(--sp-3)",
+                          color: "var(--text-secondary)",
+                        }}
+                      >
+                        Enter your email and create a password for your account.
+                      </div>
+                    </StepPageStep>
+                    <StepPageStep label="Profile" description="Personal details">
+                      <div
+                        style={{
+                          padding: "var(--sp-3)",
+                          color: "var(--text-secondary)",
+                        }}
+                      >
+                        Fill in your name, avatar, and contact information.
+                      </div>
+                    </StepPageStep>
+                    <StepPageStep
+                      label="Preferences"
+                      description="Notifications & privacy"
+                    >
+                      <div
+                        style={{
+                          padding: "var(--sp-3)",
+                          color: "var(--text-secondary)",
+                        }}
+                      >
+                        Configure your notification preferences and privacy
+                        settings.
+                      </div>
+                    </StepPageStep>
+                    <StepPageStep label="Confirm" description="Review & submit">
+                      <div
+                        style={{
+                          padding: "var(--sp-3)",
+                          color: "var(--text-secondary)",
+                        }}
+                      >
+                        Review all information and submit your registration.
+                      </div>
+                    </StepPageStep>
+                  </StepPage>
                 </div>
                 <div>
                   <h4
@@ -3873,54 +3707,39 @@ export default function ExamplesPage() {
                   >
                     Vertical
                   </h4>
-                  <StepPage
-                    orientation="vertical"
-                    steps={[
-                      {
-                        label: "Upload",
-                        description: "Source files",
-                        content: (
-                          <div
-                            style={{
-                              padding: "var(--sp-3)",
-                              color: "var(--text-secondary)",
-                            }}
-                          >
-                            Upload your source code, images, and assets.
-                          </div>
-                        ),
-                      },
-                      {
-                        label: "Configure",
-                        description: "Build settings",
-                        content: (
-                          <div
-                            style={{
-                              padding: "var(--sp-3)",
-                              color: "var(--text-secondary)",
-                            }}
-                          >
-                            Select your build configuration, environment, and
-                            target platform.
-                          </div>
-                        ),
-                      },
-                      {
-                        label: "Deploy",
-                        description: "Release",
-                        content: (
-                          <div
-                            style={{
-                              padding: "var(--sp-3)",
-                              color: "var(--text-secondary)",
-                            }}
-                          >
-                            Deploy to production or staging environment.
-                          </div>
-                        ),
-                      },
-                    ]}
-                  />
+                  <StepPage orientation="vertical">
+                    <StepPageStep label="Upload" description="Source files">
+                      <div
+                        style={{
+                          padding: "var(--sp-3)",
+                          color: "var(--text-secondary)",
+                        }}
+                      >
+                        Upload your source code, images, and assets.
+                      </div>
+                    </StepPageStep>
+                    <StepPageStep label="Configure" description="Build settings">
+                      <div
+                        style={{
+                          padding: "var(--sp-3)",
+                          color: "var(--text-secondary)",
+                        }}
+                      >
+                        Select your build configuration, environment, and
+                        target platform.
+                      </div>
+                    </StepPageStep>
+                    <StepPageStep label="Deploy" description="Release">
+                      <div
+                        style={{
+                          padding: "var(--sp-3)",
+                          color: "var(--text-secondary)",
+                        }}
+                      >
+                        Deploy to production or staging environment.
+                      </div>
+                    </StepPageStep>
+                  </StepPage>
                 </div>
               </div>
             </PageCardBody>
@@ -4658,12 +4477,86 @@ export default function ExamplesPage() {
             <PageCardBody>
               <div className="kanban-board-demo">
                 <KanbanBoard
-                  columns={kanbanColumns}
                   onCardClick={(card) => toast.info(`Card: ${card.title}`)}
                   onCardMove={(cardId, from, to) =>
                     toast.success(`Moved card from ${from} to ${to}`)
                   }
-                />
+                >
+                  <KanbanColumn id="todo" title="To Do">
+                    <KanbanCard
+                      id="k1"
+                      title="Design new dashboard layout"
+                      description="Create wireframes for the analytics dashboard with real-time widgets"
+                      labels={[{ text: "Design", color: "var(--primary)" }]}
+                      assignees={[{ name: "Alice" }, { name: "Bob" }]}
+                    />
+                    <KanbanCard
+                      id="k2"
+                      title="Implement user authentication"
+                      description="Add OAuth2 support with Google and GitHub providers"
+                      labels={[{ text: "Backend", color: "var(--accent)" }]}
+                      assignees={[{ name: "Carol" }]}
+                    />
+                    <KanbanCard
+                      id="k3"
+                      title="Write API documentation"
+                      description="Document all REST endpoints with request/response examples"
+                      labels={[{ text: "Docs", color: "var(--info)" }]}
+                      assignees={[{ name: "Dave" }, { name: "Eve" }]}
+                    />
+                  </KanbanColumn>
+                  <KanbanColumn id="in-progress" title="In Progress">
+                    <KanbanCard
+                      id="k4"
+                      title="Refactor data layer"
+                      description="Migrate from class-based to functional data access patterns"
+                      labels={[{ text: "Refactor", color: "var(--warning)" }]}
+                      assignees={[{ name: "Frank" }, { name: "Grace" }]}
+                    />
+                    <KanbanCard
+                      id="k5"
+                      title="Add dark mode support"
+                      description="Implement CSS custom properties for theme switching"
+                      labels={[
+                        { text: "UI", color: "var(--primary)" },
+                        { text: "Enhancement", color: "var(--success)" },
+                      ]}
+                      assignees={[{ name: "Heidi" }]}
+                    />
+                  </KanbanColumn>
+                  <KanbanColumn id="review" title="Review">
+                    <KanbanCard
+                      id="k6"
+                      title="Optimize database queries"
+                      description="Add indexes and query optimization for report generation"
+                      labels={[{ text: "Performance", color: "var(--danger)" }]}
+                      assignees={[{ name: "Ivan" }]}
+                    />
+                  </KanbanColumn>
+                  <KanbanColumn id="done" title="Done">
+                    <KanbanCard
+                      id="k7"
+                      title="Set up CI/CD pipeline"
+                      description="Configure GitHub Actions for automated testing and deployment"
+                      labels={[{ text: "DevOps", color: "var(--accent)" }]}
+                      assignees={[{ name: "Judy" }]}
+                    />
+                    <KanbanCard
+                      id="k8"
+                      title="Create onboarding guide"
+                      description="Write a getting-started guide for new team members"
+                      labels={[{ text: "Docs", color: "var(--info)" }]}
+                      assignees={[{ name: "Mallory" }]}
+                    />
+                    <KanbanCard
+                      id="k9"
+                      title="Deploy staging environment"
+                      description="Set up staging server with production-like configuration"
+                      labels={[{ text: "DevOps", color: "var(--accent)" }]}
+                      assignees={[{ name: "Niaj" }]}
+                    />
+                  </KanbanColumn>
+                </KanbanBoard>
               </div>
             </PageCardBody>
           </PageCard>
