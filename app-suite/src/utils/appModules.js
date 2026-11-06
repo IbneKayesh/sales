@@ -500,6 +500,22 @@ export const rawAppModules = [
           },
         ],
       },
+      {
+        id:"G03",
+        name: "Tools",
+        order: 2,
+        menus: [
+                    {
+            id: "M06-G03-M001",
+            name: "Profit Calculation",
+            color: "#3b82f6",
+            icon: "Users",
+            order: 2,
+            link: "/crm/tool/unified-profit-roi",
+            desc: "Unified Profit & ROI Calculator",
+          },
+        ]
+      }
     ],
   },
   {
