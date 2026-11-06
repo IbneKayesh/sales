@@ -226,6 +226,7 @@ export default function TreeViewExamplesPage() {
 
   // ── Demo 1: Interactive Selection ──
   const [invChecked, setInvChecked] = useState([]);
+  const [invSelected, setInvSelected] = useState([]);
   const allInvIds = useMemo(() => collectAllIds(inventoryTree), []);
 
   const handleSelectAll = useCallback(() => {
@@ -309,7 +310,7 @@ export default function TreeViewExamplesPage() {
             <div className="col-span-6">
               <div style={{ display: "flex", alignItems: "center", gap: "var(--sp-3)", marginBottom: "var(--sp-3)" }}>
                 <Badge variant="primary" icon={<IconCheck size={12} />}>
-                  {invChecked.length} of {totalInvItems} selected
+                  {invChecked.length} of {totalInvItems} checked
                 </Badge>
                 <div style={{ marginLeft: "auto", display: "flex", gap: "var(--sp-2)" }}>
                   <Button size="sm" variant="ghost" onClick={handleSelectAll}>
@@ -324,6 +325,9 @@ export default function TreeViewExamplesPage() {
                 data={inventoryTree}
                 checked={invChecked}
                 onCheckedChange={setInvChecked}
+                selected={invSelected}
+                onSelectedChange={setInvSelected}
+                multiple
                 label="Inventory Categories"
               />
             </div>
@@ -343,14 +347,53 @@ export default function TreeViewExamplesPage() {
                   fontSize: "var(--fs-sm)",
                 }}
               >
-                Selected Items
+                Selected Rows
               </h4>
               <div
                 style={{
                   fontSize: "var(--fs-sm)",
                   color: "var(--text-secondary)",
                   lineHeight: 1.6,
-                  minHeight: 120,
+                  minHeight: 44,
+                }}
+              >
+                {invSelected.length > 0 ? (
+                  <div style={{ display: "flex", flexWrap: "wrap", gap: "var(--sp-1)" }}>
+                    {invSelected.map((id) => (
+                      <Chip
+                        key={id}
+                        variant="muted"
+                        size="sm"
+                        onRemove={() => {
+                          setInvSelected((prev) => prev.filter((i) => i !== id));
+                        }}
+                      >
+                        {findLabelInTree(inventoryTree, id)}
+                      </Chip>
+                    ))}
+                  </div>
+                ) : (
+                  <span style={{ color: "var(--text-muted)" }}>
+                    Click a row to select it
+                  </span>
+                )}
+              </div>
+              <h4
+                className="h4"
+                style={{
+                  margin: 0,
+                  color: "var(--text-secondary)",
+                  fontSize: "var(--fs-sm)",
+                }}
+              >
+                Checked Rows
+              </h4>
+              <div
+                style={{
+                  fontSize: "var(--fs-sm)",
+                  color: "var(--text-secondary)",
+                  lineHeight: 1.6,
+                  minHeight: 44,
                 }}
               >
                 {invChecked.length > 0 ? (
@@ -370,7 +413,7 @@ export default function TreeViewExamplesPage() {
                   </div>
                 ) : (
                   <span style={{ color: "var(--text-muted)" }}>
-                    Click checkboxes in the tree to select items
+                    Tick checkboxes in the tree to check rows
                   </span>
                 )}
               </div>

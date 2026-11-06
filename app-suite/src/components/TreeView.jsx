@@ -1,5 +1,24 @@
-import { useCallback, useState } from 'react'
+import { useCallback, useMemo, useState } from 'react'
 import { IconChevronRight, IconCheckboxCheck, IconCheckboxIndeterminate } from '@/icons'
+
+/**
+ * TreeView — Checkbox tree with expand/collapse and row selection.
+ *
+ * Usage:
+ *   <TreeView
+ *     data={nodes}
+ *     checked={checkedIds}
+ *     onCheckedChange={setCheckedIds}
+ *     selected={selectedIds}
+ *     onSelectedChange={setSelectedIds}
+ *     multiple
+ *   />
+ *
+ * A row is *selected* by clicking it: one row at a time, or several when
+ * `multiple` is set. Its checkbox *checks* the row and cascades to every
+ * descendant, and only checked ids feed the parent checked/indeterminate state.
+ * Both values are arrays of node ids, each optional and controlled.
+ */
 
 /* ─── Compute parent state from descendants ─── */
 function computeParentState(children, checkedSet) {
@@ -40,8 +59,10 @@ function collectDescendantIds(nodes) {
 function TreeNode({
   node,
   checkedSet,
+  selectedSet,
   expandedSet,
   onToggleCheck,
+  onSelectRow,
   onToggleExpand,
   level,
 }) {
@@ -53,18 +74,23 @@ function TreeNode({
 
   const isChecked = checkedSet.has(node.id)
   const isIndeterminate = parentState === 'indeterminate'
+  const isSelected = selectedSet.has(node.id)
 
   return (
     <li className="tree-view__node">
       <div
-        className="tree-view__row"
+        className={`tree-view__row${isSelected ? ' tree-view__row--selected' : ''}`}
         style={{ paddingLeft: `${12 + level * 20}px` }}
+        onClick={() => onSelectRow(node)}
       >
         {/* Expand/collapse toggle */}
         <button
           type="button"
           className={`tree-view__toggle${hasChildren ? '' : ' tree-view__toggle--spacer'}`}
-          onClick={() => hasChildren && onToggleExpand(node.id)}
+          onClick={(e) => {
+            e.stopPropagation()
+            if (hasChildren) onToggleExpand(node.id)
+          }}
           onKeyDown={(e) => {
             if ((e.key === 'Enter' || e.key === ' ') && hasChildren) {
               e.preventDefault()
@@ -85,7 +111,10 @@ function TreeNode({
         {/* Checkbox */}
         <span
           className="tree-view__checkbox"
-          onClick={() => onToggleCheck(node)}
+          onClick={(e) => {
+            e.stopPropagation()
+            onToggleCheck(node)
+          }}
           role="checkbox"
           aria-checked={isChecked || (isIndeterminate ? 'mixed' : false)}
           tabIndex={0}
@@ -106,12 +135,7 @@ function TreeNode({
         </span>
 
         {/* Label */}
-        <span
-          className="tree-view__label"
-          onClick={() => onToggleCheck(node)}
-        >
-          {node.label}
-        </span>
+        <span className="tree-view__label">{node.label}</span>
       </div>
 
       {/* Children */}
@@ -122,8 +146,10 @@ function TreeNode({
               key={child.id}
               node={child}
               checkedSet={checkedSet}
+              selectedSet={selectedSet}
               expandedSet={expandedSet}
               onToggleCheck={onToggleCheck}
+              onSelectRow={onSelectRow}
               onToggleExpand={onToggleExpand}
               level={level + 1}
             />
@@ -139,6 +165,9 @@ export default function TreeView({
   data = [],
   checked,
   onCheckedChange,
+  selected,
+  onSelectedChange,
+  multiple = false,
   expanded,
   onExpandedChange,
   label,
@@ -157,10 +186,17 @@ export default function TreeView({
     return ids
   })
 
-  const checkedSet = new Set(checked || [])
-  const expandedSet = expanded
-    ? new Set(expanded)
-    : localExpanded
+  const [localSelected, setLocalSelected] = useState([])
+
+  const checkedSet = useMemo(() => new Set(checked || []), [checked])
+  const selectedSet = useMemo(
+    () => new Set(selected !== undefined ? selected : localSelected),
+    [selected, localSelected]
+  )
+  const expandedSet = useMemo(
+    () => (expanded ? new Set(expanded) : localExpanded),
+    [expanded, localExpanded]
+  )
 
   const handleToggleCheck = useCallback(
     (node) => {
@@ -175,6 +211,20 @@ export default function TreeView({
       onCheckedChange?.(Array.from(next))
     },
     [checkedSet, onCheckedChange]
+  )
+
+  const handleSelectRow = useCallback(
+    (node) => {
+      // Single mode starts from an empty set, so selecting replaces the row.
+      const next = new Set(multiple ? selectedSet : [])
+      if (selectedSet.has(node.id)) next.delete(node.id)
+      else next.add(node.id)
+
+      const ids = Array.from(next)
+      if (selected === undefined) setLocalSelected(ids)
+      onSelectedChange?.(ids)
+    },
+    [multiple, selectedSet, selected, onSelectedChange]
   )
 
   const handleToggleExpand = useCallback(
@@ -207,8 +257,10 @@ export default function TreeView({
             key={node.id}
             node={node}
             checkedSet={checkedSet}
+            selectedSet={selectedSet}
             expandedSet={expandedSet}
             onToggleCheck={handleToggleCheck}
+            onSelectRow={handleSelectRow}
             onToggleExpand={handleToggleExpand}
             level={0}
           />

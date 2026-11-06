@@ -47,12 +47,7 @@ import KanbanBoard, {
   KanbanColumn,
   KanbanCard,
 } from "@/components/KanbanBoard";
-import TabPage, {
-  TabPageHeader,
-  TabPageTab,
-  TabPageBody,
-  TabPagePanel,
-} from "@/components/TabPage";
+import TabPage, { TabPagePanel } from "@/components/TabPage";
 import StepPage, { StepPageStep } from "@/components/StepPage";
 import Chip from "@/components/Chip";
 import InputTime from "@/components/InputTime";
@@ -332,6 +327,7 @@ export default function ExamplesPage() {
   const [switchEmail, setSwitchEmail] = useState(true);
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [treeChecked, setTreeChecked] = useState([]);
+  const [treeSelected, setTreeSelected] = useState([]);
   const [treeCheckedItems, setTreeCheckedItems] = useState([]);
   const treeData = [
     {
@@ -379,6 +375,21 @@ export default function ExamplesPage() {
       ],
     },
   ];
+
+  const treeLabelOf = (id) => {
+    const find = (nodes) => {
+      for (const node of nodes) {
+        if (node.id === id) return node.label;
+        if (node.children?.length) {
+          const found = find(node.children);
+          if (found) return found;
+        }
+      }
+      return id;
+    };
+    return find(treeData);
+  };
+
   const treeColumns = [
     { key: "name", header: "Category / Item", width: "200px" },
     { key: "code", header: "Code", width: "100px" },
@@ -2667,7 +2678,7 @@ export default function ExamplesPage() {
             <PageCardHeader>
               <PageCardTitle
                 title="Tree View"
-                subtitle="Checkbox tree with expand/collapse, indeterminate parent states, and nested hierarchy"
+                subtitle="Checkbox tree with expand/collapse, row selection, indeterminate parent states, and nested hierarchy"
               />
             </PageCardHeader>
             <PageCardBody>
@@ -2677,6 +2688,8 @@ export default function ExamplesPage() {
                     data={treeData}
                     checked={treeChecked}
                     onCheckedChange={setTreeChecked}
+                    selected={treeSelected}
+                    onSelectedChange={setTreeSelected}
                     label="Inventory Categories"
                   />
                 </div>
@@ -2696,7 +2709,34 @@ export default function ExamplesPage() {
                       fontSize: "var(--fs-sm)",
                     }}
                   >
-                    Selected Items
+                    Selected Row
+                  </h4>
+                  <div
+                    style={{
+                      fontSize: "var(--fs-sm)",
+                      color: "var(--text-secondary)",
+                      lineHeight: 1.6,
+                    }}
+                  >
+                    {treeSelected.length > 0 ? (
+                      <strong style={{ color: "var(--text-primary)" }}>
+                        {treeSelected.map(treeLabelOf).join(", ")}
+                      </strong>
+                    ) : (
+                      <span style={{ color: "var(--text-muted)" }}>
+                        Click a row to select it
+                      </span>
+                    )}
+                  </div>
+                  <h4
+                    className="h4"
+                    style={{
+                      margin: 0,
+                      color: "var(--text-secondary)",
+                      fontSize: "var(--fs-sm)",
+                    }}
+                  >
+                    Checked Rows
                   </h4>
                   <div
                     style={{
@@ -2707,15 +2747,15 @@ export default function ExamplesPage() {
                   >
                     {treeChecked.length > 0 ? (
                       <span>
-                        {treeChecked.length} item
-                        {treeChecked.length !== 1 ? "s" : ""} selected:{" "}
+                        {treeChecked.length} row
+                        {treeChecked.length !== 1 ? "s" : ""} checked:{" "}
                         <strong style={{ color: "var(--text-primary)" }}>
-                          {treeChecked.join(", ")}
+                          {treeChecked.map(treeLabelOf).join(", ")}
                         </strong>
                       </span>
                     ) : (
                       <span style={{ color: "var(--text-muted)" }}>
-                        Click checkboxes above to select items
+                        Tick a checkbox to check rows
                       </span>
                     )}
                   </div>
@@ -3461,14 +3501,7 @@ export default function ExamplesPage() {
                     Underline
                   </h4>
                   <TabPage variant="underline">
-                    <TabPageHeader>
-                      <TabPageTab label="Overview" />
-                      <TabPageTab label="Settings" />
-                      <TabPageTab label="Billing" badge={3} />
-                      <TabPageTab label="Disabled" disabled />
-                    </TabPageHeader>
-                    <TabPageBody>
-                      <TabPagePanel>
+                      <TabPagePanel label="Overview">
                         <div
                           style={{
                             padding: "var(--sp-3)",
@@ -3479,7 +3512,7 @@ export default function ExamplesPage() {
                           quick stats.
                         </div>
                       </TabPagePanel>
-                      <TabPagePanel>
+                      <TabPagePanel label="Settings">
                         <div
                           style={{
                             padding: "var(--sp-3)",
@@ -3490,7 +3523,7 @@ export default function ExamplesPage() {
                           notifications.
                         </div>
                       </TabPagePanel>
-                      <TabPagePanel>
+                      <TabPagePanel label="Billing" badge={3}>
                         <div
                           style={{
                             padding: "var(--sp-3)",
@@ -3501,8 +3534,7 @@ export default function ExamplesPage() {
                           plans.
                         </div>
                       </TabPagePanel>
-                      <TabPagePanel />
-                    </TabPageBody>
+                      <TabPagePanel label="Disabled" disabled />
                   </TabPage>
                 </div>
                 <div>
@@ -3517,23 +3549,10 @@ export default function ExamplesPage() {
                     Pills
                   </h4>
                   <TabPage variant="pills">
-                    <TabPageHeader>
-                      <TabPageTab
+                      <TabPagePanel
                         icon={<IconUsers size={14} />}
                         label="Users"
-                      />
-                      <TabPageTab
-                        icon={<IconBox size={14} />}
-                        label="Products"
-                        badge={12}
-                      />
-                      <TabPageTab
-                        icon={<IconActivity size={14} />}
-                        label="Activity"
-                      />
-                    </TabPageHeader>
-                    <TabPageBody>
-                      <TabPagePanel>
+                      >
                         <div
                           style={{
                             padding: "var(--sp-3)",
@@ -3544,7 +3563,11 @@ export default function ExamplesPage() {
                           members.
                         </div>
                       </TabPagePanel>
-                      <TabPagePanel>
+                      <TabPagePanel
+                        icon={<IconBox size={14} />}
+                        label="Products"
+                        badge={12}
+                      >
                         <div
                           style={{
                             padding: "var(--sp-3)",
@@ -3554,7 +3577,10 @@ export default function ExamplesPage() {
                           Product catalog — manage inventory and pricing.
                         </div>
                       </TabPagePanel>
-                      <TabPagePanel>
+                      <TabPagePanel
+                        icon={<IconActivity size={14} />}
+                        label="Activity"
+                      >
                         <div
                           style={{
                             padding: "var(--sp-3)",
@@ -3564,7 +3590,6 @@ export default function ExamplesPage() {
                           Activity log — track changes and user actions.
                         </div>
                       </TabPagePanel>
-                    </TabPageBody>
                   </TabPage>
                 </div>
                 <div>
@@ -3579,13 +3604,7 @@ export default function ExamplesPage() {
                     Buttons
                   </h4>
                   <TabPage variant="buttons">
-                    <TabPageHeader>
-                      <TabPageTab label="Details" />
-                      <TabPageTab label="History" badge={7} />
-                      <TabPageTab label="Attachments" />
-                    </TabPageHeader>
-                    <TabPageBody>
-                      <TabPagePanel>
+                      <TabPagePanel label="Details">
                         <div
                           style={{
                             padding: "var(--sp-3)",
@@ -3595,7 +3614,7 @@ export default function ExamplesPage() {
                           Detailed view with comprehensive data and metadata.
                         </div>
                       </TabPagePanel>
-                      <TabPagePanel>
+                      <TabPagePanel label="History" badge={7}>
                         <div
                           style={{
                             padding: "var(--sp-3)",
@@ -3605,7 +3624,7 @@ export default function ExamplesPage() {
                           Change history — full audit trail of modifications.
                         </div>
                       </TabPagePanel>
-                      <TabPagePanel>
+                      <TabPagePanel label="Attachments">
                         <div
                           style={{
                             padding: "var(--sp-3)",
@@ -3615,7 +3634,6 @@ export default function ExamplesPage() {
                           Attachments — uploaded files, documents, and images.
                         </div>
                       </TabPagePanel>
-                    </TabPageBody>
                   </TabPage>
                 </div>
               </div>
