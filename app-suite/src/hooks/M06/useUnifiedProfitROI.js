@@ -26,9 +26,10 @@ export const createCost = (name = "", amount = "", type = "value") => ({
 
 export const TRANSLATIONS = {
   EN: {
+    languageLabel: "Language",
     pageTitle: "Unified Profit / ROI Calculator",
-    pageSubtitle: "Simulate margins, markups, costs and profitability across stages",
-    loadBDDefaults: "Load Default BD Units",
+    pageSubtitle: "Simulate margins, markups, costs, break-even and profitability across stages",
+    loadBDDefaults: "Load BD Defaults",
     resetCancel: "Reset / Cancel",
     saveCalculation: "Save Calculation",
     cancel: "Cancel",
@@ -36,28 +37,28 @@ export const TRANSLATIONS = {
     // Section 1
     sec1Title: "01 · Sales Target & Calculation Basis",
     costBasisLabel: "Cost Calculation & Entry Basis",
-    costBasisTotal: "Total for Target Qty (Full Batch)",
-    costBasisUnit: "Per Unit Wise (Single Unit)",
-    costBasisDescUnit: "Per Unit Wise: Fixed monetary entries (৳) apply to 1 unit. Total cost is multiplied by Sales Target Qty.",
-    costBasisDescTotal: "Total for Target Qty: Fixed monetary entries (৳) apply to the full sales volume. Unit cost is divided by Sales Target Qty.",
-    costBasisPercentNote: "Percentage entries (%) calculate dynamically based on unit price regardless of mode.",
+    costBasisTotal: "Total for Target Qty",
+    costBasisUnit: "Per Unit Wise",
+    costBasisDescUnit: "Per Unit Wise: Fixed monetary entries (৳) represent cost per single unit. Total cost is multiplied by Sales Target Qty.",
+    costBasisDescTotal: "Total for Target Qty: Fixed monetary entries (৳) represent total batch expenditure. Unit cost is divided by Sales Target Qty.",
+    costBasisPercentNote: "(Percentage entries (%) automatically calculate based on unit price regardless of mode).",
     timeHorizonLabel: "Target Time Horizon",
     freqDaily: "Daily",
     freqWeekly: "Weekly",
     freqMonthly: "Monthly",
     freqHalfYearly: "Half-Yearly",
     freqYearly: "Yearly",
-    salesQtyLabel: "Sales Target Quantity",
+    salesQtyLabel: "Sales Target Qty",
     profitMarginLabel: "Target Profit Margin (%)",
     discountLabel: "Planned Discount (%)",
-    otherTaxLabel: "Taxes & Levies (৳)",
+    otherTaxLabel: "AIT / Trade Tax (৳)",
 
     // Section 2
     sec2Title: "02 · Sourcing Model & Costs",
     sourceModelLabel: "Source Model Selection",
-    srcLocal: "Local Sourcing",
-    srcImport: "International Import",
-    srcManufacture: "Own Manufacturing",
+    srcLocal: "Local",
+    srcImport: "Import",
+    srcManufacture: "Manufacture",
     unitCostLabel: "Base Purchase Cost / Unit (৳)",
     productionCostLabel: "Base Production Cost / Unit (৳)",
 
@@ -66,6 +67,7 @@ export const TRANSLATIONS = {
     stockingModelLabel: "Stocking Model Selection",
     stockOwn: "Own Warehouse",
     stockRent: "Rented Warehouse",
+    stock3pl: "3PL / Fulfillment",
     stockSpot: "On Spot / No Stock",
 
     // Section 4
@@ -74,175 +76,323 @@ export const TRANSLATIONS = {
     sellRetail: "Retail / E-commerce",
     sellBulk: "Bulk / Wholesale",
     retailPriceLabel: "Retail Selling Price / Unit (৳)",
-    bulkTiersTitle: "Bulk Price Tiers & Sales Mix",
+    bulkTiersTitle: "Bulk Price Levels & Sales Mix",
     tierNameLabel: "Price Tier",
-    tierPriceLabel: "Selling Price (৳)",
+    tierPriceLabel: "Tier Price (৳)",
     tierMixLabel: "Sales Share (%)",
     addPriceTier: "Add Price Level",
-    bulkMixNote: "Total sales mix across tiers should equal 100%. Weighted average price is calculated.",
+    bulkMixNote: "Note: Total sales mix across tiers should equal 100%. Weighted average selling price will be computed.",
+    totalShareLabel: "Total Sales Share",
+    bulkShareValid: "100% Balanced",
+    bulkShareWarningUnder: "Total sales share is under 100%. Please allocate the remaining share.",
+    bulkShareWarningOver: "Total sales share exceeds 100%. Please adjust percentages to equal 100%.",
+    weightedAvgPrice: "Weighted Avg Price",
     deliveryIncomeLabel: "Delivery Income Collected (৳)",
 
     // Section 5
     sec5Title: "05 · Return Management",
     returnedQtyLabel: "Expected Returned Quantity",
-    returnDispLabel: "Return Disposition",
-    dispResell: "Resell",
-    dispRepack: "Repack / Repair",
-    dispScrap: "Scrap",
-    dispDispose: "Dispose",
-    salvageValueLabel: "Scrap / Salvage Value (৳)",
+    returnDispLabel: "Return Disposition Solution",
+    dispResellRepack: "Resell / Repack",
+    dispScrap: "Scrap (Sold at Discount)",
+    dispDispose: "Dispose (Zero Value)",
+    resellNotice: "Returned items are inspected, repacked, and resold. The returned quantity is included in the total sold quantity. Expenses increase by return processing and courier costs.",
+    scrapNotice: "Returned items are sold at a discounted scrap price. Generates lower recovery value, increasing inventory loss and expenses.",
+    disposeNotice: "Returned items cannot be salvaged and have zero sales value. 100% inventory cost is written off as a loss, plus disposal/dumping costs.",
+    courierCostSectionTitle: "Return Courier Logistics",
+    returnFeeCollectedLabel: "Courier Fee Collected from Customer (৳)",
+    returnCourierCostLabel: "Return Freight Paid to Courier Company (৳)",
+    refundValueLabel: "Original Customer Refund / Unit (৳)",
+    scrapInputBasisLabel: "Scrap Value Entry Basis",
+    scrapUnitPriceLabel: "Scrap Selling Price / Unit (৳)",
+    scrapTotalValueLabel: "Total Scrap Recovery Value (৳)",
+    scrapBasisUnit: "Per Scrapped Unit",
+    scrapBasisTotal: "Total Scrap Amount",
+    disposalInputBasisLabel: "Disposal Cost Entry Basis",
+    disposalCostUnitLabel: "Disposal / Destruction Cost / Unit (৳)",
+    disposalCostTotalLabel: "Total Disposal / Dumping Cost (৳)",
+    disposalBasisUnit: "Per Disposed Unit",
+    disposalBasisTotal: "Total Disposal Fee",
 
     // Section 6
     sec6Title: "06 · Profit & ROI Summary",
+    viewResultsAs: "View Results As",
+    roiDisplayMode: "ROI Display Mode",
+    totalAmountMode: "Total Amount",
+    perUnitMode: "Per Unit",
     kpiNetRevenue: "Net Revenue",
     kpiTotalExpenses: "Total Expenses",
+    kpiGrossProfit: "Gross Profit",
+    kpiGrossMargin: "Gross Margin (%)",
+    kpiOperatingProfit: "Operating Profit (EBITDA)",
     kpiNetProfit: "Net Profit / Loss",
-    kpiProfitMargin: "Profit Margin",
-    kpiRoi: "ROI",
-    kpiMarkup: "Cost Markup",
+    profitBadge: "+ Profit",
+    lossBadge: "- Loss",
+    kpiProfitMargin: "Net Profit Margin (%)",
+    kpiRoi: "ROI (on Capital %)",
+    netProfitPerUnit: "Net Profit / unit",
+    kpiMarkup: "Cost Markup (%)",
     kpiUnitInventoryCost: "Unit Inventory Cost",
     kpiTargetPrice: "Target Selling Price",
+    kpiBreakEvenUnits: "Break-Even Units (BEP)",
+    kpiBreakEvenRevenue: "Break-Even Sales (৳)",
+    kpiWorkingCapital: "Working Capital Required",
+    kpiContributionMargin: "Contribution Margin (%)",
+    kpiSafetyMargin: "Safety Margin (%)",
+    bepAchieved: "units to avoid loss",
+    bepInfinite: "Price below unit variable cost",
     breakdownTitle: "Unit Economics & Comprehensive Breakdown",
+    secPnlTitle: "Comprehensive Profit & Loss (P&L) Statement",
+    secBepTitle: "Break-Even & Risk Analysis",
+    secWorkingCapitalTitle: "Capital & Funding Requirements",
+    rowGrossSales: "Gross Sales (List Price)",
+    rowDiscountTotal: "Planned Discounts Given",
     rowSalesQty: "Sales Target Quantity",
     rowNetQty: "Net Quantity (After Returns)",
+    rowReturnRate: "Product Return Rate",
     rowSourcingTotal: "Sourcing Total",
     rowStockingTotal: "Stocking Total",
     rowSellingTotal: "Selling Total",
-    rowReturnCosts: "Return Processing Costs",
+    rowReturnCosts: "Return Handling & Reprocessing",
     rowRefundAmount: "Customer Refund Amount",
     rowRecoveredCost: "Recovered Inventory Value",
     rowLostCost: "Lost Inventory Cost (Unrecoverable)",
+    rowSalvageIncome: "Scrap / Salvage Proceeds",
     rowCogs: "Cost of Goods Sold (COGS)",
-    rowTaxes: "Taxes & Levies",
+    rowGrossProfit: "Gross Profit (Revenue - COGS)",
+    rowOperatingExpenses: "Total Operating Expenses (OPEX)",
+    rowOperatingProfit: "Operating Profit (EBITDA)",
+    rowTaxes: "Taxes & Municipal Levies",
     rowDeliveryIncome: "Customer Delivery Income",
+    rowWorkingCapital: "Total Working Capital Outlay",
+    rowBreakEvenQty: "Break-Even Sales Quantity",
+    rowBreakEvenRevenue: "Break-Even Sales Revenue",
+    rowTargetProfit: "Targeted Net Profit Goal",
+    rowRequiredProfitQty: "Required Sales Quantity for Target Profit",
+    rowRequiredProfitRevenue: "Required Sales Revenue for Target Profit",
+    secTargetProfitTitle: "Target Profit Planning (Goal-Seek)",
+    secTargetProfitSubtitle: "Calculate the exact sales volume and revenue required to hit your desired net profit",
+    targetProfitLabel: "Targeted Net Profit (৳)",
+    targetProfitRequiredQty: "Required Sales Quantity",
+    targetProfitRequiredRevenue: "Required Sales Revenue",
+    targetProfitUnitMargin: "Unit Contribution Margin",
+    targetProfitFeasibleNotice: "To achieve this net profit, you must sell at least:",
+    targetProfitInfeasibleNotice: "Target profit cannot be achieved: selling price per unit is lower than or equal to variable cost per unit. Increase price or reduce variable expenses.",
+    targetProfitAchievedStatus: "Current sales target already achieves this profit goal!",
+    targetProfitSurplusLabel: "Surplus Units beyond Goal",
+    targetProfitShortfallLabel: "Additional Units Needed",
     netProfitTotalLabel: "Net Profit / (Loss)",
     netProfitUnitLabel: "Net per unit",
+    units: "units",
+    returnedAt: "returned @",
+    disposedAs: "Disposed as",
+    netInventoryConsumed: "Net inventory consumed",
+    collectedShippingIncome: "Collected shipping income",
 
     // Cost Row Items
-    costHeadName: "Cost Head Name",
+    costHeadPrefix: "Cost Head",
+    costHeadPlaceholder: "e.g. Transport, Toll, Commission...",
     costType: "Cost Type",
     typeValue: "৳ Value",
     typePercent: "% Rate",
     amountPerUnit: "Amount / Unit (৳)",
     amountTotal: "Total Amount (৳)",
     amountRate: "Rate (%)",
-    calculatedCost: "Calculated Cost",
-    subtotal: "Subtotal",
+    calculatedCost: "Calculated Cost:",
+    subtotal: "Subtotal:",
     addCustomCost: "Add Custom Cost Field",
     itemsCount: "items",
+    itemCountSingular: "item",
     modeNotice: "Mode",
     percentOfSelling: "% of Selling",
     percentOfPurchase: "% of Purchase",
+    perUnitSuffix: "/ unit",
+    returnedUnitSuffix: "/ returned unit",
   },
 
   BN: {
+    languageLabel: "ভাষা",
     pageTitle: "প্রফিট ও আরওআই ক্যালকুলেটর",
-    pageSubtitle: "পণ্য সংগ্রহ, গুদামজাতকরণ ও বিক্রয়ের বিভিন্ন স্তরে মুনাফা ও ব্যয়ের হিসাব",
-    loadBDDefaults: "বাংলাদেশি ডিফল্ট লোড করুন",
-    resetCancel: "রিসেট / বাতিল",
-    saveCalculation: "হিসাব সংরক্ষণ করুন",
+    pageSubtitle: "পণ্য কেনা, গোডাউন, বিক্রির খরচ ও আসল লাভের সহজ হিসাব",
+    loadBDDefaults: "বাংলাদেশের ব্যবসার রেট লোড করুন",
+    resetCancel: "রিসেট / আগের মতো করুন",
+    saveCalculation: "হিসাব সেভ করুন",
     cancel: "বাতিল",
 
     // Section 1
-    sec1Title: "০১ · বিক্রয় লক্ষ্যমাত্রা ও ব্যয়ের ভিত্তি",
-    costBasisLabel: "ব্যয় নির্ধারণ ও গণনার ভিত্তি",
-    costBasisTotal: "মোট লক্ষ্যমাত্রা ব্যাচ ভিত্তিক",
-    costBasisUnit: "প্রতি একক / ইউনিট ভিত্তিক",
-    costBasisDescUnit: "প্রতি ইউনিট ভিত্তিক: নির্দিষ্ট টাকার ব্যয় (৳) প্রতিটি একক পণ্যের জন্য প্রযোজ্য। মোট খরচ লক্ষ্যমাত্রার সাথে গুণ হবে।",
-    costBasisDescTotal: "মোট লক্ষ্যমাত্রা ব্যাচ ভিত্তিক: নির্দিষ্ট টাকার ব্যয় (৳) পুরো ব্যাচের মোট খরচ। একক খরচ পেতে লক্ষ্যমাত্রা দিয়ে ভাগ হবে।",
-    costBasisPercentNote: "শতকরা ব্যয়ের হার (%) স্বয়ংক্রিয়ভাবে একক পণ্যের মূল্যের ওপর ভিত্তি করে হিসাব করা হয়।",
-    timeHorizonLabel: "সময়কাল নির্বাচন",
-    freqDaily: "দৈনিক",
+    sec1Title: "০১ · বিক্রির টার্গেট ও খরচের নিয়ম",
+    costBasisLabel: "খরচ লেখার নিয়ম",
+    costBasisTotal: "পুরো ব্যাচের মোট খরচ",
+    costBasisUnit: "প্রতি পিসের একক খরচ",
+    costBasisDescUnit: "প্রতি পিসের একক খরচ: এখানে টাকার অংক (৳) বসালে তা প্রতি ১ পিসের খরচ বোঝাবে। মোট খরচ বের করতে টার্গেট পিস দিয়ে গুণ হবে।",
+    costBasisDescTotal: "পুরো ব্যাচের মোট খরচ: এখানে টাকার অংক (৳) বসালে তা পুরো ব্যাচের এককালীন মোট খরচ বোঝাবে। প্রতি পিসের খরচ পেতে টার্গেট পিস দিয়ে ভাগ হবে।",
+    costBasisPercentNote: "(শতকরা পারসেন্টেজ (%) সব সময় প্রতি পিসের দামের ওপর নির্ভর করে নিজে থেকেই হিসাব হবে)।",
+    timeHorizonLabel: "হিসাবের সময়কাল",
+    freqDaily: "প্রতিদিনের",
     freqWeekly: "সাপ্তাহিক",
     freqMonthly: "মাসিক",
-    freqHalfYearly: "অর্ধ-বার্ষিক",
-    freqYearly: "বার্ষিক",
-    salesQtyLabel: "বিক্রয় লক্ষ্যমাত্রা (একক সংখ্যা)",
-    profitMarginLabel: "কাঙ্ক্ষিত মুনাফার হার (%)",
-    discountLabel: "পরিকল্পিত মূল্যছাড় (%)",
-    otherTaxLabel: "কর ও পৌর ফি (৳)",
+    freqHalfYearly: "৬ মাসের",
+    freqYearly: "বার্ষিক (১ বছরের)",
+    salesQtyLabel: "কত পিস বিক্রি করবেন (টার্গেট)",
+    profitMarginLabel: "কত % লাভ করতে চান (মার্জিন)",
+    discountLabel: "কাস্টমারকে ডিসকাউন্ট বা ছাড় (%)",
+    otherTaxLabel: "ট্যাক্স, ভ্যাট ও লাইসেন্স ফি (৳)",
 
     // Section 2
-    sec2Title: "০২ · পণ্য সংগ্রহ মডেল ও ব্যয়",
-    sourceModelLabel: "পণ্য সংগ্রহের উৎস",
-    srcLocal: "স্থানীয় ক্রয়",
-    srcImport: "আন্তর্জাতিক আমদানি",
-    srcManufacture: "নিজস্ব উৎপাদন",
-    unitCostLabel: "একক ক্রয়মূল্য (৳)",
-    productionCostLabel: "একক উৎপাদন খরচ (৳)",
+    sec2Title: "০২ · পণ্য কেনার সোর্স ও খরচ",
+    sourceModelLabel: "পণ্য কোথা থেকে সংগ্রহ করছেন?",
+    srcLocal: "দেশি বাজার বা পাইকারি থেকে কেনা",
+    srcImport: "বিদেশ থেকে সরাসরি আমদানি",
+    srcManufacture: "নিজের কারখানায় তৈরি",
+    unitCostLabel: "প্রতি পিসের কেনা দাম (৳)",
+    productionCostLabel: "প্রতি পিস বানানোর কাঁচামাল খরচ (৳)",
 
     // Section 3
-    sec3Title: "০৩ · মজুদ ও গুদাম পরিচালন ব্যয়",
-    stockingModelLabel: "গুদাম মডেল নির্বাচন",
-    stockOwn: "নিজস্ব গুদাম",
-    stockRent: "ভাড়া গুদাম",
-    stockSpot: "অন-স্পট / সরাসরি স্থানান্তর",
+    sec3Title: "০৩ · গোডাউন ও পণ্য রাখার খরচ",
+    stockingModelLabel: "পণ্য কোথায় রাখবেন?",
+    stockOwn: "নিজের গোডাউন / বাড়ি",
+    stockRent: "ভাড়া গোডাউন",
+    stock3pl: "দারাজ / স্টেডফাস্ট ৩পিএল ফুলফিলমেন্ট",
+    stockSpot: "গোডাউন ছাড়া সরাসরি ডেলিভারি",
 
     // Section 4
-    sec4Title: "০৪ · বিক্রয় ও বিপণন চ্যানেল ব্যয়",
-    salesModelLabel: "বিক্রয় চ্যানেল নির্বাচন",
-    sellRetail: "খুচরা ও অনলাইন বিক্রয়",
-    sellBulk: "পাইকারি ও ডিলার চ্যানেল",
-    retailPriceLabel: "একক খুচরা বিক্রয়মূল্য (৳)",
-    bulkTiersTitle: "পাইকারি দর ও বিক্রয়ের মিশ্রণ",
-    tierNameLabel: "মূল্য স্তর",
-    tierPriceLabel: "বিক্রয়দর (৳)",
-    tierMixLabel: "বিক্রয়ের হার (%)",
-    addPriceTier: "নতুন মূল্য স্তর যোগ করুন",
-    bulkMixNote: "সকল স্তরের বিক্রয়ের অনুপাতের যোগফল ১০০% হতে হবে। ভারিত গড় দর হিসাব করা হবে।",
-    deliveryIncomeLabel: "সংগৃহীত ডেলিভারি ফি (৳)",
+    sec4Title: "০৪ · বিক্রি ও ডেলিভারি চ্যানেল",
+    salesModelLabel: "পণ্য কীভাবে বিক্রি করবেন?",
+    sellRetail: "খুচরা ও অনলাইন সেলস",
+    sellBulk: "পাইকারি ও ডিলার সেলস",
+    retailPriceLabel: "প্রতি পিসের খুচরা বিক্রি দাম (৳)",
+    bulkTiersTitle: "পাইকারি রেট ও বিক্রির ভাগ (%)",
+    tierNameLabel: "মার্কেট বা ডিলারের নাম",
+    tierPriceLabel: "বিক্রি দর (৳)",
+    tierMixLabel: "বিক্রির ভাগ (%)",
+    addPriceTier: "+ নতুন পাইকারি রেট যোগ করুন",
+    bulkMixNote: "জরুরি: সবগুলো পাইকারি রেটের বিক্রির ভাগ মিলে মোট ১০০% হতে হবে। সিস্টেম স্বয়ংক্রিয়ভাবে গড় দাম বের করবে।",
+    totalShareLabel: "মোট বিক্রির ভাগ",
+    bulkShareValid: "১০০% মিলেছে",
+    bulkShareWarningUnder: "সব পাইকারি রেট মিলিয়ে এখনো ১০০% হয়নি। বাকি ভাগটুকু বরাদ্দ করুন।",
+    bulkShareWarningOver: "সব পাইকারি রেট মিলিয়ে ১০০% এর বেশি হয়ে গেছে। পারসেন্টেজ সমন্বয় করুন।",
+    weightedAvgPrice: "গড় বিক্রি দাম",
+    deliveryIncomeLabel: "কাস্টমারের দেওয়া ডেলিভারি চার্জ (৳)",
 
     // Section 5
-    sec5Title: "০৫ · পণ্য ফেরত ও ক্ষতিপূরণ ব্যবস্থাপনা",
-    returnedQtyLabel: "প্রত্যাশিত ফেরত পণ্যের সংখ্যা",
-    returnDispLabel: "ফেরত পণ্যের ব্যবস্থাপনা",
-    dispResell: "পুনর্বিক্রয়",
-    dispRepack: "মেরামত ও পুনরায় প্যাকিং",
-    dispScrap: "স্ক্র্যাপ হিসেবে বিক্রয়",
-    dispDispose: "সম্পূর্ণ বিনষ্টকরণ",
-    salvageValueLabel: "স্ক্র্যাপ পুনরুদ্ধার মূল্য (৳)",
+    sec5Title: "০৫ · কাস্টমার রিটার্ন ও সমাধান",
+    returnedQtyLabel: "কত পিস রিটার্ন আসতে পারে",
+    returnDispLabel: "রিটার্ন আসা পণ্য কী করবেন?",
+    dispResellRepack: "আবার নতুন প্যাকেট করে বিক্রি",
+    dispScrap: "কম দামে বা স্ক্র্যাপে বিক্রি",
+    dispDispose: "ফেলে দেওয়া / পুরো লস",
+    resellNotice: "রিটার্ন আসা পণ্য ভালো করে চেক ও নতুন প্যাকেট করে আবার বিক্রি করা হয়। এতে পণ্য নষ্ট হয় না, শুধু নতুন প্যাকেট ও কুরিয়ারের বাড়তি খরচটুকু যোগ হয়।",
+    scrapNotice: "রিটার্ন আসা পণ্য কিছুটা ড্যামেজ হওয়ায় আসল দামে বেচা যায় না, কম দামে বা স্ক্র্যাপে ছেড়ে দিতে হয়। এতে কিছু টাকা উদ্ধার হলেও বাকিটুকু লোকসান হয়।",
+    disposeNotice: "পণ্য সম্পূর্ণ নষ্ট বা ভাঙা হওয়ায় কোনো বিক্রি দাম পাওয়া যায় না। পুরো পণ্যের কেনা দাম লোকসান হয় এবং ময়লা ফেলার বাড়তি খরচ লাগে।",
+    courierCostSectionTitle: "রিটার্ন কুরিয়ার ও পরিবহন খরচ",
+    returnFeeCollectedLabel: "কাস্টমারের কাছ থেকে নেওয়া রিটার্ন বা অগ্রিম ফি (৳)",
+    returnCourierCostLabel: "কুরিয়ার কোম্পানিকে দেওয়া রিটার্ন চার্জ (৳)",
+    refundValueLabel: "কাস্টমারকে প্রতি পিসে রিফান্ড ফেরত (৳)",
+    scrapInputBasisLabel: "স্ক্র্যাপের দাম কীভাবে ধরবেন",
+    scrapUnitPriceLabel: "প্রতি পিস স্ক্র্যাপের বিক্রি দাম (৳)",
+    scrapTotalValueLabel: "সব স্ক্র্যাপের মোট বিক্রি দাম (৳)",
+    scrapBasisUnit: "প্রতি পিস হিসেবে",
+    scrapBasisTotal: "এককালীন মোট মূল্য",
+    disposalInputBasisLabel: "ফেলে দেওয়ার খরচ কীভাবে ধরবেন",
+    disposalCostUnitLabel: "প্রতি পিস ফেলতে খরচ (৳)",
+    disposalCostTotalLabel: "সব ফেলতে মোট খরচ (৳)",
+    disposalBasisUnit: "প্রতি পিস হিসেবে",
+    disposalBasisTotal: "এককালীন মোট খরচ",
 
     // Section 6
-    sec6Title: "০৬ · মুনাফা ও বিনিয়োগের রিটার্ন (আরওআই)",
-    kpiNetRevenue: "নিট বিক্রয় আয়",
-    kpiTotalExpenses: "মোট পরিচালন ব্যয়",
-    kpiNetProfit: "নিট লাভ / লোকসান",
-    kpiProfitMargin: "মুনাফার হার",
-    kpiRoi: "বিনিয়োগের রিটার্ন (ROI)",
-    kpiMarkup: "খরচের মার্কআপ",
-    kpiUnitInventoryCost: "একক মজুদ ব্যয়",
-    kpiTargetPrice: "প্রয়োজনীয় বিক্রয়দর",
-    breakdownTitle: "একক ও সামগ্রিক আর্থিক বিবরণী",
-    rowSalesQty: "বিক্রয় লক্ষ্যমাত্রা",
-    rowNetQty: "প্রকৃত কার্যকর বিক্রয় (ফেরত বাদে)",
-    rowSourcingTotal: "পণ্য সংগ্রহের মোট ব্যয়",
-    rowStockingTotal: "গুদাম ও মজুদ ব্যয়",
-    rowSellingTotal: "বিক্রয় ও বিপণন ব্যয়",
-    rowReturnCosts: "পণ্য ফেরত প্রক্রিয়াকরণ ব্যয়",
-    rowRefundAmount: "গ্রাহককে মূল্য ফেরত",
-    rowRecoveredCost: "পুনরুদ্ধারকৃত মজুদ মূল্য",
-    rowLostCost: "অপচয়কৃত অবিক্রয়যোগ্য ক্ষতি",
-    rowCogs: "বিক্রীত পণ্যের প্রকৃত ব্যয় (COGS)",
-    rowTaxes: "কর ও ফি",
-    rowDeliveryIncome: "ডেলিভারি ফি বাবদ আয়",
-    netProfitTotalLabel: "নিট লাভ / (ক্ষতি)",
-    netProfitUnitLabel: "একক প্রতি নিট লাভ",
+    sec6Title: "০৬ · লাভ-লস ও আসল মুনাফা (ROI)",
+    viewResultsAs: "হিসাব দেখতে চান",
+    roiDisplayMode: "দেখানোর নিয়ম",
+    totalAmountMode: "পুরো ব্যাচের মোট",
+    perUnitMode: "প্রতি পিসের হিসেবে",
+    kpiNetRevenue: "আসল বিক্রি আয় (নিট সেলস)",
+    kpiTotalExpenses: "মোট খরচ (সব মিলিয়ে)",
+    kpiGrossProfit: "মোট লাভ (গ্রস লাভ)",
+    kpiGrossMargin: "গ্রস লাভের মার্জিন (%)",
+    kpiOperatingProfit: "চলতি ব্যবসার লাভ (অপারেটিং লাভ)",
+    kpiNetProfit: "আসল নিট লাভ / (লস)",
+    profitBadge: "+ লাভ",
+    lossBadge: "- লস",
+    kpiProfitMargin: "নিট লাভের মার্জিন (%)",
+    kpiRoi: "টাকার ওপর লাভ (ROI %)",
+    netProfitPerUnit: "প্রতি পিসে নিট লাভ",
+    kpiMarkup: "খরচের ওপর মার্কআপ (%)",
+    kpiUnitInventoryCost: "প্রতি পিস হাতে আসার খরচ (ল্যান্ডেড কস্ট)",
+    kpiTargetPrice: "কত দামে বেচলে টার্গেট লাভ হবে",
+    kpiBreakEvenUnits: "লস না হওয়ার বিক্রি (ব্রেক-ইভেন পিস)",
+    kpiBreakEvenRevenue: "লস না হওয়ার বিক্রি (টাকায়)",
+    kpiWorkingCapital: "হাতে নগদ কত টাকা লাগবে",
+    kpiContributionMargin: "কন্ট্রিবিউশন মার্জিন (%)",
+    kpiSafetyMargin: "ঝুঁকিহীন বিক্রির মার্জিন (%)",
+    bepAchieved: "পিস বেচলে কোনো লস হবে না",
+    bepInfinite: "বিক্রি দাম খরচের চেয়েও কম!",
+    breakdownTitle: "লাভ-লস ও খরচের বিস্তারিত হিসাব",
+    secPnlTitle: "লাভ ও ক্ষতির পুরো খতিয়ান",
+    secBepTitle: "লস না হওয়ার হিসাব ও ঝুঁকি (ব্রেক-ইভেন)",
+    secWorkingCapitalTitle: "নগদ টাকা ও মূলধনের প্রয়োজন",
+    rowGrossSales: "তালিকা অনুযায়ী মোট বিক্রি",
+    rowDiscountTotal: "কাস্টমারকে দেওয়া ডিসকাউন্ট বা ছাড়",
+    rowSalesQty: "কত পিস বিক্রির টার্গেট",
+    rowNetQty: "সফলভাবে বিক্রি হওয়া আসল পিস",
+    rowReturnRate: "পণ্য ফেরতের হার",
+    rowSourcingTotal: "পণ্য কেনার মোট খরচ",
+    rowStockingTotal: "গোডাউন ও পণ্য রাখার খরচ",
+    rowSellingTotal: "বিক্রি, বিজ্ঞাপন ও কুরিয়ার খরচ",
+    rowReturnCosts: "রিটার্ন হ্যান্ডলিং ও কুরিয়ার খরচ",
+    rowRefundAmount: "কাস্টমারকে ফেরত দেওয়া টাকা (রিফান্ড)",
+    rowRecoveredCost: "আবার বিক্রি করে উদ্ধার হওয়া টাকা",
+    rowLostCost: "নষ্ট বা অবিক্রিত পণ্যের লোকসান",
+    rowSalvageIncome: "স্ক্র্যাপ বা কম দামে বিক্রির আয়",
+    rowCogs: "পণ্যের আসল কেনা ও রাখার খরচ (COGS)",
+    rowGrossProfit: "মোট লাভ (বিক্রি আয় - COGS)",
+    rowOperatingExpenses: "চলতি সব পরিচালন খরচ (OPEX)",
+    rowOperatingProfit: "চলতি ব্যবসার লাভ (অপারেটিং প্রফিট)",
+    rowTaxes: "সরকারি ট্যাক্স, ভ্যাট ও লাইসেন্স ফি",
+    rowDeliveryIncome: "কাস্টমারের দেওয়া ডেলিভারি চার্জের আয়",
+    rowWorkingCapital: "হাতে মোট নগদ মূলধন প্রয়োজন",
+    rowBreakEvenQty: "লস না হওয়ার নূন্যতম বিক্রি (পিস)",
+    rowBreakEvenRevenue: "লস না হওয়ার নূন্যতম বিক্রি (টাকা)",
+    rowTargetProfit: "যত টাকা নিট লাভ করতে চান",
+    rowRequiredProfitQty: "টার্গেট লাভে পৌঁছাতে বিক্রি করতে হবে (পিস)",
+    rowRequiredProfitRevenue: "টার্গেট লাভে পৌঁছাতে বিক্রি করতে হবে (টাকা)",
+    secTargetProfitTitle: "নির্দিষ্ট লাভ করার টার্গেট প্ল্যানার",
+    secTargetProfitSubtitle: "আপনি কত টাকা লাভ করতে চান তা লিখুন, স্বয়ংক্রিয়ভাবে দেখে নিন কত পিস বা কত টাকার মাল বেচতে হবে",
+    targetProfitLabel: "কত টাকা নিট লাভ করতে চান? (৳)",
+    targetProfitRequiredQty: "কত পিস বিক্রি করতে হবে",
+    targetProfitRequiredRevenue: "মোট কত টাকার বিক্রি লাগবে",
+    targetProfitUnitMargin: "প্রতি পিসে অবশিষ্ট মার্জিন",
+    targetProfitFeasibleNotice: "এই লাভ নিশ্চিত করতে হলে আপনাকে বিক্রি করতে হবে:",
+    targetProfitInfeasibleNotice: "এই লাভে পৌঁছানো সম্ভব না! কারণ প্রতি পিসের বিক্রি দাম খরচের চেয়েও কম বা সমান। বিক্রি দাম বাড়ান অথবা খরচ কমান।",
+    targetProfitAchievedStatus: "দারুণ! আপনার বর্তমান টার্গেটেই এই লাভ হয়ে যাচ্ছে।",
+    targetProfitSurplusLabel: "টার্গেটের চেয়ে বেশি আছে",
+    targetProfitShortfallLabel: "টার্গেটে পৌঁছাতে আরও বিক্রি লাগবে",
+    netProfitTotalLabel: "আসল নিট লাভ / (লস)",
+    netProfitUnitLabel: "প্রতি পিসে নিট লাভ",
+    units: "পিস",
+    returnedAt: "পিস রিটার্ন @",
+    disposedAs: "সমাধান:",
+    netInventoryConsumed: "ব্যবহৃত পণ্যের কেনা দাম",
+    collectedShippingIncome: "কাস্টমারের দেওয়া ডেলিভারি ফি",
 
     // Cost Row Items
-    costHeadName: "ব্যয়ের খাতের নাম",
-    costType: "ব্যয়ের ধরন",
+    costHeadPrefix: "খরচের নাম",
+    costHeadPlaceholder: "যেমন: ট্রাক ভাড়া, কুলি, পলি/বক্স, বিজ্ঞাপন...",
+    costType: "খরচের ধরন",
     typeValue: "৳ নির্দিষ্ট টাকা",
-    typePercent: "% শতকরা হার",
-    amountPerUnit: "একক ব্যয় (৳)",
-    amountTotal: "মোট ব্যয় (৳)",
-    amountRate: "শতকরা হার (%)",
-    calculatedCost: "নির্ধারিত ব্যয়",
-    subtotal: "উপমোট",
-    addCustomCost: "নতুন ব্যয়ের খাত যোগ করুন",
-    itemsCount: "টি খাত",
-    modeNotice: "মোড",
-    percentOfSelling: "বিক্রয়মূল্যের %",
-    percentOfPurchase: "ক্রয়মূল্যের %",
+    typePercent: "% পারসেন্টেজ",
+    amountPerUnit: "প্রতি পিসের খরচ (৳)",
+    amountTotal: "মোট খরচ (৳)",
+    amountRate: "হার (%)",
+    calculatedCost: "হিসাব অনুযায়ী খরচ:",
+    subtotal: "উপমোট:",
+    addCustomCost: "+ নতুন খরচের খাত যোগ করুন",
+    itemsCount: "টি খরচ",
+    itemCountSingular: "টি খরচ",
+    modeNotice: "হিসাবের মোড",
+    percentOfSelling: "বিক্রি দামের %",
+    percentOfPurchase: "কেনা দামের %",
+    perUnitSuffix: "/ পিস",
+    returnedUnitSuffix: "/ ফেরত পিস",
   },
 };
 
@@ -291,7 +441,7 @@ export const resolveCost = (
         isPercent: false,
       };
     } else {
-      const totalAmount = raw;
+      const totalAmount = qty > 0 ? raw : 0;
       const unitAmount = qty > 0 ? totalAmount / qty : 0;
       return {
         unitAmount,
@@ -313,25 +463,25 @@ export const getSourcingGroups = (lang = "EN") => {
     {
       key: "sourcing_local",
       model: "local",
-      title: isBN ? "স্থানীয় ক্রয় সংক্রান্ত ব্যয়" : "Local Sourcing Costs",
+      title: isBN ? "দেশি বাজার থেকে কেনা" : "Local Sourcing Costs",
       description: isBN
-        ? "পরিবহন, লোডিং লেবার, হাট খাজনা, স্থানীয় ব্রোকারেজ ও স্যাম্পলিং।"
+        ? "ট্রাক ও পিকআপ ভাড়া, কুলি খরচ, হাট-বাজারের খাজনা, দালাল বা ব্রোকার কমিশন ও কোয়ালিটি চেক।"
         : "Transport, labor, market tolls, local commission, and quality sampling.",
     },
     {
       key: "sourcing_import",
       model: "import",
-      title: isBN ? "আমদানি সংক্রান্ত শুল্ক ও ব্যয়" : "Import Sourcing Costs",
+      title: isBN ? "বিদেশ থেকে আমদানি সংক্রান্ত খরচ" : "Import Sourcing Costs",
       description: isBN
-        ? "এলসি কমিশন, কাস্টমস শুল্ক, পোর্ট চার্জ, সিঅ্যান্ডএফ এজেন্ট ও শিপিং লাইন ফি।"
+        ? "এলসি কমিশন, কাস্টমস ট্যাক্স ও ডিউটি, পোর্ট ডেমারেজ চার্জ, সিঅ্যান্ডএফ এজেন্ট বিল ও শিপিং কন্টেইনার ভাড়া।"
         : "LC opening, customs duty, port charges, C&F agent, shipping freight, and inland transport.",
     },
     {
       key: "sourcing_manufacture",
       model: "manufacture",
-      title: isBN ? "উৎপাদন ও কারখানা ব্যয়" : "Manufacturing Costs",
+      title: isBN ? "কারখানায় তৈরি ও উৎপাদনের খরচ" : "Manufacturing Costs",
       description: isBN
-        ? "শ্রমিক মজুরি, বিদ্যুৎ/গ্যাস, যন্ত্রপাতি অবচয় ও রক্ষণাবেক্ষণ, এবং কারখানা ওভারহেড।"
+        ? "কারিগর বা শ্রমিকের মজুরি, বিদ্যুৎ-গ্যাস বিল, মেশিনের ক্ষয় ও মেরামত, প্রাথমিক প্যাকেট ও কারখানার অন্যান্য খরচ।"
         : "Direct wages, factory electricity/gas, machine maintenance, packaging, and overhead.",
     },
   ];
@@ -343,25 +493,33 @@ export const getStockingGroups = (lang = "EN") => {
     {
       key: "stocking_own",
       model: "own",
-      title: isBN ? "নিজস্ব গুদাম পরিচালন ব্যয়" : "Own Warehouse Costs",
+      title: isBN ? "নিজের গোডাউনের খরচ" : "Own Warehouse Costs",
       description: isBN
-        ? "হোল্ডিং ট্যাক্স, গুদাম কর্মী বেতন, নিরাপত্তা প্রহরী, রক্ষণাবেক্ষণ ও অবচয় প্রভিশন।"
+        ? "পৌরসভার ট্যাক্স, গোডাউনের কর্মচারী ও দারোয়ানের বেতন, বিদ্যুৎ বিল ও মালের ক্ষতি বাবদ বরাদ্দ।"
         : "Property taxes, staff salary, security guard, maintenance, utilities, and damage reserves.",
     },
     {
       key: "stocking_rent",
       model: "rent",
-      title: isBN ? "ভাড়া গুদাম সংক্রান্ত ব্যয়" : "Rented Warehouse Costs",
+      title: isBN ? "ভাড়া গোডাউনের খরচ" : "Rented Warehouse Costs",
       description: isBN
-        ? "মাসিক গুদাম ভাড়া, মাল ওঠানামা লেবার, সার্ভিস চার্জ ও অগ্নি বীমা।"
+        ? "প্রতি মাসের গোডাউন ভাড়া, মাল ওঠানো-নামানোর কুলি মজুরি, সার্ভিস চার্জ ও বিদ্যুৎ বিল।"
         : "Monthly warehouse lease, in-out handling labor, service charges, and fire insurance.",
+    },
+    {
+      key: "stocking_3pl",
+      model: "3pl",
+      title: isBN ? "দারাজ / স্টেডফাস্ট ৩পিএল ফুলফিলমেন্ট" : "3PL / Marketplace Fulfillment",
+      description: isBN
+        ? "দারাজ মল বা ওয়্যারহাউস সেলফ ভাড়া, পিক-প্যাক ও মোড়কজাত লেবার, বারকোড স্টিকার চার্জ।"
+        : "Marketplace storage fees (FBD/Daraz Mall), pick & pack handling, barcode tagging, and 3PL fees.",
     },
     {
       key: "stocking_spot",
       model: "spot",
-      title: isBN ? "অন-স্পট সরাসরি ডেলিভারি ব্যয়" : "On-spot / Cross-docking Costs",
+      title: isBN ? "গোডাউন ছাড়া সরাসরি ডেলিভারি খরচ" : "On-spot / Cross-docking Costs",
       description: isBN
-        ? "সরাসরি স্থানান্তর লেবার, অস্থায়ী পিকআপ/ভ্যান ডেমারেজ ও জরুরি সর্টিং।"
+        ? "গাড়ি থেকে সরাসরি ডেলিভারির কুলি খরচ, পিকআপ ভ্যান অপেক্ষার ভাড়া ও প্যাকেট চেক খরচ।"
         : "Direct transfer labor, temporary holding van/pickup demurrage, and urgent sorting.",
     },
   ];
@@ -373,17 +531,17 @@ export const getSellingGroups = (lang = "EN") => {
     {
       key: "selling_retail",
       model: "retail",
-      title: isBN ? "খুচরা ও অনলাইন বিক্রয় খরচ" : "Retail & E-commerce Selling Costs",
+      title: isBN ? "খুচরা ও অনলাইন বিক্রির খরচ" : "Retail & E-commerce Selling Costs",
       description: isBN
-        ? "কুরিয়ার চার্জ (পাঠাও/স্টেডফাস্ট), এমএফএস গেটওয়ে ফি, শপিং ব্যাগ ও ডিজিটাল বিজ্ঞাপন।"
+        ? "কুরিয়ার চার্জ (পাঠাও/স্টেডফাস্ট), বিকাশ/নগদ পেমেন্ট ফি, শপিং ব্যাগ ও বক্স, ফেসবুক-গুগল অ্যাড বুস্টিং।"
         : "Courier delivery (Steadfast/Pathao), MFS payment gateway fee, bags, and digital ad boosts.",
     },
     {
       key: "selling_bulk",
       model: "bulk",
-      title: isBN ? "পাইকারি ও ডিলার চ্যানেল খরচ" : "Bulk & Wholesale Distribution Costs",
+      title: isBN ? "পাইকারি ও ডিলার বিক্রির খরচ" : "Bulk & Wholesale Distribution Costs",
       description: isBN
-        ? "ডিলার কমিশন, ফুল ট্রাক আন্তঃজেলা পরিবহন, লোডিং লেবার ও বিক্রয় প্রতিনিধি (SR) টিএ/ডিএ।"
+        ? "ডিলারের কমিশন, বড় ট্রাক ভাড়া, ট্রাকে মাল ওঠানোর কুলি মজুরি, সেলস রিপ্রেজেন্টেটিভ (SR) খরচ ও বাকির ঝুঁকি।"
         : "Dealer commission, full truck freight, loading labor, field sales officer (SR) TA/DA.",
     },
   ];
@@ -393,9 +551,9 @@ export const getReturnGroup = (lang = "EN") => {
   const isBN = lang === "BN";
   return {
     key: "returns",
-    title: isBN ? "পণ্য ফেরত সংক্রান্ত খরচ" : "Return Handling & Reprocessing Costs",
+    title: isBN ? "রিটার্ন হ্যান্ডলিং ও নতুন প্যাকেটের খরচ" : "Return Handling & Reprocessing Costs",
     description: isBN
-      ? "রিভার্স কুরিয়ার পিকআপ ফি, পণ্যের গুণমান পরীক্ষা, বাছাই, পরিষ্কার ও পুনরায় মোড়কীকরণ।"
+      ? "কুরিয়ারের রিটার্ন পিকআপ চার্জ, রিটার্ন মালের ত্রুটি পরীক্ষা ও পরিষ্কার করা, নতুন বক্স ও পলি প্যাকেট খরচ।"
       : "Reverse courier pickup, quality inspection, sorting, cleaning, and box repacking.",
   };
 };
@@ -419,13 +577,22 @@ export const getDefaultBDDataset = (mode = "total_qty", lang = "EN") => {
       retail_selling_price: 1150,
       delivery_income: 12000,
       returned_qty: 25,
-      salvage_value: 500,
+      return_fee_collected: 1500,
+      return_courier_cost: 2500,
+      refund_value_per_unit: 0,
+      scrap_recovery_basis: "per_unit",
+      scrap_value_per_unit: 400,
+      scrap_recovery_total: 10000,
+      disposal_cost_basis: "per_unit",
+      disposal_cost_per_unit: 50,
+      disposal_cost_total: 1250,
+      target_profit_amount: 50000,
     },
     salesTargetDays: "monthly",
     productSource: "local",
     stockingModel: "rent",
     salesModel: "retail",
-    returnDisposition: "resell",
+    returnDisposition: "resell_repack",
     bulkPrices: [
       {
         id: crypto.randomUUID(),
@@ -435,7 +602,7 @@ export const getDefaultBDDataset = (mode = "total_qty", lang = "EN") => {
       },
       {
         id: crypto.randomUUID(),
-        name: isBN ? "জেলা ডিলার ও আউটস্টেশন নেটওয়ার্ক" : "District Dealers Network",
+        name: isBN ? "জেলা ডিলার ও মফস্বল নেটওয়ার্ক" : "District Dealers Network",
         price: "800",
         mix: "40",
       },
@@ -444,11 +611,11 @@ export const getDefaultBDDataset = (mode = "total_qty", lang = "EN") => {
       // SOURCING GROUPS
       sourcing_local: isBN
         ? [
-            createCost("আন্তঃজেলা ট্রাক ও পরিবহন ভাড়া", isPerUnit ? 5.5 : 5500, "value"),
-            createCost("লোডিং ও আনলোডিং কুলি মজুরি", isPerUnit ? 1.8 : 1800, "value"),
-            createCost("হাট ও ঘাট খাজনা", isPerUnit ? 0.8 : 800, "value"),
-            createCost("স্থানীয় ক্রয় ও ব্রোকারেজ কমিশন", 2.0, "percent"),
-            createCost("কোয়ালিটি চেকিং ও স্যাম্পলিং", isPerUnit ? 1.2 : 1200, "value"),
+            createCost("আন্তঃজেলা ট্রাক ও পিকআপ ভাড়া", isPerUnit ? 5.5 : 5500, "value"),
+            createCost("মাল ওঠানো-নামানোর কুলি মজুরি", isPerUnit ? 1.8 : 1800, "value"),
+            createCost("হাট-বাজারের খাজনা ও ঘাট খরচ", isPerUnit ? 0.8 : 800, "value"),
+            createCost("স্থানীয় কেনাকাটা বা ব্রোকার কমিশন", 2.0, "percent"),
+            createCost("মালের কোয়ালিটি চেক ও স্যাম্পলিং", isPerUnit ? 1.2 : 1200, "value"),
           ]
         : [
             createCost("Truck & Inter-District Freight", isPerUnit ? 5.5 : 5500, "value"),
@@ -461,13 +628,13 @@ export const getDefaultBDDataset = (mode = "total_qty", lang = "EN") => {
       sourcing_import: isBN
         ? [
             createCost("এলসি কমিশন ও ব্যাংক চার্জ", 1.5, "percent"),
-            createCost("কাস্টমস শুল্ক ও সম্পূরক শুল্ক", 25.0, "percent"),
-            createCost("অগ্রিম আয়কর (AIT) ও এটি (AT)", 5.0, "percent"),
-            createCost("সিপিএ পোর্ট ও ডেমারেজ চার্জ", isPerUnit ? 9.5 : 9500, "value"),
-            createCost("সিঅ্যান্ডএফ বিল ও হ্যান্ডলিং ফি", 1.0, "percent"),
-            createCost("শিপিং লাইন ফি ও কন্টেইনার চার্জ", isPerUnit ? 14.0 : 14000, "value"),
-            createCost("মেরিন ইন্স্যুরেন্স প্রিমিয়াম", 0.75, "percent"),
-            createCost("বন্দর হতে গোডাউন ট্রেইলার ভাড়া", isPerUnit ? 16.0 : 16000, "value"),
+            createCost("কাস্টমস ট্যাক্স ও সম্পূরক শুল্ক", 25.0, "percent"),
+            createCost("অগ্রিম আয়কর (AIT ও AT)", 5.0, "percent"),
+            createCost("চট্টগ্রাম পোর্ট ও ডেমারেজ চার্জ", isPerUnit ? 9.5 : 9500, "value"),
+            createCost("সিঅ্যান্ডএফ এজেন্টের বিল ও খরচ", 1.0, "percent"),
+            createCost("শিপিং লাইন ও কন্টেইনার চার্জ", isPerUnit ? 14.0 : 14000, "value"),
+            createCost("মেরিন ইন্স্যুরেন্স প্রিমিয়াম", 0.75, "percent"),
+            createCost("বন্দর থেকে গোডাউন ট্রেইলার ভাড়া", isPerUnit ? 16.0 : 16000, "value"),
           ]
         : [
             createCost("LC Margin & Bank Commission", 1.5, "percent"),
@@ -482,12 +649,12 @@ export const getDefaultBDDataset = (mode = "total_qty", lang = "EN") => {
 
       sourcing_manufacture: isBN
         ? [
-            createCost("কারখানা শ্রমিকদের সরাসরি মজুরি", isPerUnit ? 28.0 : 28000, "value"),
-            createCost("বিদ্যুৎ, গ্যাস ও ডিজেল জ্বালানি", isPerUnit ? 15.0 : 15000, "value"),
-            createCost("যন্ত্রপাতি অবচয় ও মেরামত", 2.5, "percent"),
-            createCost("প্রাথমিক মোড়কীকরণ ও পলি", isPerUnit ? 8.5 : 8500, "value"),
-            createCost("সুপারভাইজার বেতন ও কারখানা ওভারহেড", isPerUnit ? 7.5 : 7500, "value"),
-            createCost("ওয়েস্টেজ ও স্ক্র্যাপ প্রভিশন", 2.0, "percent"),
+            createCost("কারখানা শ্রমিক ও কারিগরের সরাসরি মজুরি", isPerUnit ? 28.0 : 28000, "value"),
+            createCost("বিদ্যুৎ, গ্যাস ও জেনারেটর ডিজেল বিল", isPerUnit ? 15.0 : 15000, "value"),
+            createCost("মেশিনারিজ অবচয় ও সার্ভিসিং", 2.5, "percent"),
+            createCost("প্রাথমিক কার্টন ও পলি প্যাকেট", isPerUnit ? 8.5 : 8500, "value"),
+            createCost("সুপারভাইজার বেতন ও কারখানার খরচ", isPerUnit ? 7.5 : 7500, "value"),
+            createCost("ওয়েস্টেজ বা কাঁচামাল অপচয় বরাদ্দ", 2.0, "percent"),
           ]
         : [
             createCost("Direct Factory Labor Wages", isPerUnit ? 28.0 : 28000, "value"),
@@ -501,11 +668,11 @@ export const getDefaultBDDataset = (mode = "total_qty", lang = "EN") => {
       // STOCKING GROUPS
       stocking_own: isBN
         ? [
-            createCost("পৌরসভা হোল্ডিং ট্যাক্স ও মেরামত", isPerUnit ? 3.0 : 3000, "value"),
-            createCost("গুদাম স্টাফ ও নাইটগার্ড বেতন", isPerUnit ? 14.0 : 14000, "value"),
-            createCost("গুদাম বিদ্যুৎ ও পানির বিল", isPerUnit ? 3.5 : 3500, "value"),
-            createCost("ক্ষয়ক্ষতি ও মেয়াদোত্তীর্ণ প্রভিশন", 1.5, "percent"),
-            createCost("কীটপতঙ্গ নিয়ন্ত্রণ ও ওষুধ স্প্রে", isPerUnit ? 1.0 : 1000, "value"),
+            createCost("পৌরসভার ট্যাক্স ও গোডাউন মেরামত", isPerUnit ? 3.0 : 3000, "value"),
+            createCost("গোডাউন স্টাফ ও নাইটগার্ডের বেতন", isPerUnit ? 14.0 : 14000, "value"),
+            createCost("গোডাউনের বিদ্যুৎ ও পানির বিল", isPerUnit ? 3.5 : 3500, "value"),
+            createCost("মালের ক্ষতি ও মেয়াদোত্তীর্ণ বরাদ্দ", 1.5, "percent"),
+            createCost("কীটপতঙ্গ রোধ ও ওষুধ স্প্রে", isPerUnit ? 1.0 : 1000, "value"),
           ]
         : [
             createCost("Holding Tax & Property Maintenance", isPerUnit ? 3.0 : 3000, "value"),
@@ -517,10 +684,10 @@ export const getDefaultBDDataset = (mode = "total_qty", lang = "EN") => {
 
       stocking_rent: isBN
         ? [
-            createCost("মাসিক গোডাউন ভাড়া", isPerUnit ? 18.0 : 18000, "value"),
-            createCost("মালামাল ওঠা-নামা ও সাজানো লেবার", isPerUnit ? 4.0 : 4000, "value"),
-            createCost("সার্ভিস চার্জ ও সিকিউরিটি", isPerUnit ? 2.5 : 2500, "value"),
-            createCost("গোডাউন বিদ্যুৎ বিল", isPerUnit ? 2.2 : 2200, "value"),
+            createCost("প্রতি মাসের গোডাউন ভাড়া", isPerUnit ? 18.0 : 18000, "value"),
+            createCost("মালামাল ওঠা-নামা ও সাজানোর কুলি খরচ", isPerUnit ? 4.0 : 4000, "value"),
+            createCost("সার্ভিস চার্জ ও দারোয়ান খরচ", isPerUnit ? 2.5 : 2500, "value"),
+            createCost("গোডাউনের বিদ্যুৎ বিল", isPerUnit ? 2.2 : 2200, "value"),
             createCost("অগ্নি ও সাধারণ বীমা", 0.5, "percent"),
           ]
         : [
@@ -531,11 +698,25 @@ export const getDefaultBDDataset = (mode = "total_qty", lang = "EN") => {
             createCost("Fire & Burglary Insurance", 0.5, "percent"),
           ],
 
+      stocking_3pl: isBN
+        ? [
+            createCost("ওয়্যারহাউসের তাক বা সেলফ ভাড়া", isPerUnit ? 4.5 : 4500, "value"),
+            createCost("অর্ডার পিকিং, প্যাকিং ও হ্যান্ডলিং চার্জ", isPerUnit ? 6.0 : 6000, "value"),
+            createCost("বারকোড স্টিকার ও লেবেলিং চার্জ", isPerUnit ? 1.5 : 1500, "value"),
+            createCost("ইনভেন্টরি ইন-বাউন্ড প্রসেসিং ফি", isPerUnit ? 2.0 : 2000, "value"),
+          ]
+        : [
+            createCost("Warehouse Shelf Storage Fee", isPerUnit ? 4.5 : 4500, "value"),
+            createCost("Pick, Pack & Order Handling", isPerUnit ? 6.0 : 6000, "value"),
+            createCost("Barcode & Packaging Labeling", isPerUnit ? 1.5 : 1500, "value"),
+            createCost("Inventory Inbound Processing", isPerUnit ? 2.0 : 2000, "value"),
+          ],
+
       stocking_spot: isBN
         ? [
             createCost("সরাসরি স্থানান্তর কুলি খরচ", isPerUnit ? 2.5 : 2500, "value"),
-            createCost("অস্থায়ী পিকআপ ভ্যান হোল্ডিং ফি", isPerUnit ? 3.5 : 3500, "value"),
-            createCost("জরুরি সর্টিং ও রি-টেপিং", isPerUnit ? 1.5 : 1500, "value"),
+            createCost("পিকআপ ভ্যান অপেক্ষার ভাড়া", isPerUnit ? 3.5 : 3500, "value"),
+            createCost("জরুরি সর্টিং ও কার্টন রি-টেপিং", isPerUnit ? 1.5 : 1500, "value"),
           ]
         : [
             createCost("Cross-Docking Transfer Labor", isPerUnit ? 2.5 : 2500, "value"),
@@ -546,10 +727,10 @@ export const getDefaultBDDataset = (mode = "total_qty", lang = "EN") => {
       // SELLING GROUPS
       selling_retail: isBN
         ? [
-            createCost("কুরিয়ার ডেলিভারি চার্জ (পাঠাও/স্টেডফাস্ট)", isPerUnit ? 7.5 : 7500, "value"),
-            createCost("এমএফএস গেটওয়ে চার্জ (বিকাশ/নগদ ১.৫%)", 1.5, "percent"),
-            createCost("শপিং ব্যাগ ও মোড়ক বক্স", isPerUnit ? 2.5 : 2500, "value"),
-            createCost("ডিজিটাল বুস্টিং ও বিজ্ঞাপন", isPerUnit ? 9.0 : 9000, "value"),
+            createCost("কুরিয়ার ডেলিভারি চার্জ (পাঠাও / স্টেডফাস্ট)", isPerUnit ? 7.5 : 7500, "value"),
+            createCost("বিকাশ ও নগদ পেমেন্ট গেটওয়ে ফি (১.৫%)", 1.5, "percent"),
+            createCost("শপিং ব্যাগ ও ডেলিভারি বক্স", isPerUnit ? 2.5 : 2500, "value"),
+            createCost("ফেসবুক ও গুগল অ্যাড বুস্টিং", isPerUnit ? 9.0 : 9000, "value"),
             createCost("সেলস এক্সিকিউটিভ কমিশন", 2.0, "percent"),
           ]
         : [
@@ -562,10 +743,10 @@ export const getDefaultBDDataset = (mode = "total_qty", lang = "EN") => {
 
       selling_bulk: isBN
         ? [
-            createCost("ডিলার কমিশন ও ট্রেড অফার", 5.0, "percent"),
-            createCost("আন্তঃজেলা ফুল ট্রাক ভাড়া", isPerUnit ? 14.0 : 14000, "value"),
-            createCost("ডিলারের ট্রাকে মাল লোডিং লেবার", isPerUnit ? 3.5 : 3500, "value"),
-            createCost("বিক্রয় প্রতিনিধি (SR) টিএ/ডিএ", 2.0, "percent"),
+            createCost("ডিলার কমিশন ও বিশেষ ছাড়", 5.0, "percent"),
+            createCost("আন্তঃজেলা বড় ট্রাক ভাড়া", isPerUnit ? 14.0 : 14000, "value"),
+            createCost("ডিলারের ট্রাকে মাল লোডিং কুলি খরচ", isPerUnit ? 3.5 : 3500, "value"),
+            createCost("সেলস অফিসার (SR) যাতায়াত ও টিএ/ডিএ", 2.0, "percent"),
             createCost("বাকির ঝুঁকি ও ব্যাড ডেট প্রভিশন", 1.0, "percent"),
           ]
         : [
@@ -579,9 +760,9 @@ export const getDefaultBDDataset = (mode = "total_qty", lang = "EN") => {
       // RETURNS
       returns: isBN
         ? [
-            createCost("রিভার্স কুরিয়ার ডেলিভারি ফি", isPerUnit ? 2.8 : 2800, "value"),
-            createCost("টেস্টিং, সর্টিং ও পরিষ্কারকরণ লেবার", isPerUnit ? 1.2 : 1200, "value"),
-            createCost("নতুন বক্স ও প্যাকিং প্রতিস্থাপন", isPerUnit ? 1.8 : 1800, "value"),
+            createCost("রিটার্ন কুরিয়ার পিকআপ ডেলিভারি চার্জ", isPerUnit ? 2.8 : 2800, "value"),
+            createCost("রিটার্ন মাল পরীক্ষা, বাছাই ও পরিষ্কার লেবার", isPerUnit ? 1.2 : 1200, "value"),
+            createCost("নতুন বক্স ও পলি প্যাকেট লাগানো", isPerUnit ? 1.8 : 1800, "value"),
           ]
         : [
             createCost("Reverse Courier Pickup Fee", isPerUnit ? 2.8 : 2800, "value"),
@@ -641,6 +822,20 @@ const useUnifiedProfitROI = () => {
 
   // Bulk price levels
   const [bulkPrices, setBulkPrices] = useState(defaults.bulkPrices);
+
+  // Output time horizon for Section 06 display (null = same as input)
+  const [outputTimeHorizon, setOutputTimeHorizon] = useState(null);
+
+  // ROI view mode: 'total' or 'per_unit'
+  const [roiViewMode, setRoiViewMode] = useState("total");
+
+  // Helper to convert amounts between time horizons
+  const HORIZON_DAYS = { daily: 1, weekly: 7, monthly: 30, "half-yearly": 182, yearly: 365 };
+  const getHorizonMultiplier = useCallback((from, to) => {
+    const fromDays = HORIZON_DAYS[from] || 30;
+    const toDays = HORIZON_DAYS[to] || 30;
+    return toDays / fromDays;
+  }, []);
 
   // --------------------------------------------------
   // Active Group Key Resolvers
@@ -814,8 +1009,10 @@ const useUnifiedProfitROI = () => {
           : 0;
     }
 
-    const sellingPriceAfterDiscount =
-      averageSellingPrice * (1 - discountPercent / 100);
+    // 1. Revenues & Discounts
+    const sellingPriceAfterDiscount = averageSellingPrice * (1 - discountPercent / 100);
+    const grossSalesBeforeDiscount = qty * averageSellingPrice;
+    const discountAmount = grossSalesBeforeDiscount * (discountPercent / 100);
     const grossSales = qty * sellingPriceAfterDiscount;
 
     const resolverContext = {
@@ -825,6 +1022,7 @@ const useUnifiedProfitROI = () => {
       sellingPrice: sellingPriceAfterDiscount,
     };
 
+    // 2. Sourcing Costs
     const activeSrcGroupKey = `sourcing_${productSource}`;
     const sourcingItems = costs[activeSrcGroupKey] || [];
     const sourcingExtra = sourcingItems.reduce((sum, item) => {
@@ -836,7 +1034,9 @@ const useUnifiedProfitROI = () => {
     }, 0);
     const sourcingBase = qty * unitCost;
     const sourcingTotal = sourcingBase + sourcingExtra;
+    const unitSourcingCost = qty > 0 ? sourcingTotal / qty : 0;
 
+    // 3. Stocking Costs
     const activeStkGroupKey = `stocking_${stockingModel}`;
     const stockingItems = costs[activeStkGroupKey] || [];
     const stockingTotal = stockingItems.reduce((sum, item) => {
@@ -846,24 +1046,97 @@ const useUnifiedProfitROI = () => {
       });
       return sum + res.totalAmount;
     }, 0);
+    const unitStockingCost = qty > 0 ? stockingTotal / qty : 0;
 
+    // 4. Inventory Cost
     const inventoryCost = sourcingTotal + stockingTotal;
     const unitInventoryCost = qty > 0 ? inventoryCost / qty : 0;
 
+    // 5. Returns & Real Solutions Disposition Economics
     const returnedQty = Math.min(qty, number(formData?.returned_qty));
-    const refundAmount = returnedQty * sellingPriceAfterDiscount;
-    const recoverable =
-      returnDisposition === "resell" || returnDisposition === "repack";
-    const recoveredInventoryCost = recoverable
-      ? returnedQty * unitInventoryCost
-      : 0;
-    const lostInventoryCost = recoverable ? 0 : returnedQty * unitInventoryCost;
+    const refundPerUnit = number(formData?.refund_value_per_unit);
+    const refundAmount = returnedQty * refundPerUnit;
 
-    const cogs = inventoryCost - recoveredInventoryCost;
+    // Courier logistics on returns
+    const returnFeeCollected = number(formData?.return_fee_collected); // collected from customer
+    const returnCourierCost = number(formData?.return_courier_cost); // paid to courier company
 
+    let effectiveSoldQty = 0;
+    let regularSalesRevenue = 0;
+    let scrapSalesRevenue = 0;
+    let disposalCostTotal = 0;
+    let recoveredInventoryCost = 0;
+    let lostInventoryCost = 0;
+    let netScrapLoss = 0;
+
+    const isResell =
+      returnDisposition === "resell_repack" ||
+      returnDisposition === "resell" ||
+      returnDisposition === "repack";
+
+    if (isResell) {
+      // 1. RESELL / REPACK:
+      // Product is repaired/repacked and sold!
+      // Returned qty is included into total sold qty.
+      effectiveSoldQty = qty;
+      regularSalesRevenue = qty * sellingPriceAfterDiscount;
+      recoveredInventoryCost = returnedQty * unitInventoryCost;
+      lostInventoryCost = 0;
+    } else if (returnDisposition === "scrap") {
+      // 2. SCRAP:
+      // Sold lower than actual sales prices by unit or total amount
+      effectiveSoldQty = Math.max(0, qty - returnedQty);
+      regularSalesRevenue = effectiveSoldQty * sellingPriceAfterDiscount;
+
+      const scrapBasis = formData?.scrap_recovery_basis || "per_unit";
+      if (scrapBasis === "per_unit") {
+        const scrapUnit = number(formData?.scrap_value_per_unit);
+        scrapSalesRevenue = returnedQty * scrapUnit;
+      } else {
+        scrapSalesRevenue = number(formData?.scrap_recovery_total);
+      }
+
+      const scrappedInventoryCost = returnedQty * unitInventoryCost;
+      netScrapLoss = Math.max(0, scrappedInventoryCost - scrapSalesRevenue);
+      lostInventoryCost = scrappedInventoryCost;
+      recoveredInventoryCost = 0;
+    } else {
+      // 3. DISPOSE:
+      // Zero sales value! Regular sold qty = qty - returnedQty
+      effectiveSoldQty = Math.max(0, qty - returnedQty);
+      regularSalesRevenue = effectiveSoldQty * sellingPriceAfterDiscount;
+      scrapSalesRevenue = 0;
+
+      const dispBasis = formData?.disposal_cost_basis || "per_unit";
+      if (dispBasis === "per_unit") {
+        const dispUnit = number(formData?.disposal_cost_per_unit);
+        disposalCostTotal = returnedQty * dispUnit;
+      } else {
+        disposalCostTotal = number(formData?.disposal_cost_total);
+      }
+
+      lostInventoryCost = returnedQty * unitInventoryCost;
+      recoveredInventoryCost = 0;
+    }
+
+    // Cost of Goods Sold (COGS)
+    let cogs = 0;
+    if (isResell) {
+      cogs = inventoryCost; // Full batch sold as finished goods
+    } else if (returnDisposition === "scrap") {
+      cogs = Math.max(0, inventoryCost - scrapSalesRevenue);
+    } else {
+      cogs = inventoryCost; // Full inventory consumed (regular sold + disposed write-off)
+    }
+
+    // 6. Selling Costs & Percentage Rate Sum
     const activeSellGroupKey = `selling_${salesModel}`;
     const sellingItems = costs[activeSellGroupKey] || [];
+    let sellingPercentageSum = 0;
     const sellingTotal = sellingItems.reduce((sum, item) => {
+      if (item.type === "percent") {
+        sellingPercentageSum += number(item.amount);
+      }
       const res = resolveCost(item, {
         ...resolverContext,
         stageType: "selling",
@@ -871,69 +1144,169 @@ const useUnifiedProfitROI = () => {
       return sum + res.totalAmount;
     }, 0);
 
+    // 7. Return Processing Costs (Only incurred on returned units!)
     const returnItems = costs.returns || [];
-    const returnTotal = returnItems.reduce((sum, item) => {
-      const res = resolveCost(item, {
-        ...resolverContext,
-        stageType: "returns",
-        salesQty: returnedQty > 0 ? returnedQty : qty,
-      });
-      return sum + res.totalAmount;
-    }, 0);
+    const returnProcessingCost = returnedQty > 0
+      ? returnItems.reduce((sum, item) => {
+          const res = resolveCost(item, {
+            ...resolverContext,
+            stageType: "returns",
+            salesQty: returnedQty,
+          });
+          return sum + res.totalAmount;
+        }, 0)
+      : 0;
 
+    // Total return expenses = processing + courier return paid + disposal fee
+    const returnTotal = returnProcessingCost + returnCourierCost + disposalCostTotal;
+
+    // 8. Incomes & Total Net Revenue
     const deliveryIncome = number(formData?.delivery_income);
-    const netRevenue = grossSales - refundAmount + deliveryIncome;
+    const netRevenue =
+      regularSalesRevenue +
+      scrapSalesRevenue +
+      deliveryIncome +
+      returnFeeCollected -
+      refundAmount;
 
-    const totalExpenses = cogs + sellingTotal + returnTotal + otherTax;
+    // 9. Operating Expenses (OPEX) & Total Expenses
+    const opex = sellingTotal + returnTotal + otherTax;
+    const totalExpenses = cogs + opex;
 
+    // 10. Profits & Margins
+    const grossProfit = netRevenue - cogs;
+    const grossMargin = netRevenue > 0 ? (grossProfit / netRevenue) * 100 : 0;
+
+    const operatingProfit = grossProfit - sellingTotal - returnTotal;
     const netProfit = netRevenue - totalExpenses;
     const unitNetProfit = qty > 0 ? netProfit / qty : 0;
 
     const profitMargin = netRevenue > 0 ? (netProfit / netRevenue) * 100 : 0;
     const markup = totalExpenses > 0 ? (netProfit / totalExpenses) * 100 : 0;
-    const roi = totalExpenses > 0 ? (netProfit / totalExpenses) * 100 : 0;
 
+    // Working Capital Outlay
+    const workingCapital = sourcingTotal + stockingTotal + sellingTotal + returnTotal + otherTax;
+    const roi = workingCapital > 0 ? (netProfit / workingCapital) * 100 : 0;
+
+    // 11. Target Selling Price Calculation (Accounts for Variable % Selling Fees)
+    const variableSellingTotal = (sellingPercentageSum / 100) * sellingPriceAfterDiscount * qty;
+    const fixedSellingTotal = Math.max(0, sellingTotal - variableSellingTotal);
+    const fixedUnitCost = unitInventoryCost +
+      (fixedSellingTotal + returnTotal + otherTax) / Math.max(qty, 1);
+
+    const marginAndFeePercent = (targetMargin + sellingPercentageSum) / 100;
     const requiredPrice =
-      targetMargin < 100 && targetMargin >= 0
-        ? (unitInventoryCost +
-            (sellingTotal + returnTotal + otherTax) / Math.max(qty, 1)) /
-          (1 - targetMargin / 100) /
+      marginAndFeePercent < 1 && targetMargin >= 0
+        ? (fixedUnitCost / Math.max(0.0001, 1 - marginAndFeePercent)) /
           Math.max(0.000001, 1 - discountPercent / 100)
         : 0;
 
+    // 12. Break-Even Analysis & Net Fixed Burden
+    const unitVariableCost = unitInventoryCost + ((sellingPercentageSum / 100) * sellingPriceAfterDiscount);
+    const unitContributionMargin = sellingPriceAfterDiscount - unitVariableCost;
+    const contributionMarginPercent = sellingPriceAfterDiscount > 0
+      ? (unitContributionMargin / sellingPriceAfterDiscount) * 100
+      : 0;
+
+    const fixedCostsTotal = fixedSellingTotal + returnTotal + otherTax;
+    const fixedIncomeOffsets = deliveryIncome + returnFeeCollected - refundAmount + scrapSalesRevenue;
+    const netFixedBurden = Math.max(0, fixedCostsTotal - fixedIncomeOffsets);
+
+    const breakEvenQty = unitContributionMargin > 0
+      ? Math.ceil(netFixedBurden / unitContributionMargin)
+      : null;
+
+    const breakEvenRevenue = breakEvenQty !== null ? breakEvenQty * sellingPriceAfterDiscount : 0;
+    const safetyMarginPercent = breakEvenQty !== null && qty > 0
+      ? Math.max(0, ((qty - breakEvenQty) / qty) * 100)
+      : 0;
+
+    // 13. Target Profit Reverse Calculation (Quantity & Amount Required)
+    const targetProfit = number(formData?.target_profit_amount);
+    const requiredProfitQty = unitContributionMargin > 0
+      ? Math.ceil((targetProfit + netFixedBurden) / unitContributionMargin)
+      : null;
+
+    const requiredProfitRevenue = requiredProfitQty !== null
+      ? requiredProfitQty * sellingPriceAfterDiscount
+      : 0;
+
+    const targetProfitQtyDiff = requiredProfitQty !== null
+      ? requiredProfitQty - qty
+      : 0;
+
+    const isTargetProfitAchieved = requiredProfitQty !== null
+      ? qty >= requiredProfitQty
+      : false;
+
+    const returnRatePercent = qty > 0 ? (returnedQty / qty) * 100 : 0;
+
     return {
       qty,
+      effectiveSoldQty,
+      netQuantity: effectiveSoldQty,
+      returnedQty,
+      returnRatePercent,
+      averageSellingPrice,
+      sellingPriceAfterDiscount,
+      grossSalesBeforeDiscount,
+      discountAmount,
+      grossSales,
+      regularSalesRevenue,
+      scrapSalesRevenue,
+      netScrapLoss,
+      disposalCostTotal,
+      returnFeeCollected,
+      returnCourierCost,
+      returnProcessingCost,
+      refundAmount,
+      deliveryIncome,
+      salvageRecovery: scrapSalesRevenue,
+      netRevenue,
       sourcingBase,
       sourcingExtra,
       sourcingTotal,
+      unitSourcingCost,
       sourcingUnitExtra: qty > 0 ? sourcingExtra / qty : 0,
       stockingTotal,
+      unitStockingCost,
       stockingUnitTotal: qty > 0 ? stockingTotal / qty : 0,
       inventoryCost,
       unitInventoryCost,
-      averageSellingPrice,
-      sellingPriceAfterDiscount,
-      grossSales,
-      returnedQty,
-      refundAmount,
       recoveredInventoryCost,
       lostInventoryCost,
       cogs,
+      unitCogs: effectiveSoldQty > 0 ? cogs / effectiveSoldQty : (qty > 0 ? cogs / qty : 0),
       sellingTotal,
       sellingUnitTotal: qty > 0 ? sellingTotal / qty : 0,
       returnTotal,
-      returnUnitTotal: qty > 0 ? returnTotal / qty : 0,
-      deliveryIncome,
-      netRevenue,
+      returnUnitTotal: returnedQty > 0 ? returnTotal / returnedQty : 0,
+      opex,
       totalExpenses,
       totalExpensesUnit: qty > 0 ? totalExpenses / qty : 0,
+      grossProfit,
+      grossMargin,
+      operatingProfit,
       netProfit,
       unitNetProfit,
       profitMargin,
       markup,
+      workingCapital,
       roi,
       requiredPrice,
-      netQuantity: qty - returnedQty,
+      unitVariableCost,
+      unitContributionMargin,
+      contributionMarginPercent,
+      fixedCostsTotal,
+      netFixedBurden,
+      breakEvenQty,
+      breakEvenRevenue,
+      safetyMarginPercent,
+      targetProfit,
+      requiredProfitQty,
+      requiredProfitRevenue,
+      targetProfitQtyDiff,
+      isTargetProfitAchieved,
     };
   }, [
     formData,
@@ -973,10 +1346,17 @@ const useUnifiedProfitROI = () => {
       else if (stageKey.startsWith("selling")) stageType = "selling";
       else if (stageKey === "returns") stageType = "returns";
 
+      const returnedQty = Math.min(qty, number(formData?.returned_qty));
+      const effectiveSalesQty = stageKey === "returns" ? returnedQty : qty;
+
+      if (stageKey === "returns" && returnedQty === 0) {
+        return 0;
+      }
+
       return items.reduce((sum, item) => {
         const res = resolveCost(item, {
           costInputMode,
-          salesQty: qty,
+          salesQty: effectiveSalesQty,
           unitPurchaseCost: unitCost,
           sellingPrice: netSp,
           stageType,
@@ -990,10 +1370,12 @@ const useUnifiedProfitROI = () => {
   const getStageUnitCost = useCallback(
     (stageKey) => {
       const qty = number(formData?.sales_qty);
+      const returnedQty = Math.min(qty, number(formData?.returned_qty));
+      const effectiveQty = stageKey === "returns" ? returnedQty : qty;
       const total = getStageTotal(stageKey);
-      return qty > 0 ? total / qty : 0;
+      return effectiveQty > 0 ? total / effectiveQty : 0;
     },
-    [getStageTotal, formData?.sales_qty],
+    [getStageTotal, formData?.sales_qty, formData?.returned_qty],
   );
 
   // --------------------------------------------------
@@ -1026,10 +1408,60 @@ const useUnifiedProfitROI = () => {
     (newLang) => {
       if (newLang === lang) return;
       setLang(newLang);
-      // Auto-load default dataset in the selected language
-      handleLoadDefaultBD(newLang);
+
+      // Translate default price tier names
+      setBulkPrices((prev) =>
+        prev.map((item, idx) => {
+          if (newLang === "BN") {
+            if (item.name.includes("Dhaka Wholesale") || item.name.includes("ঢাকা পাইকারি")) {
+              return { ...item, name: "ঢাকা পাইকারি বাজার (চকবাজার / মৌলভীবাজার)" };
+            }
+            if (item.name.includes("District Dealers") || item.name.includes("জেলা ডিলার")) {
+              return { ...item, name: "জেলা ডিলার ও আউটস্টেশন নেটওয়ার্ক" };
+            }
+            if (item.name.startsWith("Price Tier")) {
+              return { ...item, name: `মূল্য স্তর ${idx + 1}` };
+            }
+          } else {
+            if (item.name.includes("ঢাকা পাইকারি") || item.name.includes("Dhaka Wholesale")) {
+              return { ...item, name: "Dhaka Wholesale Market" };
+            }
+            if (item.name.includes("জেলা ডিলার") || item.name.includes("District Dealers")) {
+              return { ...item, name: "District Dealers Network" };
+            }
+            if (item.name.startsWith("মূল্য স্তর")) {
+              return { ...item, name: `Price Tier ${idx + 1}` };
+            }
+          }
+          return item;
+        }),
+      );
+
+      // Translate cost item names if matching defaults
+      const enCosts = getDefaultBDDataset(costInputMode, "EN").costs;
+      const bnCosts = getDefaultBDDataset(costInputMode, "BN").costs;
+      setCosts((prev) => {
+        const next = { ...prev };
+        Object.keys(next).forEach((groupKey) => {
+          const fromList = newLang === "BN" ? enCosts[groupKey] || [] : bnCosts[groupKey] || [];
+          const toList = newLang === "BN" ? bnCosts[groupKey] || [] : enCosts[groupKey] || [];
+          next[groupKey] = (next[groupKey] || []).map((item) => {
+            const matchIndex = fromList.findIndex((def) => def.name === item.name);
+            if (matchIndex !== -1 && toList[matchIndex]) {
+              return { ...item, name: toList[matchIndex].name };
+            }
+            return item;
+          });
+        });
+        return next;
+      });
+
+      showToast(
+        newLang === "BN" ? "ভাষা পরিবর্তন: বাংলা" : "Language switched to English",
+        "info",
+      );
     },
-    [lang, handleLoadDefaultBD],
+    [lang, costInputMode, showToast],
   );
 
   const handleCancel = useCallback(() => {
@@ -1139,6 +1571,12 @@ const useUnifiedProfitROI = () => {
     updateBulkPrice,
     addBulkPrice,
     removeBulkPrice,
+    // Output display controls
+    outputTimeHorizon,
+    setOutputTimeHorizon,
+    roiViewMode,
+    setRoiViewMode,
+    getHorizonMultiplier,
     // Calculation result & helpers
     calculation,
     money,
@@ -1146,6 +1584,7 @@ const useUnifiedProfitROI = () => {
     // Actions
     handleChange,
     handleLoadDefaultBD,
+    handleResetToBDDefault: handleLoadDefaultBD,
     handleCancel,
     handleSubmit,
   };

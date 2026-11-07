@@ -5,6 +5,8 @@ import GroupButton from "@/components/GroupButton";
 import AccordionCard, { AccordionBody } from "@/components/AccordionCard";
 import { DataCardGrid, DataCard } from "@/components/DataCard";
 import StatListItem from "@/components/StatListItem";
+import InfoButton from "@/components/InfoButton";
+import { getMetricExplanation } from "@/hooks/M06/profitExplainer";
 import { IconClose, IconSave, IconPlus, IconDelete } from "@/icons";
 
 // --------------------------------------------------
@@ -15,7 +17,6 @@ const GroupCostSection = ({
   stageKey,
   stageType,
   title,
-  bnTitle,
   description,
   items = [],
   onAdd,
@@ -30,6 +31,8 @@ const GroupCostSection = ({
   sellingPrice,
   resolveCost,
   readOnly,
+  t = (k) => k,
+  lang = "EN",
 }) => {
   return (
     <div
@@ -51,14 +54,20 @@ const GroupCostSection = ({
               color: "var(--text-primary)",
             }}
           >
-            {title} {bnTitle && <span style={{ color: "var(--text-muted)", fontSize: "var(--fs-xs)" }}>— {bnTitle}</span>}
+            {title}
           </h4>
-          <p style={{ margin: "var(--sp-1) 0 0", fontSize: "var(--fs-xs)", color: "var(--text-secondary)" }}>
-            {description}
-          </p>
+          {description && (
+            <p style={{ margin: "var(--sp-1) 0 0", fontSize: "var(--fs-xs)", color: "var(--text-secondary)" }}>
+              {description}
+            </p>
+          )}
         </div>
         <div style={{ fontSize: "var(--fs-xs)", color: "var(--text-secondary)", fontVariantNumeric: "tabular-nums" }}>
-          Mode: <strong style={{ color: "var(--text-primary)" }}>{costInputMode === "per_unit" ? "Per Unit Wise" : "Total Target Qty"}</strong> ({items.length} item{items.length !== 1 ? "s" : ""})
+          {t("modeNotice")}:{" "}
+          <strong style={{ color: "var(--text-primary)" }}>
+            {costInputMode === "per_unit" ? t("costBasisUnit") : t("costBasisTotal")}
+          </strong>{" "}
+          ({items.length} {items.length === 1 ? t("itemCountSingular") : t("itemsCount")})
         </div>
       </div>
 
@@ -88,8 +97,8 @@ const GroupCostSection = ({
             {/* 1. Cost Name */}
             <div className="col-span-4">
               <InputText
-                label={`Cost Head ${index + 1}`}
-                placeholder="e.g. Transport, Toll, Commission..."
+                label={`${t("costHeadPrefix")} ${index + 1}`}
+                placeholder={t("costHeadPlaceholder")}
                 value={item.name}
                 onChange={(e) => onUpdateField(stageKey, item.id, "name", e.target.value)}
                 disabled={readOnly}
@@ -102,7 +111,7 @@ const GroupCostSection = ({
                 className="input-text__label"
                 style={{ marginBottom: "var(--sp-1)", display: "block", fontSize: "var(--fs-xs)" }}
               >
-                Cost Type
+                {t("costType")}
               </label>
               <div
                 style={{
@@ -128,9 +137,9 @@ const GroupCostSection = ({
                     cursor: readOnly ? "not-allowed" : "pointer",
                     transition: "all 0.15s ease",
                   }}
-                  title="Fixed monetary amount in ৳"
+                  title={t("typeValue")}
                 >
-                  ৳ Value
+                  {t("typeValue")}
                 </button>
                 <button
                   type="button"
@@ -146,9 +155,9 @@ const GroupCostSection = ({
                     cursor: readOnly ? "not-allowed" : "pointer",
                     transition: "all 0.15s ease",
                   }}
-                  title="Percentage rate (%)"
+                  title={t("typePercent")}
                 >
-                  % Rate
+                  {t("typePercent")}
                 </button>
               </div>
             </div>
@@ -158,10 +167,10 @@ const GroupCostSection = ({
               <InputNumber
                 label={
                   isPercent
-                    ? "Rate (%)"
+                    ? t("amountRate")
                     : costInputMode === "per_unit"
-                      ? "Amount / Unit (৳)"
-                      : "Total Amount (৳)"
+                      ? t("amountPerUnit")
+                      : t("amountTotal")
                 }
                 placeholder={isPercent ? "0.0%" : "0.00"}
                 value={item.amount}
@@ -187,19 +196,21 @@ const GroupCostSection = ({
               }}
             >
               <div style={{ display: "flex", justifyContent: "space-between", fontSize: "11px", color: "var(--text-muted)" }}>
-                <span>Calculated Cost:</span>
+                <span>{t("calculatedCost")}</span>
                 {isPercent && (
                   <span style={{ color: "var(--primary)", fontWeight: "var(--fw-medium)" }}>
-                    {stageType === "selling" ? "% of Selling" : "% of Purchase"}
+                    {stageType === "selling" || stageType === "returns"
+                      ? t("percentOfSelling")
+                      : t("percentOfPurchase")}
                   </span>
                 )}
               </div>
               <div style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline", marginTop: 2 }}>
                 <span style={{ fontSize: "var(--fs-xs)", fontWeight: "var(--fw-bold)", color: "var(--text-primary)" }}>
-                  Unit: ৳{(resolved.unitAmount || 0).toFixed(2)}
+                  {lang === "BN" ? "একক: ৳" : "Unit: ৳"}{(resolved.unitAmount || 0).toFixed(2)}
                 </span>
                 <span style={{ fontSize: "var(--fs-xs)", color: "var(--text-secondary)", fontVariantNumeric: "tabular-nums" }}>
-                  Total: ৳{Math.round(resolved.totalAmount || 0).toLocaleString()}
+                  {lang === "BN" ? "মোট: ৳" : "Total: ৳"}{Math.round(resolved.totalAmount || 0).toLocaleString()}
                 </span>
               </div>
             </div>
@@ -226,7 +237,7 @@ const GroupCostSection = ({
         <div style={{ marginTop: "var(--sp-1)", marginBottom: "var(--sp-2)" }}>
           <Button variant="outline" size="sm" onClick={onAdd}>
             <IconPlus size={14} className="icon-left" />
-            Add Custom Cost Field
+            {t("addCustomCost")}
           </Button>
         </div>
       )}
@@ -247,10 +258,10 @@ const GroupCostSection = ({
           fontWeight: "var(--fw-medium)",
         }}
       >
-        <span style={{ color: "var(--text-secondary)" }}>{title} Subtotal:</span>
+        <span style={{ color: "var(--text-secondary)" }}>{title} {t("subtotal")}</span>
         <div style={{ display: "flex", alignItems: "baseline", gap: "var(--sp-3)" }}>
           <span style={{ color: "var(--text-muted)", fontSize: "var(--fs-xs)" }}>
-            Unit: ৳{(stageUnitCost || 0).toFixed(2)} / unit
+            {lang === "BN" ? "একক: ৳" : "Unit: ৳"}{(stageUnitCost || 0).toFixed(2)} {t("perUnitSuffix")}
           </span>
           <span style={{ color: "var(--text-primary)", fontWeight: "var(--fw-bold)", fontSize: "var(--fs-base)" }}>
             {money(stageTotal)}
@@ -270,6 +281,10 @@ const CalculatorForm = ({
   readOnly,
   formData = {},
   formErrors = {},
+  // Language
+  lang = "EN",
+  setLanguage,
+  t = (k) => k,
   // Cost Input Mode
   costInputMode,
   handleCostInputModeChange,
@@ -312,6 +327,12 @@ const CalculatorForm = ({
   handleResetToBDDefault,
   handleCancel,
   handleSubmit,
+  // Output display controls
+  outputTimeHorizon,
+  setOutputTimeHorizon,
+  roiViewMode,
+  setRoiViewMode,
+  getHorizonMultiplier,
 }) => {
   const get = (key) => formData?.[key] ?? "";
   const salesQty = Number(formData?.sales_qty) || 0;
@@ -326,13 +347,75 @@ const CalculatorForm = ({
   const activeSellingConfig =
     SELLING_GROUPS.find((g) => g.model === salesModel) || SELLING_GROUPS[0];
 
+  // Horizon multiplier for Section 06 display & explainer calculations
+  const currentOutputMultiplier = getHorizonMultiplier
+    ? getHorizonMultiplier(salesTargetDays, outputTimeHorizon ?? salesTargetDays)
+    : 1;
+
+  // Unified Explainer Popup Modal Helper
+  const renderInfo = (key) => {
+    const info = getMetricExplanation(key, {
+      calculation,
+      formData,
+      bulkPrices,
+      outputMultiplier: currentOutputMultiplier,
+      money,
+      scaleMoney: (v) => money((v || 0) * currentOutputMultiplier),
+      lang,
+      t,
+    });
+    if (!info) return null;
+    return (
+      <InfoButton
+        title={info.title}
+        subtitle={info.subtitle}
+        explanation={info.explanation}
+        formula={info.formula}
+        breakdown={info.breakdown}
+        tips={info.tips}
+        lang={lang}
+      />
+    );
+  };
+
+  // Bulk Wholesale sales mix validation
+  const totalBulkShare = bulkPrices.reduce(
+    (sum, item) => sum + (Number(item.mix) || 0),
+    0,
+  );
+  const isBulkShareValid = Math.abs(totalBulkShare - 100) < 0.001;
+
   return (
     <div className="form-wrap">
+      {/* Language Switcher Bar */}
+      {/* <div
+        style={{
+          display: "flex",
+          justifyContent: "flex-end",
+          alignItems: "center",
+          gap: "var(--sp-2)",
+          marginBottom: "var(--sp-2)",
+        }}
+      >
+        <span style={{ fontSize: "var(--fs-xs)", color: "var(--text-secondary)", fontWeight: "var(--fw-medium)" }}>
+          {t("languageLabel")}:
+        </span>
+        <GroupButton
+          options={[
+            { value: "EN", label: "EN" },
+            { value: "BN", label: "BN" },
+          ]}
+          value={lang}
+          onChange={(e) => setLanguage && setLanguage(e.target.value)}
+          size="sm"
+        />
+      </div> */}
+
       <AccordionCard allowMultiple>
         {/* =================================================================== */}
         {/* 01 SALES TARGET                                                     */}
         {/* =================================================================== */}
-        <AccordionBody title="01 · Sales Target & Calculation Basis" defaultExpanded>
+        <AccordionBody title={t("sec1Title")} defaultExpanded>
           <div className="grid">
             {/* Cost Entry Basis: Total for Target Qty vs Per Unit Wise */}
             <div
@@ -347,19 +430,20 @@ const CalculatorForm = ({
             >
               <label
                 className="input-text__label"
-                style={{ marginBottom: "var(--sp-2)", display: "block", fontWeight: "var(--fw-semibold)" }}
+                style={{ marginBottom: "var(--sp-2)", display: "flex", alignItems: "center", fontWeight: "var(--fw-semibold)" }}
               >
-                Cost Calculation & Entry Basis (ব্যয় নির্ধারণের ভিত্তি নির্বাচন করুন)
+                <span>{t("costBasisLabel")}</span>
+                {renderInfo("costBasis")}
               </label>
               <GroupButton
                 options={[
                   {
                     value: "total_qty",
-                    label: "Total for Target Qty (মোট লক্ষ্যমাত্রা ব্যাচ ভিত্তিক)",
+                    label: t("costBasisTotal"),
                   },
                   {
                     value: "per_unit",
-                    label: "Per Unit Wise (প্রতি একক/ইউনিট ভিত্তিক)",
+                    label: t("costBasisUnit"),
                   },
                 ]}
                 value={costInputMode}
@@ -367,34 +451,23 @@ const CalculatorForm = ({
                 size="sm"
               />
               <p style={{ margin: "var(--sp-2) 0 0", fontSize: "var(--fs-xs)", color: "var(--text-secondary)" }}>
-                {costInputMode === "per_unit" ? (
-                  <span>
-                    <strong>Per Unit Wise:</strong> Fixed monetary entries (৳) represent cost per single unit. Total cost is multiplied by Sales Target Qty.
-                  </span>
-                ) : (
-                  <span>
-                    <strong>Total for Target Qty:</strong> Fixed monetary entries (৳) represent total batch expenditure. Unit cost is divided by Sales Target Qty.
-                  </span>
-                )}
-                {" "}
-                <span>
-                  (Percentage entries (%) automatically calculate based on unit price regardless of mode).
-                </span>
+                <span>{costInputMode === "per_unit" ? t("costBasisDescUnit") : t("costBasisDescTotal")}</span>{" "}
+                <span>{t("costBasisPercentNote")}</span>
               </p>
             </div>
 
             {/* Time Horizon */}
             <div className="col-span-12" style={{ marginBottom: "var(--sp-2)" }}>
               <label className="input-text__label" style={{ marginBottom: "var(--sp-1)", display: "block" }}>
-                Target Time Horizon (সময়কাল)
+                {t("timeHorizonLabel")}
               </label>
               <GroupButton
                 options={[
-                  { value: "daily", label: "Daily (দৈনিক)" },
-                  { value: "weekly", label: "Weekly (সাপ্তাহিক)" },
-                  { value: "monthly", label: "Monthly (মাসিক)" },
-                  { value: "half-yearly", label: "Half-Yearly (অর্ধ-বার্ষিক)" },
-                  { value: "yearly", label: "Yearly (বার্ষিক)" },
+                  { value: "daily", label: t("freqDaily") },
+                  { value: "weekly", label: t("freqWeekly") },
+                  { value: "monthly", label: t("freqMonthly") },
+                  { value: "half-yearly", label: t("freqHalfYearly") },
+                  { value: "yearly", label: t("freqYearly") },
                 ]}
                 value={salesTargetDays}
                 onChange={(e) => setSalesTargetDays(e.target.value)}
@@ -404,7 +477,7 @@ const CalculatorForm = ({
 
             <div className="col-span-3">
               <InputNumber
-                label="Sales Target Qty (ইউনিট সংখ্যা)"
+                label={<span style={{ display: "inline-flex", alignItems: "center" }}>{t("salesQtyLabel")} {renderInfo("targetProfitPlanner")}</span>}
                 placeholder="0"
                 value={get("sales_qty")}
                 onChange={(e) => handleChange("sales_qty", e.target.value)}
@@ -417,7 +490,7 @@ const CalculatorForm = ({
 
             <div className="col-span-3">
               <InputNumber
-                label="Target Profit Margin (% মার্জিন)"
+                label={<span style={{ display: "inline-flex", alignItems: "center" }}>{t("profitMarginLabel")} {renderInfo("profitMargin")}</span>}
                 placeholder="0.00"
                 value={get("profit_margin")}
                 onChange={(e) => handleChange("profit_margin", e.target.value)}
@@ -432,7 +505,7 @@ const CalculatorForm = ({
 
             <div className="col-span-3">
               <InputNumber
-                label="Planned Discount (% ছাড়)"
+                label={<span style={{ display: "inline-flex", alignItems: "center" }}>{t("discountLabel")} {renderInfo("discount")}</span>}
                 placeholder="0.00"
                 value={get("discount_percent")}
                 onChange={(e) => handleChange("discount_percent", e.target.value)}
@@ -447,7 +520,7 @@ const CalculatorForm = ({
 
             <div className="col-span-3">
               <InputNumber
-                label="AIT / Trade Tax (৳ কর ও ফি)"
+                label={<span style={{ display: "inline-flex", alignItems: "center" }}>{t("otherTaxLabel")} {renderInfo("taxes")}</span>}
                 placeholder="0.00"
                 value={get("other_tax_levy")}
                 onChange={(e) => handleChange("other_tax_levy", e.target.value)}
@@ -462,17 +535,18 @@ const CalculatorForm = ({
         {/* =================================================================== */}
         {/* 02 SOURCING MODEL & GROUP-WISE COSTS                                */}
         {/* =================================================================== */}
-        <AccordionBody title="02 · Sourcing Model & Costs (উৎস ও ক্রয় সংক্রান্ত ব্যয়)" defaultExpanded>
+        <AccordionBody title={t("sec2Title")} defaultExpanded>
           <div className="grid">
             <div className="col-span-12" style={{ marginBottom: "var(--sp-2)" }}>
-              <label className="input-text__label" style={{ marginBottom: "var(--sp-1)", display: "block" }}>
-                Source Model Selection (উৎস নির্বাচন করুন)
+              <label className="input-text__label" style={{ marginBottom: "var(--sp-1)", display: "flex", alignItems: "center" }}>
+                <span>{t("sourceModelLabel")}</span>
+                {renderInfo("sourcingModel")}
               </label>
               <GroupButton
                 options={[
-                  { value: "local", label: "Local (স্থানীয় ক্রয়)" },
-                  { value: "import", label: "Import (আন্তর্জাতিক আমদানি)" },
-                  { value: "manufacture", label: "Manufacture (নিজস্ব উৎপাদন)" },
+                  { value: "local", label: t("srcLocal") },
+                  { value: "import", label: t("srcImport") },
+                  { value: "manufacture", label: t("srcManufacture") },
                 ]}
                 value={productSource}
                 onChange={(e) => setProductSource(e.target.value)}
@@ -484,8 +558,8 @@ const CalculatorForm = ({
               <InputNumber
                 label={
                   productSource === "manufacture"
-                    ? "Base Production Cost / Unit (৳ একক উৎপাদন খরচ)"
-                    : "Base Purchase Cost / Unit (৳ একক ক্রয়মূল্য)"
+                    ? t("productionCostLabel")
+                    : t("unitCostLabel")
                 }
                 placeholder="0.00"
                 value={get("unit_purchase_cost")}
@@ -503,7 +577,6 @@ const CalculatorForm = ({
                 stageKey={activeSourcingKey}
                 stageType="sourcing"
                 title={activeSourcingConfig.title}
-                bnTitle={activeSourcingConfig.bnTitle}
                 description={activeSourcingConfig.description}
                 items={costs[activeSourcingKey] || []}
                 onAdd={() => addCost(activeSourcingKey, "", "", "value")}
@@ -518,6 +591,8 @@ const CalculatorForm = ({
                 sellingPrice={sellingPrice}
                 resolveCost={resolveCost}
                 readOnly={readOnly}
+                t={t}
+                lang={lang}
               />
             )}
           </div>
@@ -526,17 +601,19 @@ const CalculatorForm = ({
         {/* =================================================================== */}
         {/* 03 STOCKING MODEL & GROUP-WISE COSTS                                */}
         {/* =================================================================== */}
-        <AccordionBody title="03 · Stocking Model & Costs (মজুদ ও গুদামজাতকরণ ব্যয়)" defaultExpanded>
+        <AccordionBody title={t("sec3Title")} defaultExpanded>
           <div className="grid">
             <div className="col-span-12" style={{ marginBottom: "var(--sp-2)" }}>
-              <label className="input-text__label" style={{ marginBottom: "var(--sp-1)", display: "block" }}>
-                Stocking Model Selection (গুদাম মডেল)
+              <label className="input-text__label" style={{ marginBottom: "var(--sp-1)", display: "flex", alignItems: "center" }}>
+                <span>{t("stockingModelLabel")}</span>
+                {renderInfo("stockingModel")}
               </label>
               <GroupButton
                 options={[
-                  { value: "own", label: "Own Warehouse (নিজস্ব গুদাম)" },
-                  { value: "rent", label: "Rented Warehouse (ভাড়া গুদাম)" },
-                  { value: "spot", label: "On Spot / No Stock (সরাসরি স্থানান্তর)" },
+                  { value: "own", label: t("stockOwn") },
+                  { value: "rent", label: t("stockRent") },
+                  { value: "3pl", label: t("stock3pl") },
+                  { value: "spot", label: t("stockSpot") },
                 ]}
                 value={stockingModel}
                 onChange={(e) => setStockingModel(e.target.value)}
@@ -550,7 +627,6 @@ const CalculatorForm = ({
                 stageKey={activeStockingKey}
                 stageType="stocking"
                 title={activeStockingConfig.title}
-                bnTitle={activeStockingConfig.bnTitle}
                 description={activeStockingConfig.description}
                 items={costs[activeStockingKey] || []}
                 onAdd={() => addCost(activeStockingKey, "", "", "value")}
@@ -565,6 +641,8 @@ const CalculatorForm = ({
                 sellingPrice={sellingPrice}
                 resolveCost={resolveCost}
                 readOnly={readOnly}
+                t={t}
+                lang={lang}
               />
             )}
           </div>
@@ -573,16 +651,17 @@ const CalculatorForm = ({
         {/* =================================================================== */}
         {/* 04 SELLING MODEL & GROUP-WISE COSTS                                 */}
         {/* =================================================================== */}
-        <AccordionBody title="04 · Selling Model & Costs (বিক্রয় ও বিপণন চ্যানেল ব্যয়)" defaultExpanded>
+        <AccordionBody title={t("sec4Title")} defaultExpanded>
           <div className="grid">
             <div className="col-span-12" style={{ marginBottom: "var(--sp-2)" }}>
-              <label className="input-text__label" style={{ marginBottom: "var(--sp-1)", display: "block" }}>
-                Sales Channel Selection (বিক্রয় চ্যানেল)
+              <label className="input-text__label" style={{ marginBottom: "var(--sp-1)", display: "flex", alignItems: "center" }}>
+                <span>{t("salesModelLabel")}</span>
+                {renderInfo("salesModel")}
               </label>
               <GroupButton
                 options={[
-                  { value: "retail", label: "Retail / E-commerce (খুচরা ও অনলাইন)" },
-                  { value: "bulk", label: "Bulk / Wholesale (পাইকারি ও ডিলার চ্যানেল)" },
+                  { value: "retail", label: t("sellRetail") },
+                  { value: "bulk", label: t("sellBulk") },
                 ]}
                 value={salesModel}
                 onChange={(e) => setSalesModel(e.target.value)}
@@ -593,7 +672,7 @@ const CalculatorForm = ({
             {salesModel === "retail" && (
               <div className="col-span-4">
                 <InputNumber
-                  label="Retail Selling Price / Unit (৳ খুচরা বিক্রয়মূল্য)"
+                  label={t("retailPriceLabel")}
                   placeholder="0.00"
                   value={get("retail_selling_price")}
                   onChange={(e) => handleChange("retail_selling_price", e.target.value)}
@@ -615,12 +694,88 @@ const CalculatorForm = ({
                   padding: "var(--sp-3)",
                   background: "var(--surface)",
                   borderRadius: "var(--radius-lg)",
-                  border: "1px solid var(--border)",
+                  border: `1.5px solid ${isBulkShareValid ? "var(--border)" : "var(--danger)"}`,
                 }}
               >
-                <div style={{ fontSize: "var(--fs-sm)", fontWeight: "var(--fw-semibold)", color: "var(--text-primary)" }}>
-                  Bulk Price Levels & Sales Mix (পাইকারি দর ও বিক্রয়ের অনুপাত)
+                {/* Header with Title, Info Button, and Total Mix Share Pill */}
+                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: "var(--sp-2)" }}>
+                  <div style={{ fontSize: "var(--fs-sm)", fontWeight: "var(--fw-semibold)", color: "var(--text-primary)", display: "flex", alignItems: "center" }}>
+                    <span>{t("bulkTiersTitle")}</span>
+                    {renderInfo("bulkTiers")}
+                  </div>
+
+                  <div style={{ display: "flex", alignItems: "center", gap: "var(--sp-2)", flexWrap: "wrap" }}>
+                    <div
+                      style={{
+                        fontSize: "var(--fs-xs)",
+                        fontWeight: "var(--fw-bold)",
+                        padding: "3px 10px",
+                        borderRadius: "var(--radius-sm)",
+                        background: isBulkShareValid ? "rgba(34, 197, 94, 0.12)" : "rgba(239, 68, 68, 0.12)",
+                        color: isBulkShareValid ? "var(--success)" : "var(--danger)",
+                        border: `1px solid ${isBulkShareValid ? "var(--success)" : "var(--danger)"}`,
+                        display: "inline-flex",
+                        alignItems: "center",
+                        gap: "6px",
+                      }}
+                    >
+                      <span>{isBulkShareValid ? "✓" : "⚠️"}</span>
+                      <span>{t("totalShareLabel")}: {totalBulkShare}%</span>
+                      {isBulkShareValid && (
+                        <span style={{ fontWeight: "normal", opacity: 0.9 }}>({t("bulkShareValid")})</span>
+                      )}
+                    </div>
+
+                    <div
+                      style={{
+                        fontSize: "var(--fs-xs)",
+                        padding: "3px 8px",
+                        borderRadius: "var(--radius-sm)",
+                        background: "var(--surface-alt)",
+                        border: "1px solid var(--border)",
+                        color: "var(--text-secondary)",
+                      }}
+                    >
+                      {t("weightedAvgPrice")}: <strong style={{ color: "var(--primary)" }}>{money(calculation.averageSellingPrice)}</strong>
+                    </div>
+                  </div>
                 </div>
+
+                {/* WARNING BANNER WHEN TOTAL SALES SHARE !== 100 */}
+                {!isBulkShareValid && (
+                  <div
+                    style={{
+                      padding: "var(--sp-2) var(--sp-3)",
+                      background: "rgba(239, 68, 68, 0.08)",
+                      border: "1px solid var(--danger)",
+                      borderRadius: "var(--radius-md)",
+                      fontSize: "var(--fs-xs)",
+                      color: "var(--danger)",
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "space-between",
+                      flexWrap: "wrap",
+                      gap: "var(--sp-2)",
+                      marginTop: "var(--sp-1)",
+                      marginBottom: "var(--sp-1)",
+                    }}
+                  >
+                    <div style={{ display: "flex", alignItems: "center", gap: "6px" }}>
+                      <span style={{ fontSize: "15px" }}>⚠️</span>
+                      <span>
+                        <strong>{lang === "BN" ? "সতর্কতা:" : "Warning:"}</strong>{" "}
+                        {totalBulkShare < 100
+                          ? `${t("bulkShareWarningUnder")} (${(100 - totalBulkShare).toFixed(1)}% ${lang === "BN" ? "বাকি" : "remaining"})`
+                          : `${t("bulkShareWarningOver")} (${(totalBulkShare - 100).toFixed(1)}% ${lang === "BN" ? "অতিরিক্ত" : "over 100%"})`}
+                      </span>
+                    </div>
+                    <span style={{ fontSize: "11px", color: "var(--text-secondary)" }}>
+                      {lang === "BN" ? "যোগফল ১০০% হওয়া আবশ্যক" : "Must sum to 100%"}
+                    </span>
+                  </div>
+                )}
+
+                {/* Bulk Price Tiers Rows */}
                 {bulkPrices.map((item, index) => (
                   <div
                     key={item.id}
@@ -636,7 +791,7 @@ const CalculatorForm = ({
                   >
                     <div className="col-span-4">
                       <InputText
-                        label={`Price Tier ${index + 1}`}
+                        label={`${t("tierNameLabel")} ${index + 1}`}
                         value={item.name}
                         onChange={(e) => updateBulkPrice(item.id, "name", e.target.value)}
                         disabled={readOnly}
@@ -645,7 +800,7 @@ const CalculatorForm = ({
 
                     <div className="col-span-4">
                       <InputNumber
-                        label="Tier Price (৳ বিক্রয়দর)"
+                        label={t("tierPriceLabel")}
                         placeholder="0.00"
                         value={item.price}
                         onChange={(e) => updateBulkPrice(item.id, "price", e.target.value)}
@@ -657,7 +812,7 @@ const CalculatorForm = ({
 
                     <div className="col-span-3">
                       <InputNumber
-                        label="Sales Share (% মিশ্রণ)"
+                        label={t("tierMixLabel")}
                         placeholder="0"
                         value={item.mix}
                         onChange={(e) => updateBulkPrice(item.id, "mix", e.target.value)}
@@ -688,19 +843,16 @@ const CalculatorForm = ({
                   <div>
                     <Button variant="outline" size="sm" onClick={addBulkPrice}>
                       <IconPlus size={14} className="icon-left" />
-                      Add Price Level
+                      {t("addPriceTier")}
                     </Button>
                   </div>
                 )}
-                <p style={{ margin: "var(--sp-1) 0 0", fontSize: "var(--fs-xs)", color: "var(--text-secondary)" }}>
-                  Note: Total sales mix across tiers should equal 100%. Weighted average selling price will be computed.
-                </p>
               </div>
             )}
 
             <div className="col-span-4">
               <InputNumber
-                label="Delivery Income Collected (৳ গ্রাহক ডেলিভারি ফি আয়)"
+                label={<span style={{ display: "inline-flex", alignItems: "center" }}>{t("deliveryIncomeLabel")} {renderInfo("netRevenue")}</span>}
                 placeholder="0.00"
                 value={get("delivery_income")}
                 onChange={(e) => handleChange("delivery_income", e.target.value)}
@@ -716,7 +868,6 @@ const CalculatorForm = ({
                 stageKey={activeSellingKey}
                 stageType="selling"
                 title={activeSellingConfig.title}
-                bnTitle={activeSellingConfig.bnTitle}
                 description={activeSellingConfig.description}
                 items={costs[activeSellingKey] || []}
                 onAdd={() => addCost(activeSellingKey, "", "", "value")}
@@ -731,6 +882,8 @@ const CalculatorForm = ({
                 sellingPrice={sellingPrice}
                 resolveCost={resolveCost}
                 readOnly={readOnly}
+                t={t}
+                lang={lang}
               />
             )}
           </div>
@@ -739,11 +892,12 @@ const CalculatorForm = ({
         {/* =================================================================== */}
         {/* 05 RETURNS MANAGEMENT & COSTS                                       */}
         {/* =================================================================== */}
-        <AccordionBody title="05 · Return Management (পণ্য ফেরত ও সমাধান)" defaultExpanded>
+        <AccordionBody title={t("sec5Title")} defaultExpanded>
           <div className="grid">
+            {/* 1. Returned Qty & Disposition Selector */}
             <div className="col-span-4">
               <InputNumber
-                label="Expected Returned Quantity (ফেরত পণ্যের সংখ্যা)"
+                label={t("returnedQtyLabel")}
                 placeholder="0"
                 value={get("returned_qty")}
                 onChange={(e) => handleChange("returned_qty", e.target.value)}
@@ -753,40 +907,256 @@ const CalculatorForm = ({
             </div>
 
             <div className="col-span-8" style={{ marginBottom: "var(--sp-2)" }}>
-              <label className="input-text__label" style={{ marginBottom: "var(--sp-1)", display: "block" }}>
-                Return Disposition (ফেরত পণ্যের ব্যবস্থাপনা)
+              <label className="input-text__label" style={{ marginBottom: "var(--sp-1)", display: "flex", alignItems: "center" }}>
+                <span>{t("returnDispLabel")}</span>
+                {renderInfo("returnDisposition")}
               </label>
               <GroupButton
                 options={[
-                  { value: "resell", label: "Resell (পুনর্বিক্রয়)" },
-                  { value: "repack", label: "Repack / Repair (মেরামত)" },
-                  { value: "scrap", label: "Scrap (স্ক্র্যাপ)" },
-                  { value: "dispose", label: "Dispose (সম্পূর্ণ বিনষ্ট)" },
+                  { value: "resell_repack", label: t("dispResellRepack") },
+                  { value: "scrap", label: t("dispScrap") },
+                  { value: "dispose", label: t("dispDispose") },
                 ]}
-                value={returnDisposition}
+                value={
+                  returnDisposition === "resell" || returnDisposition === "repack"
+                    ? "resell_repack"
+                    : returnDisposition
+                }
                 onChange={(e) => setReturnDisposition(e.target.value)}
                 size="sm"
               />
             </div>
 
+            {/* 2. Contextual Solution Notice */}
+            <div
+              className="col-span-12"
+              style={{
+                padding: "var(--sp-2) var(--sp-3)",
+                background: "var(--surface)",
+                border: "1px dashed var(--border)",
+                borderRadius: "var(--radius-md)",
+                fontSize: "var(--fs-xs)",
+                color: "var(--text-secondary)",
+                marginBottom: "var(--sp-2)",
+              }}
+            >
+              {(returnDisposition === "resell_repack" ||
+                returnDisposition === "resell" ||
+                returnDisposition === "repack") && (
+                <div>
+                  <strong style={{ color: "var(--primary)" }}>✓ {t("dispResellRepack")}: </strong>
+                  {t("resellNotice")}
+                </div>
+              )}
+              {returnDisposition === "scrap" && (
+                <div>
+                  <strong style={{ color: "var(--warning)" }}>⚠️ {t("dispScrap")}: </strong>
+                  {t("scrapNotice")}
+                </div>
+              )}
+              {returnDisposition === "dispose" && (
+                <div>
+                  <strong style={{ color: "var(--danger)" }}>✕ {t("dispDispose")}: </strong>
+                  {t("disposeNotice")}
+                </div>
+              )}
+            </div>
+
+            {/* 3. Return Courier Logistics */}
             <div className="col-span-4">
               <InputNumber
-                label="Scrap / Salvage Value (৳ স্ক্র্যাপ পুনরুদ্ধার মূল্য)"
+                label={<span style={{ display: "inline-flex", alignItems: "center" }}>{t("returnFeeCollectedLabel")} {renderInfo("returnLogistics")}</span>}
                 placeholder="0.00"
-                value={get("salvage_value")}
-                onChange={(e) => handleChange("salvage_value", e.target.value)}
+                value={get("return_fee_collected")}
+                onChange={(e) => handleChange("return_fee_collected", e.target.value)}
                 min={0}
                 step={0.01}
                 disabled={readOnly}
               />
             </div>
 
-            {/* Return Cost Group */}
+            <div className="col-span-4">
+              <InputNumber
+                label={<span style={{ display: "inline-flex", alignItems: "center" }}>{t("returnCourierCostLabel")} {renderInfo("returnLogistics")}</span>}
+                placeholder="0.00"
+                value={get("return_courier_cost")}
+                onChange={(e) => handleChange("return_courier_cost", e.target.value)}
+                min={0}
+                step={0.01}
+                disabled={readOnly}
+              />
+            </div>
+
+            {/* 4. Conditional Fields: Resell/Repack Refund vs Scrap Selling vs Disposal Cost */}
+            {(returnDisposition === "resell_repack" ||
+              returnDisposition === "resell" ||
+              returnDisposition === "repack") && (
+              <div className="col-span-4">
+                <InputNumber
+                  label={t("refundValueLabel")}
+                  placeholder="0.00"
+                  value={get("refund_value_per_unit")}
+                  onChange={(e) => handleChange("refund_value_per_unit", e.target.value)}
+                  min={0}
+                  step={0.01}
+                  disabled={readOnly}
+                />
+              </div>
+            )}
+
+            {returnDisposition === "scrap" && (
+              <div
+                className="col-span-12 grid"
+                style={{
+                  alignItems: "flex-end",
+                  padding: "var(--sp-2) var(--sp-3)",
+                  background: "var(--surface-alt)",
+                  borderRadius: "var(--radius-md)",
+                  border: "1px solid var(--border)",
+                  marginBottom: "var(--sp-2)",
+                }}
+              >
+                <div className="col-span-4">
+                  <label className="input-text__label" style={{ marginBottom: "var(--sp-1)", display: "block" }}>
+                    {t("scrapInputBasisLabel")}
+                  </label>
+                  <GroupButton
+                    options={[
+                      { value: "per_unit", label: t("scrapBasisUnit") },
+                      { value: "total", label: t("scrapBasisTotal") },
+                    ]}
+                    value={formData?.scrap_recovery_basis || "per_unit"}
+                    onChange={(e) => handleChange("scrap_recovery_basis", e.target.value)}
+                    size="sm"
+                  />
+                </div>
+
+                {(formData?.scrap_recovery_basis || "per_unit") === "per_unit" ? (
+                  <div className="col-span-4">
+                    <InputNumber
+                      label={t("scrapUnitPriceLabel")}
+                      placeholder="0.00"
+                      value={get("scrap_value_per_unit")}
+                      onChange={(e) => handleChange("scrap_value_per_unit", e.target.value)}
+                      min={0}
+                      step={0.01}
+                      disabled={readOnly}
+                    />
+                  </div>
+                ) : (
+                  <div className="col-span-4">
+                    <InputNumber
+                      label={t("scrapTotalValueLabel")}
+                      placeholder="0.00"
+                      value={get("scrap_recovery_total")}
+                      onChange={(e) => handleChange("scrap_recovery_total", e.target.value)}
+                      min={0}
+                      step={0.01}
+                      disabled={readOnly}
+                    />
+                  </div>
+                )}
+
+                <div
+                  className="col-span-4"
+                  style={{
+                    padding: "var(--sp-2)",
+                    background: "var(--surface)",
+                    borderRadius: "var(--radius-sm)",
+                    border: "1px dashed var(--border)",
+                    fontSize: "var(--fs-xs)",
+                  }}
+                >
+                  <div style={{ color: "var(--text-muted)" }}>Calculated Scrap Proceeds:</div>
+                  <strong style={{ color: "var(--warning)", fontSize: "var(--fs-sm)" }}>
+                    {money(calculation.scrapSalesRevenue || 0)}
+                  </strong>
+                  <div style={{ color: "var(--danger)", fontSize: "11px", marginTop: "2px" }}>
+                    Net Scrap Loss: {money(calculation.netScrapLoss || 0)}
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {returnDisposition === "dispose" && (
+              <div
+                className="col-span-12 grid"
+                style={{
+                  alignItems: "flex-end",
+                  padding: "var(--sp-2) var(--sp-3)",
+                  background: "var(--surface-alt)",
+                  borderRadius: "var(--radius-md)",
+                  border: "1px solid var(--border)",
+                  marginBottom: "var(--sp-2)",
+                }}
+              >
+                <div className="col-span-4">
+                  <label className="input-text__label" style={{ marginBottom: "var(--sp-1)", display: "block" }}>
+                    {t("disposalInputBasisLabel")}
+                  </label>
+                  <GroupButton
+                    options={[
+                      { value: "per_unit", label: t("disposalBasisUnit") },
+                      { value: "total", label: t("disposalBasisTotal") },
+                    ]}
+                    value={formData?.disposal_cost_basis || "per_unit"}
+                    onChange={(e) => handleChange("disposal_cost_basis", e.target.value)}
+                    size="sm"
+                  />
+                </div>
+
+                {(formData?.disposal_cost_basis || "per_unit") === "per_unit" ? (
+                  <div className="col-span-4">
+                    <InputNumber
+                      label={t("disposalCostUnitLabel")}
+                      placeholder="0.00"
+                      value={get("disposal_cost_per_unit")}
+                      onChange={(e) => handleChange("disposal_cost_per_unit", e.target.value)}
+                      min={0}
+                      step={0.01}
+                      disabled={readOnly}
+                    />
+                  </div>
+                ) : (
+                  <div className="col-span-4">
+                    <InputNumber
+                      label={t("disposalCostTotalLabel")}
+                      placeholder="0.00"
+                      value={get("disposal_cost_total")}
+                      onChange={(e) => handleChange("disposal_cost_total", e.target.value)}
+                      min={0}
+                      step={0.01}
+                      disabled={readOnly}
+                    />
+                  </div>
+                )}
+
+                <div
+                  className="col-span-4"
+                  style={{
+                    padding: "var(--sp-2)",
+                    background: "var(--surface)",
+                    borderRadius: "var(--radius-sm)",
+                    border: "1px dashed var(--border)",
+                    fontSize: "var(--fs-xs)",
+                  }}
+                >
+                  <div style={{ color: "var(--text-muted)" }}>Total Disposal Fee:</div>
+                  <strong style={{ color: "var(--danger)", fontSize: "var(--fs-sm)" }}>
+                    {money(calculation.disposalCostTotal || 0)}
+                  </strong>
+                  <div style={{ color: "var(--text-secondary)", fontSize: "11px", marginTop: "2px" }}>
+                    Lost Inventory: {money(calculation.lostInventoryCost || 0)}
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {/* Return Cost Group - Calculated based on returned units */}
             <GroupCostSection
               stageKey={RETURN_GROUP.key}
               stageType="returns"
               title={RETURN_GROUP.title}
-              bnTitle={RETURN_GROUP.bnTitle}
               description={RETURN_GROUP.description}
               items={costs[RETURN_GROUP.key] || []}
               onAdd={() => addCost(RETURN_GROUP.key, "", "", "value")}
@@ -796,11 +1166,13 @@ const CalculatorForm = ({
               stageUnitCost={getStageUnitCost(RETURN_GROUP.key)}
               money={money}
               costInputMode={costInputMode}
-              salesQty={salesQty}
+              salesQty={Math.min(Number(formData?.returned_qty) || 0, salesQty)}
               unitPurchaseCost={unitPurchaseCost}
               sellingPrice={sellingPrice}
               resolveCost={resolveCost}
               readOnly={readOnly}
+              t={t}
+              lang={lang}
             />
           </div>
         </AccordionBody>
@@ -808,156 +1180,584 @@ const CalculatorForm = ({
         {/* =================================================================== */}
         {/* 06 PROFIT & ROI SUMMARY                                             */}
         {/* =================================================================== */}
-        <AccordionBody title="06 · Profit & ROI Summary (মুনাফা ও আরওআই বিশ্লেষণ)" defaultExpanded>
+        <AccordionBody title={t("sec6Title")} defaultExpanded>
           <div style={{ display: "flex", flexDirection: "column", gap: "var(--sp-4)" }}>
-            <DataCardGrid cols={4}>
-              <DataCard
-                variant="accent"
-                label="Net Revenue (নিট বিক্রয় আয়)"
-                value={money(calculation.netRevenue)}
-              />
-              <DataCard
-                variant="warning"
-                label="Total Expenses (মোট ব্যয়)"
-                value={money(calculation.totalExpenses)}
-              />
-              <DataCard
-                variant={calculation.netProfit >= 0 ? "success" : "danger"}
-                label="Net Profit / Loss (নিট লাভ/লোকসান)"
-                value={money(calculation.netProfit)}
-                badge={calculation.netProfit >= 0 ? "+ Profit" : "- Loss"}
-                trend={calculation.netProfit >= 0 ? "up" : "down"}
-              >
-                <div style={{ fontSize: "11px", color: "var(--text-muted)", marginTop: "4px" }}>
-                  ৳{(calculation.unitNetProfit || 0).toFixed(2)} / unit
-                </div>
-              </DataCard>
-              <DataCard
-                variant={calculation.profitMargin >= 0 ? "success" : "danger"}
-                label="Profit Margin (মুনাফার হার %)"
-                value={`${(calculation.profitMargin || 0).toFixed(2)}%`}
-              />
-              <DataCard
-                variant="secondary"
-                label="ROI (বিনিয়োগের রিটার্ন %)"
-                value={`${(calculation.roi || 0).toFixed(2)}%`}
-              />
-              <DataCard
-                variant="secondary"
-                label="Cost Markup (মার্কআপ %)"
-                value={`${(calculation.markup || 0).toFixed(2)}%`}
-              />
-              <DataCard
-                variant="accent"
-                label="Unit Inventory Cost (একক মজুদ ব্যয়)"
-                value={money(calculation.unitInventoryCost)}
-              />
-              <DataCard
-                variant="success"
-                label="Target Selling Price (লক্ষ্য বিক্রয়দর)"
-                value={money(calculation.requiredPrice)}
-              />
-            </DataCardGrid>
 
-            {/* Comprehensive Unit Economics & Breakdown Table */}
+            {/* Output Time Horizon & ROI View Mode Controls */}
             <div
               style={{
+                padding: "var(--sp-3)",
                 background: "var(--surface-alt)",
+                borderRadius: "var(--radius-lg)",
                 border: "1px solid var(--border)",
-                borderRadius: "var(--radius-xl)",
-                padding: "var(--sp-4)",
                 display: "flex",
                 flexDirection: "column",
-                gap: "var(--sp-2)",
+                gap: "var(--sp-3)",
               }}
             >
-              <h4 style={{ margin: "0 0 var(--sp-2)", fontSize: "var(--fs-base)", fontWeight: "var(--fw-semibold)", color: "var(--text-primary)" }}>
-                Unit Economics & Comprehensive Breakdown (একক ও মোট হিসাবের বিবরণী)
-              </h4>
-              <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(300px, 1fr))", gap: "var(--sp-3)" }}>
-                <StatListItem
-                  label="Sales Target Quantity"
-                  value={`${(calculation.qty || 0).toLocaleString()} units`}
-                />
-                <StatListItem
-                  label="Net Quantity (After Returns)"
-                  value={`${(calculation.netQuantity || 0).toLocaleString()} units`}
-                />
-                <StatListItem
-                  label={`Sourcing Total (${activeSourcingConfig.title})`}
-                  value={money(calculation.sourcingTotal)}
-                  sub={`Base: ${money(calculation.sourcingBase)} + Extra: ${money(calculation.sourcingExtra)} (৳${(calculation.sourcingUnitExtra || 0).toFixed(2)}/unit)`}
-                />
-                <StatListItem
-                  label={`Stocking Total (${activeStockingConfig.title})`}
-                  value={money(calculation.stockingTotal)}
-                  sub={`৳${(calculation.stockingUnitTotal || 0).toFixed(2)} / unit`}
-                />
-                <StatListItem
-                  label={`Selling Total (${activeSellingConfig.title})`}
-                  value={money(calculation.sellingTotal)}
-                  sub={`৳${(calculation.sellingUnitTotal || 0).toFixed(2)} / unit`}
-                />
-                <StatListItem
-                  label="Return Handling & Reprocessing"
-                  value={money(calculation.returnTotal)}
-                  sub={`৳${(calculation.returnUnitTotal || 0).toFixed(2)} / returned unit`}
-                />
-                <StatListItem
-                  label="Customer Refund Amount"
-                  value={money(calculation.refundAmount)}
-                  sub={`${calculation.returnedQty || 0} returned @ ${money(calculation.sellingPriceAfterDiscount)}`}
-                />
-                <StatListItem
-                  label="Recovered Inventory Value"
-                  value={money(calculation.recoveredInventoryCost)}
-                  sub={`Disposed as ${returnDisposition}`}
-                />
-                <StatListItem
-                  label="Lost Inventory Cost (Unrecoverable)"
-                  value={money(calculation.lostInventoryCost)}
-                />
-                <StatListItem
-                  label="Cost of Goods Sold (COGS)"
-                  value={money(calculation.cogs)}
-                  sub={`Net inventory consumed`}
-                />
-                <StatListItem
-                  label="Taxes & Municipal Levies"
-                  value={money(formData?.other_tax_levy || 0)}
-                />
-                <StatListItem
-                  label="Customer Delivery Income"
-                  value={money(calculation.deliveryIncome)}
-                  sub={`Collected shipping income`}
+              <div>
+                <label className="input-text__label" style={{ marginBottom: "var(--sp-1)", display: "block" }}>
+                  {t("viewResultsAs")}
+                </label>
+                <GroupButton
+                  options={[
+                    { value: "daily", label: t("freqDaily") },
+                    { value: "weekly", label: t("freqWeekly") },
+                    { value: "monthly", label: t("freqMonthly") },
+                    { value: "half-yearly", label: t("freqHalfYearly") },
+                    { value: "yearly", label: t("freqYearly") },
+                  ]}
+                  value={outputTimeHorizon ?? salesTargetDays}
+                  onChange={(e) => setOutputTimeHorizon && setOutputTimeHorizon(e.target.value)}
+                  size="sm"
                 />
               </div>
 
-              <div
-                style={{
-                  marginTop: "var(--sp-3)",
-                  paddingTop: "var(--sp-3)",
-                  borderTop: "2px solid var(--border)",
-                  display: "flex",
-                  justifyContent: "space-between",
-                  alignItems: "center",
-                  flexWrap: "wrap",
-                  gap: "var(--sp-2)",
-                  fontSize: "var(--fs-lg)",
-                  fontWeight: "var(--fw-bold)",
-                }}
-              >
-                <div style={{ display: "flex", flexDirection: "column" }}>
-                  <span style={{ color: "var(--text-primary)" }}>Net Profit / (Loss) নিট লাভ / (ক্ষতি)</span>
-                  <span style={{ fontSize: "var(--fs-xs)", color: "var(--text-muted)", fontWeight: "normal" }}>
-                    Net per unit: ৳{(calculation.unitNetProfit || 0).toFixed(2)} / unit
-                  </span>
-                </div>
-                <span style={{ color: calculation.netProfit >= 0 ? "var(--success)" : "var(--danger)" }}>
-                  {money(calculation.netProfit)}
-                </span>
+              <div>
+                <label className="input-text__label" style={{ marginBottom: "var(--sp-1)", display: "block" }}>
+                  {t("roiDisplayMode")}
+                </label>
+                <GroupButton
+                  options={[
+                    { value: "total", label: t("totalAmountMode") },
+                    { value: "per_unit", label: t("perUnitMode") },
+                  ]}
+                  value={roiViewMode ?? "total"}
+                  onChange={(e) => setRoiViewMode && setRoiViewMode(e.target.value)}
+                  size="sm"
+                />
               </div>
+
+              {outputTimeHorizon && outputTimeHorizon !== salesTargetDays && getHorizonMultiplier && (
+                <p style={{ margin: 0, fontSize: "var(--fs-xs)", color: "var(--text-secondary)" }}>
+                  {lang === "BN" ? (
+                    <>
+                      ইনপুট: <strong>{salesTargetDays}</strong> &rarr; আউটপুট: <strong>{outputTimeHorizon}</strong> (গুণক: {getHorizonMultiplier(salesTargetDays, outputTimeHorizon).toFixed(4)}x)
+                    </>
+                  ) : (
+                    <>
+                      Input: <strong>{salesTargetDays}</strong> &rarr; Output: <strong>{outputTimeHorizon}</strong> (multiplier: {getHorizonMultiplier(salesTargetDays, outputTimeHorizon).toFixed(4)}x)
+                    </>
+                  )}
+                </p>
+              )}
             </div>
+
+            {(() => {
+              const outputMultiplier = getHorizonMultiplier
+                ? getHorizonMultiplier(salesTargetDays, outputTimeHorizon ?? salesTargetDays)
+                : 1;
+              const scaleMoney = (v) => money((v || 0) * outputMultiplier);
+
+              return (
+                <>
+                  {/* TARGET PROFIT PLANNING (REVERSE GOAL SEEK) */}
+                  <div
+                    style={{
+                      padding: "var(--sp-4)",
+                      background: "var(--surface)",
+                      borderRadius: "var(--radius-xl)",
+                      border: "1.5px solid var(--border)",
+                      display: "flex",
+                      flexDirection: "column",
+                      gap: "var(--sp-3)",
+                      boxShadow: "var(--shadow-sm)",
+                    }}
+                  >
+                    <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", flexWrap: "wrap", gap: "var(--sp-2)" }}>
+                      <div>
+                        <div style={{ fontSize: "var(--fs-md)", fontWeight: "var(--fw-bold)", color: "var(--text-primary)", display: "flex", alignItems: "center", gap: "var(--sp-2)" }}>
+                          <span>🎯</span>
+                          <span>{t("secTargetProfitTitle")}</span>
+                          {renderInfo("targetProfitPlanner")}
+                        </div>
+                        <p style={{ margin: "4px 0 0", fontSize: "var(--fs-xs)", color: "var(--text-secondary)" }}>
+                          {t("secTargetProfitSubtitle")}
+                        </p>
+                      </div>
+                    </div>
+
+                    <div className="grid" style={{ alignItems: "flex-end" }}>
+                      <div className="col-span-4">
+                        <InputNumber
+                          label={<span style={{ display: "inline-flex", alignItems: "center" }}>{t("targetProfitLabel")} {renderInfo("targetProfitPlanner")}</span>}
+                          placeholder="50,000"
+                          value={get("target_profit_amount")}
+                          onChange={(e) => handleChange("target_profit_amount", e.target.value)}
+                          min={0}
+                          step={5000}
+                          disabled={readOnly}
+                        />
+                      </div>
+
+                      {calculation.unitContributionMargin <= 0 ? (
+                        <div
+                          className="col-span-8"
+                          style={{
+                            padding: "var(--sp-3)",
+                            background: "rgba(239, 68, 68, 0.1)",
+                            border: "1px solid var(--danger)",
+                            borderRadius: "var(--radius-md)",
+                            fontSize: "var(--fs-xs)",
+                            color: "var(--danger)",
+                            fontWeight: "var(--fw-medium)",
+                          }}
+                        >
+                          ⚠️ {t("targetProfitInfeasibleNotice")}
+                        </div>
+                      ) : (
+                        <div
+                          className="col-span-8"
+                          style={{
+                            display: "grid",
+                            gridTemplateColumns: "repeat(auto-fit, minmax(180px, 1fr))",
+                            gap: "var(--sp-2)",
+                          }}
+                        >
+                          {/* Required Quantity Card */}
+                          <div
+                            style={{
+                              padding: "var(--sp-2) var(--sp-3)",
+                              background: "var(--surface-alt)",
+                              borderRadius: "var(--radius-md)",
+                              border: "1px solid var(--border)",
+                            }}
+                          >
+                            <div style={{ fontSize: "var(--fs-xs)", color: "var(--text-secondary)", marginBottom: "2px", display: "flex", alignItems: "center" }}>
+                              <span>{t("targetProfitRequiredQty")}</span>
+                              {renderInfo("targetProfitPlanner")}
+                            </div>
+                            <div style={{ fontSize: "var(--fs-lg)", fontWeight: "var(--fw-bold)", color: "var(--primary)" }}>
+                              {Math.round((calculation.requiredProfitQty || 0) * outputMultiplier).toLocaleString()} {t("units")}
+                            </div>
+                            <div style={{ fontSize: "11px", color: "var(--text-muted)" }}>
+                              {t("targetProfitUnitMargin")}: {money(calculation.unitContributionMargin)}
+                            </div>
+                          </div>
+
+                          {/* Required Revenue Card */}
+                          <div
+                            style={{
+                              padding: "var(--sp-2) var(--sp-3)",
+                              background: "var(--surface-alt)",
+                              borderRadius: "var(--radius-md)",
+                              border: "1px solid var(--border)",
+                            }}
+                          >
+                            <div style={{ fontSize: "var(--fs-xs)", color: "var(--text-secondary)", marginBottom: "2px", display: "flex", alignItems: "center" }}>
+                              <span>{t("targetProfitRequiredRevenue")}</span>
+                              {renderInfo("targetProfitPlanner")}
+                            </div>
+                            <div style={{ fontSize: "var(--fs-lg)", fontWeight: "var(--fw-bold)", color: "var(--success)" }}>
+                              {scaleMoney(calculation.requiredProfitRevenue)}
+                            </div>
+                            <div style={{ fontSize: "11px", color: "var(--text-muted)" }}>
+                              @ {money(calculation.sellingPriceAfterDiscount)} / unit
+                            </div>
+                          </div>
+
+                          {/* Comparison Status Card */}
+                          <div
+                            style={{
+                              padding: "var(--sp-2) var(--sp-3)",
+                              background: calculation.isTargetProfitAchieved
+                                ? "rgba(34, 197, 94, 0.08)"
+                                : "rgba(234, 179, 8, 0.08)",
+                              borderRadius: "var(--radius-md)",
+                              border: `1px solid ${calculation.isTargetProfitAchieved ? "var(--success)" : "var(--warning)"}`,
+                            }}
+                          >
+                            <div style={{ fontSize: "var(--fs-xs)", color: "var(--text-secondary)", marginBottom: "2px", display: "flex", alignItems: "center" }}>
+                              <span>{calculation.isTargetProfitAchieved ? t("targetProfitSurplusLabel") : t("targetProfitShortfallLabel")}</span>
+                              {renderInfo("targetProfitPlanner")}
+                            </div>
+                            <div
+                              style={{
+                                fontSize: "var(--fs-lg)",
+                                fontWeight: "var(--fw-bold)",
+                                color: calculation.isTargetProfitAchieved ? "var(--success)" : "var(--warning)",
+                              }}
+                            >
+                              {calculation.isTargetProfitAchieved ? "+" : "-"}
+                              {Math.abs(Math.round((calculation.targetProfitQtyDiff || 0) * outputMultiplier)).toLocaleString()} {t("units")}
+                            </div>
+                            <div
+                              style={{
+                                fontSize: "11px",
+                                color: calculation.isTargetProfitAchieved ? "var(--success)" : "var(--text-secondary)",
+                              }}
+                            >
+                              {calculation.isTargetProfitAchieved
+                                ? `✓ ${t("targetProfitAchievedStatus")}`
+                                : `${t("targetProfitShortfallLabel")}: ${scaleMoney(Math.abs(calculation.targetProfitQtyDiff) * calculation.sellingPriceAfterDiscount)}`}
+                            </div>
+                          </div>
+                        </div>
+                      )}
+                    </div>
+                  </div>
+
+                  {/* TOP KPI METRICS: REVENUE, COGS, GROSS PROFIT, EXPENSES */}
+                  <DataCardGrid cols={4}>
+                    <DataCard
+                      variant="accent"
+                      label={<span style={{ display: "inline-flex", alignItems: "center" }}>{t("kpiNetRevenue")} {renderInfo("netRevenue")}</span>}
+                      value={scaleMoney(calculation.netRevenue)}
+                    />
+                    <DataCard
+                      variant="secondary"
+                      label={<span style={{ display: "inline-flex", alignItems: "center" }}>{t("rowCogs")} {renderInfo("cogs")}</span>}
+                      value={scaleMoney(calculation.cogs)}
+                    >
+                      <div style={{ fontSize: "11px", color: "var(--text-muted)", marginTop: "4px" }}>
+                        ৳{((calculation.unitCogs || 0) * outputMultiplier).toFixed(2)} {t("perUnitSuffix")}
+                      </div>
+                    </DataCard>
+                    <DataCard
+                      variant={calculation.grossProfit >= 0 ? "success" : "danger"}
+                      label={<span style={{ display: "inline-flex", alignItems: "center" }}>{t("kpiGrossProfit")} {renderInfo("grossProfit")}</span>}
+                      value={scaleMoney(calculation.grossProfit)}
+                    >
+                      <div style={{ fontSize: "11px", color: "var(--text-muted)", marginTop: "4px" }}>
+                        {t("kpiGrossMargin")}: {(calculation.grossMargin || 0).toFixed(2)}%
+                      </div>
+                    </DataCard>
+                    <DataCard
+                      variant="warning"
+                      label={<span style={{ display: "inline-flex", alignItems: "center" }}>{t("kpiTotalExpenses")} {renderInfo("totalExpenses")}</span>}
+                      value={scaleMoney(calculation.totalExpenses)}
+                    />
+
+                    {/* ROW 2: NET PROFIT, ROI, BREAK-EVEN, CAPITAL */}
+                    <DataCard
+                      variant={calculation.netProfit >= 0 ? "success" : "danger"}
+                      label={<span style={{ display: "inline-flex", alignItems: "center" }}>{t("kpiNetProfit")} {renderInfo("netProfit")}</span>}
+                      value={scaleMoney(calculation.netProfit)}
+                      badge={calculation.netProfit >= 0 ? t("profitBadge") : t("lossBadge")}
+                      trend={calculation.netProfit >= 0 ? "up" : "down"}
+                    >
+                      <div style={{ fontSize: "11px", color: "var(--text-muted)", marginTop: "4px" }}>
+                        ৳{((calculation.unitNetProfit || 0) * outputMultiplier).toFixed(2)} {t("perUnitSuffix")} ({((calculation.profitMargin || 0)).toFixed(1)}%)
+                      </div>
+                    </DataCard>
+
+                    <DataCard
+                      variant="secondary"
+                      label={<span style={{ display: "inline-flex", alignItems: "center" }}>{roiViewMode === "per_unit" ? t("netProfitPerUnit") : t("kpiRoi")} {renderInfo("roi")}</span>}
+                      value={
+                        roiViewMode === "per_unit"
+                          ? money((calculation.unitNetProfit || 0) * outputMultiplier)
+                          : `${(calculation.roi || 0).toFixed(2)}%`
+                      }
+                    />
+
+                    <DataCard
+                      variant={calculation.breakEvenQty ? "accent" : "danger"}
+                      label={<span style={{ display: "inline-flex", alignItems: "center" }}>{t("kpiBreakEvenUnits")} {renderInfo("breakEven")}</span>}
+                      value={
+                        calculation.breakEvenQty
+                          ? `${Math.round(calculation.breakEvenQty * outputMultiplier).toLocaleString()} ${t("units")}`
+                          : "N/A"
+                      }
+                    >
+                      <div style={{ fontSize: "11px", color: "var(--text-muted)", marginTop: "4px" }}>
+                        {calculation.breakEvenQty
+                          ? `${scaleMoney(calculation.breakEvenRevenue)}`
+                          : t("bepInfinite")}
+                      </div>
+                    </DataCard>
+
+                    <DataCard
+                      variant="accent"
+                      label={<span style={{ display: "inline-flex", alignItems: "center" }}>{t("kpiWorkingCapital")} {renderInfo("workingCapital")}</span>}
+                      value={scaleMoney(calculation.workingCapital)}
+                    />
+
+                    {/* ROW 3: OPERATING PROFIT, MARKUP, UNIT INVENTORY, REQUIRED TARGET PRICE */}
+                    <DataCard
+                      variant={calculation.operatingProfit >= 0 ? "success" : "danger"}
+                      label={<span style={{ display: "inline-flex", alignItems: "center" }}>{t("kpiOperatingProfit")} {renderInfo("operatingProfit")}</span>}
+                      value={scaleMoney(calculation.operatingProfit)}
+                    />
+
+                    <DataCard
+                      variant="secondary"
+                      label={<span style={{ display: "inline-flex", alignItems: "center" }}>{t("kpiMarkup")} {renderInfo("markup")}</span>}
+                      value={`${(calculation.markup || 0).toFixed(2)}%`}
+                    />
+
+                    <DataCard
+                      variant="secondary"
+                      label={<span style={{ display: "inline-flex", alignItems: "center" }}>{t("kpiUnitInventoryCost")} {renderInfo("unitInventoryCost")}</span>}
+                      value={scaleMoney(calculation.unitInventoryCost)}
+                    />
+
+                    <DataCard
+                      variant="success"
+                      label={<span style={{ display: "inline-flex", alignItems: "center" }}>{t("kpiTargetPrice")} {renderInfo("targetPrice")}</span>}
+                      value={scaleMoney(calculation.requiredPrice)}
+                    />
+                  </DataCardGrid>
+
+                  {/* Comprehensive Unit Economics & Breakdown Table */}
+                  <div
+                    style={{
+                      background: "var(--surface-alt)",
+                      border: "1px solid var(--border)",
+                      borderRadius: "var(--radius-xl)",
+                      padding: "var(--sp-4)",
+                      display: "flex",
+                      flexDirection: "column",
+                      gap: "var(--sp-4)",
+                    }}
+                  >
+                    {/* SECTION A: REVENUE & SALES DEDUCTIONS */}
+                    <div>
+                      <h4 style={{ margin: "0 0 var(--sp-2)", fontSize: "var(--fs-sm)", fontWeight: "var(--fw-bold)", color: "var(--primary)", display: "flex", alignItems: "center" }}>
+                        <span>1. {lang === "BN" ? "বিক্রয় আয় ও সংগৃহীত অর্থ (Revenue & Incomes)" : "Sales Revenues & Incomes"}</span>
+                        {renderInfo("netRevenue")}
+                      </h4>
+                      <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))", gap: "var(--sp-3)" }}>
+                        <StatListItem
+                          label={<span style={{ display: "inline-flex", alignItems: "center" }}>{t("rowSalesQty")} {renderInfo("targetProfitPlanner")}</span>}
+                          value={`${(calculation.qty || 0).toLocaleString()} ${t("units")}`}
+                        />
+                        <StatListItem
+                          label={<span style={{ display: "inline-flex", alignItems: "center" }}>{t("rowNetQty")} {renderInfo("returnDisposition")}</span>}
+                          value={`${(calculation.effectiveSoldQty || 0).toLocaleString()} ${t("units")}`}
+                          sub={
+                            returnDisposition === "resell_repack" ||
+                            returnDisposition === "resell" ||
+                            returnDisposition === "repack"
+                              ? lang === "BN"
+                                ? "রিপ্যাকিং করে ১০০% বিক্রি"
+                                : "100% Sold after repacking"
+                              : `${t("rowReturnRate")}: ${(calculation.returnRatePercent || 0).toFixed(1)}%`
+                          }
+                        />
+                        <StatListItem
+                          label={<span style={{ display: "inline-flex", alignItems: "center" }}>{t("rowGrossSales")} {renderInfo("netRevenue")}</span>}
+                          value={scaleMoney(calculation.grossSalesBeforeDiscount)}
+                          sub={`@ ${money(calculation.averageSellingPrice)}`}
+                        />
+                        <StatListItem
+                          label={<span style={{ display: "inline-flex", alignItems: "center" }}>{t("rowDiscountTotal")} {renderInfo("discount")}</span>}
+                          value={`- ${scaleMoney(calculation.discountAmount)}`}
+                          sub={`${formData?.discount_percent || 0}% discount applied`}
+                        />
+                        <StatListItem
+                          label={<span style={{ display: "inline-flex", alignItems: "center" }}>{t("rowRefundAmount")} {renderInfo("returnLogistics")}</span>}
+                          value={`- ${scaleMoney(calculation.refundAmount)}`}
+                          sub={`${calculation.returnedQty || 0} ${t("returnedAt")} ${money(calculation.refundAmount / Math.max(1, calculation.returnedQty))}`}
+                        />
+                        <StatListItem
+                          label={<span style={{ display: "inline-flex", alignItems: "center" }}>{t("rowDeliveryIncome")} {renderInfo("netRevenue")}</span>}
+                          value={`+ ${scaleMoney(calculation.deliveryIncome)}`}
+                          sub={t("collectedShippingIncome")}
+                        />
+                        {calculation.returnFeeCollected > 0 && (
+                          <StatListItem
+                            label={<span style={{ display: "inline-flex", alignItems: "center" }}>{t("returnFeeCollectedLabel")} {renderInfo("returnLogistics")}</span>}
+                            value={`+ ${scaleMoney(calculation.returnFeeCollected)}`}
+                            sub="Customer return/advance charge"
+                          />
+                        )}
+                        {calculation.scrapSalesRevenue > 0 && (
+                          <StatListItem
+                            label={<span style={{ display: "inline-flex", alignItems: "center" }}>{t("rowSalvageIncome")} {renderInfo("returnDisposition")}</span>}
+                            value={`+ ${scaleMoney(calculation.scrapSalesRevenue)}`}
+                            sub={`${calculation.returnedQty || 0} ${t("units")} scrapped`}
+                          />
+                        )}
+                        <StatListItem
+                          label={<span style={{ display: "inline-flex", alignItems: "center" }}>{t("kpiNetRevenue")} {renderInfo("netRevenue")}</span>}
+                          value={scaleMoney(calculation.netRevenue)}
+                          sub={`Net effective revenue`}
+                        />
+                      </div>
+                    </div>
+
+                    {/* SECTION B: COST OF GOODS SOLD (COGS) */}
+                    <div>
+                      <h4 style={{ margin: "0 0 var(--sp-2)", fontSize: "var(--fs-sm)", fontWeight: "var(--fw-bold)", color: "var(--primary)", display: "flex", alignItems: "center" }}>
+                        <span>2. {lang === "BN" ? "বিক্রীত পণ্যের প্রত্যক্ষ ব্যয় (Cost of Goods Sold - COGS)" : "Direct Cost of Goods Sold (COGS)"}</span>
+                        {renderInfo("cogs")}
+                      </h4>
+                      <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))", gap: "var(--sp-3)" }}>
+                        <StatListItem
+                          label={<span style={{ display: "inline-flex", alignItems: "center" }}>{`${t("rowSourcingTotal")} (${activeSourcingConfig.title})`} {renderInfo("sourcingModel")}</span>}
+                          value={scaleMoney(calculation.sourcingTotal)}
+                          sub={`Base: ${scaleMoney(calculation.sourcingBase)} + Extra: ${scaleMoney(calculation.sourcingExtra)}`}
+                        />
+                        <StatListItem
+                          label={<span style={{ display: "inline-flex", alignItems: "center" }}>{`${t("rowStockingTotal")} (${activeStockingConfig.title})`} {renderInfo("stockingModel")}</span>}
+                          value={scaleMoney(calculation.stockingTotal)}
+                          sub={`৳${((calculation.stockingUnitTotal || 0) * outputMultiplier).toFixed(2)} ${t("perUnitSuffix")}`}
+                        />
+                        <StatListItem
+                          label={<span style={{ display: "inline-flex", alignItems: "center" }}>Total Landed Batch Cost {renderInfo("unitInventoryCost")}</span>}
+                          value={scaleMoney(calculation.inventoryCost)}
+                          sub={`৳${((calculation.unitInventoryCost || 0) * outputMultiplier).toFixed(2)} ${t("perUnitSuffix")}`}
+                        />
+                        {returnDisposition === "resell_repack" ||
+                        returnDisposition === "resell" ||
+                        returnDisposition === "repack" ? (
+                          <StatListItem
+                            label={<span style={{ display: "inline-flex", alignItems: "center" }}>{t("rowRecoveredCost")} {renderInfo("returnDisposition")}</span>}
+                            value={`✓ ${scaleMoney(calculation.recoveredInventoryCost)}`}
+                            sub="100% inventory sold to customers"
+                          />
+                        ) : returnDisposition === "scrap" ? (
+                          <StatListItem
+                            label={<span style={{ display: "inline-flex", alignItems: "center" }}>{t("rowLostCost")} {renderInfo("returnDisposition")}</span>}
+                            value={scaleMoney(calculation.lostInventoryCost)}
+                            sub={`Net Scrap Loss: ${scaleMoney(calculation.netScrapLoss)}`}
+                          />
+                        ) : (
+                          <StatListItem
+                            label={<span style={{ display: "inline-flex", alignItems: "center" }}>{t("rowLostCost")} {renderInfo("returnDisposition")}</span>}
+                            value={scaleMoney(calculation.lostInventoryCost)}
+                            sub="100% loss write-off"
+                          />
+                        )}
+                        <StatListItem
+                          label={<span style={{ display: "inline-flex", alignItems: "center" }}>{t("rowCogs")} {renderInfo("cogs")}</span>}
+                          value={scaleMoney(calculation.cogs)}
+                          sub={`৳${((calculation.unitCogs || 0) * outputMultiplier).toFixed(2)} / delivered unit`}
+                        />
+                        <StatListItem
+                          label={<span style={{ display: "inline-flex", alignItems: "center" }}>{t("kpiGrossProfit")} {renderInfo("grossProfit")}</span>}
+                          value={scaleMoney(calculation.grossProfit)}
+                          sub={`Gross Margin: ${(calculation.grossMargin || 0).toFixed(2)}%`}
+                        />
+                      </div>
+                    </div>
+
+                    {/* SECTION C: OPERATING EXPENSES (OPEX) & NET PROFIT */}
+                    <div>
+                      <h4 style={{ margin: "0 0 var(--sp-2)", fontSize: "var(--fs-sm)", fontWeight: "var(--fw-bold)", color: "var(--primary)", display: "flex", alignItems: "center" }}>
+                        <span>3. {lang === "BN" ? "পরিচালন ব্যয় ও নিট লাভ (OPEX & Net Profit)" : "Operating Expenses (OPEX) & Net Profit"}</span>
+                        {renderInfo("totalExpenses")}
+                      </h4>
+                      <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))", gap: "var(--sp-3)" }}>
+                        <StatListItem
+                          label={<span style={{ display: "inline-flex", alignItems: "center" }}>{`${t("rowSellingTotal")} (${activeSellingConfig.title})`} {renderInfo("salesModel")}</span>}
+                          value={scaleMoney(calculation.sellingTotal)}
+                          sub={`৳${((calculation.sellingUnitTotal || 0) * outputMultiplier).toFixed(2)} ${t("perUnitSuffix")}`}
+                        />
+                        <StatListItem
+                          label={<span style={{ display: "inline-flex", alignItems: "center" }}>{t("rowReturnCosts")} {renderInfo("returnDisposition")}</span>}
+                          value={scaleMoney(calculation.returnTotal)}
+                          sub={`Proc: ${scaleMoney(calculation.returnProcessingCost)} + Courier: ${scaleMoney(calculation.returnCourierCost)}${calculation.disposalCostTotal > 0 ? ` + Disp: ${scaleMoney(calculation.disposalCostTotal)}` : ""}`}
+                        />
+                        <StatListItem
+                          label={<span style={{ display: "inline-flex", alignItems: "center" }}>{t("rowTaxes")} {renderInfo("taxes")}</span>}
+                          value={scaleMoney(formData?.other_tax_levy || 0)}
+                          sub="AIT, VAT, Trade licensing fees"
+                        />
+                        <StatListItem
+                          label={<span style={{ display: "inline-flex", alignItems: "center" }}>{t("rowOperatingExpenses")} {renderInfo("totalExpenses")}</span>}
+                          value={scaleMoney(calculation.opex)}
+                          sub="Selling + Returns + Taxes"
+                        />
+                        <StatListItem
+                          label={<span style={{ display: "inline-flex", alignItems: "center" }}>{t("kpiOperatingProfit")} {renderInfo("operatingProfit")}</span>}
+                          value={scaleMoney(calculation.operatingProfit)}
+                          sub="EBITDA / Operating Income"
+                        />
+                        <StatListItem
+                          label={<span style={{ display: "inline-flex", alignItems: "center" }}>{t("kpiTotalExpenses")} {renderInfo("totalExpenses")}</span>}
+                          value={scaleMoney(calculation.totalExpenses)}
+                          sub="COGS + OPEX"
+                        />
+                      </div>
+                    </div>
+
+                    {/* SECTION D: BREAK-EVEN & FINANCIAL RISK ANALYSIS */}
+                    <div>
+                      <h4 style={{ margin: "0 0 var(--sp-2)", fontSize: "var(--fs-sm)", fontWeight: "var(--fw-bold)", color: "var(--primary)", display: "flex", alignItems: "center" }}>
+                        <span>4. {lang === "BN" ? "ব্রেক-ইভেন ও আর্থিক সম্ভাব্যতা (Break-Even & Risk Analysis)" : "Break-Even & Financial Viability Analysis"}</span>
+                        {renderInfo("breakEven")}
+                      </h4>
+                      <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))", gap: "var(--sp-3)" }}>
+                        <StatListItem
+                          label={<span style={{ display: "inline-flex", alignItems: "center" }}>{t("kpiContributionMargin")} {renderInfo("breakEven")}</span>}
+                          value={`${(calculation.contributionMarginPercent || 0).toFixed(2)}%`}
+                          sub={`৳${((calculation.unitContributionMargin || 0) * outputMultiplier).toFixed(2)} / unit margin`}
+                        />
+                        <StatListItem
+                          label={<span style={{ display: "inline-flex", alignItems: "center" }}>{t("rowBreakEvenQty")} {renderInfo("breakEven")}</span>}
+                          value={calculation.breakEvenQty ? `${Math.round(calculation.breakEvenQty * outputMultiplier).toLocaleString()} ${t("units")}` : "N/A"}
+                          sub={calculation.breakEvenQty ? t("bepAchieved") : t("bepInfinite")}
+                        />
+                        <StatListItem
+                          label={<span style={{ display: "inline-flex", alignItems: "center" }}>{t("rowBreakEvenRevenue")} {renderInfo("breakEven")}</span>}
+                          value={calculation.breakEvenQty ? scaleMoney(calculation.breakEvenRevenue) : "N/A"}
+                          sub="Sales volume to break even"
+                        />
+                        <StatListItem
+                          label={<span style={{ display: "inline-flex", alignItems: "center" }}>{t("kpiSafetyMargin")} {renderInfo("breakEven")}</span>}
+                          value={`${(calculation.safetyMarginPercent || 0).toFixed(2)}%`}
+                          sub="Cushion before incurring losses"
+                        />
+                        <StatListItem
+                          label={<span style={{ display: "inline-flex", alignItems: "center" }}>{t("rowTargetProfit")} {renderInfo("targetProfitPlanner")}</span>}
+                          value={scaleMoney(calculation.targetProfit)}
+                          sub="Desired net profit goal"
+                        />
+                        <StatListItem
+                          label={<span style={{ display: "inline-flex", alignItems: "center" }}>{t("rowRequiredProfitQty")} {renderInfo("targetProfitPlanner")}</span>}
+                          value={
+                            calculation.requiredProfitQty
+                              ? `${Math.round(calculation.requiredProfitQty * outputMultiplier).toLocaleString()} ${t("units")}`
+                              : "N/A"
+                          }
+                          sub={
+                            calculation.requiredProfitQty
+                              ? `${scaleMoney(calculation.requiredProfitRevenue)} total sales`
+                              : t("targetProfitInfeasibleNotice")
+                          }
+                        />
+                        <StatListItem
+                          label={<span style={{ display: "inline-flex", alignItems: "center" }}>{t("rowWorkingCapital")} {renderInfo("workingCapital")}</span>}
+                          value={scaleMoney(calculation.workingCapital)}
+                          sub="Total initial cash required to fund batch"
+                        />
+                      </div>
+                    </div>
+
+                    {/* BOTTOM SUMMARY ROW */}
+                    <div
+                      style={{
+                        marginTop: "var(--sp-2)",
+                        paddingTop: "var(--sp-3)",
+                        borderTop: "2px solid var(--border)",
+                        display: "flex",
+                        justifyContent: "space-between",
+                        alignItems: "center",
+                        flexWrap: "wrap",
+                        gap: "var(--sp-2)",
+                        fontSize: "var(--fs-lg)",
+                        fontWeight: "var(--fw-bold)",
+                      }}
+                    >
+                      <div style={{ display: "flex", flexDirection: "column" }}>
+                        <span style={{ color: "var(--text-primary)", display: "inline-flex", alignItems: "center" }}>
+                          <span>{t("netProfitTotalLabel")}</span>
+                          {renderInfo("netProfit")}
+                        </span>
+                        <span style={{ fontSize: "var(--fs-xs)", color: "var(--text-muted)", fontWeight: "normal" }}>
+                          {t("netProfitUnitLabel")}: ৳{((calculation.unitNetProfit || 0) * outputMultiplier).toFixed(2)} {t("perUnitSuffix")} (Net Margin: {(calculation.profitMargin || 0).toFixed(2)}%)
+                        </span>
+                      </div>
+                      <span style={{ color: calculation.netProfit >= 0 ? "var(--success)" : "var(--danger)", fontSize: "var(--fs-xl)" }}>
+                        {scaleMoney(calculation.netProfit)}
+                      </span>
+                    </div>
+                  </div>
+                </>
+              );
+            })()}
           </div>
         </AccordionBody>
       </AccordionCard>
@@ -965,18 +1765,18 @@ const CalculatorForm = ({
       {/* ACTIONS */}
       <div className="form-actions">
         <Button variant="secondary" onClick={handleResetToBDDefault} disabled={isBusy}>
-          Load Bangladesh Defaults (ডিফল্ট রিসেট)
+          {t("loadBDDefaults")}
         </Button>
 
         <Button variant="ghost" onClick={handleCancel} disabled={isBusy}>
           <IconClose size={16} className="icon-left" />
-          Cancel
+          {t("cancel")}
         </Button>
 
         {!readOnly && (
           <Button variant="primary" onClick={() => handleSubmit()} disabled={isBusy}>
             <IconSave size={16} className="icon-left" />
-            Save Calculation
+            {t("saveCalculation")}
           </Button>
         )}
       </div>

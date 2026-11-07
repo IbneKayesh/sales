@@ -6,6 +6,7 @@ import PageCard, {
 } from "@/components/PageCard";
 import { IconClose } from "@/icons";
 import Button from "@/components/Button";
+import GroupButton from "@/components/GroupButton";
 import useUnifiedProfitROI from "@/hooks/M06/useUnifiedProfitROI";
 import CalculatorForm from "./CalculatorForm";
 
@@ -17,17 +18,29 @@ const UnifiedProfitROIPage = () => {
       <PageCard>
         <PageCardHeader>
           <PageCardTitle
-            title="Unified Profit / ROI Calculator"
-            subtitle="Simulate margins, markups, costs and profitability across stages"
+            title={roi.t("pageTitle")}
+            subtitle={roi.t("pageSubtitle")}
           />
           <PageCardActions>
+            <div style={{ display: "inline-flex", alignItems: "center", gap: "4px" }}>
+              <span>{roi.t("languageLabel")}:</span>
+              <GroupButton
+                options={[
+                  { value: "EN", label: "EN" },
+                  { value: "BN", label: "BN" },
+                ]}
+                value={roi.lang}
+                onChange={(e) => roi.setLanguage(e.target.value)}
+                size="sm"
+              />
+            </div>
             <Button variant="secondary" size="sm" onClick={roi.handleResetToBDDefault}>
-              Load BD Defaults
+              {roi.t("loadBDDefaults")}
             </Button>
             {roi.pgView === "SYS_VW_FRM_1" && (
               <Button variant="secondary" size="sm" onClick={roi.handleCancel}>
                 <IconClose size={14} className="icon-left" />
-                Cancel
+                {roi.t("cancel")}
               </Button>
             )}
           </PageCardActions>
