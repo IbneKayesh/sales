@@ -7,6 +7,7 @@
     "dev": "vite",
     "build": "vite build",
     "lint": "eslint .",
+    "test:roi": "node scripts/verify-profit-calculator.mjs",
     "preview": "vite preview"
   },
   "dependencies": {

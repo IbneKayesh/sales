@@ -16,7 +16,10 @@ export const getMetricExplanation = (metricKey, {
   t = (k) => k,
 }) => {
   const isBN = lang === 'BN';
-  const qty = Number(calculation.qty || formData.sales_qty || 0);
+  const totalBulkShare = (bulkPrices || []).reduce(
+    (sum, tier) => sum + (Number(tier?.mix) || 0),
+    0,
+  );
 
   const explanations = {
     // ----------------------------------------------------
@@ -67,9 +70,9 @@ export const getMetricExplanation = (metricKey, {
       title: isBN ? 'পণ্যের মোট আসল খরচ (COGS)' : 'Cost of Goods Sold (COGS)',
       subtitle: isBN ? 'পণ্য কেনা বা বানানো এবং গোডাউনে রাখার সরাসরি খরচ' : 'Direct inventory procurement & warehousing costs',
       explanation: isBN
-        ? 'সহজ কথায়, যে মালগুলো বিক্রি হয়েছে সেগুলো কিনতে বা বানাতে এবং গোডাউনে এনে রাখতে আপনার সরাসরি কত খরচ পড়েছে। কোনো রিটার্ন মাল স্ক্র্যাপে কম দামে বিক্রি করলে সেই টাকা এই খরচ থেকে বাদ দিয়ে হিসাব করা হয়।'
-        : 'Direct costs attributable to procurement or manufacturing plus warehouse storage. Reduced by any cash recovery from scrap sales of returned merchandise.',
-      formula: 'COGS = Total Batch Inventory Cost (Sourcing + Stocking) - Scrap Recovery Proceeds',
+        ? 'সহজ কথায়, পুরো ব্যাচের মাল কিনতে বা বানাতে এবং গোডাউনে এনে রাখতে আপনার সরাসরি মোট কত টাকা খরচ হয়েছে। রিটার্ন মাল স্ক্র্যাপে বেচে যে টাকা ফেরত আসে সেটা এই খরচ থেকে বাদ দেওয়া হয় না, সেটা বিক্রয় আয়ের সাথে যোগ হয়—তাই একই টাকা দুইবার হিসাব হয় না।'
+        : 'Direct costs attributable to procurement or manufacturing plus warehouse storage for the whole batch. Cash recovered by scrapping returned units is booked as income in Net Revenue instead of reducing this cost, so the recovery is counted only once.',
+      formula: 'COGS = Total Batch Inventory Cost (Sourcing + Stocking) — scrap proceeds are income in Net Revenue',
       breakdown: [
         {
           label: isBN ? 'পণ্য কেনা বা তৈরির মোট খরচ' : 'Sourcing Total Outlay',
@@ -86,13 +89,15 @@ export const getMetricExplanation = (metricKey, {
           value: `= ${scaleMoney(calculation.inventoryCost)}`,
         },
         {
-          label: isBN ? 'স্ক্র্যাপ বিক্রির টাকা (বাদ)' : 'Less Scrap Proceeds',
-          value: `- ${scaleMoney(calculation.scrapSalesRevenue)}`,
-        },
-        {
-          label: isBN ? 'বিক্রীত পণ্যের আসল খরচ (COGS)' : 'Effective COGS',
+          label: isBN ? 'মালের মোট খরচ (COGS)' : 'COGS — full batch cost',
           value: scaleMoney(calculation.cogs),
-          note: `৳${((calculation.unitCogs || 0) * outputMultiplier).toFixed(2)} / ${isBN ? 'পিস' : 'unit'}`,
+          note:
+            `${money(calculation.unitCogs)} / ${isBN ? 'পিস' : 'unit'}` +
+            (calculation.scrapSalesRevenue > 0
+              ? isBN
+                ? ` • স্ক্র্যাপ আয় ${scaleMoney(calculation.scrapSalesRevenue)} আয়ের সাথে যোগ হয়েছে`
+                : ` • scrap income ${scaleMoney(calculation.scrapSalesRevenue)} counted in revenue`
+              : ''),
           highlight: true,
         },
       ],
@@ -197,7 +202,7 @@ export const getMetricExplanation = (metricKey, {
         },
         {
           label: isBN ? 'প্রতি পিসে আসল লাভ' : 'Net Profit per Unit',
-          value: `৳${((calculation.unitNetProfit || 0) * outputMultiplier).toFixed(2)} / ${isBN ? 'পিস' : 'unit'}`,
+          value: `${money(calculation.unitNetProfit)} / ${isBN ? 'পিস' : 'unit'}`,
         },
       ],
       tips: isBN
@@ -402,8 +407,8 @@ export const getMetricExplanation = (metricKey, {
       subtitle: isBN ? 'প্রস্তাবিত সঠিক তালিকা মূল্য' : 'Recommended list price per unit',
       explanation: isBN
         ? 'আপনি যে লাভ করতে চান, এবং সাথে কাস্টমারকে যে ডিসকাউন্ট বা প্ল্যাটফর্ম ফি দিতে হবে—সবকিছু মাথায় রেখে প্রতি পিসের গায়ের দাম (MSRP) ঠিক কত রাখা দরকার তা স্বয়ংক্রিয়ভাবে দেখায়।'
-        : 'The exact recommended selling price needed to absorb fixed unit costs, variable sales commissions, and planned discounts while securing your target profit margin %.',
-      formula: 'Target Price = [Unit Fixed Cost / (1 - Target Margin% - Variable Selling%)] / (1 - Discount%)',
+        : 'The exact recommended selling price needed to absorb landed inventory, per-unit selling costs and the net fixed burden (after delivery income, scrap recovery, return fees collected and customer refunds), while still covering variable percentage fees and your target margin.',
+      formula: 'Target Price = [Unit Inventory + Per-Unit Selling + Net Fixed Burden/Qty] / (1 - Target Margin% - Variable % Fees) / (1 - Discount%)',
       breakdown: [
         {
           label: isBN ? 'প্রতি পিস হাতে আসার খরচ' : 'Unit Landed Inventory Cost',
@@ -415,7 +420,17 @@ export const getMetricExplanation = (metricKey, {
         },
         {
           label: isBN ? 'বিক্রি ও প্ল্যাটফর্ম কমিশন' : 'Variable Selling Commissions',
-          value: `${formData?.sellingPercentageSum || 0}%`,
+          value: `${(calculation.sellingPercentageSum || 0).toFixed(2)}%${calculation.returnPercentageSum > 0 && calculation.returnShare > 0
+            ? ` + ${(calculation.returnPercentageSum * calculation.returnShare).toFixed(2)}%`
+            : ''}`,
+        },
+        {
+          label: isBN ? 'প্রতি পিস বিক্রির পরিবর্তনশীল খরচ' : 'Per-Unit Selling Cost',
+          value: `+ ${money(calculation.unitValueSellingCost)}`,
+        },
+        {
+          label: isBN ? 'প্রতি পিসে নির্দিষ্ট খরচের ভাগ' : 'Net Fixed Burden per Unit',
+          value: `+ ${money((calculation.netFixedBurden || 0) / Math.max(calculation.qty || 1, 1))}`,
         },
         {
           label: isBN ? 'কাস্টমারকে ডিসকাউন্ট বা ছাড়' : 'Planned Promotional Discount',
@@ -423,7 +438,7 @@ export const getMetricExplanation = (metricKey, {
         },
         {
           label: isBN ? 'প্রস্তাবিত বিক্রি দাম' : 'Recommended Target Selling Price',
-          value: scaleMoney(calculation.requiredPrice),
+          value: money(calculation.requiredPrice),
           highlight: true,
         },
       ],
@@ -576,16 +591,15 @@ export const getMetricExplanation = (metricKey, {
               label: bp.name || `${isBN ? 'পাইকারি রেট' : 'Tier'} ${i + 1}`,
               value: `৳${Number(bp.price || 0).toFixed(2)} (${Number(bp.mix || 0)}% ${isBN ? 'ভাগ' : 'share'})`,
               note: isBN
-                ? `গড়ে প্রভাব: ৳${((Number(bp.price || 0) * Number(bp.mix || 0)) / 100).toFixed(2)}`
-                : `Weighted component: ৳${((Number(bp.price || 0) * Number(bp.mix || 0)) / 100).toFixed(2)}`,
+                ? `গড়ে প্রভাব: ৳${((Number(bp.price || 0) * Number(bp.mix || 0)) / (totalBulkShare || 1)).toFixed(2)}`
+                : `Weighted component: ৳${((Number(bp.price || 0) * Number(bp.mix || 0)) / (totalBulkShare || 1)).toFixed(2)}`,
             }))
           : []),
         {
           label: isBN ? 'মোট বিক্রির ভাগ' : 'Total Sales Mix Share',
-          value: `${Array.isArray(bulkPrices) ? bulkPrices.reduce((s, b) => s + (Number(b.mix) || 0), 0) : 0}%`,
+          value: `${Number(totalBulkShare.toFixed(1))}%`,
           note:
-            Array.isArray(bulkPrices) &&
-            Math.abs(bulkPrices.reduce((s, b) => s + (Number(b.mix) || 0), 0) - 100) < 0.001
+            Math.abs(totalBulkShare - 100) < 0.001
               ? isBN
                 ? '✓ মোট ১০০% সঠিক'
                 : '✓ 100% Balanced'
@@ -627,6 +641,247 @@ export const getMetricExplanation = (metricKey, {
       tips: isBN
         ? 'কাস্টমারের কাছ থেকে ডেলিভারি চার্জটা আগেই বিকাশ/নগদে নিয়ে নিলে রিটার্ন আসলেও কুরিয়ার বিলের বাড়তি লোকসান হয় না।'
         : 'Collecting delivery charges upfront eliminates the risk of courier loss on fake orders.',
+    },
+
+    payback: {
+      title: isBN ? 'বিনিয়োগ ফেরত পেতে সময়' : 'Payback Period',
+      subtitle: isBN ? 'যে টাকা ঢুকিয়েছেন, কত দিনে ফেরত আসবে' : 'How long until the upfront capital comes back',
+      explanation: isBN
+        ? 'মাল কেনা ও ব্যবসা চালাতে যে নগদ টাকা আগে ঢুকিয়েছেন, বর্তমান লাভের হারে সেই টাকা তুলে আনতে কত দিন লাগবে। লাভ না হলে বা লস হলে বিনিয়োগ কোনোদিন ফেরত আসবে না, তখন এই হিসাবটি খালি থাকে।'
+        : 'The number of days needed to recover the upfront cash outlay from the profit this batch generates. If the batch runs at a loss there is no payback, so the metric is shown as unavailable.',
+      formula: 'Payback Days = (Working Capital / Net Profit) × Input Horizon Days',
+      breakdown: [
+        {
+          label: isBN ? 'মোট নগদ বিনিয়োগ' : 'Working Capital Outlay',
+          value: scaleMoney(calculation.workingCapital),
+        },
+        {
+          label: isBN ? 'প্রতি সময়ে নিট লাভ' : 'Net Profit this Period',
+          value: scaleMoney(calculation.netProfit),
+        },
+        {
+          label: isBN ? 'বিনিয়োগ ফেরতের সময়' : 'Payback',
+          value:
+            calculation.paybackDays !== null
+              ? `${Math.round(calculation.paybackDays).toLocaleString()} ${isBN ? 'দিন' : 'days'}`
+              : isBN
+                ? 'বর্তমান লাভে ফেরত আসবে না'
+                : 'Never at this profit',
+          highlight: true,
+        },
+      ],
+      tips: isBN
+        ? 'বিনিয়োগ ফেরতের সময় কমাতে মাল বেশি দিন গুদামে রাখবেন না এবং বিক্রি বাড়ানোর পাশাপাশি অপ্রয়োজনীয় খরচ কমান।'
+        : 'Shorten payback by moving stock faster, raising contribution per unit, and cutting overhead that does not drive sales.',
+    },
+
+    maxDiscount: {
+      title: isBN ? 'সর্বোচ্চ নিরাপদ ছাড়' : 'Maximum Safe Discount',
+      subtitle: isBN ? 'এর বেশি ছাড় দিলে লস শুরু হবে' : 'The discount ceiling before the business loses money',
+      explanation: isBN
+        ? 'বর্তমান দাম ও খরচে আপনি সর্বোচ্চ কত শতাংশ ছাড় দিতে পারেন, যাতে লাভ ঠিক শূন্য থাকে। এর চেয়ে বেশি ছাড় দিলে প্রতি পিসে লস হবে। এই সীমাটা জেনে রাখলে বিজ্ঞাপনী অফার বা পাইকারি দর ঠিক করা সহজ হয়।'
+        : 'The largest discount off the current list price that still leaves the business at zero profit. Any discount beyond this loses money on every unit, which makes it a hard floor for promotions and wholesale negotiations.',
+      formula: 'Max Discount % = (1 - Break-Even Net Price / Current List Price) × 100',
+      breakdown: [
+        {
+          label: isBN ? 'বর্তমান তালিকা দাম' : 'Current List Price',
+          value: money(calculation.averageSellingPrice),
+        },
+        {
+          label: isBN ? 'এখনকার ছাড়ের পরের দাম' : 'Net Price after Current Discount',
+          value: money(calculation.sellingPriceAfterDiscount),
+        },
+        {
+          label: isBN ? 'লস না হওয়ার আসল দাম' : 'Break-Even Net Price',
+          value:
+            calculation.breakEvenNetPrice !== null
+              ? money(calculation.breakEvenNetPrice)
+              : 'N/A',
+        },
+        {
+          label: isBN ? 'সর্বোচ্চ নিরাপদ ছাড়' : 'Maximum Safe Discount',
+          value: `${(calculation.maxDiscountPercent || 0).toFixed(1)}%`,
+          highlight: true,
+        },
+        {
+          label: isBN ? 'বর্তমান ছাড়ে ছেড়ে দেওয়া লাভ' : 'Profit Given Up to Current Discount',
+          value: scaleMoney(calculation.discountImpactAmount),
+        },
+      ],
+      tips: isBN
+        ? 'ছাড় দেওয়ার আগে এই সীমাটা দেখে নিন। ছাড়ের বদলে ফ্রি ডেলিভারি বা ছোট গিফট দিলে অনেক সময় কম খরচে বেশি বিক্রি পাওয়া যায়।'
+        : 'Check this ceiling before launching a promotion. A small free gift or free delivery often protects margin better than a deep price cut.',
+    },
+
+    scenarios: {
+      title: isBN ? 'বিক্রি ও খরচ বাড়লে-কমলে কী হবে' : 'Sales & Cost Scenarios',
+      subtitle: isBN ? 'একই ব্যবসার তিনটি সম্ভাব্য অবস্থা' : 'Stress-testing the same plan',
+      explanation: isBN
+        ? 'বিক্রি ২০% কমলে, ২০% বাড়লে এবং সব খরচ ১০% বাড়লে লাভ-লস কেমন দাঁড়াবে তা দেখানো হয়। কম বিক্রির হিসাবে ধরা হয় মাল আগেই কেনা হয়ে গেছে, তাই অবিক্রিত পিসের কেনা দামও লসে যোগ হয়। বেশি বিক্রির হিসাবে বাড়তি পিস কিনতে হবে ধরা হয়।'
+        : 'Shows the profit if sales fall 20%, rise 20%, or all costs rise 10%. The downside assumes the batch is already purchased, so unsold units still carry their inventory cost. The upside assumes extra units must be bought at the normal landed cost.',
+      formula: 'Scenario Profit = Base Profit ± Change in Sold Units × Unit Contribution | Cost Shock = Profit - 10% of Cash Costs',
+      breakdown: [
+        {
+          label: isBN ? 'বিক্রি ২০% কমলে' : 'If sales fall 20%',
+          value: scaleMoney(calculation.scenarioWorst),
+        },
+        {
+          label: isBN ? 'এখন যেভাবে হিসাব' : 'At your current plan',
+          value: scaleMoney(calculation.scenarioBase),
+          highlight: true,
+        },
+        {
+          label: isBN ? 'বিক্রি ২০% বাড়লে' : 'If sales rise 20%',
+          value: scaleMoney(calculation.scenarioBest),
+        },
+        {
+          label: isBN ? 'সব খরচ ১০% বাড়লে' : 'If all costs rise 10%',
+          value: scaleMoney(calculation.costShockProfit),
+        },
+        {
+          label: isBN ? 'লস শুরুর আগে বিক্রি কমতে পারে' : 'Sales can fall before a loss',
+          value: `${(calculation.salesDropToLossPercent || 0).toFixed(1)}%`,
+        },
+      ],
+      tips: isBN
+        ? 'যে অবস্থাতেই লস দেখাচ্ছে, সেই খরচ বা দামটা আগে ঠিক করুন। ব্যবসার নিরাপত্তা হলো খারাপ সময়েও যাতে লস না হয়।'
+        : 'Fix the input that turns every scenario into a loss first. A resilient business still covers its costs in the downside case.',
+    },
+
+    cashFlow: {
+      title: isBN ? 'হাতে থাকা নগদ বনাম লাভ' : 'Cash Flow vs Accounting Profit',
+      subtitle: isBN ? 'হিসাবের লাভ আর পকেটে থাকা টাকা একই কি না' : 'Is the profit actually in your hand?',
+      explanation: isBN
+        ? 'এই ক্যালকুলেটরে সব খরচই নগদে দেওয়া হয়, তাই হিসাবের নিট লাভ আর সব খরচের পরে হাতে থাকা নগদ একই হয়। বাস্তবে পাইকারি বাকিতে বিক্রি করলে টাকা পরে আসতে পারে, তখন লাভ থাকলেও হাতে নগদ কম থাকবে।'
+        : 'Every cost in this calculator is a cash cost, so cash left after all payments equals accounting net profit. In real wholesale trade, credit sales can delay the cash even when the books show a profit.',
+      formula: 'Cash Left = Cash Inflow - Cash Outflow | Cash Inflow = Sales + Scrap + Delivery + Return Fees',
+      breakdown: [
+        {
+          label: isBN ? 'হাতে আসা নগদ' : 'Cash Inflow',
+          value: scaleMoney(calculation.cashInflow),
+        },
+        {
+          label: isBN ? 'খরচে যাওয়া নগদ' : 'Cash Outflow',
+          value: `- ${scaleMoney(calculation.cashOutflow)}`,
+        },
+        {
+          label: isBN ? 'সব খরচের পরে হাতে থাকা নগদ' : 'Cash Left after All Costs',
+          value: scaleMoney(calculation.cashProfit),
+          highlight: true,
+        },
+        {
+          label: isBN ? 'হিসাবের নিট লাভ' : 'Accounting Net Profit',
+          value: scaleMoney(calculation.netProfit),
+        },
+      ],
+      tips: isBN
+        ? 'বাকিতে বিক্রি করলে কত টাকা কখন আসবে তার একটা তালিকা রাখুন। লাভ থাকলেও নগদ শেষ হয়ে গেলে ব্যবসা চালানো কঠিন হয়ে যায়।'
+        : 'Track receivables by due date. Running out of cash is possible even in a profitable business when credit sales pile up.',
+    },
+
+    inventoryTurnover: {
+      title: isBN ? 'মাল কত দ্রুত ঘুরছে' : 'Inventory Turnover',
+      subtitle: isBN ? 'একই মাল বছরে কতবার বিক্রি হচ্ছে' : 'How many times the stock sells through in a year',
+      explanation: isBN
+        ? 'বছরে আপনার পণ্য কতবার কেনা ও বিক্রি হচ্ছে তার হিসাব। সংখ্যাটা বেশি হলে মাল দ্রুত বিক্রি হচ্ছে এবং টাকা আটকে থাকছে না। সংখ্যাটা কম হলে গুদামে মাল জমছে, টাকা আটকে আছে এবং পুরনো বা নষ্ট হওয়ার ঝুঁকি বাড়ছে।'
+        : 'How many times the annualised cost of goods sold covers the inventory value. A higher number means stock moves quickly and cash is not tied up. A low number means slow-moving stock, tied-up capital, and a higher risk of damage or expiry.',
+      formula: 'Turns per Year = Annualised COGS / Inventory Value | Days Held = 365 / Turns',
+      breakdown: [
+        {
+          label: isBN ? 'এই সময়ের COGS' : 'COGS this Period',
+          value: scaleMoney(calculation.cogs),
+        },
+        {
+          label: isBN ? 'বছরের হিসাবে COGS' : 'Annualised COGS',
+          value: money(calculation.cogs * (365 / (calculation.horizonDays || 365))),
+        },
+        {
+          label: isBN ? 'মালের মোট মূল্য' : 'Inventory Value',
+          value: scaleMoney(calculation.inventoryCost),
+        },
+        {
+          label: isBN ? 'বছরে কতবার ঘুরছে' : 'Turns per Year',
+          value: `${(calculation.inventoryTurnsPerYear || 0).toFixed(1)}x`,
+          highlight: true,
+        },
+        {
+          label: isBN ? 'মাল হাতে থাকার দিন' : 'Days Inventory Held',
+          value:
+            calculation.daysInventoryHeld !== null
+              ? `${Math.round(calculation.daysInventoryHeld)} ${isBN ? 'দিন' : 'days'}`
+              : 'N/A',
+        },
+      ],
+      tips: isBN
+        ? 'যে পণ্য সবচেয়ে ধীরে বিক্রি হয় সেটা চিহ্নিত করুন এবং অর্ডার কমিয়ে দিন। দ্রুত ঘোরা মালেই টাকা বেশি ঘোরে।'
+        : 'Identify the slowest-moving items and reduce their order quantities. Fast turns keep working capital free.',
+    },
+
+    dailyTargets: {
+      title: isBN ? 'প্রতিদিন ও প্রতি মাসে কত বেচতে হবে' : 'Daily & Monthly Sales Targets',
+      subtitle: isBN ? 'আপনার টার্গেটকে ছোট ছোট ভাগে ভাগ করুন' : 'Breaking the target into everyday goals',
+      explanation: isBN
+        ? 'আপনি যে সময়ের জন্য হিসাব করছেন (দিন, সপ্তাহ, মাস বা বছর), সেই টার্গেটকে প্রতিদিন ও প্রতি মাসে ভাগ করে দেখানো হয়। এতে করে বড় টার্গেটটাও সহজে বোঝা যায় এবং প্রতিদিন কত অর্ডার দরকার তা পরিকল্পনা করা যায়।'
+        : 'Converts the sales target for your selected horizon into daily and monthly units and revenue. Smaller goals are easier to plan, track, and assign to a sales routine.',
+      formula: 'Units per Day = Target Units / Horizon Days | Units per Month = Units per Day × (365 / 12)',
+      breakdown: [
+        {
+          label: isBN ? 'প্রতিদিন কত পিস' : 'Units per Day',
+          value: `${(calculation.targetUnitsPerDay || 0).toFixed(2)} ${t('units')}`,
+          highlight: true,
+        },
+        {
+          label: isBN ? 'প্রতিদিনের বিক্রি আয়' : 'Revenue per Day',
+          value: money(calculation.targetRevenuePerDay),
+        },
+        {
+          label: isBN ? 'প্রতি মাসে কত পিস' : 'Units per Month',
+          value: `${Math.round(calculation.targetUnitsPerMonth || 0).toLocaleString()} ${t('units')}`,
+        },
+        {
+          label: isBN ? 'প্রতি মাসের বিক্রি আয়' : 'Revenue per Month',
+          value: money(calculation.targetRevenuePerMonth),
+        },
+      ],
+      tips: isBN
+        ? 'প্রতিদিনের টার্গেটটা লিখে রাখুন এবং দিনশেষে মিলিয়ে দেখুন। ছোট ছোট জয়েই বড় টার্গেট পূরণ হয়।'
+        : 'Write the daily number where the team can see it and compare it at the end of every day. Small consistent wins close the monthly target.',
+    },
+
+    decisionVerdict: {
+      title: isBN ? 'সিদ্ধান্তের সারসংক্ষেপ' : 'Decision Snapshot',
+      subtitle: isBN ? 'হিসাবের মূল কথা এক নজরে' : 'The bottom line at a glance',
+      explanation: isBN
+        ? 'সব হিসাব মিলিয়ে এই পণ্যটি এখন লাভজনক, খুবই কম লাভে চলছে, নাকি লস করছে তা দেখানো হয়। সাথে লস এড়াতে কত পিস লাগবে, সর্বোচ্চ কত ছাড় দেওয়া যাবে, বিনিয়োগ কত দিনে ফেরত আসবে এবং বিক্রি কতটা কমলে লস শুরু হবে তা এক জায়গায় দেখা যায়।'
+        : 'Summarises whether the product is profitable, running on a thin margin, or losing money, together with the minimum volume, discount ceiling, payback time, and sales cushion. Use it as the first check before approving a price, discount, or purchase.',
+      formula: 'Verdict = Net Profit > 0 ? (Safety Margin >= 20% ? Healthy : Thin) : Loss',
+      breakdown: [
+        {
+          label: isBN ? 'এখন যেভাবে হিসাব, তাতে লাভ' : 'Profit at the Current Plan',
+          value: scaleMoney(calculation.netProfit),
+          highlight: true,
+        },
+        {
+          label: isBN ? 'লস এড়াতে কমপক্ষে পিস' : 'Minimum Units to Avoid Loss',
+          value:
+            calculation.breakEvenQty !== null
+              ? `${calculation.breakEvenQty.toLocaleString()} ${t('units')}`
+              : isBN
+                ? 'দাম খরচের চেয়ে কম'
+                : 'Price below cost',
+        },
+        {
+          label: isBN ? 'সর্বোচ্চ নিরাপদ ছাড়' : 'Maximum Safe Discount',
+          value: `${(calculation.maxDiscountPercent || 0).toFixed(1)}%`,
+        },
+        {
+          label: isBN ? 'লস শুরুর আগে বিক্রি কমতে পারে' : 'Sales Cushion Before Loss',
+          value: `${(calculation.salesDropToLossPercent || 0).toFixed(1)}%`,
+        },
+      ],
+      tips: isBN
+        ? 'লাভের পরিমাণ দেখে সিদ্ধান্ত নিন, শুধু বিক্রির পরিমাণ দেখে নয়। বেশি বিক্রি করেও লস হতে পারে যদি প্রতি পিসে খরচ বেশি হয়।'
+        : 'Judge the business by profit per unit and the safety cushion, not by sales volume alone. High sales with negative contribution still lose money.',
     },
   };
 

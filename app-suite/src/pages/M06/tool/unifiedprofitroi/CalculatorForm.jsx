@@ -222,8 +222,8 @@ const GroupCostSection = ({
                   variant="danger"
                   size="sm"
                   onClick={() => onRemove(item.id)}
-                  title="Remove entry"
-                  aria-label="Remove entry"
+                  title={t("removeEntry")}
+                  aria-label={t("removeEntry")}
                 >
                   <IconDelete size={14} />
                 </Button>
@@ -272,9 +272,51 @@ const GroupCostSection = ({
   );
 };
 
+// Compact metric used by the Decision Snapshot panel.
+const SnapshotItem = ({ label, value, hint, tone = "default" }) => {
+  const color =
+    tone === "danger"
+      ? "var(--danger)"
+      : tone === "warning"
+        ? "var(--warning)"
+        : tone === "success"
+          ? "var(--success)"
+          : "var(--text-primary)";
+
+  return (
+    <div
+      style={{
+        padding: "var(--sp-2) var(--sp-3)",
+        background: "var(--surface-alt)",
+        borderRadius: "var(--radius-md)",
+        border: "1px solid var(--border)",
+        minWidth: 0,
+      }}
+    >
+      <div style={{ fontSize: "var(--fs-xs)", color: "var(--text-secondary)", marginBottom: "2px" }}>
+        {label}
+      </div>
+      <div style={{ fontSize: "var(--fs-lg)", fontWeight: "var(--fw-bold)", color, letterSpacing: "-0.2px" }}>
+        {value}
+      </div>
+      {hint && (
+        <div style={{ fontSize: "11px", color: "var(--text-muted)", marginTop: 1 }}>{hint}</div>
+      )}
+    </div>
+  );
+};
+
 // --------------------------------------------------
 // Main Calculator Form
 // --------------------------------------------------
+
+const HORIZON_LABEL_KEYS = {
+  daily: "freqDaily",
+  weekly: "freqWeekly",
+  monthly: "freqMonthly",
+  "half-yearly": "freqHalfYearly",
+  yearly: "freqYearly",
+};
 
 const CalculatorForm = ({
   isBusy,
@@ -283,7 +325,6 @@ const CalculatorForm = ({
   formErrors = {},
   // Language
   lang = "EN",
-  setLanguage,
   t = (k) => k,
   // Cost Input Mode
   costInputMode,
@@ -335,6 +376,7 @@ const CalculatorForm = ({
   getHorizonMultiplier,
 }) => {
   const get = (key) => formData?.[key] ?? "";
+  const horizonLabel = (key) => t(HORIZON_LABEL_KEYS[key] || "freqMonthly");
   const salesQty = Number(formData?.sales_qty) || 0;
   const unitPurchaseCost = Number(formData?.unit_purchase_cost) || 0;
   const sellingPrice = calculation?.sellingPriceAfterDiscount || Number(formData?.retail_selling_price) || 0;
@@ -720,7 +762,7 @@ const CalculatorForm = ({
                       }}
                     >
                       <span>{isBulkShareValid ? "✓" : "⚠️"}</span>
-                      <span>{t("totalShareLabel")}: {totalBulkShare}%</span>
+                      <span>{t("totalShareLabel")}: {Number(totalBulkShare.toFixed(1))}%</span>
                       {isBulkShareValid && (
                         <span style={{ fontWeight: "normal", opacity: 0.9 }}>({t("bulkShareValid")})</span>
                       )}
@@ -766,7 +808,7 @@ const CalculatorForm = ({
                         <strong>{lang === "BN" ? "সতর্কতা:" : "Warning:"}</strong>{" "}
                         {totalBulkShare < 100
                           ? `${t("bulkShareWarningUnder")} (${(100 - totalBulkShare).toFixed(1)}% ${lang === "BN" ? "বাকি" : "remaining"})`
-                          : `${t("bulkShareWarningOver")} (${(totalBulkShare - 100).toFixed(1)}% ${lang === "BN" ? "অতিরিক্ত" : "over 100%"})`}
+                          : `${t("bulkShareWarningOver")} (${(totalBulkShare - 100).toFixed(1)}% ${lang === "BN" ? "অতিরিক্ত" : "excess"})`}
                       </span>
                     </div>
                     <span style={{ fontSize: "11px", color: "var(--text-secondary)" }}>
@@ -829,8 +871,8 @@ const CalculatorForm = ({
                           size="sm"
                           onClick={() => removeBulkPrice(item.id)}
                           disabled={bulkPrices.length <= 1}
-                          title="Remove level"
-                          aria-label="Remove level"
+                          title={t("removeLevel")}
+                          aria-label={t("removeLevel")}
                         >
                           <IconDelete size={14} />
                         </Button>
@@ -987,22 +1029,20 @@ const CalculatorForm = ({
               />
             </div>
 
-            {/* 4. Conditional Fields: Resell/Repack Refund vs Scrap Selling vs Disposal Cost */}
-            {(returnDisposition === "resell_repack" ||
-              returnDisposition === "resell" ||
-              returnDisposition === "repack") && (
-              <div className="col-span-4">
-                <InputNumber
-                  label={t("refundValueLabel")}
-                  placeholder="0.00"
-                  value={get("refund_value_per_unit")}
-                  onChange={(e) => handleChange("refund_value_per_unit", e.target.value)}
-                  min={0}
-                  step={0.01}
-                  disabled={readOnly}
-                />
-              </div>
-            )}
+            {/* Customer refund is owed on every returned unit, whatever the disposition */}
+            <div className="col-span-4">
+              <InputNumber
+                label={<span style={{ display: "inline-flex", alignItems: "center" }}>{t("refundValueLabel")} {renderInfo("returnLogistics")}</span>}
+                placeholder="0.00"
+                value={get("refund_value_per_unit")}
+                onChange={(e) => handleChange("refund_value_per_unit", e.target.value)}
+                min={0}
+                step={0.01}
+                disabled={readOnly}
+              />
+            </div>
+
+            {/* 4. Conditional Fields: Scrap Selling vs Disposal Cost */}
 
             {returnDisposition === "scrap" && (
               <div
@@ -1067,12 +1107,12 @@ const CalculatorForm = ({
                     fontSize: "var(--fs-xs)",
                   }}
                 >
-                  <div style={{ color: "var(--text-muted)" }}>Calculated Scrap Proceeds:</div>
+                  <div style={{ color: "var(--text-muted)" }}>{t("scrapProceedsLabel")}:</div>
                   <strong style={{ color: "var(--warning)", fontSize: "var(--fs-sm)" }}>
                     {money(calculation.scrapSalesRevenue || 0)}
                   </strong>
                   <div style={{ color: "var(--danger)", fontSize: "11px", marginTop: "2px" }}>
-                    Net Scrap Loss: {money(calculation.netScrapLoss || 0)}
+                    {t("netScrapLossLabel")}: {money(calculation.netScrapLoss || 0)}
                   </div>
                 </div>
               </div>
@@ -1141,12 +1181,12 @@ const CalculatorForm = ({
                     fontSize: "var(--fs-xs)",
                   }}
                 >
-                  <div style={{ color: "var(--text-muted)" }}>Total Disposal Fee:</div>
+                  <div style={{ color: "var(--text-muted)" }}>{t("totalDisposalFeeLabel")}:</div>
                   <strong style={{ color: "var(--danger)", fontSize: "var(--fs-sm)" }}>
                     {money(calculation.disposalCostTotal || 0)}
                   </strong>
                   <div style={{ color: "var(--text-secondary)", fontSize: "11px", marginTop: "2px" }}>
-                    Lost Inventory: {money(calculation.lostInventoryCost || 0)}
+                    {t("lostInventoryLabel")}: {money(calculation.lostInventoryCost || 0)}
                   </div>
                 </div>
               </div>
@@ -1232,11 +1272,11 @@ const CalculatorForm = ({
                 <p style={{ margin: 0, fontSize: "var(--fs-xs)", color: "var(--text-secondary)" }}>
                   {lang === "BN" ? (
                     <>
-                      ইনপুট: <strong>{salesTargetDays}</strong> &rarr; আউটপুট: <strong>{outputTimeHorizon}</strong> (গুণক: {getHorizonMultiplier(salesTargetDays, outputTimeHorizon).toFixed(4)}x)
+                      ইনপুট: <strong>{horizonLabel(salesTargetDays)}</strong> &rarr; আউটপুট: <strong>{horizonLabel(outputTimeHorizon)}</strong> (গুণক: {getHorizonMultiplier(salesTargetDays, outputTimeHorizon).toFixed(4)}x)
                     </>
                   ) : (
                     <>
-                      Input: <strong>{salesTargetDays}</strong> &rarr; Output: <strong>{outputTimeHorizon}</strong> (multiplier: {getHorizonMultiplier(salesTargetDays, outputTimeHorizon).toFixed(4)}x)
+                      Input: <strong>{horizonLabel(salesTargetDays)}</strong> &rarr; Output: <strong>{horizonLabel(outputTimeHorizon)}</strong> (multiplier: {getHorizonMultiplier(salesTargetDays, outputTimeHorizon).toFixed(4)}x)
                     </>
                   )}
                 </p>
@@ -1248,6 +1288,8 @@ const CalculatorForm = ({
                 ? getHorizonMultiplier(salesTargetDays, outputTimeHorizon ?? salesTargetDays)
                 : 1;
               const scaleMoney = (v) => money((v || 0) * outputMultiplier);
+              const scaleQty = (v) => Math.round((v || 0) * outputMultiplier);
+              const unitMoney = (v) => money(v || 0);
 
               return (
                 <>
@@ -1328,7 +1370,7 @@ const CalculatorForm = ({
                               {renderInfo("targetProfitPlanner")}
                             </div>
                             <div style={{ fontSize: "var(--fs-lg)", fontWeight: "var(--fw-bold)", color: "var(--primary)" }}>
-                              {Math.round((calculation.requiredProfitQty || 0) * outputMultiplier).toLocaleString()} {t("units")}
+                              {scaleQty(calculation.requiredProfitQty).toLocaleString()} {t("units")}
                             </div>
                             <div style={{ fontSize: "11px", color: "var(--text-muted)" }}>
                               {t("targetProfitUnitMargin")}: {money(calculation.unitContributionMargin)}
@@ -1352,7 +1394,7 @@ const CalculatorForm = ({
                               {scaleMoney(calculation.requiredProfitRevenue)}
                             </div>
                             <div style={{ fontSize: "11px", color: "var(--text-muted)" }}>
-                              @ {money(calculation.sellingPriceAfterDiscount)} / unit
+                              @ {money(calculation.sellingPriceAfterDiscount)} / {t("unitShort")}
                             </div>
                           </div>
 
@@ -1379,7 +1421,7 @@ const CalculatorForm = ({
                               }}
                             >
                               {calculation.isTargetProfitAchieved ? "+" : "-"}
-                              {Math.abs(Math.round((calculation.targetProfitQtyDiff || 0) * outputMultiplier)).toLocaleString()} {t("units")}
+                              {Math.abs(scaleQty(calculation.targetProfitQtyDiff)).toLocaleString()} {t("units")}
                             </div>
                             <div
                               style={{
@@ -1397,6 +1439,146 @@ const CalculatorForm = ({
                     </div>
                   </div>
 
+                  {/* DECISION SNAPSHOT: plain-language verdict + decision metrics */}
+                  {(() => {
+                    const hasProfit = (calculation.netProfit || 0) > 0;
+                    const isThin =
+                      hasProfit &&
+                      ((calculation.profitMargin || 0) < 10 ||
+                        (calculation.safetyMarginPercent || 0) < 20);
+                    const verdict = !hasProfit ? "loss" : isThin ? "thin" : "profit";
+                    const verdictTone = {
+                      profit: { color: "var(--success)", bg: "rgba(34, 197, 94, 0.08)" },
+                      thin: { color: "var(--warning)", bg: "rgba(234, 179, 8, 0.08)" },
+                      loss: { color: "var(--danger)", bg: "rgba(239, 68, 68, 0.08)" },
+                    }[verdict];
+
+                    return (
+                      <div
+                        style={{
+                          padding: "var(--sp-4)",
+                          background: "var(--surface)",
+                          borderRadius: "var(--radius-xl)",
+                          border: `1.5px solid ${verdictTone.color}`,
+                          display: "flex",
+                          flexDirection: "column",
+                          gap: "var(--sp-3)",
+                          boxShadow: "var(--shadow-sm)",
+                        }}
+                      >
+                        <div>
+                          <div style={{ display: "flex", alignItems: "center", gap: "var(--sp-2)", fontSize: "var(--fs-md)", fontWeight: "var(--fw-bold)", color: "var(--text-primary)" }}>
+                            <span>🧭</span>
+                            <span>{t("secDecisionTitle")}</span>
+                            {renderInfo("decisionVerdict")}
+                          </div>
+                          <p style={{ margin: "4px 0 0", fontSize: "var(--fs-xs)", color: "var(--text-secondary)" }}>
+                            {t("secDecisionSubtitle")}
+                          </p>
+                        </div>
+
+                        <div
+                          style={{
+                            padding: "var(--sp-3)",
+                            background: verdictTone.bg,
+                            borderRadius: "var(--radius-md)",
+                            borderLeft: `4px solid ${verdictTone.color}`,
+                          }}
+                        >
+                          <div style={{ fontSize: "var(--fs-base)", fontWeight: "var(--fw-bold)", color: verdictTone.color }}>
+                            {verdict === "loss"
+                              ? t("verdictLossTitle")
+                              : verdict === "thin"
+                                ? t("verdictThinTitle")
+                                : t("verdictProfitTitle")}
+                          </div>
+                          <div style={{ fontSize: "var(--fs-xs)", color: "var(--text-secondary)", marginTop: 2 }}>
+                            {verdict === "loss"
+                              ? t("verdictLossBody")
+                              : verdict === "thin"
+                                ? t("verdictThinBody")
+                                : t("verdictProfitBody")}
+                          </div>
+                        </div>
+
+                        <div
+                          style={{
+                            display: "grid",
+                            gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))",
+                            gap: "var(--sp-2)",
+                          }}
+                        >
+                          <SnapshotItem
+                            label={t("recBreakEvenLabel")}
+                            value={
+                              calculation.breakEvenQty !== null
+                                ? `${scaleQty(calculation.breakEvenQty).toLocaleString()} ${t("units")}`
+                                : "N/A"
+                            }
+                            hint={t("recBreakEvenHint")}
+                            tone={calculation.breakEvenQty !== null ? "default" : "danger"}
+                          />
+                          <SnapshotItem
+                            label={t("recMaxDiscountLabel")}
+                            value={`${(calculation.maxDiscountPercent || 0).toFixed(1)}%`}
+                            hint={t("recMaxDiscountHint")}
+                            tone={(calculation.maxDiscountPercent || 0) > 0 ? "success" : "danger"}
+                          />
+                          <SnapshotItem
+                            label={t("recPaybackLabel")}
+                            value={
+                              calculation.paybackDays !== null
+                                ? `${Math.round(calculation.paybackDays).toLocaleString()} ${t("daysSuffix")}`
+                                : t("recPaybackNever")
+                            }
+                            hint={t("recPaybackHint")}
+                            tone={calculation.paybackDays !== null ? "success" : "warning"}
+                          />
+                          <SnapshotItem
+                            label={t("recCushionLabel")}
+                            value={`${(calculation.salesDropToLossPercent || 0).toFixed(1)}%`}
+                            hint={t("recCushionHint")}
+                            tone={
+                              (calculation.salesDropToLossPercent || 0) >= 20
+                                ? "success"
+                                : (calculation.salesDropToLossPercent || 0) > 0
+                                  ? "warning"
+                                  : "danger"
+                            }
+                          />
+                          <SnapshotItem
+                            label={
+                              calculation.requiredProfitQty === null
+                                ? t("recTargetGapLabel")
+                                : calculation.isTargetProfitAchieved
+                                  ? t("targetProfitSurplusLabel")
+                                  : t("recTargetGapLabel")
+                            }
+                            value={
+                              calculation.requiredProfitQty === null
+                                ? "N/A"
+                                : `${Math.abs(scaleQty(calculation.targetProfitQtyDiff)).toLocaleString()} ${t("units")}`
+                            }
+                            hint={t("recTargetGapHint")}
+                            tone={
+                              calculation.requiredProfitQty === null
+                                ? "danger"
+                                : calculation.isTargetProfitAchieved
+                                  ? "success"
+                                  : "warning"
+                            }
+                          />
+                          <SnapshotItem
+                            label={t("recCostShockLabel")}
+                            value={scaleMoney(calculation.costShockProfit)}
+                            hint={t("recCostShockHint")}
+                            tone={calculation.costShockProfit >= 0 ? "success" : "danger"}
+                          />
+                        </div>
+                      </div>
+                    );
+                  })()}
+
                   {/* TOP KPI METRICS: REVENUE, COGS, GROSS PROFIT, EXPENSES */}
                   <DataCardGrid cols={4}>
                     <DataCard
@@ -1410,7 +1592,7 @@ const CalculatorForm = ({
                       value={scaleMoney(calculation.cogs)}
                     >
                       <div style={{ fontSize: "11px", color: "var(--text-muted)", marginTop: "4px" }}>
-                        ৳{((calculation.unitCogs || 0) * outputMultiplier).toFixed(2)} {t("perUnitSuffix")}
+                        {unitMoney(calculation.unitCogs)} {t("perUnitSuffix")}
                       </div>
                     </DataCard>
                     <DataCard
@@ -1437,7 +1619,7 @@ const CalculatorForm = ({
                       trend={calculation.netProfit >= 0 ? "up" : "down"}
                     >
                       <div style={{ fontSize: "11px", color: "var(--text-muted)", marginTop: "4px" }}>
-                        ৳{((calculation.unitNetProfit || 0) * outputMultiplier).toFixed(2)} {t("perUnitSuffix")} ({((calculation.profitMargin || 0)).toFixed(1)}%)
+                        {unitMoney(calculation.unitNetProfit)} {t("perUnitSuffix")} ({((calculation.profitMargin || 0)).toFixed(1)}%)
                       </div>
                     </DataCard>
 
@@ -1446,7 +1628,7 @@ const CalculatorForm = ({
                       label={<span style={{ display: "inline-flex", alignItems: "center" }}>{roiViewMode === "per_unit" ? t("netProfitPerUnit") : t("kpiRoi")} {renderInfo("roi")}</span>}
                       value={
                         roiViewMode === "per_unit"
-                          ? money((calculation.unitNetProfit || 0) * outputMultiplier)
+                          ? unitMoney(calculation.unitNetProfit)
                           : `${(calculation.roi || 0).toFixed(2)}%`
                       }
                     />
@@ -1456,7 +1638,7 @@ const CalculatorForm = ({
                       label={<span style={{ display: "inline-flex", alignItems: "center" }}>{t("kpiBreakEvenUnits")} {renderInfo("breakEven")}</span>}
                       value={
                         calculation.breakEvenQty
-                          ? `${Math.round(calculation.breakEvenQty * outputMultiplier).toLocaleString()} ${t("units")}`
+                          ? `${scaleQty(calculation.breakEvenQty).toLocaleString()} ${t("units")}`
                           : "N/A"
                       }
                     >
@@ -1489,14 +1671,61 @@ const CalculatorForm = ({
                     <DataCard
                       variant="secondary"
                       label={<span style={{ display: "inline-flex", alignItems: "center" }}>{t("kpiUnitInventoryCost")} {renderInfo("unitInventoryCost")}</span>}
-                      value={scaleMoney(calculation.unitInventoryCost)}
+                      value={unitMoney(calculation.unitInventoryCost)}
                     />
 
                     <DataCard
                       variant="success"
                       label={<span style={{ display: "inline-flex", alignItems: "center" }}>{t("kpiTargetPrice")} {renderInfo("targetPrice")}</span>}
-                      value={scaleMoney(calculation.requiredPrice)}
+                      value={unitMoney(calculation.requiredPrice)}
                     />
+
+                    {/* ROW 4: DECISION METRICS */}
+                    <DataCard
+                      variant={calculation.paybackDays !== null ? "accent" : "danger"}
+                      label={<span style={{ display: "inline-flex", alignItems: "center" }}>{t("kpiPayback")} {renderInfo("payback")}</span>}
+                      value={
+                        calculation.paybackDays !== null
+                          ? `${Math.round(calculation.paybackDays).toLocaleString()} ${t("daysSuffix")}`
+                          : t("paybackNever")
+                      }
+                    >
+                      <div style={{ fontSize: "11px", color: "var(--text-muted)", marginTop: "4px" }}>
+                        {t("rowAnnualizedRoi")}: {(calculation.annualizedRoi || 0).toFixed(1)}%
+                      </div>
+                    </DataCard>
+
+                    <DataCard
+                      variant={(calculation.maxDiscountPercent || 0) > 0 ? "warning" : "danger"}
+                      label={<span style={{ display: "inline-flex", alignItems: "center" }}>{t("kpiMaxDiscount")} {renderInfo("maxDiscount")}</span>}
+                      value={`${(calculation.maxDiscountPercent || 0).toFixed(1)}%`}
+                    >
+                      <div style={{ fontSize: "11px", color: "var(--text-muted)", marginTop: "4px" }}>
+                        {t("rowDiscountImpact")}: {scaleMoney(calculation.discountImpactAmount)}
+                      </div>
+                    </DataCard>
+
+                    <DataCard
+                      variant="accent"
+                      label={<span style={{ display: "inline-flex", alignItems: "center" }}>{t("kpiDailyTarget")} {renderInfo("dailyTargets")}</span>}
+                      value={`${(calculation.targetUnitsPerDay || 0).toFixed(1)} ${t("units")}`}
+                    >
+                      <div style={{ fontSize: "11px", color: "var(--text-muted)", marginTop: "4px" }}>
+                        {unitMoney(calculation.targetRevenuePerDay)} / {t("daysSuffix")}
+                      </div>
+                    </DataCard>
+
+                    <DataCard
+                      variant="secondary"
+                      label={<span style={{ display: "inline-flex", alignItems: "center" }}>{t("kpiInventoryTurnover")} {renderInfo("inventoryTurnover")}</span>}
+                      value={`${(calculation.inventoryTurnsPerYear || 0).toFixed(1)}x`}
+                    >
+                      <div style={{ fontSize: "11px", color: "var(--text-muted)", marginTop: "4px" }}>
+                        {calculation.daysInventoryHeld !== null
+                          ? `${t("rowDaysInventory")}: ${Math.round(calculation.daysInventoryHeld)} ${t("daysSuffix")}`
+                          : "N/A"}
+                      </div>
+                    </DataCard>
                   </DataCardGrid>
 
                   {/* Comprehensive Unit Economics & Breakdown Table */}
@@ -1520,11 +1749,11 @@ const CalculatorForm = ({
                       <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))", gap: "var(--sp-3)" }}>
                         <StatListItem
                           label={<span style={{ display: "inline-flex", alignItems: "center" }}>{t("rowSalesQty")} {renderInfo("targetProfitPlanner")}</span>}
-                          value={`${(calculation.qty || 0).toLocaleString()} ${t("units")}`}
+                          value={`${scaleQty(calculation.qty).toLocaleString()} ${t("units")}`}
                         />
                         <StatListItem
                           label={<span style={{ display: "inline-flex", alignItems: "center" }}>{t("rowNetQty")} {renderInfo("returnDisposition")}</span>}
-                          value={`${(calculation.effectiveSoldQty || 0).toLocaleString()} ${t("units")}`}
+                          value={`${scaleQty(calculation.effectiveSoldQty).toLocaleString()} ${t("units")}`}
                           sub={
                             returnDisposition === "resell_repack" ||
                             returnDisposition === "resell" ||
@@ -1543,12 +1772,12 @@ const CalculatorForm = ({
                         <StatListItem
                           label={<span style={{ display: "inline-flex", alignItems: "center" }}>{t("rowDiscountTotal")} {renderInfo("discount")}</span>}
                           value={`- ${scaleMoney(calculation.discountAmount)}`}
-                          sub={`${formData?.discount_percent || 0}% discount applied`}
+                          sub={`${formData?.discount_percent || 0}% ${t("discountAppliedSuffix")}`}
                         />
                         <StatListItem
                           label={<span style={{ display: "inline-flex", alignItems: "center" }}>{t("rowRefundAmount")} {renderInfo("returnLogistics")}</span>}
                           value={`- ${scaleMoney(calculation.refundAmount)}`}
-                          sub={`${calculation.returnedQty || 0} ${t("returnedAt")} ${money(calculation.refundAmount / Math.max(1, calculation.returnedQty))}`}
+                          sub={`${scaleQty(calculation.returnedQty)} ${t("returnedAt")} ${money(calculation.refundAmount / Math.max(1, calculation.returnedQty))}`}
                         />
                         <StatListItem
                           label={<span style={{ display: "inline-flex", alignItems: "center" }}>{t("rowDeliveryIncome")} {renderInfo("netRevenue")}</span>}
@@ -1559,20 +1788,20 @@ const CalculatorForm = ({
                           <StatListItem
                             label={<span style={{ display: "inline-flex", alignItems: "center" }}>{t("returnFeeCollectedLabel")} {renderInfo("returnLogistics")}</span>}
                             value={`+ ${scaleMoney(calculation.returnFeeCollected)}`}
-                            sub="Customer return/advance charge"
+                            sub={t("subCustomerReturn")}
                           />
                         )}
                         {calculation.scrapSalesRevenue > 0 && (
                           <StatListItem
                             label={<span style={{ display: "inline-flex", alignItems: "center" }}>{t("rowSalvageIncome")} {renderInfo("returnDisposition")}</span>}
                             value={`+ ${scaleMoney(calculation.scrapSalesRevenue)}`}
-                            sub={`${calculation.returnedQty || 0} ${t("units")} scrapped`}
+                            sub={`${scaleQty(calculation.returnedQty)} ${t("units")} ${t("scrappedSuffix")}`}
                           />
                         )}
                         <StatListItem
                           label={<span style={{ display: "inline-flex", alignItems: "center" }}>{t("kpiNetRevenue")} {renderInfo("netRevenue")}</span>}
                           value={scaleMoney(calculation.netRevenue)}
-                          sub={`Net effective revenue`}
+                          sub={t("netEffectiveRevenue")}
                         />
                       </div>
                     </div>
@@ -1587,17 +1816,17 @@ const CalculatorForm = ({
                         <StatListItem
                           label={<span style={{ display: "inline-flex", alignItems: "center" }}>{`${t("rowSourcingTotal")} (${activeSourcingConfig.title})`} {renderInfo("sourcingModel")}</span>}
                           value={scaleMoney(calculation.sourcingTotal)}
-                          sub={`Base: ${scaleMoney(calculation.sourcingBase)} + Extra: ${scaleMoney(calculation.sourcingExtra)}`}
+                          sub={`${t("baseLabel")}: ${scaleMoney(calculation.sourcingBase)} + ${t("extraLabel")}: ${scaleMoney(calculation.sourcingExtra)}`}
                         />
                         <StatListItem
                           label={<span style={{ display: "inline-flex", alignItems: "center" }}>{`${t("rowStockingTotal")} (${activeStockingConfig.title})`} {renderInfo("stockingModel")}</span>}
                           value={scaleMoney(calculation.stockingTotal)}
-                          sub={`৳${((calculation.stockingUnitTotal || 0) * outputMultiplier).toFixed(2)} ${t("perUnitSuffix")}`}
+                          sub={`${unitMoney(calculation.stockingUnitTotal)} ${t("perUnitSuffix")}`}
                         />
                         <StatListItem
                           label={<span style={{ display: "inline-flex", alignItems: "center" }}>Total Landed Batch Cost {renderInfo("unitInventoryCost")}</span>}
                           value={scaleMoney(calculation.inventoryCost)}
-                          sub={`৳${((calculation.unitInventoryCost || 0) * outputMultiplier).toFixed(2)} ${t("perUnitSuffix")}`}
+                          sub={`${unitMoney(calculation.unitInventoryCost)} ${t("perUnitSuffix")}`}
                         />
                         {returnDisposition === "resell_repack" ||
                         returnDisposition === "resell" ||
@@ -1605,30 +1834,30 @@ const CalculatorForm = ({
                           <StatListItem
                             label={<span style={{ display: "inline-flex", alignItems: "center" }}>{t("rowRecoveredCost")} {renderInfo("returnDisposition")}</span>}
                             value={`✓ ${scaleMoney(calculation.recoveredInventoryCost)}`}
-                            sub="100% inventory sold to customers"
+                            sub={t("inventoryFullySold")}
                           />
                         ) : returnDisposition === "scrap" ? (
                           <StatListItem
                             label={<span style={{ display: "inline-flex", alignItems: "center" }}>{t("rowLostCost")} {renderInfo("returnDisposition")}</span>}
                             value={scaleMoney(calculation.lostInventoryCost)}
-                            sub={`Net Scrap Loss: ${scaleMoney(calculation.netScrapLoss)}`}
+                            sub={`${t("netScrapLossLabel")}: ${scaleMoney(calculation.netScrapLoss)}`}
                           />
                         ) : (
                           <StatListItem
                             label={<span style={{ display: "inline-flex", alignItems: "center" }}>{t("rowLostCost")} {renderInfo("returnDisposition")}</span>}
                             value={scaleMoney(calculation.lostInventoryCost)}
-                            sub="100% loss write-off"
+                            sub={t("lossWriteOff")}
                           />
                         )}
                         <StatListItem
                           label={<span style={{ display: "inline-flex", alignItems: "center" }}>{t("rowCogs")} {renderInfo("cogs")}</span>}
                           value={scaleMoney(calculation.cogs)}
-                          sub={`৳${((calculation.unitCogs || 0) * outputMultiplier).toFixed(2)} / delivered unit`}
+                          sub={`${unitMoney(calculation.unitCogs)} / ${t("deliveredUnitSuffix")}`}
                         />
                         <StatListItem
                           label={<span style={{ display: "inline-flex", alignItems: "center" }}>{t("kpiGrossProfit")} {renderInfo("grossProfit")}</span>}
                           value={scaleMoney(calculation.grossProfit)}
-                          sub={`Gross Margin: ${(calculation.grossMargin || 0).toFixed(2)}%`}
+                          sub={`${t("grossMarginLabel")}: ${(calculation.grossMargin || 0).toFixed(2)}%`}
                         />
                       </div>
                     </div>
@@ -1643,32 +1872,32 @@ const CalculatorForm = ({
                         <StatListItem
                           label={<span style={{ display: "inline-flex", alignItems: "center" }}>{`${t("rowSellingTotal")} (${activeSellingConfig.title})`} {renderInfo("salesModel")}</span>}
                           value={scaleMoney(calculation.sellingTotal)}
-                          sub={`৳${((calculation.sellingUnitTotal || 0) * outputMultiplier).toFixed(2)} ${t("perUnitSuffix")}`}
+                          sub={`${unitMoney(calculation.sellingUnitTotal)} ${t("perUnitSuffix")}`}
                         />
                         <StatListItem
                           label={<span style={{ display: "inline-flex", alignItems: "center" }}>{t("rowReturnCosts")} {renderInfo("returnDisposition")}</span>}
                           value={scaleMoney(calculation.returnTotal)}
-                          sub={`Proc: ${scaleMoney(calculation.returnProcessingCost)} + Courier: ${scaleMoney(calculation.returnCourierCost)}${calculation.disposalCostTotal > 0 ? ` + Disp: ${scaleMoney(calculation.disposalCostTotal)}` : ""}`}
+                          sub={`${t("procLabel")}: ${scaleMoney(calculation.returnProcessingCost)} + ${t("courierLabel")}: ${scaleMoney(calculation.returnCourierCost)}${calculation.disposalCostTotal > 0 ? ` + ${t("dispLabel")}: ${scaleMoney(calculation.disposalCostTotal)}` : ""}`}
                         />
                         <StatListItem
                           label={<span style={{ display: "inline-flex", alignItems: "center" }}>{t("rowTaxes")} {renderInfo("taxes")}</span>}
                           value={scaleMoney(formData?.other_tax_levy || 0)}
-                          sub="AIT, VAT, Trade licensing fees"
+                          sub={t("taxSub")}
                         />
                         <StatListItem
                           label={<span style={{ display: "inline-flex", alignItems: "center" }}>{t("rowOperatingExpenses")} {renderInfo("totalExpenses")}</span>}
                           value={scaleMoney(calculation.opex)}
-                          sub="Selling + Returns + Taxes"
+                          sub={t("opexComposition")}
                         />
                         <StatListItem
                           label={<span style={{ display: "inline-flex", alignItems: "center" }}>{t("kpiOperatingProfit")} {renderInfo("operatingProfit")}</span>}
                           value={scaleMoney(calculation.operatingProfit)}
-                          sub="EBITDA / Operating Income"
+                          sub={t("ebitdaSub")}
                         />
                         <StatListItem
                           label={<span style={{ display: "inline-flex", alignItems: "center" }}>{t("kpiTotalExpenses")} {renderInfo("totalExpenses")}</span>}
                           value={scaleMoney(calculation.totalExpenses)}
-                          sub="COGS + OPEX"
+                          sub={t("cogsOpexSub")}
                         />
                       </div>
                     </div>
@@ -1683,33 +1912,33 @@ const CalculatorForm = ({
                         <StatListItem
                           label={<span style={{ display: "inline-flex", alignItems: "center" }}>{t("kpiContributionMargin")} {renderInfo("breakEven")}</span>}
                           value={`${(calculation.contributionMarginPercent || 0).toFixed(2)}%`}
-                          sub={`৳${((calculation.unitContributionMargin || 0) * outputMultiplier).toFixed(2)} / unit margin`}
+                          sub={`${unitMoney(calculation.unitContributionMargin)} / ${t("unitMarginSuffix")}`}
                         />
                         <StatListItem
                           label={<span style={{ display: "inline-flex", alignItems: "center" }}>{t("rowBreakEvenQty")} {renderInfo("breakEven")}</span>}
-                          value={calculation.breakEvenQty ? `${Math.round(calculation.breakEvenQty * outputMultiplier).toLocaleString()} ${t("units")}` : "N/A"}
+                          value={calculation.breakEvenQty ? `${scaleQty(calculation.breakEvenQty).toLocaleString()} ${t("units")}` : "N/A"}
                           sub={calculation.breakEvenQty ? t("bepAchieved") : t("bepInfinite")}
                         />
                         <StatListItem
                           label={<span style={{ display: "inline-flex", alignItems: "center" }}>{t("rowBreakEvenRevenue")} {renderInfo("breakEven")}</span>}
                           value={calculation.breakEvenQty ? scaleMoney(calculation.breakEvenRevenue) : "N/A"}
-                          sub="Sales volume to break even"
+                          sub={t("bepVolumeSub")}
                         />
                         <StatListItem
                           label={<span style={{ display: "inline-flex", alignItems: "center" }}>{t("kpiSafetyMargin")} {renderInfo("breakEven")}</span>}
                           value={`${(calculation.safetyMarginPercent || 0).toFixed(2)}%`}
-                          sub="Cushion before incurring losses"
+                          sub={t("safetyMarginSub")}
                         />
                         <StatListItem
                           label={<span style={{ display: "inline-flex", alignItems: "center" }}>{t("rowTargetProfit")} {renderInfo("targetProfitPlanner")}</span>}
                           value={scaleMoney(calculation.targetProfit)}
-                          sub="Desired net profit goal"
+                          sub={t("targetProfitGoalSub")}
                         />
                         <StatListItem
                           label={<span style={{ display: "inline-flex", alignItems: "center" }}>{t("rowRequiredProfitQty")} {renderInfo("targetProfitPlanner")}</span>}
                           value={
                             calculation.requiredProfitQty
-                              ? `${Math.round(calculation.requiredProfitQty * outputMultiplier).toLocaleString()} ${t("units")}`
+                              ? `${scaleQty(calculation.requiredProfitQty).toLocaleString()} ${t("units")}`
                               : "N/A"
                           }
                           sub={
@@ -1721,8 +1950,114 @@ const CalculatorForm = ({
                         <StatListItem
                           label={<span style={{ display: "inline-flex", alignItems: "center" }}>{t("rowWorkingCapital")} {renderInfo("workingCapital")}</span>}
                           value={scaleMoney(calculation.workingCapital)}
-                          sub="Total initial cash required to fund batch"
+                          sub={t("workingCapitalSub")}
                         />
+                      </div>
+                    </div>
+
+                    {/* SECTION 5: SALES, CASH & INVESTMENT DECISIONS */}
+                    <div>
+                      <h4 style={{ margin: "0 0 var(--sp-2)", fontSize: "var(--fs-sm)", fontWeight: "var(--fw-bold)", color: "var(--primary)", display: "flex", alignItems: "center" }}>
+                        <span>5. {t("secSalesCashTitle")}</span>
+                        {renderInfo("cashFlow")}
+                      </h4>
+
+                      <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))", gap: "var(--sp-3)" }}>
+                        <StatListItem
+                          label={<span style={{ display: "inline-flex", alignItems: "center" }}>{t("rowBreakEvenNetPrice")} {renderInfo("maxDiscount")}</span>}
+                          value={calculation.breakEvenNetPrice !== null ? money(calculation.breakEvenNetPrice) : "N/A"}
+                          sub={`${t("rowBreakEvenListPrice")}: ${calculation.breakEvenListPrice !== null ? money(calculation.breakEvenListPrice) : "N/A"}`}
+                          color="var(--warning)"
+                        />
+                        <StatListItem
+                          label={<span style={{ display: "inline-flex", alignItems: "center" }}>{t("rowMaxDiscount")} {renderInfo("maxDiscount")}</span>}
+                          value={`${(calculation.maxDiscountPercent || 0).toFixed(1)}%`}
+                          sub={`${t("rowDiscountImpact")}: ${scaleMoney(calculation.discountImpactAmount)}`}
+                          color="var(--success)"
+                        />
+                        <StatListItem
+                          label={<span style={{ display: "inline-flex", alignItems: "center" }}>{t("rowPayback")} {renderInfo("payback")}</span>}
+                          value={
+                            calculation.paybackDays !== null
+                              ? `${Math.round(calculation.paybackDays).toLocaleString()} ${t("daysSuffix")}`
+                              : t("paybackNever")
+                          }
+                          sub={`${t("rowAnnualizedRoi")}: ${(calculation.annualizedRoi || 0).toFixed(1)}%`}
+                          color={calculation.paybackDays !== null ? "var(--success)" : "var(--danger)"}
+                        />
+                        <StatListItem
+                          label={<span style={{ display: "inline-flex", alignItems: "center" }}>{t("rowInventoryTurnover")} {renderInfo("inventoryTurnover")}</span>}
+                          value={`${(calculation.inventoryTurnsPerYear || 0).toFixed(1)}x`}
+                          sub={
+                            calculation.daysInventoryHeld !== null
+                              ? `${t("rowDaysInventory")}: ${Math.round(calculation.daysInventoryHeld)} ${t("daysSuffix")}`
+                              : t("inventoryTurnoverNote")
+                          }
+                          color="var(--primary)"
+                        />
+                        <StatListItem
+                          label={<span style={{ display: "inline-flex", alignItems: "center" }}>{t("rowSalesDropCushion")} {renderInfo("scenarios")}</span>}
+                          value={`${(calculation.salesDropToLossPercent || 0).toFixed(1)}%`}
+                          sub={t("recCushionHint")}
+                          color={
+                            (calculation.salesDropToLossPercent || 0) >= 20
+                              ? "var(--success)"
+                              : "var(--warning)"
+                          }
+                        />
+                        <StatListItem
+                          label={<span style={{ display: "inline-flex", alignItems: "center" }}>{t("rowDailyUnits")} {renderInfo("dailyTargets")}</span>}
+                          value={`${(calculation.targetUnitsPerDay || 0).toFixed(2)} ${t("units")}`}
+                          sub={`${t("rowDailyRevenue")}: ${unitMoney(calculation.targetRevenuePerDay)}`}
+                          color="var(--primary)"
+                        />
+                        <StatListItem
+                          label={<span style={{ display: "inline-flex", alignItems: "center" }}>{t("rowMonthlyUnits")} {renderInfo("dailyTargets")}</span>}
+                          value={`${Math.round(calculation.targetUnitsPerMonth || 0).toLocaleString()} ${t("units")}`}
+                          sub={`${t("rowMonthlyRevenue")}: ${unitMoney(calculation.targetRevenuePerMonth)}`}
+                          color="var(--primary)"
+                        />
+                        <StatListItem
+                          label={<span style={{ display: "inline-flex", alignItems: "center" }}>{t("rowCashProfit")} {renderInfo("cashFlow")}</span>}
+                          value={scaleMoney(calculation.cashProfit)}
+                          sub={`${t("cashProfitNote")}`}
+                          color={calculation.cashProfit >= 0 ? "var(--success)" : "var(--danger)"}
+                        />
+                        <StatListItem
+                          label={<span style={{ display: "inline-flex", alignItems: "center" }}>{t("rowCashInflow")} {renderInfo("cashFlow")}</span>}
+                          value={`+ ${scaleMoney(calculation.cashInflow)}`}
+                          sub={`${t("rowCashOutflow")}: - ${scaleMoney(calculation.cashOutflow)}`}
+                          color="var(--success)"
+                        />
+                      </div>
+
+                      <div style={{ marginTop: "var(--sp-3)" }}>
+                        <div style={{ fontSize: "var(--fs-xs)", color: "var(--text-muted)", marginBottom: "var(--sp-2)", display: "flex", alignItems: "center" }}>
+                          <span>{t("scenarioNote")}</span>
+                          {renderInfo("scenarios")}
+                        </div>
+                        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(180px, 1fr))", gap: "var(--sp-3)" }}>
+                          <StatListItem
+                            label={t("rowScenarioDown")}
+                            value={scaleMoney(calculation.scenarioWorst)}
+                            color={calculation.scenarioWorst >= 0 ? "var(--success)" : "var(--danger)"}
+                          />
+                          <StatListItem
+                            label={t("rowScenarioBase")}
+                            value={scaleMoney(calculation.scenarioBase)}
+                            color={calculation.scenarioBase >= 0 ? "var(--success)" : "var(--danger)"}
+                          />
+                          <StatListItem
+                            label={t("rowScenarioUp")}
+                            value={scaleMoney(calculation.scenarioBest)}
+                            color={calculation.scenarioBest >= 0 ? "var(--success)" : "var(--danger)"}
+                          />
+                          <StatListItem
+                            label={t("rowCostShock")}
+                            value={scaleMoney(calculation.costShockProfit)}
+                            color={calculation.costShockProfit >= 0 ? "var(--success)" : "var(--danger)"}
+                          />
+                        </div>
                       </div>
                     </div>
 
@@ -1747,7 +2082,7 @@ const CalculatorForm = ({
                           {renderInfo("netProfit")}
                         </span>
                         <span style={{ fontSize: "var(--fs-xs)", color: "var(--text-muted)", fontWeight: "normal" }}>
-                          {t("netProfitUnitLabel")}: ৳{((calculation.unitNetProfit || 0) * outputMultiplier).toFixed(2)} {t("perUnitSuffix")} (Net Margin: {(calculation.profitMargin || 0).toFixed(2)}%)
+                          {t("netProfitUnitLabel")}: {unitMoney(calculation.unitNetProfit)} {t("perUnitSuffix")} (Net Margin: {(calculation.profitMargin || 0).toFixed(2)}%)
                         </span>
                       </div>
                       <span style={{ color: calculation.netProfit >= 0 ? "var(--success)" : "var(--danger)", fontSize: "var(--fs-xl)" }}>

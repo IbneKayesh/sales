@@ -1,4 +1,14 @@
-task status: completed (require re-check)
+task status: completed (step 1 and step 2 both re-checked)
+step 1 re-check task list (one by one):
+[x] 1. Return Management cost heads based on Returned Qty + resell/repack/scrap/dispose + per-unit customer refund — re-checked, fixed scrap double-count, zero-return logistics, hidden refund field, qty-based gross sales
+[x] 2. Output time horizon switcher + total vs per-unit ROI view — re-checked, fixed per-unit values being scaled by the horizon (unit cost, target price, unit COGS/profit and their info popups), scaled qty rows/BEP/required qty consistently, calendar-consistent horizon days (365/12, 182.5)
+[x] 3. BN/EN single-language toggle across the calculator — re-checked, dictionaries at parity (197/197, no duplicates), localized 32 hard-coded result labels (breakdown sub-lines, scrap/disposal callouts, target planner, remove buttons) and the horizon status line; InfoButton + explainer chrome verified bilingual
+[x] 4. Audit & corrections (COGS, zero returns, target price, 3PL model, gross/operating profit, BEP, working capital) — re-checked; per-unit value selling costs were classed as fixed (inflated BEP and target-profit qty), fixed by splitting variable vs fixed selling; target price and BEP now share one net fixed burden; % return handling isolated from the price; P&L identities and 3PL model verified
+[x] 5. Return Management real solutions (resell/repack, scrap, dispose economics) — verified: resell re-sells 100% of qty, scrap sells only non-returned units and books recovery + write-off, dispose books zero recovery + disposal fee, profit ordering resell > scrap > dispose
+[x] 6. Target profit reverse calculation — verified required qty/revenue, surplus vs shortfall, feasibility guard when price <= variable cost; over-asking units caused by the fixed-burden bug is fixed (50,000 target now needs 780 units, was 830)
+[x] 7. InfoButton + profitExplainer coverage, reusable with no hard-coded copy — verified 23 explainer metrics all wired (12 KPI cards, target planner, breakdown rows, sections 01-05), 66 info buttons, InfoButton is props-only and bilingual
+[x] 8. Bulk/wholesale sales share validation + bulkTiers info popup — verified banner + status pill show exact remaining/excess, share display rounded, weighted average normalised by total share, live tier breakdown in the popup
+
 step 1:
 1. useUnifiedProfitROI.js, CalculatorForm.jsx, 05. Return Management > Resell/Repack/Scrap/Dispose value or refund to customer value, all the cost head will be based on Return Management / Returned Qty not to the full Qty (completed: updated cost calculations and subtotal per-unit based on returned_qty, added customer refund value per unit input)
 2. 0.6 Profit & ROI summary will be based on Selected 01 Sales Target & Calculation Basis > Target Time Horizon, but after entries user can see result in different time horizon, like Input time horizon is Monthly, but user can select output as daily or weekly, also can be Input daily and see result  Monthly, also ROI result can see as total amount or unit wise (completed: added output horizon switcher and total vs per-unit ROI view mode)
@@ -32,85 +42,44 @@ step 1:
    - If total sales share is not equal to 100% (under or over), dynamically displays a prominent red warning banner and status badge showing exact remaining or excess percentage.
    - Replaced static inline note with interactive `InfoButton` (`bulkTiers`) in the title header, showing weighted average price formulas and live tier breakdowns upon click.
 
-task status: pending
+InfoButton.jsx - it will reusable components, no hard coded code is there.
+
+task status: completed (re-checked)
 step 2:
-What I’ll improve
-1. Verify every calculation
-- Check every formula, input, output, and calculation.
-- Test every selection and combination of options.
-- Correct incorrect formulas and inconsistent results.
-- Check edge cases, percentages, rounding, and currency calculations.
-- Ensure changing one input updates all dependent results correctly.
+[x] 1. Verify every calculation
+   - Extracted the whole calculation into a pure engine: src/hooks/M06/profitCalculator.js (no React), so it can be tested directly.
+   - Added scripts/verify-profit-calculator.mjs (npm run test:roi): 118 checks across resell/scrap/dispose x total-qty/per-unit.
+   - Verified identities: netProfit = netRevenue - cogs - opex, netProfit = qty x unit contribution - fixed burden, cashProfit = netProfit, BEP is minimal and covers costs, target-profit qty is minimal and reaches the goal, recommended price hits the target margin, max discount lands on break-even.
+   - Edge cases: zero qty, zero returns, all units returned, 100% discount, zero price, refunds, fixed-income-only, loss-making. Percentages are clamped to 0-100 and returns are capped at the batch qty.
+   - Fixed: scrap/dispose break-even and target-profit qty were understated because returned units were treated as if they sold at full price. Contribution now uses revenue actually earned per purchased unit (regular sales + scrap).
+   - Fixed: target price / break-even price now subtract scrap recovery per unit, so they agree with BEP and the goal-seek.
+   - Fixed: Cost Markup (%) now uses (net price - landed cost) / landed cost instead of net profit / total expenses, matching its explanation.
+   - Fixed: sales-drop scenarios now respect committed inventory (unsold units keep their cost) instead of pretending the batch shrinks.
+   - Fixed: payback is not reported when there is no sales volume.
+[x] 2. Add missing business calculations
+   - Payback period in days + annualised ROI (was computed but never shown).
+   - Break-even net price, break-even list price, maximum safe discount, profit given up to the planned discount.
+   - Inventory turnover per year and days inventory held (annualised, so different horizons compare).
+   - Daily and monthly sales targets in units and revenue, from the selected input horizon.
+   - Sales cushion before a loss, -20% / base / +20% sales scenarios and a +10% cost-shock scenario.
+   - Cash inflow, cash outflow and cash left, explicitly reconciled with accounting net profit.
+   - Working capital, ROI (existing) plus annualised ROI; contribution margin now exact for every return disposition.
+[x] 3. Improve business decision-making
+   - New Decision Snapshot panel: plain-language verdict (profitable / thin / loss), minimum units, maximum discount, payback, sales cushion, target-profit gap, cost-shock profit.
+   - Loss, thin-margin, infeasible target-profit and no-safe-discount states are flagged in red/amber.
+   - Every new metric has a bilingual InfoButton explainer with formula, live numbers and a practical tip (7 new explainer entries).
+[x] 4. Improve Bangla and English content
+   - Rewrote key BN labels in everyday wording, e.g. net profit -> সব খরচ বাদে কত টাকা লাভ থাকছে, BEP units -> কত পিস বেচলে লাভ-লোকসান সমান হবে, working capital -> ব্যবসা শুরু করতে কত টাকা লাগবে, OPEX -> ব্যবসা চালাতে মোট খরচ, margin -> সব খরচ বাদে কত শতাংশ লাভ থাকছে.
+   - New copy added in both EN and BN; dictionaries checked at parity (252/252, no duplicate keys).
+[x] 5. Make the calculator easier to use
+   - Decision Snapshot turns raw numbers into recommendations; warnings appear when the business operates at a loss or has no discount room.
+   - Auto-fit responsive grids for the new panels (mobile-friendly); existing defaults, placeholders and explanations kept.
+   - Loss / thin-margin badges and tone colours on the new KPI cards.
+[x] 6. Final testing
+   - npm run test:roi -> 118 checks passed, 0 failed.
+   - npx eslint on profitCalculator.js, profitExplainer.js, useUnifiedProfitROI.js and CalculatorForm.jsx -> clean.
+   - npm run build -> succeeds.
 
-2. Add missing business calculations
-I'll review and add commonly needed business metrics, including:
+Known gap (not implemented): multi-product comparison / "which product is most profitable" needs a multi-product store, which this single-product form does not have. Product-level choice is covered by the -20%/+20% and cost-shock scenarios instead.
 
-Category Calculations
-Profitability - Gross profit, net profit, profit margin
-Pricing - Selling price, markup, target profit
-Costs - Fixed costs, variable costs, operating expenses
-Sales - Revenue, sales targets, daily/monthly targets
-Break-even - Break-even units and revenue
-Investment - Initial investment, ROI, payback period
-Product selection - Product profitability comparison
-Discounts - Discount impact, minimum profitable price
-Inventory - Stock cost, inventory value, stock turnover
-Business decisions - Best-case, expected-case, worst-case scenarios
-Cash flow - Cash inflow, outflow, working capital
-E-commerce - Platform fees, delivery, packaging, returns
-Wholesale/Retail - Wholesale margin, retail margin, distributor profit
-
-I'll also distinguish between accounting profit, cash flow, and actual money available to the business.
-
-3. Improve business decision-making
-The calculator should help users answer questions such as:
-
-- Is this product worth selling?
-- How much should I charge?
-- How many units must I sell to avoid a loss?
-- Which product gives me the highest profit?
-- How much capital do I need to start?
-- What happens if sales decrease by 20%?
-- What happens if costs increase?
-- Can I afford to offer a discount?
-- Which business option is more profitable?
-- How long will it take to recover my investment?
-
-4. Improve Bangla and English content
-Bangla: I'll use natural, friendly, conversational Bangla instead of overly formal or complicated wording.
-
-For example:
-
-Current/formal style - Improved conversational style
-
-মোট মুনাফার পরিমাণ - মোট কত টাকা লাভ হচ্ছে
-সমতা বিন্দু - কত বিক্রি করলে লাভ-লোকসান সমান হবে
-প্রাথমিক বিনিয়োগ - ব্যবসা শুরু করতে কত টাকা লাগবে
-নিট মুনাফার হার - সব খরচ বাদে কত শতাংশ লাভ থাকছে
-পরিচালন ব্যয় - ব্যবসা চালাতে মোট খরচ
-
-English: I'll make the wording simple, consistent, professional, and understandable even for someone without an accounting background.
-
-5. Make the calculator easier to use
-- Clear input labels and helpful examples.
-- Simple explanations for business terms.
-- Sensible default values.
-- Easy-to-understand results.
-- Warnings when a business is operating at a loss.
-- Profitability indicators.
-- Comparison between multiple products or business scenarios.
-- Recommendations based on actual calculated results.
-- Mobile-friendly and easy navigation.
-
-6. Final testing
-I'll test different business scenarios, including:
-
-- Profitable businesses.
-- Loss-making businesses.
-- Zero-profit situations.
-- Low-margin and high-margin products.
-- Different tax, discount, and expense combinations.
-- Small and large investments.
-- Different product and business selections.
-
-The goal is to make sure the calculator doesn't just display numbers—it helps people understand what those numbers mean and make better decisions.
+step 1: still completed. Step 2 moved the calculation into profitCalculator.js and re-verified all step 1 behaviour (including scrap/dispose economics) with the test suite.

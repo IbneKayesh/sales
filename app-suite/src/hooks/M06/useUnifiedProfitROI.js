@@ -1,11 +1,14 @@
 import { useState, useMemo, useCallback } from "react";
 import { useUI } from "@/context/AppUIContext.jsx";
+import { computeProfitROI, number, HORIZON_DAYS, resolveCost } from "./profitCalculator";
+
+// Keep the original public surface of this hook intact; the pure engine lives
+// in profitCalculator.js so it can be verified outside React.
+export { number, HORIZON_DAYS, resolveCost };
 
 // --------------------------------------------------
 // Helpers & Formatting
 // --------------------------------------------------
-
-export const number = (value) => Math.max(0, Number(value) || 0);
 
 export const money = (value) =>
   `৳${(Number(value) || 0).toLocaleString("en-BD", {
@@ -183,6 +186,63 @@ export const TRANSLATIONS = {
     targetProfitShortfallLabel: "Additional Units Needed",
     netProfitTotalLabel: "Net Profit / (Loss)",
     netProfitUnitLabel: "Net per unit",
+
+    // Section 6 — Decision snapshot & extended analysis
+    secDecisionTitle: "Decision Snapshot",
+    secDecisionSubtitle: "What these numbers mean for your business",
+    verdictProfitTitle: "This product is profitable.",
+    verdictThinTitle: "Profit is thin — a small change can wipe it out.",
+    verdictLossTitle: "This product is losing money.",
+    verdictProfitBody: "You are making money at the current price, volume and costs.",
+    verdictThinBody: "You are making money, but the cushion is small. Watch costs and discounts.",
+    verdictLossBody: "Costs are higher than income. Raise the price, cut costs, or sell more.",
+    recBreakEvenLabel: "Minimum units to sell",
+    recBreakEvenHint: "Below this you lose money",
+    recMaxDiscountLabel: "Highest discount you can give",
+    recMaxDiscountHint: "At this discount profit becomes zero",
+    recPaybackLabel: "Capital comes back in",
+    recPaybackHint: "At the current profit",
+    recPaybackNever: "Not at the current profit",
+    recCushionLabel: "Sales can fall before a loss",
+    recCushionHint: "How much sales volume can drop",
+    recTargetGapLabel: "Units still needed for your profit goal",
+    recTargetGapHint: "Compared with your current sales target",
+    recCostShockLabel: "Profit if all costs rise 10%",
+    recCostShockHint: "Stress test",
+    recProfitNowLabel: "Profit at the current plan",
+    kpiPayback: "Payback Period",
+    kpiMaxDiscount: "Max Safe Discount",
+    kpiInventoryTurnover: "Inventory Turns / Year",
+    kpiDailyTarget: "Units to Sell / Day",
+    kpiAnnualizedRoi: "Annualised ROI",
+    paybackNever: "Never at this profit",
+    daysSuffix: "days",
+    perYearSuffix: "times",
+    secSalesCashTitle: "Sales, Cash & Investment Analysis",
+    rowBreakEvenNetPrice: "Break-Even Net Price (after discount)",
+    rowBreakEvenListPrice: "Break-Even List Price (before discount)",
+    rowMaxDiscount: "Maximum Safe Discount",
+    rowDiscountImpact: "Profit Given Up to Discount",
+    rowPayback: "Payback Period",
+    rowAnnualizedRoi: "Annualised ROI",
+    rowInventoryTurnover: "Inventory Turnover",
+    rowDaysInventory: "Days Inventory Held",
+    rowDailyUnits: "Units to Sell per Day",
+    rowDailyRevenue: "Sales Revenue per Day",
+    rowMonthlyUnits: "Units to Sell per Month",
+    rowMonthlyRevenue: "Sales Revenue per Month",
+    rowSalesDropCushion: "Sales Cushion Before Loss",
+    rowCashInflow: "Cash Coming In",
+    rowCashOutflow: "Cash Going Out",
+    rowCashProfit: "Cash Left after All Costs",
+    cashProfitNote: "Every cost here is a cash cost, so cash left equals net profit.",
+    rowScenarioDown: "If sales fall 20%",
+    rowScenarioBase: "At your current plan",
+    rowScenarioUp: "If sales rise 20%",
+    rowCostShock: "If all costs rise 10%",
+    scenarioNote: "Downside assumes the batch is already bought. Upside assumes extra units are purchased.",
+    inventoryTurnoverNote: "Annualised so products with different time horizons can be compared.",
+    dailyTargetNote: "Based on your selected input time horizon.",
     units: "units",
     returnedAt: "returned @",
     disposedAs: "Disposed as",
@@ -208,6 +268,37 @@ export const TRANSLATIONS = {
     percentOfPurchase: "% of Purchase",
     perUnitSuffix: "/ unit",
     returnedUnitSuffix: "/ returned unit",
+
+    // Section 5/6 helper labels (single-language display)
+    subCustomerReturn: "Customer return/advance charge",
+    discountAppliedSuffix: "discount applied",
+    scrappedSuffix: "scrapped",
+    netEffectiveRevenue: "Net effective revenue",
+    baseLabel: "Base",
+    extraLabel: "Extra",
+    inventoryFullySold: "100% inventory sold to customers",
+    lossWriteOff: "100% loss write-off",
+    netScrapLossLabel: "Net Scrap Loss",
+    grossMarginLabel: "Gross Margin",
+    deliveredUnitSuffix: "delivered unit",
+    unitMarginSuffix: "unit margin",
+    procLabel: "Proc",
+    courierLabel: "Courier",
+    dispLabel: "Disp",
+    taxSub: "AIT, VAT, Trade licensing fees",
+    opexComposition: "Selling + Returns + Taxes",
+    ebitdaSub: "EBITDA / Operating Income",
+    cogsOpexSub: "COGS + OPEX",
+    bepVolumeSub: "Sales volume to break even",
+    safetyMarginSub: "Cushion before incurring losses",
+    targetProfitGoalSub: "Desired net profit goal",
+    workingCapitalSub: "Total initial cash required to fund batch",
+    totalDisposalFeeLabel: "Total Disposal Fee",
+    lostInventoryLabel: "Lost Inventory",
+    scrapProceedsLabel: "Calculated Scrap Proceeds",
+    unitShort: "unit",
+    removeEntry: "Remove entry",
+    removeLevel: "Remove level",
   },
 
   BN: {
@@ -306,24 +397,24 @@ export const TRANSLATIONS = {
     totalAmountMode: "পুরো ব্যাচের মোট",
     perUnitMode: "প্রতি পিসের হিসেবে",
     kpiNetRevenue: "আসল বিক্রি আয় (নিট সেলস)",
-    kpiTotalExpenses: "মোট খরচ (সব মিলিয়ে)",
+    kpiTotalExpenses: "ব্যবসা চালাতে মোট খরচ",
     kpiGrossProfit: "মোট লাভ (গ্রস লাভ)",
     kpiGrossMargin: "গ্রস লাভের মার্জিন (%)",
-    kpiOperatingProfit: "চলতি ব্যবসার লাভ (অপারেটিং লাভ)",
-    kpiNetProfit: "আসল নিট লাভ / (লস)",
+    kpiOperatingProfit: "ব্যবসা চালানোর খরচ বাদে লাভ",
+    kpiNetProfit: "সব খরচ বাদে কত টাকা লাভ থাকছে",
     profitBadge: "+ লাভ",
     lossBadge: "- লস",
-    kpiProfitMargin: "নিট লাভের মার্জিন (%)",
+    kpiProfitMargin: "সব খরচ বাদে কত শতাংশ লাভ থাকছে",
     kpiRoi: "টাকার ওপর লাভ (ROI %)",
     netProfitPerUnit: "প্রতি পিসে নিট লাভ",
-    kpiMarkup: "খরচের ওপর মার্কআপ (%)",
+    kpiMarkup: "খরচের তুলনায় দাম কত % বেশি",
     kpiUnitInventoryCost: "প্রতি পিস হাতে আসার খরচ (ল্যান্ডেড কস্ট)",
-    kpiTargetPrice: "কত দামে বেচলে টার্গেট লাভ হবে",
-    kpiBreakEvenUnits: "লস না হওয়ার বিক্রি (ব্রেক-ইভেন পিস)",
-    kpiBreakEvenRevenue: "লস না হওয়ার বিক্রি (টাকায়)",
-    kpiWorkingCapital: "হাতে নগদ কত টাকা লাগবে",
-    kpiContributionMargin: "কন্ট্রিবিউশন মার্জিন (%)",
-    kpiSafetyMargin: "ঝুঁকিহীন বিক্রির মার্জিন (%)",
+    kpiTargetPrice: "টার্গেট লাভে বেচতে হবে যে দামে",
+    kpiBreakEvenUnits: "কত পিস বেচলে লাভ-লোকসান সমান হবে",
+    kpiBreakEvenRevenue: "কত টাকার বিক্রিতে লাভ-লোকসান সমান হবে",
+    kpiWorkingCapital: "ব্যবসা শুরু করতে কত টাকা লাগবে",
+    kpiContributionMargin: "প্রতি পিসে খরচ বাদে যা থাকে (%)",
+    kpiSafetyMargin: "বিক্রি কত কমলেও লস হবে না (%)",
     bepAchieved: "পিস বেচলে কোনো লস হবে না",
     bepInfinite: "বিক্রি দাম খরচের চেয়েও কম!",
     breakdownTitle: "লাভ-লস ও খরচের বিস্তারিত হিসাব",
@@ -366,8 +457,65 @@ export const TRANSLATIONS = {
     targetProfitAchievedStatus: "দারুণ! আপনার বর্তমান টার্গেটেই এই লাভ হয়ে যাচ্ছে।",
     targetProfitSurplusLabel: "টার্গেটের চেয়ে বেশি আছে",
     targetProfitShortfallLabel: "টার্গেটে পৌঁছাতে আরও বিক্রি লাগবে",
-    netProfitTotalLabel: "আসল নিট লাভ / (লস)",
+    netProfitTotalLabel: "সব খরচ বাদে নিট লাভ / (লস)",
     netProfitUnitLabel: "প্রতি পিসে নিট লাভ",
+
+    // Section 6 — Decision snapshot & extended analysis
+    secDecisionTitle: "সিদ্ধান্তের সারসংক্ষেপ",
+    secDecisionSubtitle: "এই হিসাব আপনার ব্যবসার জন্য কী বলছে",
+    verdictProfitTitle: "এই হিসাবে পণ্যটি লাভজনক।",
+    verdictThinTitle: "লাভ খুবই কম — সামান্য পরিবর্তনেই লস হয়ে যেতে পারে।",
+    verdictLossTitle: "এই হিসাবে পণ্যটি লস করছে।",
+    verdictProfitBody: "বর্তমান দাম, বিক্রি ও খরচে আপনি লাভ করছেন।",
+    verdictThinBody: "লাভ হচ্ছে, তবে নিরাপত্তার জায়গা কম। খরচ ও ছাড়ে নজর রাখুন।",
+    verdictLossBody: "খরচ আয়ের চেয়ে বেশি। দাম বাড়ান, খরচ কমান বা বেশি বিক্রি করুন।",
+    recBreakEvenLabel: "লস এড়াতে কমপক্ষে যত পিস বেচতে হবে",
+    recBreakEvenHint: "এর কম বেচলে লস হবে",
+    recMaxDiscountLabel: "সর্বোচ্চ যত % ছাড় দিতে পারবেন",
+    recMaxDiscountHint: "এই ছাড়ে লাভ শূন্য হয়ে যাবে",
+    recPaybackLabel: "বিনিয়োগ ফেরত পেতে সময়",
+    recPaybackHint: "বর্তমান লাভের হিসাবে",
+    recPaybackNever: "বর্তমান লাভে বিনিয়োগ ফেরত আসবে না",
+    recCushionLabel: "বিক্রি যত % কমলেও লস হবে না",
+    recCushionHint: "বিক্রি কতটা কমতে পারে",
+    recTargetGapLabel: "টার্গেট লাভে পৌঁছাতে আরও যত পিস লাগবে",
+    recTargetGapHint: "বর্তমান বিক্রির টার্গেটের তুলনায়",
+    recCostShockLabel: "সব খরচ ১০% বাড়লে লাভ থাকবে",
+    recCostShockHint: "ঝুঁকি পরীক্ষা",
+    recProfitNowLabel: "এখন যেভাবে হিসাব, তাতে লাভ",
+    kpiPayback: "বিনিয়োগ ফেরতের সময়",
+    kpiMaxDiscount: "সর্বোচ্চ নিরাপদ ছাড়",
+    kpiInventoryTurnover: "বছরে মাল কতবার ঘুরবে",
+    kpiDailyTarget: "প্রতিদিন কত পিস বেচতে হবে",
+    kpiAnnualizedRoi: "বছরের হিসাবে ROI",
+    paybackNever: "এই লাভে ফেরত আসবে না",
+    daysSuffix: "দিন",
+    perYearSuffix: "বার",
+    secSalesCashTitle: "বিক্রি, নগদ ও বিনিয়োগের হিসাব",
+    rowBreakEvenNetPrice: "লস না হওয়ার আসল বিক্রি দাম (ছাড়ের পরে)",
+    rowBreakEvenListPrice: "লস না হওয়ার তালিকা দাম (ছাড়ের আগে)",
+    rowMaxDiscount: "সর্বোচ্চ নিরাপদ ছাড়",
+    rowDiscountImpact: "ছাড় দিয়ে যে লাভ ছেড়ে দিচ্ছেন",
+    rowPayback: "বিনিয়োগ ফেরত পেতে সময়",
+    rowAnnualizedRoi: "বছরের হিসাবে ROI",
+    rowInventoryTurnover: "বছরে মাল কতবার ঘুরছে",
+    rowDaysInventory: "মাল হাতে থাকার দিন",
+    rowDailyUnits: "প্রতিদিন কত পিস বেচতে হবে",
+    rowDailyRevenue: "প্রতিদিন কত টাকার বিক্রি লাগবে",
+    rowMonthlyUnits: "প্রতি মাসে কত পিস বেচতে হবে",
+    rowMonthlyRevenue: "প্রতি মাসে কত টাকার বিক্রি লাগবে",
+    rowSalesDropCushion: "লস শুরুর আগে বিক্রি কত কমতে পারে",
+    rowCashInflow: "হাতে আসা নগদ",
+    rowCashOutflow: "খরচে যাওয়া নগদ",
+    rowCashProfit: "সব খরচের পরে হাতে থাকা নগদ",
+    cashProfitNote: "এখানে সব খরচই নগদ খরচ, তাই হাতে থাকা নগদ আর নিট লাভ একই।",
+    rowScenarioDown: "বিক্রি ২০% কমলে",
+    rowScenarioBase: "এখন যেভাবে হিসাব করছেন",
+    rowScenarioUp: "বিক্রি ২০% বাড়লে",
+    rowCostShock: "সব খরচ ১০% বাড়লে",
+    scenarioNote: "কম বিক্রির হিসাবে মাল আগেই কেনা ধরা হয়েছে। বেশি বিক্রির হিসাবে বাড়তি মাল কিনতে হবে।",
+    inventoryTurnoverNote: "বছরের হিসাবে দেখানো হয়েছে, যাতে ভিন্ন সময়ের পণ্য তুলনা করা যায়।",
+    dailyTargetNote: "আপনার বেছে নেওয়া সময়ের হিসাব অনুযায়ী।",
     units: "পিস",
     returnedAt: "পিস রিটার্ন @",
     disposedAs: "সমাধান:",
@@ -393,64 +541,38 @@ export const TRANSLATIONS = {
     percentOfPurchase: "কেনা দামের %",
     perUnitSuffix: "/ পিস",
     returnedUnitSuffix: "/ ফেরত পিস",
+
+    // Section 5/6 helper labels (single-language display)
+    subCustomerReturn: "কাস্টমারের রিটার্ন বা অগ্রিম চার্জ",
+    discountAppliedSuffix: "ডিসকাউন্ট বাদ দেওয়া হয়েছে",
+    scrappedSuffix: "স্ক্র্যাপে বিক্রি",
+    netEffectiveRevenue: "সব বাদে আসল বিক্রি আয়",
+    baseLabel: "মূল দাম",
+    extraLabel: "অতিরিক্ত খরচ",
+    inventoryFullySold: "১০০% মাল ক্রেতার কাছে বিক্রি হয়েছে",
+    lossWriteOff: "১০০% মালের দাম লোকসান",
+    netScrapLossLabel: "স্ক্র্যাপে মোট লোকসান",
+    grossMarginLabel: "গ্রস মার্জিন",
+    deliveredUnitSuffix: "ডেলিভারি হওয়া পিস",
+    unitMarginSuffix: "প্রতি পিসে লাভ",
+    procLabel: "প্রসেসিং",
+    courierLabel: "কুরিয়ার",
+    dispLabel: "ফেলার খরচ",
+    taxSub: "এআইটি, ভ্যাট, ট্রেড লাইসেন্স ফি",
+    opexComposition: "বিক্রি + রিটার্ন + ট্যাক্স খরচ",
+    ebitdaSub: "ইবিআইটিডিএ / পরিচালন লাভ",
+    cogsOpexSub: "পণ্যের খরচ + পরিচালন খরচ",
+    bepVolumeSub: "লাভ-লোকসান সমান হতে কত পিস বিক্রি লাগবে",
+    safetyMarginSub: "লোকসান শুরুর আগে কতটা নিরাপদ আছেন",
+    targetProfitGoalSub: "যত টাকা লাভ করতে চান",
+    workingCapitalSub: "ব্যাচ চালাতে শুরুতে যত টাকা লাগবে",
+    totalDisposalFeeLabel: "ফেলার মোট খরচ",
+    lostInventoryLabel: "নষ্ট হওয়া মালের কেনা দাম",
+    scrapProceedsLabel: "স্ক্র্যাপ থেকে পাওয়া টাকা",
+    unitShort: "পিস",
+    removeEntry: "খরচটি বাদ দিন",
+    removeLevel: "লেভেলটি বাদ দিন",
   },
-};
-
-// --------------------------------------------------
-// Cost Resolver Function
-// --------------------------------------------------
-
-export const resolveCost = (
-  item,
-  {
-    costInputMode = "total_qty",
-    salesQty = 0,
-    unitPurchaseCost = 0,
-    sellingPrice = 0,
-    stageType = "sourcing",
-  },
-) => {
-  const raw = number(item?.amount);
-  const isPercent = item?.type === "percent";
-  const qty = Math.max(0, salesQty);
-
-  if (isPercent) {
-    let unitBase = unitPurchaseCost;
-    if (stageType === "selling" || stageType === "returns") {
-      unitBase = sellingPrice;
-    } else if (stageType === "stocking") {
-      unitBase = unitPurchaseCost;
-    }
-
-    const unitAmount = (raw / 100) * unitBase;
-    const totalAmount = unitAmount * qty;
-    return {
-      unitAmount,
-      totalAmount,
-      rate: raw,
-      isPercent: true,
-    };
-  } else {
-    if (costInputMode === "per_unit") {
-      const unitAmount = raw;
-      const totalAmount = unitAmount * qty;
-      return {
-        unitAmount,
-        totalAmount,
-        rate: 0,
-        isPercent: false,
-      };
-    } else {
-      const totalAmount = qty > 0 ? raw : 0;
-      const unitAmount = qty > 0 ? totalAmount / qty : 0;
-      return {
-        unitAmount,
-        totalAmount,
-        rate: 0,
-        isPercent: false,
-      };
-    }
-  }
 };
 
 // --------------------------------------------------
@@ -830,7 +952,6 @@ const useUnifiedProfitROI = () => {
   const [roiViewMode, setRoiViewMode] = useState("total");
 
   // Helper to convert amounts between time horizons
-  const HORIZON_DAYS = { daily: 1, weekly: 7, monthly: 30, "half-yearly": 182, yearly: 365 };
   const getHorizonMultiplier = useCallback((from, to) => {
     const fromDays = HORIZON_DAYS[from] || 30;
     const toDays = HORIZON_DAYS[to] || 30;
@@ -985,339 +1106,31 @@ const useUnifiedProfitROI = () => {
   // Calculations (Dynamic for Active Selected Models & Modes)
   // --------------------------------------------------
 
-  const calculation = useMemo(() => {
-    const qty = number(formData?.sales_qty);
-    const unitCost = number(formData?.unit_purchase_cost);
-    const discountPercent = Math.min(100, number(formData?.discount_percent));
-    const targetMargin = number(formData?.profit_margin);
-    const otherTax = number(formData?.other_tax_levy);
-
-    let averageSellingPrice = 0;
-    if (salesModel === "retail") {
-      averageSellingPrice = number(formData?.retail_selling_price);
-    } else {
-      const mixTotal = bulkPrices.reduce(
-        (sum, item) => sum + number(item.mix),
-        0,
-      );
-      averageSellingPrice =
-        mixTotal > 0
-          ? bulkPrices.reduce(
-              (sum, item) => sum + number(item.price) * number(item.mix),
-              0,
-            ) / mixTotal
-          : 0;
-    }
-
-    // 1. Revenues & Discounts
-    const sellingPriceAfterDiscount = averageSellingPrice * (1 - discountPercent / 100);
-    const grossSalesBeforeDiscount = qty * averageSellingPrice;
-    const discountAmount = grossSalesBeforeDiscount * (discountPercent / 100);
-    const grossSales = qty * sellingPriceAfterDiscount;
-
-    const resolverContext = {
+  const calculation = useMemo(
+    () =>
+      computeProfitROI({
+        formData,
+        costs,
+        bulkPrices,
+        productSource,
+        stockingModel,
+        salesModel,
+        returnDisposition,
+        costInputMode,
+        salesTargetDays,
+      }),
+    [
+      formData,
+      costs,
+      bulkPrices,
+      productSource,
+      stockingModel,
+      salesModel,
+      returnDisposition,
       costInputMode,
-      salesQty: qty,
-      unitPurchaseCost: unitCost,
-      sellingPrice: sellingPriceAfterDiscount,
-    };
-
-    // 2. Sourcing Costs
-    const activeSrcGroupKey = `sourcing_${productSource}`;
-    const sourcingItems = costs[activeSrcGroupKey] || [];
-    const sourcingExtra = sourcingItems.reduce((sum, item) => {
-      const res = resolveCost(item, {
-        ...resolverContext,
-        stageType: "sourcing",
-      });
-      return sum + res.totalAmount;
-    }, 0);
-    const sourcingBase = qty * unitCost;
-    const sourcingTotal = sourcingBase + sourcingExtra;
-    const unitSourcingCost = qty > 0 ? sourcingTotal / qty : 0;
-
-    // 3. Stocking Costs
-    const activeStkGroupKey = `stocking_${stockingModel}`;
-    const stockingItems = costs[activeStkGroupKey] || [];
-    const stockingTotal = stockingItems.reduce((sum, item) => {
-      const res = resolveCost(item, {
-        ...resolverContext,
-        stageType: "stocking",
-      });
-      return sum + res.totalAmount;
-    }, 0);
-    const unitStockingCost = qty > 0 ? stockingTotal / qty : 0;
-
-    // 4. Inventory Cost
-    const inventoryCost = sourcingTotal + stockingTotal;
-    const unitInventoryCost = qty > 0 ? inventoryCost / qty : 0;
-
-    // 5. Returns & Real Solutions Disposition Economics
-    const returnedQty = Math.min(qty, number(formData?.returned_qty));
-    const refundPerUnit = number(formData?.refund_value_per_unit);
-    const refundAmount = returnedQty * refundPerUnit;
-
-    // Courier logistics on returns
-    const returnFeeCollected = number(formData?.return_fee_collected); // collected from customer
-    const returnCourierCost = number(formData?.return_courier_cost); // paid to courier company
-
-    let effectiveSoldQty = 0;
-    let regularSalesRevenue = 0;
-    let scrapSalesRevenue = 0;
-    let disposalCostTotal = 0;
-    let recoveredInventoryCost = 0;
-    let lostInventoryCost = 0;
-    let netScrapLoss = 0;
-
-    const isResell =
-      returnDisposition === "resell_repack" ||
-      returnDisposition === "resell" ||
-      returnDisposition === "repack";
-
-    if (isResell) {
-      // 1. RESELL / REPACK:
-      // Product is repaired/repacked and sold!
-      // Returned qty is included into total sold qty.
-      effectiveSoldQty = qty;
-      regularSalesRevenue = qty * sellingPriceAfterDiscount;
-      recoveredInventoryCost = returnedQty * unitInventoryCost;
-      lostInventoryCost = 0;
-    } else if (returnDisposition === "scrap") {
-      // 2. SCRAP:
-      // Sold lower than actual sales prices by unit or total amount
-      effectiveSoldQty = Math.max(0, qty - returnedQty);
-      regularSalesRevenue = effectiveSoldQty * sellingPriceAfterDiscount;
-
-      const scrapBasis = formData?.scrap_recovery_basis || "per_unit";
-      if (scrapBasis === "per_unit") {
-        const scrapUnit = number(formData?.scrap_value_per_unit);
-        scrapSalesRevenue = returnedQty * scrapUnit;
-      } else {
-        scrapSalesRevenue = number(formData?.scrap_recovery_total);
-      }
-
-      const scrappedInventoryCost = returnedQty * unitInventoryCost;
-      netScrapLoss = Math.max(0, scrappedInventoryCost - scrapSalesRevenue);
-      lostInventoryCost = scrappedInventoryCost;
-      recoveredInventoryCost = 0;
-    } else {
-      // 3. DISPOSE:
-      // Zero sales value! Regular sold qty = qty - returnedQty
-      effectiveSoldQty = Math.max(0, qty - returnedQty);
-      regularSalesRevenue = effectiveSoldQty * sellingPriceAfterDiscount;
-      scrapSalesRevenue = 0;
-
-      const dispBasis = formData?.disposal_cost_basis || "per_unit";
-      if (dispBasis === "per_unit") {
-        const dispUnit = number(formData?.disposal_cost_per_unit);
-        disposalCostTotal = returnedQty * dispUnit;
-      } else {
-        disposalCostTotal = number(formData?.disposal_cost_total);
-      }
-
-      lostInventoryCost = returnedQty * unitInventoryCost;
-      recoveredInventoryCost = 0;
-    }
-
-    // Cost of Goods Sold (COGS)
-    let cogs = 0;
-    if (isResell) {
-      cogs = inventoryCost; // Full batch sold as finished goods
-    } else if (returnDisposition === "scrap") {
-      cogs = Math.max(0, inventoryCost - scrapSalesRevenue);
-    } else {
-      cogs = inventoryCost; // Full inventory consumed (regular sold + disposed write-off)
-    }
-
-    // 6. Selling Costs & Percentage Rate Sum
-    const activeSellGroupKey = `selling_${salesModel}`;
-    const sellingItems = costs[activeSellGroupKey] || [];
-    let sellingPercentageSum = 0;
-    const sellingTotal = sellingItems.reduce((sum, item) => {
-      if (item.type === "percent") {
-        sellingPercentageSum += number(item.amount);
-      }
-      const res = resolveCost(item, {
-        ...resolverContext,
-        stageType: "selling",
-      });
-      return sum + res.totalAmount;
-    }, 0);
-
-    // 7. Return Processing Costs (Only incurred on returned units!)
-    const returnItems = costs.returns || [];
-    const returnProcessingCost = returnedQty > 0
-      ? returnItems.reduce((sum, item) => {
-          const res = resolveCost(item, {
-            ...resolverContext,
-            stageType: "returns",
-            salesQty: returnedQty,
-          });
-          return sum + res.totalAmount;
-        }, 0)
-      : 0;
-
-    // Total return expenses = processing + courier return paid + disposal fee
-    const returnTotal = returnProcessingCost + returnCourierCost + disposalCostTotal;
-
-    // 8. Incomes & Total Net Revenue
-    const deliveryIncome = number(formData?.delivery_income);
-    const netRevenue =
-      regularSalesRevenue +
-      scrapSalesRevenue +
-      deliveryIncome +
-      returnFeeCollected -
-      refundAmount;
-
-    // 9. Operating Expenses (OPEX) & Total Expenses
-    const opex = sellingTotal + returnTotal + otherTax;
-    const totalExpenses = cogs + opex;
-
-    // 10. Profits & Margins
-    const grossProfit = netRevenue - cogs;
-    const grossMargin = netRevenue > 0 ? (grossProfit / netRevenue) * 100 : 0;
-
-    const operatingProfit = grossProfit - sellingTotal - returnTotal;
-    const netProfit = netRevenue - totalExpenses;
-    const unitNetProfit = qty > 0 ? netProfit / qty : 0;
-
-    const profitMargin = netRevenue > 0 ? (netProfit / netRevenue) * 100 : 0;
-    const markup = totalExpenses > 0 ? (netProfit / totalExpenses) * 100 : 0;
-
-    // Working Capital Outlay
-    const workingCapital = sourcingTotal + stockingTotal + sellingTotal + returnTotal + otherTax;
-    const roi = workingCapital > 0 ? (netProfit / workingCapital) * 100 : 0;
-
-    // 11. Target Selling Price Calculation (Accounts for Variable % Selling Fees)
-    const variableSellingTotal = (sellingPercentageSum / 100) * sellingPriceAfterDiscount * qty;
-    const fixedSellingTotal = Math.max(0, sellingTotal - variableSellingTotal);
-    const fixedUnitCost = unitInventoryCost +
-      (fixedSellingTotal + returnTotal + otherTax) / Math.max(qty, 1);
-
-    const marginAndFeePercent = (targetMargin + sellingPercentageSum) / 100;
-    const requiredPrice =
-      marginAndFeePercent < 1 && targetMargin >= 0
-        ? (fixedUnitCost / Math.max(0.0001, 1 - marginAndFeePercent)) /
-          Math.max(0.000001, 1 - discountPercent / 100)
-        : 0;
-
-    // 12. Break-Even Analysis & Net Fixed Burden
-    const unitVariableCost = unitInventoryCost + ((sellingPercentageSum / 100) * sellingPriceAfterDiscount);
-    const unitContributionMargin = sellingPriceAfterDiscount - unitVariableCost;
-    const contributionMarginPercent = sellingPriceAfterDiscount > 0
-      ? (unitContributionMargin / sellingPriceAfterDiscount) * 100
-      : 0;
-
-    const fixedCostsTotal = fixedSellingTotal + returnTotal + otherTax;
-    const fixedIncomeOffsets = deliveryIncome + returnFeeCollected - refundAmount + scrapSalesRevenue;
-    const netFixedBurden = Math.max(0, fixedCostsTotal - fixedIncomeOffsets);
-
-    const breakEvenQty = unitContributionMargin > 0
-      ? Math.ceil(netFixedBurden / unitContributionMargin)
-      : null;
-
-    const breakEvenRevenue = breakEvenQty !== null ? breakEvenQty * sellingPriceAfterDiscount : 0;
-    const safetyMarginPercent = breakEvenQty !== null && qty > 0
-      ? Math.max(0, ((qty - breakEvenQty) / qty) * 100)
-      : 0;
-
-    // 13. Target Profit Reverse Calculation (Quantity & Amount Required)
-    const targetProfit = number(formData?.target_profit_amount);
-    const requiredProfitQty = unitContributionMargin > 0
-      ? Math.ceil((targetProfit + netFixedBurden) / unitContributionMargin)
-      : null;
-
-    const requiredProfitRevenue = requiredProfitQty !== null
-      ? requiredProfitQty * sellingPriceAfterDiscount
-      : 0;
-
-    const targetProfitQtyDiff = requiredProfitQty !== null
-      ? requiredProfitQty - qty
-      : 0;
-
-    const isTargetProfitAchieved = requiredProfitQty !== null
-      ? qty >= requiredProfitQty
-      : false;
-
-    const returnRatePercent = qty > 0 ? (returnedQty / qty) * 100 : 0;
-
-    return {
-      qty,
-      effectiveSoldQty,
-      netQuantity: effectiveSoldQty,
-      returnedQty,
-      returnRatePercent,
-      averageSellingPrice,
-      sellingPriceAfterDiscount,
-      grossSalesBeforeDiscount,
-      discountAmount,
-      grossSales,
-      regularSalesRevenue,
-      scrapSalesRevenue,
-      netScrapLoss,
-      disposalCostTotal,
-      returnFeeCollected,
-      returnCourierCost,
-      returnProcessingCost,
-      refundAmount,
-      deliveryIncome,
-      salvageRecovery: scrapSalesRevenue,
-      netRevenue,
-      sourcingBase,
-      sourcingExtra,
-      sourcingTotal,
-      unitSourcingCost,
-      sourcingUnitExtra: qty > 0 ? sourcingExtra / qty : 0,
-      stockingTotal,
-      unitStockingCost,
-      stockingUnitTotal: qty > 0 ? stockingTotal / qty : 0,
-      inventoryCost,
-      unitInventoryCost,
-      recoveredInventoryCost,
-      lostInventoryCost,
-      cogs,
-      unitCogs: effectiveSoldQty > 0 ? cogs / effectiveSoldQty : (qty > 0 ? cogs / qty : 0),
-      sellingTotal,
-      sellingUnitTotal: qty > 0 ? sellingTotal / qty : 0,
-      returnTotal,
-      returnUnitTotal: returnedQty > 0 ? returnTotal / returnedQty : 0,
-      opex,
-      totalExpenses,
-      totalExpensesUnit: qty > 0 ? totalExpenses / qty : 0,
-      grossProfit,
-      grossMargin,
-      operatingProfit,
-      netProfit,
-      unitNetProfit,
-      profitMargin,
-      markup,
-      workingCapital,
-      roi,
-      requiredPrice,
-      unitVariableCost,
-      unitContributionMargin,
-      contributionMarginPercent,
-      fixedCostsTotal,
-      netFixedBurden,
-      breakEvenQty,
-      breakEvenRevenue,
-      safetyMarginPercent,
-      targetProfit,
-      requiredProfitQty,
-      requiredProfitRevenue,
-      targetProfitQtyDiff,
-      isTargetProfitAchieved,
-    };
-  }, [
-    formData,
-    costs,
-    bulkPrices,
-    productSource,
-    stockingModel,
-    salesModel,
-    returnDisposition,
-    costInputMode,
-  ]);
+      salesTargetDays,
+    ],
+  );
 
   const getStageTotal = useCallback(
     (stageKey) => {
