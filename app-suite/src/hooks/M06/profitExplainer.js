@@ -354,18 +354,18 @@ export const getMetricExplanation = (metricKey, {
       explanation: isBN
         ? 'মালের মোট খরচের ওপর কত শতকরা টাকা বাড়িয়ে বিক্রি দাম ঠিক করা হয়েছে। যেমন: ১০০ টাকার খরচের জিনিস ১৫০ টাকায় বেচলে মার্কআপ হলো ৫০%।'
         : 'The percentage markup added on top of total expenditure to generate the targeted net profit.',
-      formula: 'Markup % = (Net Profit / Total Expenses) * 100',
+      formula: 'Markup % = (Net Selling Price - Unit Inventory Cost) / Unit Inventory Cost × 100',
       breakdown: [
         {
-          label: isBN ? 'আসল নিট লাভ' : 'Net Profit',
-          value: scaleMoney(calculation.netProfit),
+          label: isBN ? 'বিক্রি দামের পরে প্রতি পিসের দাম' : 'Net Selling Price per Unit',
+          value: money(calculation.sellingPriceAfterDiscount),
         },
         {
-          label: isBN ? 'সর্বমোট খরচ' : 'Total Expenses',
-          value: `/ ${scaleMoney(calculation.totalExpenses)}`,
+          label: isBN ? 'প্রতি পিস ল্যান্ডেড খরচ' : 'Unit Inventory Cost',
+          value: money(calculation.unitInventoryCost),
         },
         {
-          label: isBN ? 'মার্কআপ হার (%)' : 'Markup Rate (%)',
+          label: isBN ? 'খরচের ওপর শতাংশ বৃদ্ধি' : 'Cost Markup (%)',
           value: `${(calculation.markup || 0).toFixed(2)}%`,
           highlight: true,
         },

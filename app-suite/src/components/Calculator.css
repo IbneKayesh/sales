@@ -1,0 +1,120 @@
+/* Calculator.css — styles isolated to src/components/Calculator.jsx.
+   All class names are scoped under .calculator to avoid leaking elsewhere. */
+
+.calculator__header {
+  cursor: grab;
+}
+
+.calculator__header-title {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.calculator__header-controls {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  flex-shrink: 0;
+}
+
+.calculator__expand-btn,
+.calculator__close-btn {
+  margin-top: 0;
+}
+
+.calculator__body {
+  padding: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.calculator__display {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding: 10px 12px;
+  background: var(--surface-hover);
+  border: 1px solid var(--border-light);
+  border-radius: var(--radius-lg);
+}
+
+.calculator__equation {
+  text-align: right;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  line-height: 1.4;
+  color: var(--text-muted);
+  min-height: 15px;
+  max-height: 44px;
+  overflow-y: auto;
+  word-break: break-all;
+}
+
+.calculator__result {
+  text-align: right;
+  font-family: var(--font-mono);
+  font-size: 32px;
+  font-weight: 700;
+  color: var(--text-primary);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  min-height: 40px;
+  line-height: 1.15;
+}
+
+.calculator__result-in-words {
+  text-align: right;
+  font-family: var(--font-sans);
+  font-size: 10px;
+  line-height: 1.15;
+  color: var(--text-muted);
+  min-height: 0;
+  word-break: break-all;
+  margin-top: -4px;
+}
+
+.calculator__keypad {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 6px;
+}
+
+.calculator__key {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 10px 0;
+  font-size: 15px;
+  font-weight: 600;
+  border-radius: var(--radius-md);
+  border: 1px solid;
+  cursor: pointer;
+  font-family: var(--font-sans);
+  box-shadow: none;
+  transition: all 0.08s ease;
+}
+
+.calculator__key--hoverable:hover {
+  box-shadow: var(--shadow-xs);
+}
+
+.calculator__key--dimmed:hover {
+  filter: brightness(0.94);
+}
+
+.calculator__key--pressed,
+.calculator__key--active {
+  transform: scale(0.94);
+  filter: brightness(0.85);
+}
+
+.calculator__key--span-2 {
+  grid-column: span 2;
+}
+
+/* Variant colors are kept as inline styles on top of the shared .calculator__key
+   class, matching the previous keyStyles object so hover / pressed feedback
+   continues to work the same way. */
