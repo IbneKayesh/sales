@@ -33,7 +33,7 @@ h1,
 h2 {
   font-family: var(--font-heading);
   font-weight: 600;
-  color: var(--text-primary);
+  color: var(--text-heading);
 }
 
 h1 {
@@ -52,6 +52,7 @@ h2 {
   line-height: var(--lh-tight);
   letter-spacing: -0.3px;
   margin: 0 0 var(--sp-2);
+  color: var(--text-heading);
   @media (max-width: 1024px) {
     font-size: var(--fs-xl);
   }
@@ -61,10 +62,11 @@ code {
   font-family: var(--font-mono);
   display: inline-flex;
   border-radius: var(--radius-sm);
-  color: var(--text-primary);
+  color: var(--text-heading);
   font-size: var(--fs-base);
   line-height: 135%;
   padding: var(--sp-1) var(--sp-2);
+  text-decoration: none;
   background: var(--surface-alt);
 }
 
@@ -74,8 +76,8 @@ code {
 
 /* --- Placeholder text --- */
 ::placeholder {
-  color: var(--text-secondary);
-  opacity: 0.6;
+  color: var(--text-placeholder);
+  opacity: 1;
 }
 
 /* --- Icon action button (edit/delete rows) — uses Button component now --- */
@@ -83,16 +85,61 @@ code {
 /* Danger hover for icon-only ghost buttons */
 .btn--icon-danger:hover {
   background: var(--danger-bg) !important;
-  color: var(--danger) !important;
+  color: var(--danger-text) !important;
 }
 
 /* Success hover for icon-only ghost buttons */
 .btn--icon-success:hover {
   background: var(--success-bg) !important;
-  color: var(--success) !important;
+  color: var(--success-text) !important;
+}
+
+/* ---- Accessible focus-visible ring (shared across theme files) ---- */
+button:focus-visible,
+a:focus-visible,
+input:focus-visible,
+select:focus-visible,
+textarea:focus-visible,
+[tabindex]:focus-visible {
+  outline: none;
+  box-shadow: var(--focus-ring);
+  outline-offset: var(--focus-ring-offset);
+}
+
+button:focus-visible,
+a:focus-visible,
+input:focus-visible,
+select:focus-visible,
+textarea:focus-visible,
+[tabindex]:focus-visible {
+  outline: none;
+  box-shadow: var(--focus-ring);
+  outline-offset: var(--focus-ring-offset);
 }
 
 /* --- Form wrapper & actions (page-level shared pattern) --- */
+
+/* ---- Text-safe semantic hover helper (DO NOT add brand bg grads) ---- */
+/* whenever a hover state wraps text, prefer background + text-safe foreground 
+   over lifting the 500 hue onto the text. In this codebase the only brand-hover
+   foregrounds left are icon-only action buttons (btn--icon-*), which are
+   intentionally kept short and reviewed separately. */
+
+/* Focusable interactive elements (override Flexbox `button`).
+   When a `<button>`/`<button>` is rendered through a Flexbox container, the
+   inherited `display: inline-flex` makes it behave like a box rather than a plain
+   action trigger, so buttons need either their own layout styling or are explicitly
+   laid out via Flexbox wrappers.
+
+   Core action buttons use :focus-visible in their own rule (covered by the shared
+   focus ring above), except primary/secondary/ghost/danger which define their own
+   focus-visible shadows below.
+
+   Navigation buttons look like `<button>`s but they are `<a>`s under the hood.
+   Link packets use `text-decoration: none` by default, so buttons and links share
+   the same semantic text color tokens, and link/link:hover states use --text-heading and --text-primary. */
+
+/* ---- T-Shirt-size online wire context toggle ---- */
 .form-wrap {
   display: flex;
   flex-direction: column;
@@ -920,8 +967,8 @@ code {
 }
 
 .input-time__input::placeholder {
-  color: var(--text-secondary);
-  opacity: 0.6;
+  color: var(--text-placeholder);
+  opacity: 1;
 }
 
 .input-time__input::-webkit-calendar-picker-indicator {
@@ -2645,7 +2692,7 @@ code {
 }
 .toast-item--success .toast-item__icon {
   background: var(--success-bg);
-  color: var(--success);
+  color: var(--success-text);
 }
 
 .toast-item--error::before {
@@ -2653,7 +2700,7 @@ code {
 }
 .toast-item--error .toast-item__icon {
   background: var(--danger-bg);
-  color: var(--danger);
+  color: var(--danger-text);
 }
 
 .toast-item--info::before {
@@ -2661,7 +2708,7 @@ code {
 }
 .toast-item--info .toast-item__icon {
   background: var(--primary-bg);
-  color: var(--primary);
+  color: var(--info-text);
 }
 
 .toast-item--warning::before {
@@ -2669,7 +2716,7 @@ code {
 }
 .toast-item--warning .toast-item__icon {
   background: var(--warning-bg);
-  color: var(--warning);
+  color: var(--warning-text);
 }
 
 .toast-item__message {
@@ -3531,14 +3578,14 @@ html[data-layout="boxed"] .layout__main {
 .module-page__title {
   font-size: var(--fs-2xl);
   font-weight: var(--fw-bold);
-  color: var(--accent-light);
+  color: var(--text-heading);
   margin: 0;
   letter-spacing: -0.3px;
 }
 
 .module-page__subtitle {
   font-size: var(--fs-sm);
-  color: var(--accent-light);
+  color: var(--text-secondary);
   margin: var(--sp-1) 0 0;
 }
 
@@ -3591,15 +3638,24 @@ html[data-layout="boxed"] .layout__main {
 .greeting-header__title {
   font-size: var(--fs-2xl);
   font-weight: var(--fw-bold);
-  color: var(--accent-light);
+  color: var(--text-heading);
   margin: 0;
   letter-spacing: -0.3px;
 }
 
 .greeting-header__subtitle {
   font-size: var(--fs-sm);
-  color: var(--accent-light);
+  color: var(--text-secondary);
   margin: var(--sp-1) 0 0;
+}
+
+.greeting-header__icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  color: var(--text-muted);
+  aria-hidden: true;
 }
 
 .greeting-header__actions {
@@ -7159,8 +7215,8 @@ html[data-layout="boxed"] .layout__main {
 }
 
 .input-textarea__textarea::placeholder {
-  color: var(--text-secondary);
-  opacity: 0.6;
+  color: var(--text-placeholder);
+  opacity: 1;
 }
 
 .input-textarea--focused .input-textarea__textarea {
@@ -8254,8 +8310,8 @@ html[data-layout="boxed"] .layout__main {
 }
 
 .examples-page__nav-search-input::placeholder {
-  color: var(--text-secondary);
-  opacity: 0.6;
+  color: var(--text-placeholder);
+  opacity: 1;
 }
 
 .examples-page__nav-search-clear {

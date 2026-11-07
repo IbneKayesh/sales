@@ -253,24 +253,28 @@
   --success-light:        #4ade80;
   --success-bg:           rgba(34, 197, 94, 0.12);
   --success-on:           #0f1117;
+  --success-text:         var(--green-700, #15803d);
 
   --warning:              #f59e0b;
   --warning-hover:        color-mix(in srgb, #f59e0b 85%, #000000);
   --warning-light:        #fbbf24;
   --warning-bg:           rgba(245, 158, 11, 0.12);
   --warning-on:           #0f1117;
+  --warning-text:         var(--amber-700, #b45309);
 
   --danger:               #ef4444;
   --danger-hover:         color-mix(in srgb, #ef4444 85%, #000000);
   --danger-light:         #f87171;
   --danger-bg:            rgba(239, 68, 68, 0.12);
   --danger-on:            #ffffff;
+  --danger-text:          var(--red-700, #b91c1c);
 
   --info:                 #3b82f6;
   --info-hover:           color-mix(in srgb, #3b82f6 85%, #000000);
   --info-light:           #60a5fa;
   --info-bg:              rgba(59, 130, 246, 0.12);
   --info-on:              #ffffff;
+  --info-text:            var(--blue-700, #1d4ed8);
 
   /* ---- Muted / Neutral ---- */
   --muted:                #6b7280;
@@ -305,10 +309,19 @@
   --text-primary:         #111827;
   --text-secondary:       #4b5563;
   --text-muted:           #6b7280;
-  --text-disabled:        #d1d5db;
-  --text-danger:          #ef4444;
+  --text-disabled:        var(--gray-500, #6b7280);
+  --text-danger:          var(--danger-text, #b91c1c);
+  --text-placeholder:     var(--gray-500, #6b7280);
+  --disabled-opacity:     0.65;
+  --text-heading:         var(--text-primary);
+  --success-text:         var(--green-700, #15803d);
+  --warning-text:         var(--amber-700, #b45309);
+  --danger-text:          var(--red-700, #b91c1c);
+  --info-text:            var(--blue-700, #1d4ed8);
 
   --link:                 #7c3aed;
+
+
   --link-hover:           #6d28d9;
 
   --icon:                 #4b5563;
@@ -323,6 +336,11 @@
 
   /* ---- Focus ---- */
   --focus-ring:           0 0 0 3px var(--primary-bg);
+  --focus-ring-offset:    2px;
+  --focus-ring-offset:    2px;
+  --focus-ring-offset:    2px;
+  --focus-ring-offset:    2px;
+  --focus-ring-offset:    2px;
 
   /* ---- Shadow Colors (per elevation) — Purple-tinted ---- */
   --shadow-color-xs:      rgba(124, 58, 237, 0.04);
@@ -351,6 +369,9 @@
   --fs-2xl:               calc(22px * var(--fs-scale, 1));
   --fs-3xl:               calc(32px * var(--fs-scale, 1));
   --fs-4xl:               calc(48px * var(--fs-scale, 1));
+  --fs-5xl:               calc(56px * var(--fs-scale, 1));
+  --fs-5xl:               calc(56px * var(--fs-scale, 1));
+  --fs-5xl:               calc(56px * var(--fs-scale, 1));
 
   --lh-tight:             1.15;
   --lh-normal:            1.40;
@@ -458,6 +479,7 @@
   --accent:               var(--primary);
   --accent-hover:         var(--primary-hover);
   --accent-light:         var(--primary-light);
+  --text-heading:         var(--text-primary);
   --accent-bg:            var(--primary-bg);
   --accent-border:        var(--primary-border);
   --text:                 var(--text-secondary);
@@ -492,6 +514,7 @@ html[data-motion="reduced"] *,
 html[data-motion="reduced"] *::before,
 html[data-motion="reduced"] *::after {
   animation-duration: 0.001s !important;
+  animation-iteration-count: 1 !important;
   transition-duration: 0.001s !important;
 }
 
@@ -529,22 +552,29 @@ html[data-motion="reduced"] *::after {
     --success-hover:        #c4b5fd;
     --success-light:        #ddd6fe;
     --success-bg:           rgba(167, 139, 250, 0.15);
+    --success-on:           #0f1117;
+    --success-text:         var(--green-700, #15803d);
 
     --warning:              #a78bfa;
     --warning-hover:        #c4b5fd;
     --warning-light:        #ddd6fe;
     --warning-bg:           rgba(167, 139, 250, 0.15);
+    --warning-on:           #0f1117;
+    --warning-text:         var(--amber-700, #b45309);
 
     --danger:               #a78bfa;
     --danger-hover:         #c4b5fd;
     --danger-light:         #ddd6fe;
     --danger-bg:            rgba(167, 139, 250, 0.15);
+    --danger-on:            #ffffff;
+    --danger-text:          var(--red-700, #b91c1c);
 
     --info:                 #8f5ef3;
     --info-hover:           #7a50cf;
     --info-light:           #ddd6fe;
     --info-bg:              rgba(143, 94, 243, 0.15);
     --info-on:              #ffffff;
+    --info-text:            var(--blue-700, #1d4ed8);
 
     --muted:                #6b7280;
     --muted-bg:             rgba(107, 114, 128, 0.20);
@@ -573,7 +603,11 @@ html[data-motion="reduced"] *::after {
     --text-primary:         #f1f3f5;
     --text-secondary:       #c4c9d0;
     --text-muted:           #9ca3af;
-    --text-disabled:        #4b4d5c;
+    --text-disabled:        var(--gray-500, #9ca3af);
+    --text-danger:          var(--danger-text, #b91c1c);
+    --text-placeholder:     var(--gray-500, #9ca3af);
+    --disabled-opacity:     0.65;
+    --text-heading:         var(--text-primary);
 
     --link:                 #a78bfa;
     --link-hover:           #c4b5fd;
@@ -619,6 +653,8 @@ html[data-theme] {
   --secondary-bg:         color-mix(in srgb, var(--theme-500) 10%, transparent);
   --secondary-on:         #ffffff;
 
+  --info-text:            var(--blue-700, #1d4ed8);
+
   --info:                 color-mix(in srgb, var(--theme-500) 45%, var(--theme-600));
   --info-hover:           color-mix(in srgb, var(--info) 88%, #000000);
   --info-light:           var(--theme-400);
@@ -630,18 +666,21 @@ html[data-theme] {
   --success-light:        #4ade80;
   --success-bg:           color-mix(in srgb, #22c55e 12%, transparent);
   --success-on:           #0f1117;
+  --success-text:         var(--green-700, #15803d);
 
   --warning:              #f59e0b;
   --warning-hover:        color-mix(in srgb, #f59e0b 85%, #000000);
   --warning-light:        #fbbf24;
   --warning-bg:           color-mix(in srgb, #f59e0b 12%, transparent);
   --warning-on:           #0f1117;
+  --warning-text:         var(--amber-700, #b45309);
 
   --danger:               #ef4444;
   --danger-hover:         color-mix(in srgb, #ef4444 85%, #000000);
   --danger-light:         #f87171;
   --danger-bg:            color-mix(in srgb, #ef4444 12%, transparent);
   --danger-on:            #ffffff;
+  --danger-text:          var(--red-700, #b91c1c);
 
   /* Soft theme wash: cards stay white; background, alt surfaces, table
       headers and borders get a light blend of the theme shade so switching
@@ -696,6 +735,8 @@ html[data-theme] {
     --secondary-light:      var(--theme-300);
     --secondary-bg:         color-mix(in srgb, var(--theme-500) 15%, transparent);
 
+    --info-text:            var(--blue-700, #1d4ed8);
+
     --info:                 color-mix(in srgb, var(--theme-500) 45%, var(--theme-600));
     --info-hover:           color-mix(in srgb, var(--info) 88%, #000000);
     --info-light:           var(--theme-300);
@@ -707,18 +748,21 @@ html[data-theme] {
     --success-light:        #86efac;
     --success-bg:           color-mix(in srgb, #22c55e 15%, transparent);
     --success-on:           #0f1117;
+    --success-text:         var(--green-700, #15803d);
 
     --warning:              #f59e0b;
     --warning-hover:        #fbbf24;
     --warning-light:        #fcd34d;
     --warning-bg:           color-mix(in srgb, #f59e0b 15%, transparent);
     --warning-on:           #0f1117;
+    --warning-text:         var(--amber-700, #b45309);
 
     --danger:               #ef4444;
     --danger-hover:         #f87171;
     --danger-light:         #fca5a5;
     --danger-bg:            color-mix(in srgb, #ef4444 15%, transparent);
     --danger-on:            #ffffff;
+    --danger-text:          var(--red-700, #b91c1c);
 
     --link:                 var(--theme-400);
     --link-hover:           var(--theme-300);
@@ -791,22 +835,29 @@ html[data-mode="dark"] {
   --success-hover:        #4ade80;
   --success-light:        #86efac;
   --success-bg:           rgba(34, 197, 94, 0.15);
+  --success-on:           #0f1117;
+  --success-text:         var(--green-700, #15803d);
 
   --warning:              #f59e0b;
   --warning-hover:        #fbbf24;
   --warning-light:        #fcd34d;
   --warning-bg:           rgba(245, 158, 11, 0.15);
+  --warning-on:           #0f1117;
+  --warning-text:         var(--amber-700, #b45309);
 
   --danger:               #ef4444;
   --danger-hover:         #f87171;
   --danger-light:         #fca5a5;
   --danger-bg:            rgba(239, 68, 68, 0.15);
+  --danger-on:            #ffffff;
+  --danger-text:          var(--red-700, #b91c1c);
 
   --info:                 #3b82f6;
   --info-hover:           #60a5fa;
   --info-light:           #93c5fd;
   --info-bg:              rgba(59, 130, 246, 0.15);
   --info-on:              #ffffff;
+  --info-text:            var(--blue-700, #1d4ed8);
 
   --muted:                #6b7280;
   --muted-bg:             rgba(107, 114, 128, 0.20);
@@ -835,7 +886,15 @@ html[data-mode="dark"] {
   --text-primary:         #f1f3f5;
   --text-secondary:       #c4c9d0;
   --text-muted:           #9ca3af;
-  --text-disabled:        #4b4d5c;
+  --text-disabled:        var(--gray-500, #9ca3af);
+  --text-danger:          var(--danger-text, #b91c1c);
+  --text-placeholder:     var(--gray-500, #9ca3af);
+  --disabled-opacity:     0.65;
+  --text-heading:         var(--text-primary);
+  --success-text:         var(--green-700, #15803d);
+  --warning-text:         var(--amber-700, #b45309);
+  --danger-text:          var(--red-700, #b91c1c);
+  --info-text:            var(--blue-700, #1d4ed8);
 
   --bg-scrim:             rgba(15, 17, 23, 0.70);
   --titlebar-scrim:       rgba(15, 17, 23, 0.72);
@@ -846,6 +905,11 @@ html[data-mode="dark"] {
 
   --icon:                 #c4c9d0;
   --icon-muted:           #9ca3af;
+
+  --text-danger:          var(--danger-text, #b91c1c);
+  --text-placeholder:     var(--gray-500, #9ca3af);
+  --disabled-opacity:     0.65;
+  --text-heading:         var(--text-primary);
 
   --border:               #2e3040;
   --border-light:         #252738;
@@ -1204,12 +1268,15 @@ table {
 .text-muted     { color: var(--text-muted); }
 
 /* --------------------------------------------------------------------------
-   7b. Tailwind-style Color Utility Classes
-   text-{color}-{shade} → color
-   bg-{color}-{shade}   → background-color
-   Shades: 50 · 100 · 200 · 300 · 400 · 500 · 600 · 700 · 800 · 900 · 950
-   (gray maps to the theme-aware --gray-* tokens defined above)
+   7b. Text-safe semantic avatar tokens (WCAG 2.1 AA foregrounds on the app
+   surfaces). These are FOR TEXT and TEXT-BEARING ICONS. Keep the 500 shades
+   for fills, dots, bars, chart series and tinted badges.
    -------------------------------------------------------------------------- */
+
+.text-safe-success   { color: var(--success-text); }
+.text-safe-warning   { color: var(--warning-text); }
+.text-safe-danger    { color: var(--danger-text); }
+.text-safe-info      { color: var(--info-text); }
 
 /* --- red --- */
 .text-red-50 { color: var(--red-50); }

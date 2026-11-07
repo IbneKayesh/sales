@@ -1,0 +1,7 @@
+/* UnifiedProfitROIPage.css — styles isolated to UnifiedProfitROIPage.jsx.
+   Scope names under `.unified-profit-roi` to avoid leaking into other pages. */
+.unified-profit-roi-page__lang-selector {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}

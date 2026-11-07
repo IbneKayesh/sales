@@ -9,6 +9,7 @@ import Button from "@/components/Button";
 import GroupButton from "@/components/GroupButton";
 import useUnifiedProfitROI from "@/hooks/M06/useUnifiedProfitROI";
 import CalculatorForm from "./CalculatorForm";
+import "./UnifiedProfitROIPage.css";
 
 const UnifiedProfitROIPage = () => {
   const roi = useUnifiedProfitROI();
@@ -22,7 +23,7 @@ const UnifiedProfitROIPage = () => {
             subtitle={roi.t("pageSubtitle")}
           />
           <PageCardActions>
-            <div style={{ display: "inline-flex", alignItems: "center", gap: "4px" }}>
+            <div className="unified-profit-roi-page__lang-selector">
               <span>{roi.t("languageLabel")}:</span>
               <GroupButton
                 options={[

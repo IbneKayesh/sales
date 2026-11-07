@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import { amountInWords } from "@/utils/ntw";
 import Modal, { ModalHeader } from "@/components/Modal";
 import { IconClose, IconCollapse, IconExpand } from "@/icons";
+import "./Calculator.css";
 
 const CALC_WIDTH = 272;
 const HISTORY_MAX = 10;
@@ -68,42 +69,22 @@ const keyStyles = {
 /* Keypad button with hover + pressed feedback (inline styles, no CSS).
    `active` lights it up for keyboard input. */
 const Key = ({ variant, label, onClick, span, active, title }) => {
-  const [hovered, setHovered] = useState(false);
-  const [pressed, setPressed] = useState(false);
   const base = keyStyles[variant] || keyStyles.digit;
   return (
     <button
       type="button"
+      className={[
+        "calculator__key",
+        "calculator__key--hoverable",
+        "calculator__key--dimmed",
+        active ? "calculator__key--active" : "",
+        span ? "calculator__key--span-2" : "",
+      ]
+        .filter(Boolean)
+        .join(" ")}
       onClick={onClick}
       title={title}
-      onMouseEnter={() => setHovered(true)}
-      onMouseLeave={() => setHovered(false)}
-      onMouseDown={() => setPressed(true)}
-      onMouseUp={() => setPressed(false)}
-      onBlur={() => {
-        setHovered(false);
-        setPressed(false);
-      }}
-      style={{
-        display: "flex",
-        alignItems: "center",
-        justifyContent: "center",
-        padding: "10px 0",
-        fontSize: 15,
-        fontWeight: 600,
-        borderRadius: "var(--radius-md)",
-        border: "1px solid",
-        cursor: "pointer",
-        fontFamily: "var(--font-sans)",
-        boxShadow: hovered ? "var(--shadow-xs)" : "none",
-        transition: "all 0.08s ease",
-        ...base,
-        ...(hovered ? { filter: "brightness(0.94)" } : {}),
-        ...(pressed || active
-          ? { transform: "scale(0.94)", filter: "brightness(0.85)" }
-          : {}),
-        ...(span ? { gridColumn: `span ${span}` } : {}),
-      }}
+      style={base}
     >
       {label}
     </button>
@@ -376,28 +357,14 @@ export default function Calculator({ open, onClose }) {
         transform: `translate(${pos.x}px, ${pos.y}px)`,
       }}
     >
-      <ModalHeader onMouseDown={startDrag} style={{ cursor: "grab" }}>
-        <span
-          style={{
-            fontSize: 14,
-            fontWeight: 600,
-            color: "var(--text-primary)",
-          }}
-        >
+      <ModalHeader onMouseDown={startDrag} className="calculator__header">
+        <span className="calculator__header-title">
           Calculator
         </span>
-        <div
-          style={{
-            display: "flex",
-            alignItems: "center",
-            gap: 4,
-            flexShrink: 0,
-          }}
-        >
+        <div className="calculator__header-controls">
           <button
             type="button"
-            className="modal__close"
-            style={{ marginTop: 0 }}
+            className="modal__close calculator__expand-btn"
             onClick={() => setExpanded((v) => !v)}
             aria-label={expanded ? "Collapse calculator" : "Expand calculator"}
             title={expanded ? "Collapse" : "Expand to show history"}
@@ -406,8 +373,7 @@ export default function Calculator({ open, onClose }) {
           </button>
           <button
             type="button"
-            className="modal__close"
-            style={{ marginTop: 0 }}
+            className="modal__close calculator__close-btn"
             onClick={onClose}
             aria-label="Close calculator"
             title="Close"
@@ -416,88 +382,30 @@ export default function Calculator({ open, onClose }) {
           </button>
         </div>
       </ModalHeader>
-      <div
-        style={{
-          padding: 12,
-          display: "flex",
-          flexDirection: "column",
-          gap: 10,
-        }}
-      >
+      <div className="calculator__body">
         {/* Equation + result display */}
-        <div
-          style={{
-            display: "flex",
-            flexDirection: "column",
-            gap: 2,
-            padding: "10px 12px",
-            background: "var(--surface-hover)",
-            border: "1px solid var(--border-light)",
-            borderRadius: "var(--radius-lg)",
-          }}
-        >
-          <div
-            style={{
-              textAlign: "right",
-              fontFamily: "var(--font-mono)",
-              fontSize: 11,
-              lineHeight: 1.4,
-              color: "var(--text-muted)",
-              minHeight: 15,
-              maxHeight: 44,
-              overflowY: "auto",
-              wordBreak: "break-all",
-            }}
-          >
+        <div className="calculator__display">
+          <div className="calculator__equation">
             {equationText || "\u00A0"}
           </div>
-          <div
-            style={{
-              textAlign: "right",
-              fontFamily: "var(--font-mono)",
-              fontSize: 32,
-              fontWeight: 700,
-              color: "var(--text-primary)",
-              overflow: "hidden",
-              textOverflow: "ellipsis",
-              whiteSpace: "nowrap",
-              minHeight: 40,
-              lineHeight: 1.15,
-            }}
-          >
+          <div className="calculator__result">
             {display}
           </div>
           {display !== "0" && display !== "Error" && (
-            <div
-              style={{
-                textAlign: "right",
-                fontFamily: "var(--font-sans)",
-                fontSize: 10,
-                lineHeight: 1.15,
-                color: "var(--text-muted)",
-                minHeight: 0,
-                wordBreak: "break-all",
-                marginTop: -4,
-              }}
-            >
+            <div className="calculator__result-in-words">
               {amountInWords(parseFloat(display))}
             </div>
           )}
         </div>
 
         {/* Keypad */}
-        <div
-          style={{
-            display: "grid",
-            gridTemplateColumns: "repeat(4, 1fr)",
-            gap: 6,
-          }}
-        >
+        <div className="calculator__keypad">
           <Key
             variant="fn"
             label="C"
             active={activeKey === "C"}
             onClick={clearAll}
+            style={keyStyles.fn}
           />
           <Key
             variant="fn"
@@ -505,18 +413,21 @@ export default function Calculator({ open, onClose }) {
             active={activeKey === "±"}
             onClick={toggleSign}
             title="Toggle sign (n or F9)"
+            style={keyStyles.fn}
           />
           <Key
             variant="fn"
             label="%"
             active={activeKey === "%"}
             onClick={percent}
+            style={keyStyles.fn}
           />
           <Key
             variant="op"
             label="÷"
             active={activeKey === "÷"}
             onClick={() => setOperator("÷")}
+            style={keyStyles.op}
           />
           {["7", "8", "9"].map((d) => (
             <Key
@@ -569,128 +480,63 @@ export default function Calculator({ open, onClose }) {
             active={activeKey === "⌫"}
             onClick={backspace}
             title="Backspace"
+            style={keyStyles.fn}
           />
           <Key
             variant="digit"
             label="0"
             active={activeKey === "0"}
             onClick={() => inputDigit("0")}
+            style={keyStyles.digit}
           />
           <Key
             variant="digit"
             label="."
             active={activeKey === "."}
             onClick={inputDot}
+            style={keyStyles.digit}
           />
           <Key
             variant="equals"
             label="="
             active={activeKey === "="}
             onClick={equals}
+            style={keyStyles.equals}
           />
         </div>
 
         {/* History — last 10 calculations (visible when expanded) */}
         {expanded && (
-          <div
-            style={{
-              borderTop: "1px solid var(--border-light)",
-              paddingTop: 8,
-              display: "flex",
-              flexDirection: "column",
-              gap: 4,
-            }}
-          >
-            <div
-              style={{
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "space-between",
-              }}
-            >
-              <span
-                style={{
-                  fontSize: 11,
-                  fontWeight: 600,
-                  color: "var(--text-muted)",
-                  textTransform: "uppercase",
-                  letterSpacing: 0.6,
-                }}
-              >
+          <div className="calculator__history">
+            <div className="calculator__history-header">
+              <span className="calculator__history-label">
                 History
               </span>
               <button
                 type="button"
+                className="calculator__history-clear"
                 onClick={clearHistory}
-                style={{
-                  fontSize: 11,
-                  color: "var(--text-muted)",
-                  background: "none",
-                  border: "none",
-                  cursor: "pointer",
-                  padding: 0,
-                }}
               >
                 Clear
               </button>
             </div>              {history.length === 0 ? (
-                <div
-                  style={{
-                    fontSize: 12,
-                    color: "var(--text-muted)",
-                    padding: "6px 2px",
-                  }}
-                >
+                <div className="calculator__history-empty">
                   No calculations yet
                 </div>
               ) : (
-                <div
-                  style={{
-                    maxHeight: 160,
-                    overflowY: "auto",
-                    display: "flex",
-                    flexDirection: "column",
-                    gap: 2,
-                  }}
-                >
+                <div className="calculator__history-list">
                 {history.map((h) => (
                 <button
                   key={h.id}
                   type="button"
+                  className="calculator__history-item"
                   onClick={() => reuseHistory(h)}
                   title="Click to reuse result"
-                  style={{
-                    display: "flex",
-                    alignItems: "center",
-                    justifyContent: "space-between",
-                    gap: 8,
-                    background: "transparent",
-                    border: "none",
-                    cursor: "pointer",
-                    padding: "3px 6px",
-                    borderRadius: "var(--radius-md)",
-                    fontSize: 12,
-                    fontFamily: "var(--font-mono)",
-                    color: "var(--text-secondary)",
-                    textAlign: "left",
-                  }}
                 >
-                  <span
-                    style={{
-                      overflow: "hidden",
-                      textOverflow: "ellipsis",
-                      whiteSpace: "nowrap",
-                    }}
-                  >
+                  <span className="calculator__history-expression">
                     {h.expression}
                   </span>
-                  <span
-                    style={{
-                      color: "var(--text-primary)",
-                      fontWeight: 600,
-                      flexShrink: 0,
-                    }}
-                  >
+                  <span className="calculator__history-result">
                     = {h.result}
                   </span>
                 </button>
