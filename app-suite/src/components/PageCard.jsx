@@ -85,7 +85,7 @@ export function PageSection({ title, children, style, ...rest }) {
         >
           {title}
         </span>
-        <span style={{ flex: 1, height: 1, background: 'var(--border)' }} />
+        <span style={{ flex: 1, height: 1, background: 'var(--primary-border)' }} />
       </div>
       {children}
     </section>

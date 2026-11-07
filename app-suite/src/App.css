@@ -105,7 +105,7 @@ code {
   justify-content: flex-end;
   gap: var(--sp-3);
   padding-top: var(--sp-3);
-  border-top: 1px solid var(--border);
+  border-top: 1px solid var(--primary-border);
 }
 
 /* --- Shared form input base styles (prevents drift across InputText, InputNumber, InputCalendar, Dropdown) --- */
@@ -2703,7 +2703,7 @@ code {
 
 .page-card {
   background: var(--card-bg);
-  border: 1px solid var(--border);
+  border: 1px solid var(--border-primary);
   /* Page bodies match the modal treatment — crisp desktop corners. */
   border-radius: var(--radius-lg);
   box-shadow: var(--shadow-xs);
@@ -2720,7 +2720,7 @@ code {
   justify-content: space-between;
   gap: var(--sp-3);
   padding: var(--sp-2) var(--sp-4);
-  border-bottom: 1px solid var(--border);
+  border-bottom: 1px solid var(--primary-border);
 }
 
 .page-card__title-wrap {
@@ -4380,6 +4380,7 @@ html[data-layout="boxed"] .layout__main {
   justify-content: space-between;
   gap: var(--sp-4);
   width: 100%;
+  border-bottom: 1px solid var(--primary-border);
 }
 
 .modal__title-text {
@@ -7240,6 +7241,7 @@ html[data-layout="boxed"] .layout__main {
   text-align: left;
   transition: background var(--transition-fast);
   box-sizing: border-box;
+  border-bottom: 1px solid var(--primary-border);
 }
 
 .accordion-card__header:hover {
