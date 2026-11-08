@@ -76,7 +76,16 @@ export default function Dropdown({
   const searchRef = useRef(null);
   const fallbackId = useId();
   const inputId = name || fallbackId;
-  const [menuStyle, setMenuStyle] = useState({});
+  // The menu is portalled, so before the first measurement it would render at
+  // the document bottom (absolute, top:100%). Keep it hidden until
+  // updatePosition() has placed it, otherwise focusing the search input on
+  // first open makes the browser scroll the page to that off-screen menu.
+  const [menuStyle, setMenuStyle] = useState({
+    position: "fixed",
+    top: 0,
+    left: 0,
+    visibility: "hidden",
+  });
 
   const columns = parseOptionGrid(optionGrid);
   const isGrid = columns.length > 0;
@@ -103,6 +112,7 @@ export default function Dropdown({
       position: "fixed",
       zIndex: 1200,
       margin: 0,
+      visibility: "visible",
     };
 
     if (openUp) {
@@ -173,9 +183,14 @@ export default function Dropdown({
   }, []);
 
   useEffect(() => {
-    if (open && searchRef.current) {
-      searchRef.current.focus();
-    }
+    if (!open) return undefined;
+    // Wait one frame: the menu is hidden until the layout effect positions it,
+    // and a hidden element cannot take focus. preventScroll keeps the page
+    // still when the field does get focus.
+    const frame = requestAnimationFrame(() => {
+      searchRef.current?.focus({ preventScroll: true });
+    });
+    return () => cancelAnimationFrame(frame);
   }, [open]);
 
   const filtered =
@@ -292,10 +307,7 @@ export default function Dropdown({
             style={menuStyle}
           >
           {searchable && (
-            <div
-              className="dropdown__search"
-              style={{ padding: "var(--sp-1) var(--sp-2)" }}
-            >
+            <div className="dropdown__search">
               <span className="dropdown__search-icon">
                 <IconSearch size={12} />
               </span>
@@ -307,7 +319,6 @@ export default function Dropdown({
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
                 onKeyDown={(e) => e.stopPropagation()}
-                style={{ padding: "var(--sp-1) 0", fontSize: "var(--fs-sm)" }}
               />
             </div>
           )}

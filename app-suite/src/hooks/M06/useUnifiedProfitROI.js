@@ -1,6 +1,7 @@
 import { useState, useMemo, useCallback } from "react";
 import { useUI } from "@/context/AppUIContext.jsx";
 import { computeProfitROI, number, HORIZON_DAYS, resolveCost } from "./profitCalculator";
+import { generateGuid } from "@/utils/guid";
 
 // Keep the original public surface of this hook intact; the pure engine lives
 // in profitCalculator.js so it can be verified outside React.
@@ -17,7 +18,7 @@ export const money = (value) =>
   })}`;
 
 export const createCost = (name = "", amount = "", type = "value") => ({
-  id: crypto.randomUUID(),
+  id: generateGuid(),
   name,
   amount: amount === "" ? "" : String(amount),
   type: type === "percent" ? "percent" : "value",
@@ -717,13 +718,13 @@ export const getDefaultBDDataset = (mode = "total_qty", lang = "EN") => {
     returnDisposition: "resell_repack",
     bulkPrices: [
       {
-        id: crypto.randomUUID(),
+        id: generateGuid(),
         name: isBN ? "ঢাকা পাইকারি বাজার (চকবাজার / মৌলভীবাজার)" : "Dhaka Wholesale Market",
         price: "850",
         mix: "60",
       },
       {
-        id: crypto.randomUUID(),
+        id: generateGuid(),
         name: isBN ? "জেলা ডিলার ও মফস্বল নেটওয়ার্ক" : "District Dealers Network",
         price: "800",
         mix: "40",
@@ -1074,7 +1075,7 @@ const useUnifiedProfitROI = () => {
     setBulkPrices((prev) => [
       ...prev,
       {
-        id: crypto.randomUUID(),
+        id: generateGuid(),
         name: lang === "BN" ? `মূল্য স্তর ${prev.length + 1}` : `Price Tier ${prev.length + 1}`,
         price: "",
         mix: "0",

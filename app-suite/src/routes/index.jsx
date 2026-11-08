@@ -1,5 +1,6 @@
 import { Route } from "react-router-dom";
 import mainRoutes from "./mainRoutes";
+import openRoutes from "./OpenRoutes";
 import M01Routes from "./M01Routes";
 import M02Routes from "./M02Routes";
 import M03Routes from "./M03Routes";
@@ -12,11 +13,14 @@ import M51Routes from "./M51Routes";
 import M101Routes from "./M101Routes";
 import ProtectedRoute from "./ProtectedRoute";
 
-// Routes that don't require authentication
+// Routes that don't require authentication: the login page, the 404 page and
+// everything declared in OpenRoutes (kept in one place so it stays obvious).
 const publicPaths = new Set(["/auth/login", "*"]);
+openRoutes.forEach(({ path }) => publicPaths.add(path));
 
 const routes = [
   ...mainRoutes,
+  ...openRoutes,
   ...M01Routes,
   ...M02Routes,
   ...M03Routes,

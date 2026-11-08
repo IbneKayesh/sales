@@ -1,9 +1,10 @@
 import { useEffect } from "react";
-import { Routes } from "react-router-dom";
+import { Route, Routes, useLocation } from "react-router-dom";
 import { AppProvider, useApp } from "./context/AppContext";
 import { AppUIProvider } from "./context/AppUIContext";
 import Layout from "./layouts/Layout";
 import getRoutes from "./routes";
+import openRoutes from "./routes/OpenRoutes";
 import LoginPage from "./pages/auth/LoginPage";
 import ErrorBoundary from "./components/ErrorBoundary";
 import Windows from "./layouts/Window";
@@ -26,6 +27,10 @@ function AppContent() {
     isLocked,
   } = useApp();
 
+  // Public routes keep working when nobody is signed in (see OpenRoutes.jsx).
+  const { pathname } = useLocation();
+  const isOpenRoute = openRoutes.some((route) => route.path === pathname);
+
   // Block the browser's default right-click context menu app-wide.
   // useEffect(() => {
   //   const handler = (e) => e.preventDefault();
@@ -35,6 +40,20 @@ function AppContent() {
 
 
   if (!user) {
+    // Open routes render on their own, without the signed-in shell.
+    if (isOpenRoute) {
+      return (
+        <div className="layout">
+          <main className="layout__main">
+            <Routes>
+              {openRoutes.map((route) => (
+                <Route key={route.path} path={route.path} element={route.element} />
+              ))}
+            </Routes>
+          </main>
+        </div>
+      );
+    }
     return <LoginPage />;
   }
 
