@@ -1508,6 +1508,7 @@ textarea:focus-visible,
   background: var(--surface);
   color: var(--text-primary);
   box-shadow: var(--shadow-xs);
+  border: 0.5px solid var(--primary-border);
 }
 
 .group-btn__item:focus-visible {

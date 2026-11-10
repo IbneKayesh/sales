@@ -101,7 +101,7 @@ export default function InfoButton({
   }, [onClose]);
 
   // Labels
-  const lblClose = closeLabel || (isBN ? 'ঠিক আছে / বন্ধ করুন' : 'Got it / Close');
+  const lblClose = closeLabel || (isBN ? 'বন্ধ করুন' : 'Close');
   const lblExplanation = explanationLabel || (isBN ? 'ব্যাখ্যা ও ব্যবসায়িক তাৎপর্য' : 'Concept & Meaning');
   const lblFormula = formulaLabel || (isBN ? 'হিসাবের গাণিতিক সূত্র' : 'Calculation Formula');
   const lblBreakdown = breakdownLabel || (isBN ? 'হিসাবের বিস্তারিত মান' : 'Calculation Breakdown');

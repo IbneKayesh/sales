@@ -429,35 +429,11 @@ const CalculatorForm = ({
 
   return (
     <div className="form-wrap">
-      {/* Language Switcher Bar */}
-      {/* <div
-        style={{
-          display: "flex",
-          justifyContent: "flex-end",
-          alignItems: "center",
-          gap: "var(--sp-2)",
-          marginBottom: "var(--sp-2)",
-        }}
-      >
-        <span style={{ fontSize: "var(--fs-xs)", color: "var(--text-secondary)", fontWeight: "var(--fw-medium)" }}>
-          {t("languageLabel")}:
-        </span>
-        <GroupButton
-          options={[
-            { value: "EN", label: "EN" },
-            { value: "BN", label: "BN" },
-          ]}
-          value={lang}
-          onChange={(e) => setLanguage && setLanguage(e.target.value)}
-          size="sm"
-        />
-      </div> */}
-
       <AccordionCard allowMultiple>
         {/* =================================================================== */}
         {/* 01 SALES TARGET                                                     */}
         {/* =================================================================== */}
-        <AccordionBody title={t("sec1Title")} defaultExpanded>
+        <AccordionBody title={t("sec1Title")} defaultExpanded={false}>
           <div className="grid">
             {/* Cost Entry Basis: Total for Target Qty vs Per Unit Wise */}
             <div
@@ -577,7 +553,7 @@ const CalculatorForm = ({
         {/* =================================================================== */}
         {/* 02 SOURCING MODEL & GROUP-WISE COSTS                                */}
         {/* =================================================================== */}
-        <AccordionBody title={t("sec2Title")} defaultExpanded>
+        <AccordionBody title={t("sec2Title")} defaultExpanded={false}>
           <div className="grid">
             <div className="col-span-12" style={{ marginBottom: "var(--sp-2)" }}>
               <label className="input-text__label" style={{ marginBottom: "var(--sp-1)", display: "flex", alignItems: "center" }}>
@@ -643,7 +619,7 @@ const CalculatorForm = ({
         {/* =================================================================== */}
         {/* 03 STOCKING MODEL & GROUP-WISE COSTS                                */}
         {/* =================================================================== */}
-        <AccordionBody title={t("sec3Title")} defaultExpanded>
+        <AccordionBody title={t("sec3Title")} defaultExpanded={false}>
           <div className="grid">
             <div className="col-span-12" style={{ marginBottom: "var(--sp-2)" }}>
               <label className="input-text__label" style={{ marginBottom: "var(--sp-1)", display: "flex", alignItems: "center" }}>
@@ -693,7 +669,7 @@ const CalculatorForm = ({
         {/* =================================================================== */}
         {/* 04 SELLING MODEL & GROUP-WISE COSTS                                 */}
         {/* =================================================================== */}
-        <AccordionBody title={t("sec4Title")} defaultExpanded>
+        <AccordionBody title={t("sec4Title")} defaultExpanded={false}>
           <div className="grid">
             <div className="col-span-12" style={{ marginBottom: "var(--sp-2)" }}>
               <label className="input-text__label" style={{ marginBottom: "var(--sp-1)", display: "flex", alignItems: "center" }}>
@@ -934,7 +910,7 @@ const CalculatorForm = ({
         {/* =================================================================== */}
         {/* 05 RETURNS MANAGEMENT & COSTS                                       */}
         {/* =================================================================== */}
-        <AccordionBody title={t("sec5Title")} defaultExpanded>
+        <AccordionBody title={t("sec5Title")} defaultExpanded={false}>
           <div className="grid">
             {/* 1. Returned Qty & Disposition Selector */}
             <div className="col-span-4">
@@ -1220,7 +1196,7 @@ const CalculatorForm = ({
         {/* =================================================================== */}
         {/* 06 PROFIT & ROI SUMMARY                                             */}
         {/* =================================================================== */}
-        <AccordionBody title={t("sec6Title")} defaultExpanded>
+        <AccordionBody title={t("sec6Title")} defaultExpanded={false}>
           <div style={{ display: "flex", flexDirection: "column", gap: "var(--sp-4)" }}>
 
             {/* Output Time Horizon & ROI View Mode Controls */}
